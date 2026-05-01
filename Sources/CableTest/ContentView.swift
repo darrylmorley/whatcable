@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
     @StateObject private var portWatcher = USBCPortWatcher()
@@ -53,7 +54,7 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        HStack {
+        HStack(spacing: 10) {
             Image(systemName: "cable.connector.horizontal")
                 .font(.title2)
             VStack(alignment: .leading, spacing: 2) {
@@ -70,6 +71,18 @@ struct ContentView: View {
             }
             .buttonStyle(.borderless)
             .help("Refresh")
+            Menu {
+                Button("About \(AppInfo.name)") { AppDelegate.showAboutPanel() }
+                Button("Help") { NSWorkspace.shared.open(AppInfo.helpURL) }
+                Divider()
+                Button("Quit \(AppInfo.name)") { NSApp.terminate(nil) }
+            } label: {
+                Image(systemName: "gearshape")
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .help("More options")
         }
         .padding(12)
     }

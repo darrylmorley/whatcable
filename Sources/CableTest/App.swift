@@ -87,6 +87,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
 
     @objc private func menuAbout() {
+        Self.showAboutPanel()
+    }
+
+    @objc private func menuQuit() {
+        NSApp.terminate(nil)
+    }
+
+    static func showAboutPanel() {
         NSApp.activate(ignoringOtherApps: true)
         let credits = NSAttributedString(
             string: "\(AppInfo.tagline)\n\nBuilt by \(AppInfo.credit).",
@@ -102,10 +110,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             .credits: credits,
             .init(rawValue: "Copyright"): AppInfo.copyright
         ])
-    }
-
-    @objc private func menuQuit() {
-        NSApp.terminate(nil)
     }
 }
 
