@@ -46,6 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         if event.type == .rightMouseUp {
             showMenu(from: sender)
         } else {
+            Self.refreshSignal.showAdvanced = event.modifierFlags.contains(.option)
             togglePopover(from: sender)
         }
     }
@@ -111,5 +112,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
 final class RefreshSignal: ObservableObject {
     @Published var tick: Int = 0
+    @Published var showAdvanced: Bool = false
     func bump() { tick &+= 1 }
 }

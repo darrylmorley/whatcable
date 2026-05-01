@@ -6,7 +6,6 @@ struct ContentView: View {
     @StateObject private var powerWatcher = PowerSourceWatcher()
     @StateObject private var pdWatcher = PDIdentityWatcher()
     @EnvironmentObject private var refresh: RefreshSignal
-    @State private var showAdvanced = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -23,7 +22,7 @@ struct ContentView: View {
                                 devices: matchingDevices(for: port),
                                 powerSources: powerWatcher.sources(for: port),
                                 identities: pdWatcher.identities(for: port),
-                                showAdvanced: showAdvanced
+                                showAdvanced: refresh.showAdvanced
                             )
                         }
                     }
@@ -76,9 +75,9 @@ struct ContentView: View {
 
     private var footer: some View {
         HStack(spacing: 8) {
-            Toggle("Show technical details", isOn: $showAdvanced)
-                .toggleStyle(.switch)
-                .controlSize(.small)
+            Text("Tip: ⌥-click the menu bar icon for technical details")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
             Spacer()
             Text("\(deviceWatcher.devices.count) USB device\(deviceWatcher.devices.count == 1 ? "" : "s")")
                 .font(.caption)
