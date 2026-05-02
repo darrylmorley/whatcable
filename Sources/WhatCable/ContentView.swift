@@ -179,8 +179,15 @@ struct ContentView: View {
         
         let devices = deviceWatcher.devices
         
-        // 1. Try exact matches by name (highest confidence).
-        let byName = devices.filter { $0.controllerPortName == port.serviceName }
+        // 1. Try matches by name (highest confidence).
+        // We check for exact match or if one is a suffix of the other (e.g. "Port-USB-C"
+        // matching "Port-USB-C@1") to handle naming variations across IOKit properties.
+        let byName = devices.filter { d in
+            guard let dPort = d.controllerPortName else { return false }
+            return dPort == port.serviceName || 
+                   dPort.hasPrefix(port.serviceName) || 
+                   port.serviceName.hasPrefix(dPort)
+        }
         if !byName.isEmpty {
             return byName
         }

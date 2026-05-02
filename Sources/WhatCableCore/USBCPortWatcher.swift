@@ -144,28 +144,33 @@ public final class USBCPortWatcher: ObservableObject {
         IOObjectRetain(current)
         defer { IOObjectRelease(current) }
 
+        // 1. Walk up looking for an 'hpmN' node (M3+) or 'atcN' / 'usb-drdN' node (M1/M2).
         for _ in 0..<8 {
+            var nameBuf = [CChar](repeating: 0, count: 128)
+            IORegistryEntryGetName(current, &nameBuf)
+            let name = String(cString: nameBuf)
+            
+            // hpmN@... (M3) or atcN / usb-drdN (M1/M2)
+            let prefixes = ["hpm", "atc", "usb-drd"]
+            for prefix in prefixes {
+                if name.hasPrefix(prefix) {
+                    let start = name.index(name.startIndex, offsetBy: prefix.count)
+                    let end = name.firstIndex(of: "@") ?? name.endIndex
+                    if start < end, let n = Int(name[start..<end]) {
+                        return n
+                    }
+                }
+            }
+
             var parent: io_service_t = 0
             guard IORegistryEntryGetParentEntry(current, kIOServicePlane, &parent) == KERN_SUCCESS else {
                 break
             }
             IOObjectRelease(current)
             current = parent
-
-            var nameBuf = [CChar](repeating: 0, count: 128)
-            IORegistryEntryGetName(current, &nameBuf)
-            let name = String(cString: nameBuf)
-            if name.hasPrefix("hpm"), let at = name.firstIndex(of: "@") {
-                let digits = name[name.index(name.startIndex, offsetBy: 3)..<at]
-                if let n = Int(digits) {
-                    return n
-                }
-            }
         }
 
-        // Fallback for M1/M2: use the port's own location if it's a simple index.
-        // On these machines the port's location (e.g. "@1") typically matches
-        // the upper byte of its XHCI controller's locationID.
+        // 2. Fallback: use the port's own location if it's a simple index.
         var locBuf = [CChar](repeating: 0, count: 128)
         if IORegistryEntryGetLocationInPlane(service, kIOServicePlane, &locBuf) == KERN_SUCCESS {
             let loc = String(cString: locBuf)

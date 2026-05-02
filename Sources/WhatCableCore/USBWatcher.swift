@@ -151,7 +151,8 @@ public final class USBWatcher: ObservableObject {
         var portName: String?
         var bus: Int?
 
-        for _ in 0..<16 {
+        // Walk up to 20 hops to handle deep hub topologies.
+        for _ in 0..<20 {
             var parent: io_service_t = 0
             guard IORegistryEntryGetParentEntry(current, kIOServicePlane, &parent) == KERN_SUCCESS else {
                 break
@@ -159,10 +160,17 @@ public final class USBWatcher: ObservableObject {
             IOObjectRelease(current)
             current = parent
 
-            if portName == nil,
-               let raw = IORegistryEntryCreateCFProperty(current, "UsbIOPort" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
-               let last = raw.split(separator: "/").last {
-                portName = String(last)
+            if portName == nil {
+                if let raw = IORegistryEntryCreateCFProperty(current, "UsbIOPort" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() {
+                    let path: String? = {
+                        if let s = raw as? String { return s }
+                        if let d = raw as? Data { return String(data: d, encoding: .utf8)?.trimmingCharacters(in: .controlCharacters) }
+                        return nil
+                    }()
+                    if let path, let last = path.split(separator: "/").last {
+                        portName = String(last)
+                    }
+                }
             }
 
             var classBuf = [CChar](repeating: 0, count: 128)
