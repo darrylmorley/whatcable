@@ -10,7 +10,9 @@ struct WhatCableApp: App {
     var body: some Scene {
         // Headless — UI is owned by AppDelegate (status item + popover, or
         // a regular window, depending on AppSettings.useMenuBarMode).
-        Settings { EmptyView() }
+        Settings {
+            SettingsView()
+        }
     }
 }
 
@@ -164,7 +166,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         pinItem.state = isPinned ? .on : .off
         menu.addItem(pinItem)
         menu.addItem(.separator())
+        menu.addItem(.init(title: "Settings…", action: #selector(menuSettings), keyEquivalent: ","))
         menu.addItem(.init(title: "Check for Updates…", action: #selector(menuCheckUpdates), keyEquivalent: ""))
+        menu.addItem(.separator())
         menu.addItem(.init(title: "About \(AppInfo.name)", action: #selector(menuAbout), keyEquivalent: ""))
         menu.addItem(.init(title: "WhatCable on GitHub", action: #selector(menuHelp), keyEquivalent: ""))
         menu.addItem(.separator())
@@ -183,6 +187,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
     @objc private func menuRefresh() {
         Self.refreshSignal.bump()
+    }
+
+    @objc private func menuSettings() {
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.sendAction(Selector(("showSettingsPanel:")), to: nil, from: nil)
     }
 
     @objc private func menuAbout() {
