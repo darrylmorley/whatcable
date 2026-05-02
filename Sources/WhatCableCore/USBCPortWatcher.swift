@@ -147,7 +147,7 @@ public final class USBCPortWatcher: ObservableObject {
         for _ in 0..<8 {
             var parent: io_service_t = 0
             guard IORegistryEntryGetParentEntry(current, kIOServicePlane, &parent) == KERN_SUCCESS else {
-                return nil
+                break
             }
             IOObjectRelease(current)
             current = parent
@@ -162,6 +162,18 @@ public final class USBCPortWatcher: ObservableObject {
                 }
             }
         }
+
+        // Fallback for M1/M2: use the port's own location if it's a simple index.
+        // On these machines the port's location (e.g. "@1") typically matches
+        // the upper byte of its XHCI controller's locationID.
+        var locBuf = [CChar](repeating: 0, count: 128)
+        if IORegistryEntryGetLocationInPlane(service, kIOServicePlane, &locBuf) == KERN_SUCCESS {
+            let loc = String(cString: locBuf)
+            if let n = Int(loc, radix: 16) {
+                return n
+            }
+        }
+
         return nil
     }
 

@@ -176,28 +176,28 @@ struct ContentView: View {
     /// reported.
     private func matchingDevices(for port: USBCPort) -> [USBDevice] {
         guard port.connectionActive == true else { return [] }
-        guard portCarriesUSB(port) else { return [] }
-        let byPortName = deviceWatcher.devices.filter { $0.controllerPortName == port.serviceName }
-        if !byPortName.isEmpty {
-            return byPortName
+        
+        let devices = deviceWatcher.devices
+        
+        // 1. Try exact matches by name (highest confidence).
+        let byName = devices.filter { $0.controllerPortName == port.serviceName }
+        if !byName.isEmpty {
+            return byName
         }
-        // No device claims this port via UsbIOPort. Only fall back to bus-index
-        // matching if at least one device exposes a controllerPortName, which
-        // tells us UsbIOPort is supported on this machine and an empty result
-        // is meaningful (no device is on this port). Otherwise UsbIOPort isn't
-        // available and we use the older busIndex heuristic.
-        let anyDeviceHasPortName = deviceWatcher.devices.contains { $0.controllerPortName != nil }
-        if anyDeviceHasPortName {
-            return []
+        
+        // 2. Fall back to busIndex for devices that don't have a port name,
+        // provided the port itself is active for USB and has a bus index.
+        guard portCarriesUSB(port), let portBus = port.busIndex else { return [] }
+        
+        return devices.filter { d in
+            d.controllerPortName == nil && d.busIndex == portBus
         }
-        if let portBus = port.busIndex {
-            return deviceWatcher.devices.filter { $0.busIndex == portBus }
-        }
-        return []
     }
 
     private func portCarriesUSB(_ port: USBCPort) -> Bool {
-        port.transportsActive.contains { $0 == "USB2" || $0 == "USB3" }
+        if port.usbActive == true || port.superSpeedActive == true { return true }
+        let active = port.transportsActive
+        return active.contains("USB2") || active.contains("USB3") || active.contains("USB4") || active.contains("CIO")
     }
 }
 
