@@ -93,17 +93,29 @@ public final class PDIdentityWatcher: ObservableObject {
         let endpointName = (dict["ComponentName"] as? String)
             ?? (dict["AddressDescription"] as? String)
             ?? (dict["Address Description"] as? String)
+            ?? (dict["TransportTypeDescription"] as? String) // Support "CC" node metadata
             ?? "Unknown"
-        let endpoint = PDIdentity.Endpoint(rawValue: endpointName) ?? .unknown
+        let endpoint: PDIdentity.Endpoint = {
+            if endpointName == "CC" { return .sopPrime } // Treat MagSafe CC metadata as SOP'
+            return PDIdentity.Endpoint(rawValue: endpointName) ?? .unknown
+        }()
 
-        let parentType = (dict["ParentPortType"] as? NSNumber)?.intValue ?? 0
-        let parentNum = (dict["ParentPortNumber"] as? NSNumber)?.intValue ?? 0
+        let parentType = (dict["ParentPortType"] as? NSNumber)?.intValue 
+            ?? (dict["ParentBuiltInPortType"] as? NSNumber)?.intValue
+            ?? 0
+        let parentNum = (dict["ParentPortNumber"] as? NSNumber)?.intValue 
+            ?? (dict["ParentBuiltInPortNumber"] as? NSNumber)?.intValue
+            ?? 0
         let specRev = (dict["Specification Revision"] as? NSNumber)?.intValue ?? 0
 
         let metadata = dict["Metadata"] as? [String: Any] ?? [:]
         let vendorID = (metadata["Vendor ID"] as? NSNumber)?.intValue
+            ?? (metadata["Vendor ID (SOP1)"] as? NSNumber)?.intValue
+            ?? (dict["Vendor ID (SOP1)"] as? NSNumber)?.intValue
             ?? (dict["Vendor ID"] as? NSNumber)?.intValue ?? 0
         let productID = (metadata["Product ID"] as? NSNumber)?.intValue
+            ?? (metadata["Product ID (SOP1)"] as? NSNumber)?.intValue
+            ?? (dict["Product ID (SOP1)"] as? NSNumber)?.intValue
             ?? (dict["Product ID"] as? NSNumber)?.intValue ?? 0
         let bcdDevice = (metadata["bcdDevice"] as? NSNumber)?.intValue ?? 0
 

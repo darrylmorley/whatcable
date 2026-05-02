@@ -27,7 +27,8 @@ public struct ChargingDiagnostic {
 
 extension ChargingDiagnostic {
     public init?(port: USBCPort, sources: [PowerSource], identities: [PDIdentity]) {
-        guard let usbPD = sources.first(where: { $0.name == "USB-PD" }) else {
+        // MagSafe uses "Brick ID", standard USB-C uses "USB-PD"
+        guard let source = sources.first(where: { $0.name == "USB-PD" || $0.name == "Brick ID" }) else {
             return nil // No PD source on this port, no diagnostic to make.
         }
         // MagSafe (and at least some USB-C ports) keep the last negotiated
@@ -37,8 +38,18 @@ extension ChargingDiagnostic {
         // the PowerSource node alone.
         guard port.connectionActive == true else { return nil }
 
-        let chargerMaxW = Int((Double(usbPD.maxPowerMW) / 1000).rounded())
-        let negotiatedW = usbPD.winning.map { Int((Double($0.maxPowerMW) / 1000).rounded()) }
+        var chargerMaxW = Int((Double(source.maxPowerMW) / 1000).rounded())
+        var negotiatedW = source.winning.map { Int((Double($0.maxPowerMW) / 1000).rounded()) }
+
+        // Fallback for MagSafe: if we have a source but no negotiated wattage, 
+        // try pulling from the system-wide power details (which usually matches 
+        // the active MagSafe connection).
+        if negotiatedW == nil || negotiatedW == 0 {
+            if let system = SystemPower.currentAdapter(), let w = system.watts {
+                negotiatedW = w
+                if chargerMaxW == 0 { chargerMaxW = w }
+            }
+        }
 
         let cableMaxW: Int? = identities
             .first(where: { $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime })?

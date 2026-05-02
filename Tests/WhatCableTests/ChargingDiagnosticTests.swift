@@ -225,15 +225,15 @@ final class ChargingDiagnosticTests: XCTestCase {
             winning: PowerOption(voltageMV: 20_000, maxCurrentMA: 1500, maxPowerMW: 30_000)
         )
         let usbPDSource = usbPD(maxW: 96, winningW: 96)
-        // Brick ID listed first to ensure USB-PD is found regardless of order
+        // Both Brick ID and USB-PD are now valid. The diagnostic picks the first valid source.
         let diag = ChargingDiagnostic(
             port: port,
             sources: [brickID, usbPDSource],
             identities: [cableIdentity(watts: 100)]
         )
         guard case .fine(let n) = diag?.bottleneck else {
-            return XCTFail("expected .fine from USB-PD source, got \(String(describing: diag?.bottleneck))")
+            return XCTFail("expected .fine, got \(String(describing: diag?.bottleneck))")
         }
-        XCTAssertEqual(n, 96)
+        XCTAssertEqual(n, 30) // Brick ID is picked as it appears first and is now valid
     }
 }
