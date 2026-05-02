@@ -103,9 +103,16 @@ struct ContentView: View {
             }
             .buttonStyle(.borderless)
             .help("Settings")
-            .keyboardShortcut(",", modifiers: .command)
         }
         .padding(12)
+        .background(
+            Button("") {
+                refresh.showSettings = true
+            }
+            .keyboardShortcut(",", modifiers: .command)
+            .opacity(0)
+            .allowsHitTesting(false)
+        )
     }
 
     private var footer: some View {

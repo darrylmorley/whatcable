@@ -11,6 +11,14 @@ struct WhatCableApp: App {
         // Headless — UI is owned by AppDelegate (status item + popover, or
         // a regular window, depending on AppSettings.useMenuBarMode).
         Settings { EmptyView() }
+            .commands {
+                CommandGroup(replacing: .appSettings) {
+                    Button("Settings…") {
+                        delegate.showSettingsPanel(nil)
+                    }
+                    .keyboardShortcut(",", modifiers: .command)
+                }
+            }
     }
 }
 
