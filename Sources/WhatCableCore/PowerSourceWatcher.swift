@@ -86,8 +86,12 @@ public final class PowerSourceWatcher: ObservableObject {
         }
 
         let name = (dict["PowerSourceName"] as? String) ?? "Unknown"
-        let parentType = (dict["ParentPortType"] as? NSNumber)?.intValue ?? 0
-        let parentNum = (dict["ParentPortNumber"] as? NSNumber)?.intValue ?? 0
+        let parentType = (dict["ParentBuiltInPortType"] as? NSNumber)?.intValue 
+            ?? (dict["ParentPortType"] as? NSNumber)?.intValue 
+            ?? 0
+        let parentNum = (dict["ParentBuiltInPortNumber"] as? NSNumber)?.intValue 
+            ?? (dict["ParentPortNumber"] as? NSNumber)?.intValue
+            ?? Int((dict["Priority"] as? NSNumber)?.uint64Value ?? 0 & 0xFF)
 
         let options: [PowerOption] = parseOptions(dict["PowerSourceOptions"])
         let winning: PowerOption? = parseOption(dict["WinningPowerSourceOption"])
