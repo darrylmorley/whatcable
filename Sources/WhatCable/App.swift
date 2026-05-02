@@ -10,9 +10,7 @@ struct WhatCableApp: App {
     var body: some Scene {
         // Headless — UI is owned by AppDelegate (status item + popover, or
         // a regular window, depending on AppSettings.useMenuBarMode).
-        Settings {
-            SettingsView()
-        }
+        Settings { EmptyView() }
     }
 }
 
@@ -190,8 +188,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     }
 
     @objc private func menuSettings() {
+        showSettings()
+    }
+
+    @objc func showSettingsPanel(_ sender: Any?) {
+        showSettings()
+    }
+
+    private func showSettings() {
         NSApp.activate(ignoringOtherApps: true)
-        NSApp.sendAction(Selector(("showSettingsPanel:")), to: nil, from: nil)
+        Self.refreshSignal.showSettings = true
+        if AppSettings.shared.useMenuBarMode {
+            if let button = statusItem?.button, let popover, !popover.isShown {
+                togglePopover(from: button)
+            }
+        } else {
+            if let window {
+                window.makeKeyAndOrderFront(nil)
+            } else {
+                setUpWindowMode()
+            }
+        }
     }
 
     @objc private func menuAbout() {
@@ -241,5 +258,7 @@ final class RefreshSignal: ObservableObject {
     /// `AppSettings.showTechnicalDetails`; the effective state is the OR
     /// of the two.
     @Published var optionHeld: Bool = false
+    @Published var showSettings: Bool = false
+
     func bump() { tick &+= 1 }
 }
