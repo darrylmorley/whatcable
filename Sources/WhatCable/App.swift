@@ -33,7 +33,7 @@ struct WhatCableApp: App {
                         delegate.menuHelp()
                     }
                 }
-                CommandMenu("View") {
+                CommandGroup(after: .toolbar) {
                     Button("Refresh") {
                         delegate.menuRefresh()
                     }
