@@ -58,6 +58,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private var cancellables: Set<AnyCancellable> = []
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        NSWindow.allowsAutomaticWindowTabbing = false
+
         // Override the process name so the About panel and menus use the
         // app name even though the SwiftPM executable name might differ.
         ProcessInfo.processInfo.setValue(AppInfo.name, forKey: "processName")
