@@ -33,6 +33,12 @@ struct WhatCableApp: App {
                         delegate.menuHelp()
                     }
                 }
+                CommandMenu("View") {
+                    Button("Refresh") {
+                        delegate.menuRefresh()
+                    }
+                    .keyboardShortcut("r", modifiers: .command)
+                }
             }
     }
 }
@@ -206,7 +212,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         popover?.behavior = isPinned ? .applicationDefined : .transient
     }
 
-    @objc private func menuRefresh() {
+    @objc func menuRefresh() {
         Self.refreshSignal.bump()
     }
 
