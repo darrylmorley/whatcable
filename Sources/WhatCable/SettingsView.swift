@@ -4,35 +4,15 @@ import SwiftUI
 /// "Done" header and groups toggles by purpose. All preferences live on
 /// `AppSettings` and are persisted to UserDefaults.
 struct SettingsView: View {
-    var dismiss: (() -> Void)? = nil
-
     @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
-        VStack(spacing: 0) {
-            if let dismiss {
-                header(dismiss: dismiss)
-                Divider()
-            }
-            ScrollView {
-                SettingsForm()
-                    .padding(16)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
+        ScrollView {
+            SettingsForm()
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(minWidth: 400, minHeight: 300)
-    }
-
-    private func header(dismiss: @escaping () -> Void) -> some View {
-        HStack {
-            Image(systemName: "gearshape")
-                .font(.title2)
-            Text("Settings").font(.headline)
-            Spacer()
-            Button("Done", action: dismiss)
-                .keyboardShortcut(.defaultAction)
-        }
-        .padding(12)
+        .frame(minWidth: 400, minHeight: 280)
     }
 }
 
@@ -40,33 +20,44 @@ struct SettingsForm: View {
     @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 20) {
             section("Display") {
-                Toggle("Show technical details", isOn: $settings.showTechnicalDetails)
-                Toggle("Hide empty ports", isOn: $settings.hideEmptyPorts)
+                toggle("Show technical details", isOn: $settings.showTechnicalDetails)
+                toggle("Hide empty ports", isOn: $settings.hideEmptyPorts)
             }
             section("Behavior") {
-                Toggle("Launch at login", isOn: $settings.launchAtLogin)
-                Toggle("Show in menu bar", isOn: $settings.useMenuBarMode)
+                toggle("Launch at login", isOn: $settings.launchAtLogin)
+                toggle("Show in menu bar", isOn: $settings.useMenuBarMode)
                 Text(settings.useMenuBarMode
                      ? "Lives in the menu bar with no Dock icon."
                      : "Runs as a regular Dock app with a window.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .padding(.leading, 120)
             }
             section("Notifications") {
-                Toggle("Notify on cable changes", isOn: $settings.notifyOnChanges)
+                toggle("Notify on cable changes", isOn: $settings.notifyOnChanges)
             }
+        }
+    }
+
+    private func toggle(_ title: String, isOn: Binding<Bool>) -> some View {
+        HStack {
+            Text(title)
+                .frame(width: 150, alignment: .trailing)
+            Toggle("", isOn: isOn)
+                .labelsHidden()
+            Spacer()
         }
     }
 
     @ViewBuilder
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(title.uppercased())
-                .font(.caption2)
+                .font(.caption2).bold()
                 .foregroundStyle(.secondary)
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
                 content()
             }
             .toggleStyle(.switch)

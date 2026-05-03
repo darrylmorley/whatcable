@@ -15,30 +15,24 @@ struct ContentView: View {
     }
 
     var body: some View {
-        Group {
-            if refresh.showSettings {
-                SettingsView(dismiss: { refresh.showSettings = false })
-            } else {
-                mainContent
+        mainContent
+            .onAppear {
+                portWatcher.start()
+                deviceWatcher.start()
+                powerWatcher.start()
+                pdWatcher.start()
             }
-        }
-        .onAppear {
-            portWatcher.start()
-            deviceWatcher.start()
-            powerWatcher.start()
-            pdWatcher.start()
-        }
-        .onDisappear {
-            portWatcher.stop()
-            deviceWatcher.stop()
-            powerWatcher.stop()
-            pdWatcher.stop()
-        }
-        .onChange(of: refresh.tick) { _, _ in
-            portWatcher.refresh()
-            powerWatcher.refresh()
-            pdWatcher.refresh()
-        }
+            .onDisappear {
+                portWatcher.stop()
+                deviceWatcher.stop()
+                powerWatcher.stop()
+                pdWatcher.stop()
+            }
+            .onChange(of: refresh.tick) { _, _ in
+                portWatcher.refresh()
+                powerWatcher.refresh()
+                pdWatcher.refresh()
+            }
     }
 
     private var mainContent: some View {
@@ -97,7 +91,7 @@ struct ContentView: View {
             .buttonStyle(.borderless)
             .help("Refresh")
             Button {
-                refresh.showSettings = true
+                (NSApp.delegate as? AppDelegate)?.showSettingsPanel(nil)
             } label: {
                 Image(systemName: "gearshape")
             }
@@ -107,7 +101,7 @@ struct ContentView: View {
         .padding(12)
         .background(
             Button("") {
-                refresh.showSettings = true
+                (NSApp.delegate as? AppDelegate)?.showSettingsPanel(nil)
             }
             .keyboardShortcut(",", modifiers: .command)
             .opacity(0)

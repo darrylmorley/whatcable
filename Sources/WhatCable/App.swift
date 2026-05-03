@@ -54,6 +54,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
     // Window mode
     private var window: NSWindow?
+    private var settingsWindow: NSWindow?
 
     private var cancellables: Set<AnyCancellable> = []
 
@@ -227,19 +228,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     }
 
     private func showSettings() {
-        NSApp.activate(ignoringOtherApps: true)
-        Self.refreshSignal.showSettings = true
-        if AppSettings.shared.useMenuBarMode {
-            if let button = statusItem?.button, let popover, !popover.isShown {
-                togglePopover(from: button)
-            }
-        } else {
-            if let window {
-                window.makeKeyAndOrderFront(nil)
-            } else {
-                setUpWindowMode()
-            }
+        if let settingsWindow {
+            settingsWindow.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
         }
+
+        let host = NSHostingController(rootView: SettingsView())
+        let w = NSWindow(contentViewController: host)
+        w.title = "\(AppInfo.name) Settings"
+        w.styleMask = [.titled, .closable]
+        w.setContentSize(NSSize(width: 400, height: 280))
+        w.center()
+        w.isReleasedWhenClosed = false
+        w.delegate = self
+        settingsWindow = w
+
+        w.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     @objc func menuAbout() {
@@ -272,6 +278,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         NSApp.terminate(nil)
     }
 
+    // MARK: - NSWindowDelegate
+
+    func windowWillClose(_ notification: Notification) {
+        if let win = notification.object as? NSWindow, win === settingsWindow {
+            settingsWindow = nil
+        }
+    }
+
     // MARK: - NSPopoverDelegate
 
     nonisolated func popoverDidClose(_ notification: Notification) {
@@ -289,7 +303,6 @@ final class RefreshSignal: ObservableObject {
     /// `AppSettings.showTechnicalDetails`; the effective state is the OR
     /// of the two.
     @Published var optionHeld: Bool = false
-    @Published var showSettings: Bool = false
 
     func bump() { tick &+= 1 }
 }
