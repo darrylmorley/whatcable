@@ -46,6 +46,7 @@ struct WhatCableApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowDelegate {
     static let refreshSignal = RefreshSignal()
+    private(set) static var shared: AppDelegate!
 
     // Menu bar mode
     private var statusItem: NSStatusItem?
@@ -59,6 +60,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private var cancellables: Set<AnyCancellable> = []
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Self.shared = self
         NSWindow.allowsAutomaticWindowTabbing = false
 
         // Override the process name so the About panel and menus use the
@@ -228,9 +230,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     }
 
     private func showSettings() {
+        NSApp.activate(ignoringOtherApps: true)
+
         if let settingsWindow {
             settingsWindow.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
             return
         }
 
@@ -245,7 +248,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         settingsWindow = w
 
         w.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
     }
 
     @objc func menuAbout() {

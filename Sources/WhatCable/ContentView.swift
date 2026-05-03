@@ -91,7 +91,7 @@ struct ContentView: View {
             .buttonStyle(.borderless)
             .help("Refresh")
             Button {
-                (NSApp.delegate as? AppDelegate)?.showSettingsPanel(nil)
+                AppDelegate.shared.showSettingsPanel(nil)
             } label: {
                 Image(systemName: "gearshape")
             }
@@ -101,7 +101,7 @@ struct ContentView: View {
         .padding(12)
         .background(
             Button("") {
-                (NSApp.delegate as? AppDelegate)?.showSettingsPanel(nil)
+                AppDelegate.shared.showSettingsPanel(nil)
             }
             .keyboardShortcut(",", modifiers: .command)
             .opacity(0)
