@@ -33,7 +33,7 @@ struct SettingsForm: View {
                      : "Runs as a regular Dock app with a window.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .padding(.leading, 120)
+                    .padding(.leading, 20)
             }
             section("Notifications") {
                 toggle("Notify on cable changes", isOn: $settings.notifyOnChanges)
@@ -44,7 +44,7 @@ struct SettingsForm: View {
     private func toggle(_ title: String, isOn: Binding<Bool>) -> some View {
         HStack {
             Text(title)
-                .frame(width: 150, alignment: .trailing)
+                .frame(width: 150, alignment: .leading)
             Toggle("", isOn: isOn)
                 .labelsHidden()
             Spacer()
