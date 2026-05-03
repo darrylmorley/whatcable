@@ -12,11 +12,26 @@ struct WhatCableApp: App {
         // a regular window, depending on AppSettings.useMenuBarMode).
         Settings { EmptyView() }
             .commands {
+                CommandGroup(replacing: .appInfo) {
+                    Button("About \(AppInfo.name)") {
+                        delegate.menuAbout()
+                    }
+                }
+                CommandGroup(after: .appInfo) {
+                    Button("Check for Updates…") {
+                        delegate.menuCheckUpdates()
+                    }
+                }
                 CommandGroup(replacing: .appSettings) {
                     Button("Settings…") {
                         delegate.showSettingsPanel(nil)
                     }
                     .keyboardShortcut(",", modifiers: .command)
+                }
+                CommandGroup(replacing: .help) {
+                    Button("\(AppInfo.name) on GitHub") {
+                        delegate.menuHelp()
+                    }
                 }
             }
     }
@@ -219,7 +234,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         }
     }
 
-    @objc private func menuAbout() {
+    @objc func menuAbout() {
         NSApp.activate(ignoringOtherApps: true)
         let credits = NSAttributedString(
             string: "\(AppInfo.tagline)\n\nBuilt by \(AppInfo.credit).",
@@ -237,11 +252,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         ])
     }
 
-    @objc private func menuCheckUpdates() {
+    @objc func menuCheckUpdates() {
         UpdateChecker.shared.check(silent: false)
     }
 
-    @objc private func menuHelp() {
+    @objc func menuHelp() {
         NSWorkspace.shared.open(AppInfo.helpURL)
     }
 
