@@ -97,8 +97,6 @@ cat > "${CONTENTS_DIR}/Info.plist" <<PLIST
     <string>${BUILD_NUMBER}</string>
     <key>LSMinimumSystemVersion</key>
     <string>${MIN_OS}</string>
-    <key>LSUIElement</key>
-    <true/>
     <key>NSHumanReadableCopyright</key>
     <string>© $(date +%Y) Darryl Morley</string>
     <key>NSHighResolutionCapable</key>

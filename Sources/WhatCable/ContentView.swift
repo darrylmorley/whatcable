@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var showSettings = false
 
     private var showAdvanced: Bool {
-        settings.showTechnicalDetails || refresh.optionHeld
+        settings.showTechnicalDetails
     }
 
     var body: some View {

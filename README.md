@@ -2,15 +2,15 @@
 
 > **What can this USB-C cable actually do?**
 
-A small macOS menu bar app that tells you, in plain English, what each USB-C cable plugged into your Mac can actually do, and **why your Mac might be charging slowly**.
+A small macOS app that tells you, in plain English, what each USB-C cable plugged into your Mac can actually do, and **why your Mac might be charging slowly**.
 
-USB-C hides a lot under one connector. Anything from a USB 2.0 charge-only cable to a 240W / 40 Gbps Thunderbolt 4 cable, all looking identical in your drawer. macOS already exposes the relevant info via IOKit; WhatCable surfaces it as a friendly menu bar popover.
+USB-C hides a lot under one connector. Anything from a USB 2.0 charge-only cable to a 240W / 40 Gbps Thunderbolt 4 cable, all looking identical in your drawer. macOS already exposes the relevant info via IOKit; WhatCable surfaces it as a friendly Mac app.
 
 [![Latest release](https://img.shields.io/github/v/release/darrylmorley/whatcable)](https://github.com/darrylmorley/whatcable/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-macOS%2014%2B-blue)](https://github.com/darrylmorley/whatcable)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-![WhatCable popover](docs/screenshot.png)
+![WhatCable](docs/screenshot.png)
 
 ## What it shows
 
@@ -26,16 +26,16 @@ Per port, in plain English:
 - **Connected device identity:** vendor name and product type, decoded from the PD Discover Identity response
 - **Attached USB devices:** storage, hubs, and peripherals listed under the physical port they're plugged into, with their negotiated speed
 - **Active transports:** USB 2 / USB 3 / Thunderbolt / DisplayPort
-- **⌥-click** the menu bar icon (or flip the toggle in Settings) to reveal the underlying IOKit properties for engineers
+- Toggle **Show technical details** in Settings to reveal the underlying IOKit properties for engineers
 
-Click the **gear icon** in the popover header to open Settings, where you can:
+Click the **gear icon** in the window header to open Settings, where you can:
 
 - Hide empty ports
 - Launch at login
-- Run as a regular Dock app instead of a menu bar icon
+- Show technical details for engineers
 - Get notifications when cables are connected or disconnected
 
-Right-click the menu bar icon for **Refresh**, a **Keep window open** toggle (handy for screenshots and demos), **Check for Updates…**, **About**, **WhatCable on GitHub**, and **Quit**.
+Standard Mac menus: **File → Refresh** (⌘R), **WhatCable → Check for Updates…**, **WhatCable → About**, **Help → WhatCable on GitHub**, **WhatCable → Quit** (⌘Q).
 
 ## Install
 
@@ -45,7 +45,7 @@ The app is universal (Apple silicon + Intel), signed with a Developer ID, and no
 
 Requires macOS 14 (Sonoma) or later. Apple Silicon only. On Intel Macs, the USB-C ports are driven by Intel Titan Ridge / JHL9580 Thunderbolt 3 controllers, and the USB-PD state and cable e-marker data WhatCable depends on are not exposed through any public IOKit accessor.
 
-> **Note:** The manual install gives you the menu bar app only. The `whatcable` CLI is bundled inside the `.app` and is not on your PATH by default. If you want to use it from the shell, see the [Command-line interface](#command-line-interface) section below for the one-line symlink. Or install via Homebrew, which sets up the CLI automatically.
+> **Note:** The manual install gives you the app only. The `whatcable` CLI is bundled inside the `.app` and is not on your PATH by default. If you want to use it from the shell, see the [Command-line interface](#command-line-interface) section below for the one-line symlink. Or install via Homebrew, which sets up the CLI automatically.
 
 ### Homebrew
 
@@ -54,11 +54,11 @@ brew tap darrylmorley/whatcable
 brew install --cask whatcable
 ```
 
-This installs the menu bar app and symlinks the `whatcable` CLI into your PATH.
+This installs the app and symlinks the `whatcable` CLI into your PATH.
 
 ## Command-line interface
 
-A `whatcable` binary ships alongside the menu bar app, driven by the same diagnostic engine:
+A `whatcable` binary ships alongside the app, driven by the same diagnostic engine:
 
 ```bash
 whatcable                # human-readable summary of every port
@@ -93,7 +93,7 @@ Cable speed and power decoding follow the USB Power Delivery 3.x spec.
 ## Build from source
 
 ```bash
-swift run WhatCable          # menu bar app
+swift run WhatCable          # Mac app
 swift run whatcable-cli      # CLI
 ```
 
@@ -158,7 +158,7 @@ cp .env.example .env
 
 ## Contributing
 
-Issues and PRs welcome. The code is small and tries to stay readable. Start at [`Sources/WhatCable/ContentView.swift`](Sources/WhatCable/ContentView.swift) for the UI, [`Sources/WhatCableCore/PortSummary.swift`](Sources/WhatCableCore/PortSummary.swift) for the plain-English logic, or [`Sources/WhatCableCore/PDVDO.swift`](Sources/WhatCableCore/PDVDO.swift) for the bit-twiddling. The diagnostic engine lives in `WhatCableCore`, which is shared by the menu bar app and the `whatcable` CLI in `Sources/WhatCableCLI/`.
+Issues and PRs welcome. The code is small and tries to stay readable. Start at [`Sources/WhatCable/ContentView.swift`](Sources/WhatCable/ContentView.swift) for the UI, [`Sources/WhatCableCore/PortSummary.swift`](Sources/WhatCableCore/PortSummary.swift) for the plain-English logic, or [`Sources/WhatCableCore/PDVDO.swift`](Sources/WhatCableCore/PDVDO.swift) for the bit-twiddling. The diagnostic engine lives in `WhatCableCore`, which is shared by the app and the `whatcable` CLI in `Sources/WhatCableCLI/`.
 
 ## Credits
 

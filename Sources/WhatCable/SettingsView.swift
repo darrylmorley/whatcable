@@ -20,12 +20,6 @@ struct SettingsView: View {
                     }
                     section("Behavior") {
                         Toggle("Launch at login", isOn: $settings.launchAtLogin)
-                        Toggle("Show in menu bar", isOn: $settings.useMenuBarMode)
-                        Text(settings.useMenuBarMode
-                             ? "Lives in the menu bar with no Dock icon."
-                             : "Runs as a regular Dock app with a window.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
                     }
                     section("Notifications") {
                         Toggle("Notify on cable changes", isOn: $settings.notifyOnChanges)
