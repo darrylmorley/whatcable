@@ -305,6 +305,7 @@ final class RefreshSignal: ObservableObject {
     /// `AppSettings.showTechnicalDetails`; the effective state is the OR
     /// of the two.
     @Published var optionHeld: Bool = false
+    @Published var showSettings: Bool = false
 
     func bump() { tick &+= 1 }
 }
