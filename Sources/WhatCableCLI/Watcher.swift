@@ -15,6 +15,7 @@ final class WatchRunner {
     private var lastOutput: String = ""
     private var pollTimer: DispatchSourceTimer?
     private var sigintSource: DispatchSourceSignal?
+    private var sigtermSource: DispatchSourceSignal?
 
     init(asJSON: Bool, showRaw: Bool) {
         self.asJSON = asJSON
@@ -53,21 +54,38 @@ final class WatchRunner {
     private func installSignalHandler() {
         // Default SIGINT prints ^C and exits; we want a clean exit so
         // watchers stop their IOKit notification ports first.
+        // Also handle SIGTERM (sent by kill, launchd, etc.) for the same reason.
         signal(SIGINT, SIG_IGN)
-        let src = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
-        src.setEventHandler { [weak self] in
+        signal(SIGTERM, SIG_IGN)
+
+        let intSrc = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
+        intSrc.setEventHandler { [weak self] in
             Task { @MainActor in
                 self?.shutdown()
                 exit(0)
             }
         }
-        src.resume()
-        sigintSource = src
+        intSrc.resume()
+        sigintSource = intSrc
+
+        let termSrc = DispatchSource.makeSignalSource(signal: SIGTERM, queue: .main)
+        termSrc.setEventHandler { [weak self] in
+            Task { @MainActor in
+                self?.shutdown()
+                exit(0)
+            }
+        }
+        termSrc.resume()
+        sigtermSource = termSrc
     }
 
     private func shutdown() {
         pollTimer?.cancel()
         pollTimer = nil
+        sigintSource?.cancel()
+        sigintSource = nil
+        sigtermSource?.cancel()
+        sigtermSource = nil
         portWatcher.stop()
         powerWatcher.stop()
         pdWatcher.stop()
