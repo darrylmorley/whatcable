@@ -155,8 +155,14 @@ final class PortSummaryTests: XCTestCase {
     // MARK: - Bullets
 
     func testEmarkerCableProducesEmarkerBullet() {
-        let port = makePort(active: ["USB3"], superSpeed: true, emarker: true)
-        let summary = PortSummary(port: port)
+        let port = makePort(active: ["USB3"], superSpeed: true)
+        let cable = PDIdentity(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 0, parentPortNumber: 0,
+            vendorID: 0, productID: 0, bcdDevice: 0,
+            vdos: [], specRevision: 0
+        )
+        let summary = PortSummary(port: port, identities: [cable])
         XCTAssertTrue(
             summary.bullets.contains(where: { $0.contains("e-marker") && $0.contains("advertises") }),
             "expected an e-marker bullet, got bullets: \(summary.bullets)"

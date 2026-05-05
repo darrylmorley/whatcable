@@ -3,16 +3,22 @@ import Foundation
 import IOKit
 import WhatCableCore
 
-/// Watches `IOPortTransportComponentCCUSBPDSOP` services. These hold the PD
-/// Discover Identity response for the port partner (SOP) and any e-marker
-/// chips on the cable (SOP', SOP'').
+/// Watches `IOPortTransportComponentCCUSBPDSOP` (port partner) and
+/// `IOPortTransportComponentCCUSBPDSOPp` (cable e-marker SOP') services.
+/// macOS exposes these as separate IOKit classes, so we have to match both.
+/// Some hardware also exposes SOP'' as a third class.
 @MainActor
 public final class PDIdentityWatcher: ObservableObject {
     @Published public private(set) var identities: [PDIdentity] = []
 
+    private static let matchedClasses = [
+        "IOPortTransportComponentCCUSBPDSOP",
+        "IOPortTransportComponentCCUSBPDSOPp",
+        "IOPortTransportComponentCCUSBPDSOPpp",
+    ]
+
     private var notifyPort: IONotificationPortRef?
-    private var addedIter: io_iterator_t = 0
-    private var removedIter: io_iterator_t = 0
+    private var iterators: [io_iterator_t] = []
 
     public init() {}
 
@@ -35,31 +41,39 @@ public final class PDIdentityWatcher: ObservableObject {
             Task { @MainActor in w.handleRemoved(iter) }
         }
 
-        IOServiceAddMatchingNotification(port, kIOMatchedNotification,
-            IOServiceMatching("IOPortTransportComponentCCUSBPDSOP"),
-            added, selfPtr, &addedIter)
-        handleAdded(addedIter)
+        for className in Self.matchedClasses {
+            var addedIter: io_iterator_t = 0
+            IOServiceAddMatchingNotification(port, kIOMatchedNotification,
+                IOServiceMatching(className),
+                added, selfPtr, &addedIter)
+            handleAdded(addedIter)
+            iterators.append(addedIter)
 
-        IOServiceAddMatchingNotification(port, kIOTerminatedNotification,
-            IOServiceMatching("IOPortTransportComponentCCUSBPDSOP"),
-            removed, selfPtr, &removedIter)
-        handleRemoved(removedIter)
+            var removedIter: io_iterator_t = 0
+            IOServiceAddMatchingNotification(port, kIOTerminatedNotification,
+                IOServiceMatching(className),
+                removed, selfPtr, &removedIter)
+            handleRemoved(removedIter)
+            iterators.append(removedIter)
+        }
     }
 
     public func stop() {
-        if addedIter != 0 { IOObjectRelease(addedIter); addedIter = 0 }
-        if removedIter != 0 { IOObjectRelease(removedIter); removedIter = 0 }
+        for iter in iterators where iter != 0 { IOObjectRelease(iter) }
+        iterators.removeAll()
         if let p = notifyPort { IONotificationPortDestroy(p); notifyPort = nil }
         identities.removeAll()
     }
 
     public func refresh() {
         identities.removeAll()
-        var iter: io_iterator_t = 0
-        if IOServiceGetMatchingServices(kIOMainPortDefault,
-            IOServiceMatching("IOPortTransportComponentCCUSBPDSOP"), &iter) == KERN_SUCCESS {
-            handleAdded(iter)
-            IOObjectRelease(iter)
+        for className in Self.matchedClasses {
+            var iter: io_iterator_t = 0
+            if IOServiceGetMatchingServices(kIOMainPortDefault,
+                IOServiceMatching(className), &iter) == KERN_SUCCESS {
+                handleAdded(iter)
+                IOObjectRelease(iter)
+            }
         }
     }
 
@@ -92,7 +106,12 @@ public final class PDIdentityWatcher: ObservableObject {
             return nil
         }
 
-        let endpoint = Self.endpoint(from: dict)
+        var classNameBuf = [CChar](repeating: 0, count: 128)
+        let className: String? = (IOObjectGetClass(service, &classNameBuf) == KERN_SUCCESS)
+            ? String(cString: classNameBuf)
+            : nil
+
+        let endpoint = Self.endpoint(from: dict, className: className)
         let parent = Self.parentPortIdentity(from: dict)
         let specRev = (dict["Specification Revision"] as? NSNumber)?.intValue ?? 0
 
@@ -127,11 +146,20 @@ public final class PDIdentityWatcher: ObservableObject {
             ?? "Unknown"
     }
 
-    nonisolated static func endpoint(from dict: [String: Any]) -> PDIdentity.Endpoint {
+    nonisolated static func endpoint(from dict: [String: Any], className: String? = nil) -> PDIdentity.Endpoint {
         if let name = (dict["ComponentName"] as? String)
             ?? (dict["AddressDescription"] as? String)
             ?? (dict["Address Description"] as? String) {
             return PDIdentity.Endpoint(rawValue: name) ?? .unknown
+        }
+        // The IOKit class name is the most reliable signal: macOS exposes
+        // SOP' as a separate `IOPortTransportComponentCCUSBPDSOPp` class
+        // (and SOP'' as `...SOPpp`), even when ComponentName is absent.
+        switch className {
+        case "IOPortTransportComponentCCUSBPDSOP": return .sop
+        case "IOPortTransportComponentCCUSBPDSOPp": return .sopPrime
+        case "IOPortTransportComponentCCUSBPDSOPpp": return .sopDoublePrime
+        default: break
         }
         // MagSafe CC transport has no ComponentName; map "CC" only from
         // TransportTypeDescription so a future node with ComponentName="CC"
@@ -139,6 +167,7 @@ public final class PDIdentityWatcher: ObservableObject {
         switch dict["TransportTypeDescription"] as? String {
         case "SOP": return .sop
         case "SOP'", "CC": return .sopPrime
+        case "SOP''": return .sopDoublePrime
         default: return .unknown
         }
     }

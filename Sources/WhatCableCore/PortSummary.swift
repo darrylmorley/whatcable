@@ -47,7 +47,15 @@ extension PortSummary {
         let hasUSB2 = active.contains("USB2")
         let hasTB = active.contains("CIO") // Thunderbolt = Converged I/O
         let hasDP = active.contains("DisplayPort")
-        let hasEmarker = port.activeCable == true
+        // E-marker presence is "did the cable respond to Discover Identity?",
+        // which means we have an SOP'/SOP'' PDIdentity for this port. The
+        // port's `ActiveCable` IOKit flag means "this cable contains active
+        // signal-conditioning electronics", which is unrelated: passive
+        // cables (including high-end USB4 / 240W EPR cables) carry e-markers
+        // too.
+        let hasEmarker = identities.contains {
+            $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime
+        }
         let portLabel = port.portDescription ?? port.serviceName
 
         if !connected {

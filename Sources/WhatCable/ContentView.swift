@@ -497,7 +497,7 @@ struct AdvancedPortDetails: View {
         VStack(alignment: .leading, spacing: 8) {
             group("Connection") {
                 row("Active", bool(port.connectionActive))
-                row("E-marker chip", bool(port.activeCable))
+                row("Active cable electronics", bool(port.activeCable))
                 row("Optical", bool(port.opticalCable))
                 row("USB active", bool(port.usbActive))
                 row("SuperSpeed", bool(port.superSpeedActive))
