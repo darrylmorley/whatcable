@@ -102,9 +102,37 @@ private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Boo
 }
 
 private func runWatch(provider: any CableSnapshotProvider, asJSON: Bool, showRaw: Bool) async {
+    let watchTask = Task {
+        await consumeWatchStream(provider: provider, asJSON: asJSON, showRaw: showRaw)
+    }
+
+    // Default SIGINT / SIGTERM kill the process abruptly. Take them over so
+    // the watch task can cancel cleanly, the provider's onTermination tears
+    // down its internal task, and stdout flushes before exit.
+    signal(SIGINT, SIG_IGN)
+    signal(SIGTERM, SIG_IGN)
+
+    let intSrc = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
+    intSrc.setEventHandler { watchTask.cancel() }
+    intSrc.resume()
+
+    let termSrc = DispatchSource.makeSignalSource(signal: SIGTERM, queue: .main)
+    termSrc.setEventHandler { watchTask.cancel() }
+    termSrc.resume()
+
+    await watchTask.value
+
+    intSrc.cancel()
+    termSrc.cancel()
+    fflush(stdout)
+}
+
+private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Bool, showRaw: Bool) async {
     var lastOutput = ""
     do {
         for try await snapshot in provider.watch() {
+            if Task.isCancelled { return }
+
             let output: String
             if asJSON {
                 do {
@@ -143,6 +171,8 @@ private func runWatch(provider: any CableSnapshotProvider, asJSON: Bool, showRaw
             }
             fflush(stdout)
         }
+    } catch is CancellationError {
+        return
     } catch {
         FileHandle.standardError.write(Data("whatcable: \(error)\n".utf8))
         exit(1)
