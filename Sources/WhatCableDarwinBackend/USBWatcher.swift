@@ -1,6 +1,7 @@
 import Foundation
 import IOKit
 import IOKit.usb
+import WhatCableCore
 
 @MainActor
 public final class USBWatcher: ObservableObject {

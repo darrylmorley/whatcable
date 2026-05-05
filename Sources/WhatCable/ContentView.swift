@@ -1,5 +1,6 @@
 import SwiftUI
 import WhatCableCore
+import WhatCableDarwinBackend
 
 struct ContentView: View {
     @StateObject private var portWatcher = USBCPortWatcher()

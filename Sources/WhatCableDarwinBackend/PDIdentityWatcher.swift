@@ -1,5 +1,6 @@
 import Foundation
 import IOKit
+import WhatCableCore
 
 /// Watches `IOPortTransportComponentCCUSBPDSOP` services. These hold the PD
 /// Discover Identity response for the port partner (SOP) and any e-marker

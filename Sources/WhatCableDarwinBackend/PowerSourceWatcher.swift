@@ -1,5 +1,6 @@
 import Foundation
 import IOKit
+import WhatCableCore
 
 /// Watches `IOPortFeaturePowerSource` services. These appear under each port's
 /// `Power In` feature when something that advertises PD is connected.

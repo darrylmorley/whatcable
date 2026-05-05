@@ -1,5 +1,6 @@
 import Foundation
 import IOKit
+import WhatCableCore
 
 /// Watches USB-C / MagSafe port-controller services. On Apple-silicon Macs the
 /// relevant class is `AppleHPMInterfaceType10` (USB-C) and `Type11` (MagSafe).

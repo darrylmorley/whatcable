@@ -3,6 +3,7 @@ import Combine
 import UserNotifications
 import os.log
 import WhatCableCore
+import WhatCableDarwinBackend
 
 /// Posts user notifications when USB-C cables / power sources connect or
 /// disconnect, gated by the user's `AppSettings.notifyOnChanges` preference.

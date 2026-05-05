@@ -1,5 +1,6 @@
 import Foundation
 import WhatCableCore
+import WhatCableDarwinBackend
 
 /// Continuous-monitoring mode. Holds the three IOKit watchers, polls the
 /// port watcher (whose property changes don't fire match notifications),
@@ -92,6 +93,7 @@ final class WatchRunner {
     }
 
     private func renderIfChanged() {
+        let adapter = SystemPower.currentAdapter()
         let output: String
         if asJSON {
             do {
@@ -99,7 +101,8 @@ final class WatchRunner {
                     ports: portWatcher.ports,
                     sources: powerWatcher.sources,
                     identities: pdWatcher.identities,
-                    showRaw: showRaw
+                    showRaw: showRaw,
+                    adapter: adapter
                 )
             } catch {
                 FileHandle.standardError.write(Data("whatcable: json encoding failed: \(error)\n".utf8))
@@ -110,7 +113,8 @@ final class WatchRunner {
                 ports: portWatcher.ports,
                 sources: powerWatcher.sources,
                 identities: pdWatcher.identities,
-                showRaw: showRaw
+                showRaw: showRaw,
+                adapter: adapter
             )
         }
 

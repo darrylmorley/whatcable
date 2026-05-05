@@ -1,5 +1,6 @@
 import Foundation
 import WhatCableCore
+import WhatCableDarwinBackend
 
 @main
 struct WhatCableCLI {
@@ -50,13 +51,16 @@ struct WhatCableCLI {
             return
         }
 
+        let adapter = SystemPower.currentAdapter()
+
         if asJSON {
             do {
                 let json = try JSONFormatter.render(
                     ports: portWatcher.ports,
                     sources: powerWatcher.sources,
                     identities: pdWatcher.identities,
-                    showRaw: showRaw
+                    showRaw: showRaw,
+                    adapter: adapter
                 )
                 print(json)
             } catch {
@@ -68,7 +72,8 @@ struct WhatCableCLI {
                 ports: portWatcher.ports,
                 sources: powerWatcher.sources,
                 identities: pdWatcher.identities,
-                showRaw: showRaw
+                showRaw: showRaw,
+                adapter: adapter
             )
             print(output, terminator: "")
         }

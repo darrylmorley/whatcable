@@ -1,5 +1,6 @@
 import XCTest
 @testable import WhatCableCore
+@testable import WhatCableDarwinBackend
 
 final class RegistryParsingTests: XCTestCase {
     func testUSBCPortWatcherScansM4MiniFrontPortClass() {
