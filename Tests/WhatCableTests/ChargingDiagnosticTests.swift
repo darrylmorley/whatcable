@@ -202,7 +202,7 @@ final class ChargingDiagnosticTests: XCTestCase {
             port: port,
             sources: [brickIDWithoutPDOs()],
             identities: [],
-            systemAdapter: .init(watts: 140, isCharging: nil, source: "AC")
+            adapter: AdapterInfo(watts: 140, isCharging: nil, source: "AC")
         )
         guard case .fine(let n) = diag?.bottleneck else {
             return XCTFail("expected .fine from system adapter wattage, got \(String(describing: diag?.bottleneck))")
