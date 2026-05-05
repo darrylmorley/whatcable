@@ -52,8 +52,8 @@ extension ChargingDiagnostic {
             self.bottleneck = .cableLimit(cableW: cableW, chargerW: chargerMaxW)
             self.summary = "Cable is limiting charging speed"
             self.detail = "Charger can deliver up to \(chargerMaxW)W, but this cable is only rated to carry \(cableW)W. Replace the cable to charge faster."
-        } else if let n = negotiatedW, n < chargerMaxW - 5,
-                  (cableMaxW.map { n < $0 - 5 } ?? true) {
+        } else if let n = negotiatedW, n < chargerMaxW - max(5, chargerMaxW / 10),
+                  (cableMaxW.map { n < $0 - max(5, $0 / 10) } ?? true) {
             self.bottleneck = .macLimit(negotiatedW: n, chargerW: chargerMaxW, cableW: cableMaxW)
             self.summary = "Charging at \(n)W (charger can do up to \(chargerMaxW)W)"
             self.detail = "Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle."
