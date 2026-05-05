@@ -31,12 +31,13 @@ final class Installer: ObservableObject {
         state = .downloading
 
         Task {
+            var workDir: URL?
             do {
-                let workDir = try makeWorkDir()
-                let zipURL = try await download(from: downloadURL, into: workDir)
+                workDir = try makeWorkDir()
+                let zipURL = try await download(from: downloadURL, into: workDir!)
 
                 state = .verifying
-                let extractedApp = try unzipAndLocate(zip: zipURL, in: workDir)
+                let extractedApp = try unzipAndLocate(zip: zipURL, in: workDir!)
                 try stripQuarantine(at: extractedApp)
                 try verifySignatureMatches(new: extractedApp, current: Bundle.main.bundleURL)
 
@@ -47,6 +48,9 @@ final class Installer: ObservableObject {
                 try await Task.sleep(nanoseconds: 250_000_000)
                 NSApp.terminate(nil)
             } catch {
+                if let workDir {
+                    try? FileManager.default.removeItem(at: workDir)
+                }
                 Self.log.error("Install failed: \(error.localizedDescription, privacy: .public)")
                 state = .failed(error.localizedDescription)
             }
@@ -126,6 +130,10 @@ final class Installer: ObservableObject {
         rm -rf "$OLD"
         mv "$NEW" "$OLD"
         open "$OLD"
+
+        # Clean up this script and the temp directory.
+        rm -rf "$(dirname "$0")"
+        rm -f "$0"
         """
 
         let scriptURL = FileManager.default.temporaryDirectory
