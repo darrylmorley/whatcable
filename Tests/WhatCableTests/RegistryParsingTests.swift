@@ -2,6 +2,10 @@ import XCTest
 @testable import WhatCableCore
 
 final class RegistryParsingTests: XCTestCase {
+    func testUSBCPortWatcherScansM4MiniFrontPortClass() {
+        XCTAssertTrue(USBCPortWatcher.candidateClasses.contains("IOPort"))
+    }
+
     func testUSBCPortWatcherExtractsBusIndexAcrossControllerNameShapes() {
         XCTAssertEqual(USBCPortWatcher.busIndex(fromRegistryName: "hpm4@3"), 4)
         XCTAssertEqual(USBCPortWatcher.busIndex(fromRegistryName: "atc1"), 1)
