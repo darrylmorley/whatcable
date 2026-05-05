@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import WhatCableCore
 
@@ -82,3 +83,5 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
 public func makeDefaultSnapshotProvider() -> any CableSnapshotProvider {
     DarwinSnapshotProvider()
 }
+
+#endif

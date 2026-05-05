@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import IOKit
 import WhatCableCore
@@ -191,3 +192,5 @@ public final class PDIdentityWatcher: ObservableObject {
         return identities.filter { $0.portKey == key }
     }
 }
+
+#endif

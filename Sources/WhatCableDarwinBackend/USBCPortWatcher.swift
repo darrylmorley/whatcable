@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import IOKit
 import WhatCableCore
@@ -236,3 +237,5 @@ public final class USBCPortWatcher: ObservableObject {
         return Int(location, radix: 16)
     }
 }
+
+#endif

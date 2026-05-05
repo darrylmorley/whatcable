@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import IOKit
 import IOKit.ps
@@ -32,3 +33,5 @@ extension ChargingDiagnostic {
         )
     }
 }
+
+#endif

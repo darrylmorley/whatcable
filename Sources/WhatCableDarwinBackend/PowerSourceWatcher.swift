@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import IOKit
 import WhatCableCore
@@ -148,3 +149,5 @@ extension PowerSourceWatcher {
         return sources.filter { $0.portKey == key }
     }
 }
+
+#endif
