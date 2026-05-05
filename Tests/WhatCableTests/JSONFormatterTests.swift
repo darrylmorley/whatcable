@@ -1,6 +1,5 @@
 import XCTest
-@testable import WhatCableCore
-@testable import WhatCableCLI
+import WhatCableCore
 
 /// Schema tests for the `whatcable --json` output. The JSON shape is a public
 /// contract for downstream consumers (Übersicht / SwiftBar widgets, scripts,

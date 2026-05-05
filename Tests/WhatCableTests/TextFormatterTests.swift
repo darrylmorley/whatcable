@@ -1,6 +1,5 @@
 import XCTest
-@testable import WhatCableCore
-@testable import WhatCableCLI
+import WhatCableCore
 
 final class TextFormatterTests: XCTestCase {
 

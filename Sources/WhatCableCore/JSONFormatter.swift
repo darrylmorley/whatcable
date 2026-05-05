@@ -1,8 +1,7 @@
 import Foundation
-import WhatCableCore
 
-enum JSONFormatter {
-    static func render(
+public enum JSONFormatter {
+    public static func render(
         ports: [USBCPort],
         sources: [PowerSource],
         identities: [PDIdentity],

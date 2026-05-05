@@ -1,8 +1,7 @@
 import Foundation
-import WhatCableCore
 
-enum TextFormatter {
-    static func render(
+public enum TextFormatter {
+    public static func render(
         ports: [USBCPort],
         sources: [PowerSource],
         identities: [PDIdentity],
