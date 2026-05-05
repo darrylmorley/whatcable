@@ -20,6 +20,20 @@ jobs:
       - name: Run tests
         run: swift test
 
+  linux:
+    name: Linux build (CLI + portable tests)
+    runs-on: ubuntu-latest
+    container: swift:5.9
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build whatcable-cli
+        run: swift build --product whatcable-cli
+
+      - name: Run portable tests
+        run: swift test --filter '^WhatCableCoreTests\.'
+
   lint-scripts:
     name: Shell script syntax
     runs-on: ubuntu-latest
