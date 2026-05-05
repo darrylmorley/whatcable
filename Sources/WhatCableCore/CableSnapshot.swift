@@ -17,7 +17,7 @@ public struct AdapterInfo: Hashable {
 /// One unified view of cable / port / power state at a point in time.
 /// Backends produce these; CLI and GUI consume them.
 // TODO: Sendable — requires USBCPort, PowerSource, PDIdentity, USBDevice to conform first
-public struct CableSnapshot {
+public struct CableSnapshot: Equatable {
     public let ports: [USBCPort]
     public let powerSources: [PowerSource]
     public let identities: [PDIdentity]

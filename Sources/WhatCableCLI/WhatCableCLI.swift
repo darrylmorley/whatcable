@@ -1,11 +1,13 @@
 import Foundation
 import WhatCableCore
+
+#if canImport(WhatCableDarwinBackend)
 import WhatCableDarwinBackend
+#endif
 
 @main
 struct WhatCableCLI {
-    @MainActor
-    static func main() {
+    static func main() async {
         // Hand-rolled flag parsing. We only have a handful of flags; pulling
         // in swift-argument-parser would be heavier than the rest of the CLI.
         let args = Array(CommandLine.arguments.dropFirst())
@@ -32,50 +34,30 @@ struct WhatCableCLI {
             exit(2)
         }
 
+        #if canImport(WhatCableDarwinBackend)
+        let provider = makeDefaultSnapshotProvider()
+        #else
+        FileHandle.standardError.write(Data("whatcable: no backend available on this platform\n".utf8))
+        exit(1)
+        #endif
+
         if watch {
-            let runner = WatchRunner(asJSON: asJSON, showRaw: showRaw)
-            runner.start()
-            dispatchMain()
-        }
-
-        let portWatcher = USBCPortWatcher()
-        let powerWatcher = PowerSourceWatcher()
-        let pdWatcher = PDIdentityWatcher()
-
-        portWatcher.refresh()
-        powerWatcher.refresh()
-        pdWatcher.refresh()
-
-        if report {
-            printCableReports(identities: pdWatcher.identities)
+            await runWatch(provider: provider, asJSON: asJSON, showRaw: showRaw)
             return
         }
 
-        let adapter = SystemPower.currentAdapter()
+        do {
+            let snapshot = try await provider.snapshot()
 
-        if asJSON {
-            do {
-                let json = try JSONFormatter.render(
-                    ports: portWatcher.ports,
-                    sources: powerWatcher.sources,
-                    identities: pdWatcher.identities,
-                    showRaw: showRaw,
-                    adapter: adapter
-                )
-                print(json)
-            } catch {
-                FileHandle.standardError.write(Data("whatcable: json encoding failed: \(error)\n".utf8))
-                exit(1)
+            if report {
+                printCableReports(identities: snapshot.identities)
+                return
             }
-        } else {
-            let output = TextFormatter.render(
-                ports: portWatcher.ports,
-                sources: powerWatcher.sources,
-                identities: pdWatcher.identities,
-                showRaw: showRaw,
-                adapter: adapter
-            )
-            print(output, terminator: "")
+
+            try printSnapshot(snapshot, asJSON: asJSON, showRaw: showRaw)
+        } catch {
+            FileHandle.standardError.write(Data("whatcable: \(error)\n".utf8))
+            exit(1)
         }
     }
 
@@ -93,6 +75,82 @@ struct WhatCableCLI {
       -h, --help     Show this help and exit
 
     """
+}
+
+private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Bool) throws {
+    if asJSON {
+        let json = try JSONFormatter.render(
+            ports: snapshot.ports,
+            sources: snapshot.powerSources,
+            identities: snapshot.identities,
+            showRaw: showRaw,
+            adapter: snapshot.adapter
+        )
+        print(json)
+    } else {
+        let output = TextFormatter.render(
+            ports: snapshot.ports,
+            sources: snapshot.powerSources,
+            identities: snapshot.identities,
+            showRaw: showRaw,
+            adapter: snapshot.adapter
+        )
+        print(output, terminator: "")
+    }
+}
+
+private func runWatch(provider: any CableSnapshotProvider, asJSON: Bool, showRaw: Bool) async {
+    var lastOutput = ""
+    do {
+        for try await snapshot in provider.watch() {
+            let output: String
+            if asJSON {
+                do {
+                    output = try JSONFormatter.render(
+                        ports: snapshot.ports,
+                        sources: snapshot.powerSources,
+                        identities: snapshot.identities,
+                        showRaw: showRaw,
+                        adapter: snapshot.adapter
+                    )
+                } catch {
+                    FileHandle.standardError.write(Data("whatcable: json encoding failed: \(error)\n".utf8))
+                    continue
+                }
+            } else {
+                output = TextFormatter.render(
+                    ports: snapshot.ports,
+                    sources: snapshot.powerSources,
+                    identities: snapshot.identities,
+                    showRaw: showRaw,
+                    adapter: snapshot.adapter
+                )
+            }
+
+            guard output != lastOutput else { continue }
+            lastOutput = output
+
+            if asJSON {
+                // Newline-delimited JSON: one self-contained object per change.
+                print(output)
+            } else {
+                // Clear screen + home cursor, then redraw.
+                print("\u{1B}[2J\u{1B}[H", terminator: "")
+                print(timestampHeader())
+                print(output, terminator: "")
+            }
+            fflush(stdout)
+        }
+    } catch {
+        FileHandle.standardError.write(Data("whatcable: \(error)\n".utf8))
+        exit(1)
+    }
+}
+
+private func timestampHeader() -> String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    return "whatcable --watch · \(formatter.string(from: Date()))\n\n"
 }
 
 private func printCableReports(identities: [PDIdentity]) {
