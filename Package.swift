@@ -17,20 +17,43 @@ let package = Package(
             name: "WhatCableCore",
             path: "Sources/WhatCableCore"
         ),
+        .target(
+            name: "WhatCableDarwinBackend",
+            dependencies: ["WhatCableCore"],
+            path: "Sources/WhatCableDarwinBackend"
+        ),
+        .target(
+            name: "WhatCableLinuxBackend",
+            dependencies: ["WhatCableCore"],
+            path: "Sources/WhatCableLinuxBackend"
+        ),
         .executableTarget(
             name: "WhatCable",
-            dependencies: ["WhatCableCore"],
+            dependencies: ["WhatCableCore", "WhatCableDarwinBackend"],
             path: "Sources/WhatCable"
         ),
         .executableTarget(
             name: "WhatCableCLI",
-            dependencies: ["WhatCableCore"],
+            dependencies: [
+                "WhatCableCore",
+                .target(name: "WhatCableDarwinBackend", condition: .when(platforms: [.macOS])),
+                .target(name: "WhatCableLinuxBackend", condition: .when(platforms: [.linux]))
+            ],
             path: "Sources/WhatCableCLI"
         ),
         .testTarget(
-            name: "WhatCableTests",
-            dependencies: ["WhatCable", "WhatCableCore", "WhatCableCLI"],
-            path: "Tests/WhatCableTests"
+            name: "WhatCableCoreTests",
+            dependencies: ["WhatCableCore"],
+            path: "Tests/WhatCableCoreTests"
+        ),
+        .testTarget(
+            name: "WhatCableDarwinTests",
+            dependencies: [
+                "WhatCableCore",
+                .target(name: "WhatCable", condition: .when(platforms: [.macOS])),
+                .target(name: "WhatCableDarwinBackend", condition: .when(platforms: [.macOS]))
+            ],
+            path: "Tests/WhatCableDarwinTests"
         )
     ]
 )

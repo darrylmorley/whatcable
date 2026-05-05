@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import AppKit
 import UserNotifications
@@ -86,9 +87,10 @@ final class UpdateChecker: ObservableObject {
                 let remote = tag.hasPrefix("v") ? String(tag.dropFirst()) : tag
                 let notes = json["body"] as? String
                 let downloadURL = (json["assets"] as? [[String: Any]])?
-                    .first(where: { ($0["name"] as? String)?.hasSuffix(".zip") == true })
+                    .first(where: { ($0["name"] as? String) == "WhatCable.zip" })
                     .flatMap { $0["browser_download_url"] as? String }
                     .flatMap { URL(string: $0) }
+                    .flatMap { Self.isTrustedDownloadURL($0) ? $0 : nil }
 
                 if Self.isNewer(remote: remote, current: AppInfo.version) {
                     let update = AvailableUpdate(version: remote, url: url, downloadURL: downloadURL, notes: notes)
@@ -141,4 +143,14 @@ final class UpdateChecker: ObservableObject {
     nonisolated static func isNewer(remote: String, current: String) -> Bool {
         AppInfo.isNewer(remote: remote, current: current)
     }
+
+    /// Only accept download URLs from GitHub's release asset CDN.
+    nonisolated static func isTrustedDownloadURL(_ url: URL) -> Bool {
+        guard url.scheme == "https",
+              let host = url.host else { return false }
+        let trusted = ["objects.githubusercontent.com", "github.com", "releases.githubusercontent.com"]
+        return trusted.contains(host)
+    }
 }
+
+#endif

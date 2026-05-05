@@ -1,0 +1,45 @@
+name: Cable report
+description: Share a USB-C cable's e-marker fingerprint so it can be added to the public cable database.
+title: "[Cable Report] "
+labels: ["cable-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a cable. These reports help build a public
+        database of known-good and counterfeit USB-C cable fingerprints.
+
+        WhatCable does not collect or send any data on its own. You are
+        submitting this voluntarily. You can edit anything below before
+        submitting.
+  - type: textarea
+    id: fingerprint
+    attributes:
+      label: Cable fingerprint
+      description: |
+        Pre-filled by WhatCable. Please leave the table intact so the report
+        can be parsed automatically. Add notes below in the next field.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What's the story with this cable?
+      description: |
+        Useful details:
+          - Brand and model (if known)
+          - Where you bought it
+          - Whether it works as advertised
+          - Any specific failures (e.g. "claims 240W but only charges at 60W",
+            "won't carry Thunderbolt despite e-marker saying USB4")
+      placeholder: Brand, model, where you got it, and how it actually behaves.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Photos, links to product pages, related issues, reproduction steps.
+    validations:
+      required: false

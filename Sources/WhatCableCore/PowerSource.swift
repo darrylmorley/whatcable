@@ -61,11 +61,22 @@ public struct PowerSource: Identifiable, Hashable {
     public var portKey: String { "\(parentPortType)/\(parentPortNumber)" }
 }
 
+extension PowerSource {
+    public static func preferredChargingSource(in sources: [PowerSource]) -> PowerSource? {
+        sources.first { $0.name == "USB-PD" }
+            ?? sources.first { $0.name == "Brick ID" }
+    }
+}
+
 extension USBCPort {
     public var portKey: String? {
         guard let n = portNumber else { return nil }
-        // PortType lives in raw properties; pull it out for matching.
-        let rawType = (rawProperties["PortType"]).flatMap { Int($0) } ?? 0x2
+        let rawType: Int
+        if portTypeDescription?.hasPrefix("MagSafe") == true {
+            rawType = 0x11
+        } else {
+            rawType = rawProperties["PortType"].flatMap { Int($0) } ?? 0x2
+        }
         return "\(rawType)/\(n)"
     }
 }

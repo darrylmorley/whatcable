@@ -1,5 +1,7 @@
+#if os(macOS)
 import Foundation
 import IOKit
+import WhatCableCore
 
 /// Watches `IOPortFeaturePowerSource` services. These appear under each port's
 /// `Power In` feature when something that advertises PD is connected.
@@ -86,8 +88,7 @@ public final class PowerSourceWatcher: ObservableObject {
         }
 
         let name = (dict["PowerSourceName"] as? String) ?? "Unknown"
-        let parentType = (dict["ParentPortType"] as? NSNumber)?.intValue ?? 0
-        let parentNum = (dict["ParentPortNumber"] as? NSNumber)?.intValue ?? 0
+        let parent = Self.parentPortIdentity(from: dict)
 
         let options: [PowerOption] = parseOptions(dict["PowerSourceOptions"])
         let winning: PowerOption? = parseOption(dict["WinningPowerSourceOption"])
@@ -95,11 +96,21 @@ public final class PowerSourceWatcher: ObservableObject {
         return PowerSource(
             id: entryID,
             name: name,
-            parentPortType: parentType,
-            parentPortNumber: parentNum,
+            parentPortType: parent.type,
+            parentPortNumber: parent.number,
             options: options,
             winning: winning
         )
+    }
+
+    nonisolated static func parentPortIdentity(from dict: [String: Any]) -> (type: Int, number: Int) {
+        let type = (dict["ParentBuiltInPortType"] as? NSNumber)?.intValue
+            ?? (dict["ParentPortType"] as? NSNumber)?.intValue
+            ?? 0
+        let number = (dict["ParentBuiltInPortNumber"] as? NSNumber)?.intValue
+            ?? (dict["ParentPortNumber"] as? NSNumber)?.intValue
+            ?? Int(((dict["Priority"] as? NSNumber)?.uint64Value ?? 0) & 0xFF)
+        return (type, number)
     }
 
     private func parseOptions(_ value: Any?) -> [PowerOption] {
@@ -138,3 +149,5 @@ extension PowerSourceWatcher {
         return sources.filter { $0.portKey == key }
     }
 }
+
+#endif

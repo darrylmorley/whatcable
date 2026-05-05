@@ -140,6 +140,85 @@ public struct USBCPort: Identifiable, Hashable {
         self.busIndex = busIndex
         self.rawProperties = rawProperties
     }
+
+    public func matchingDevices(from devices: [USBDevice]) -> [USBDevice] {
+        guard connectionActive == true else { return [] }
+
+        let portNames = [serviceName, portDescription].compactMap(Self.cleanPortName)
+
+        if !portNames.isEmpty {
+            let directMatches = devices.filter { device in
+                guard let name = device.controllerPortName else { return false }
+                return portNames.contains { portName in
+                    Self.portNameMatches(
+                        portName,
+                        deviceName: name,
+                        portBusIndex: busIndex,
+                        deviceBusIndex: device.busIndex
+                    )
+                }
+            }
+            if !directMatches.isEmpty {
+                return directMatches
+            }
+        }
+
+        guard carriesUSB, let busIndex else { return [] }
+        return devices.filter { device in
+            device.controllerPortName == nil && device.busIndex == busIndex
+        }
+    }
+
+    private var carriesUSB: Bool {
+        if usbActive == true || superSpeedActive == true {
+            return true
+        }
+        return transportsActive.contains { transport in
+            transport == "USB2" || transport == "USB3" || transport == "USB4" || transport == "CIO"
+        }
+    }
+
+    private static func portNameMatches(
+        _ portName: String,
+        deviceName: String,
+        portBusIndex: Int?,
+        deviceBusIndex: Int?
+    ) -> Bool {
+        guard let portName = cleanPortName(portName),
+              let deviceName = cleanPortName(deviceName) else {
+            return false
+        }
+        if portName == deviceName {
+            return true
+        }
+        guard busIndexesAreCompatible(portBusIndex, deviceBusIndex) else {
+            return false
+        }
+        if basePortName(portName) == deviceName {
+            return true
+        }
+        if basePortName(deviceName) == portName {
+            return true
+        }
+        return false
+    }
+
+    private static func cleanPortName(_ value: String?) -> String? {
+        guard let value else { return nil }
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    private static func basePortName(_ value: String) -> String? {
+        guard let at = value.firstIndex(of: "@") else { return nil }
+        let base = String(value[..<at])
+        return base.hasPrefix("Port-") ? base : nil
+    }
+
+    private static func busIndexesAreCompatible(_ lhs: Int?, _ rhs: Int?) -> Bool {
+        guard let lhs, let rhs else { return true }
+        return lhs == rhs
+    }
 }
 
 // MARK: - Property-dictionary parsing helpers

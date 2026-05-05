@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import AppKit
 import Combine
@@ -14,12 +15,17 @@ struct WhatCableApp: App {
             .commands {
                 CommandGroup(replacing: .appInfo) {
                     Button("About \(AppInfo.name)") {
-                        delegate.menuAbout()
+                        delegate.showAboutPanel()
                     }
                 }
                 CommandGroup(after: .appInfo) {
                     Button("Check for Updates…") {
-                        delegate.menuCheckUpdates()
+                        UpdateChecker.shared.check(silent: false)
+                    }
+                }
+                CommandGroup(replacing: .help) {
+                    Button("WhatCable on GitHub") {
+                        NSWorkspace.shared.open(AppInfo.helpURL)
                     }
                 }
                 CommandGroup(replacing: .appSettings) {
@@ -27,11 +33,6 @@ struct WhatCableApp: App {
                         delegate.showSettingsPanel(nil)
                     }
                     .keyboardShortcut(",", modifiers: .command)
-                }
-                CommandGroup(replacing: .help) {
-                    Button("\(AppInfo.name) on GitHub") {
-                        delegate.menuHelp()
-                    }
                 }
                 CommandGroup(after: .toolbar) {
                     Button("Refresh") {
@@ -201,7 +202,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         menu.addItem(.init(title: "Settings…", action: #selector(menuSettings), keyEquivalent: ","))
         menu.addItem(.init(title: "Check for Updates…", action: #selector(menuCheckUpdates), keyEquivalent: ""))
         menu.addItem(.separator())
-        menu.addItem(.init(title: "About \(AppInfo.name)", action: #selector(menuAbout), keyEquivalent: ""))
+        menu.addItem(.init(title: "About \(AppInfo.name)", action: #selector(showAboutPanel), keyEquivalent: ""))
         menu.addItem(.init(title: "WhatCable on GitHub", action: #selector(menuHelp), keyEquivalent: ""))
         menu.addItem(.separator())
         menu.addItem(.init(title: "Quit \(AppInfo.name)", action: #selector(menuQuit), keyEquivalent: "q"))
@@ -231,26 +232,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
     private func showSettings() {
         NSApp.activate(ignoringOtherApps: true)
-
-        if let settingsWindow {
-            settingsWindow.makeKeyAndOrderFront(nil)
-            return
+        Self.refreshSignal.showSettings = true
+        if AppSettings.shared.useMenuBarMode {
+            if let button = statusItem?.button, let popover, !popover.isShown {
+                togglePopover(from: button)
+            }
+        } else {
+            if let window {
+                window.makeKeyAndOrderFront(nil)
+            } else {
+                setUpWindowMode()
+            }
         }
-
-        let host = NSHostingController(rootView: SettingsView())
-        let w = NSWindow(contentViewController: host)
-        w.title = "\(AppInfo.name) Settings"
-        w.styleMask = [.titled, .closable]
-        w.setContentSize(NSSize(width: 400, height: 280))
-        w.center()
-        w.isReleasedWhenClosed = false
-        w.delegate = self
-        settingsWindow = w
-
-        w.makeKeyAndOrderFront(nil)
     }
 
-    @objc func menuAbout() {
+    @objc func showAboutPanel() {
         NSApp.activate(ignoringOtherApps: true)
         let credits = NSAttributedString(
             string: "\(AppInfo.tagline)\n\nBuilt by \(AppInfo.credit).",
@@ -293,6 +289,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     nonisolated func popoverDidClose(_ notification: Notification) {
         Task { @MainActor in
             Self.refreshSignal.optionHeld = false
+            Self.refreshSignal.showSettings = false
         }
     }
 }
@@ -309,3 +306,18 @@ final class RefreshSignal: ObservableObject {
 
     func bump() { tick &+= 1 }
 }
+
+#else
+import Foundation
+
+/// Linux stub. WhatCable.app is a macOS menu bar app, but SwiftPM still
+/// builds the executable target on Linux during `swift test`, so the linker
+/// needs an `@main`. Whatcable on Linux ships as `whatcable-cli` only.
+@main
+struct WhatCableLinuxStub {
+    static func main() {
+        FileHandle.standardError.write(Data("WhatCable.app is macOS only. Use whatcable-cli on Linux.\n".utf8))
+        exit(1)
+    }
+}
+#endif

@@ -1,18 +1,41 @@
+#if os(macOS)
 import SwiftUI
 
 /// Settings panel shown in place of the main popover content. Pushes a
 /// "Done" header and groups toggles by purpose. All preferences live on
 /// `AppSettings` and are persisted to UserDefaults.
 struct SettingsView: View {
+    var dismiss: (() -> Void)? = nil
+
     @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
-        ScrollView {
-            SettingsForm()
-                .padding(20)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(spacing: 0) {
+            if let dismiss {
+                header(dismiss: dismiss)
+                Divider()
+            }
+            ScrollView {
+                SettingsForm()
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
-        .frame(minWidth: 400, minHeight: 280)
+        .frame(minWidth: 400, minHeight: 300)
+    }
+
+    private func header(dismiss: @escaping () -> Void) -> some View {
+        HStack {
+            Text("Settings")
+                .font(.headline)
+            Spacer()
+            Button("Done") {
+                dismiss()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.small)
+        }
+        .padding(12)
     }
 }
 
@@ -20,34 +43,23 @@ struct SettingsForm: View {
     @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 18) {
             section("Display") {
-                toggle("Show technical details", isOn: $settings.showTechnicalDetails)
-                toggle("Hide empty ports", isOn: $settings.hideEmptyPorts)
+                Toggle("Show technical details", isOn: $settings.showTechnicalDetails)
+                Toggle("Hide empty ports", isOn: $settings.hideEmptyPorts)
             }
             section("Behavior") {
-                toggle("Launch at login", isOn: $settings.launchAtLogin)
-                toggle("Show in menu bar", isOn: $settings.useMenuBarMode)
+                Toggle("Launch at login", isOn: $settings.launchAtLogin)
+                Toggle("Show in menu bar", isOn: $settings.useMenuBarMode)
                 Text(settings.useMenuBarMode
                      ? "Lives in the menu bar with no Dock icon."
                      : "Runs as a regular Dock app with a window.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .padding(.leading, 20)
             }
             section("Notifications") {
-                toggle("Notify on cable changes", isOn: $settings.notifyOnChanges)
+                Toggle("Notify on cable changes", isOn: $settings.notifyOnChanges)
             }
-        }
-    }
-
-    private func toggle(_ title: String, isOn: Binding<Bool>) -> some View {
-        HStack {
-            Text(title)
-                .frame(width: 150, alignment: .leading)
-            Toggle("", isOn: isOn)
-                .labelsHidden()
-            Spacer()
         }
     }
 
@@ -65,3 +77,5 @@ struct SettingsForm: View {
         }
     }
 }
+
+#endif

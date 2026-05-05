@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import ServiceManagement
 import os.log
@@ -96,3 +97,5 @@ final class AppSettings: ObservableObject {
         }
     }
 }
+
+#endif

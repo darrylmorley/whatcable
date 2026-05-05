@@ -45,6 +45,22 @@ final class ChargingDiagnosticTests: XCTestCase {
         )
     }
 
+    private func brickID(maxW: Int, winningW: Int) -> PowerSource {
+        let winning = PowerOption(voltageMV: 20_000, maxCurrentMA: winningW * 50, maxPowerMW: winningW * 1000)
+        let max = PowerOption(voltageMV: 20_000, maxCurrentMA: maxW * 50, maxPowerMW: maxW * 1000)
+        return PowerSource(
+            id: 2, name: "Brick ID", parentPortType: 0x11, parentPortNumber: 1,
+            options: [max], winning: winning
+        )
+    }
+
+    private func brickIDWithoutPDOs() -> PowerSource {
+        PowerSource(
+            id: 2, name: "Brick ID", parentPortType: 0x11, parentPortNumber: 1,
+            options: [], winning: nil
+        )
+    }
+
     /// Build a cable e-marker identity advertising the given watt rating.
     /// We pin watts via maxV/current bits: 5A @ 20V = 100W, 3A @ 20V = 60W.
     private func cableIdentity(watts: Int) -> PDIdentity {
@@ -155,6 +171,43 @@ final class ChargingDiagnosticTests: XCTestCase {
         )
         if case .fine = diag?.bottleneck { return }
         XCTFail("expected .fine without cable identity, got \(String(describing: diag?.bottleneck))")
+    }
+
+    func testBrickIDPowerSourceIsValidForMagSafe() {
+        let diag = ChargingDiagnostic(
+            port: port,
+            sources: [brickID(maxW: 140, winningW: 140)],
+            identities: []
+        )
+        guard case .fine(let n) = diag?.bottleneck else {
+            return XCTFail("expected .fine from Brick ID source, got \(String(describing: diag?.bottleneck))")
+        }
+        XCTAssertEqual(n, 140)
+    }
+
+    func testUSBPDIsPreferredWhenUSBPDAndBrickIDAreBothPresent() {
+        let diag = ChargingDiagnostic(
+            port: port,
+            sources: [brickID(maxW: 30, winningW: 30), usbPD(maxW: 96, winningW: 96)],
+            identities: [cableIdentity(watts: 100)]
+        )
+        guard case .fine(let n) = diag?.bottleneck else {
+            return XCTFail("expected .fine from USB-PD source, got \(String(describing: diag?.bottleneck))")
+        }
+        XCTAssertEqual(n, 96)
+    }
+
+    func testSystemPowerAdapterWattsFallbackCanSupplyNegotiatedWattage() {
+        let diag = ChargingDiagnostic(
+            port: port,
+            sources: [brickIDWithoutPDOs()],
+            identities: [],
+            adapter: AdapterInfo(watts: 140, isCharging: nil, source: "AC")
+        )
+        guard case .fine(let n) = diag?.bottleneck else {
+            return XCTFail("expected .fine from system adapter wattage, got \(String(describing: diag?.bottleneck))")
+        }
+        XCTAssertEqual(n, 140)
     }
 
     // MARK: - Edge cases (#15)

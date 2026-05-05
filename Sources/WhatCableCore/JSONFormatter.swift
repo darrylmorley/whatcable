@@ -1,12 +1,12 @@
 import Foundation
-import WhatCableCore
 
-enum JSONFormatter {
-    static func render(
+public enum JSONFormatter {
+    public static func render(
         ports: [USBCPort],
         sources: [PowerSource],
         identities: [PDIdentity],
-        showRaw: Bool
+        showRaw: Bool,
+        adapter: AdapterInfo? = nil
     ) throws -> String {
         let output = Output(
             version: AppInfo.version,
@@ -15,7 +15,8 @@ enum JSONFormatter {
                     port: port,
                     sources: sources.filter { $0.portKey == port.portKey },
                     identities: identities.filter { $0.portKey == port.portKey },
-                    showRaw: showRaw
+                    showRaw: showRaw,
+                    adapter: adapter
                 )
             }
         )
@@ -47,7 +48,7 @@ private struct PortDTO: Codable {
     let charging: ChargingDTO?
     let rawProperties: [String: String]?
 
-    init(port: USBCPort, sources: [PowerSource], identities: [PDIdentity], showRaw: Bool) {
+    init(port: USBCPort, sources: [PowerSource], identities: [PDIdentity], showRaw: Bool, adapter: AdapterInfo?) {
         self.name = port.portDescription ?? port.serviceName
         self.type = port.portTypeDescription
         self.className = port.className
@@ -75,7 +76,7 @@ private struct PortDTO: Codable {
         let partner = identities.first { $0.endpoint == .sop }
         self.device = partner.map { DeviceDTO(identity: $0) }
 
-        self.charging = ChargingDiagnostic(port: port, sources: sources, identities: identities)
+        self.charging = ChargingDiagnostic(port: port, sources: sources, identities: identities, adapter: adapter)
             .map { ChargingDTO(diagnostic: $0) }
 
         self.rawProperties = showRaw ? port.rawProperties : nil

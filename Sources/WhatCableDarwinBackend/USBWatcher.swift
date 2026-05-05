@@ -1,6 +1,8 @@
+#if os(macOS)
 import Foundation
 import IOKit
 import IOKit.usb
+import WhatCableCore
 
 @MainActor
 public final class USBWatcher: ObservableObject {
@@ -140,9 +142,7 @@ public final class USBWatcher: ObservableObject {
     ///     kept as a fallback for older topologies that don't expose
     ///     `UsbIOPort` (and for the advanced view).
     ///
-    /// Walks up to 16 hops to handle devices behind a hub: a device behind
-    /// a USB 2.0 hub sits ~5 hops below the `usb-drd*-port-hs` node and
-    /// ~6 below the XHCI controller.
+    /// Walks up to 20 hops to handle devices behind deeper hub chains.
     private func controllerInfo(for service: io_service_t, fallback locationID: UInt32) -> (Int?, String?) {
         var current = service
         IOObjectRetain(current)
@@ -151,7 +151,7 @@ public final class USBWatcher: ObservableObject {
         var portName: String?
         var bus: Int?
 
-        for _ in 0..<16 {
+        for _ in 0..<20 {
             var parent: io_service_t = 0
             guard IORegistryEntryGetParentEntry(current, kIOServicePlane, &parent) == KERN_SUCCESS else {
                 break
@@ -160,9 +160,15 @@ public final class USBWatcher: ObservableObject {
             current = parent
 
             if portName == nil,
-               let raw = IORegistryEntryCreateCFProperty(current, "UsbIOPort" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
-               let last = raw.split(separator: "/").last {
-                portName = String(last)
+               let raw = IORegistryEntryCreateCFProperty(
+                    current,
+                    "UsbIOPort" as CFString,
+                    kCFAllocatorDefault,
+                    0
+               )?.takeRetainedValue(),
+               let portPath = Self.usbIOPortPath(from: raw),
+               let name = Self.portName(fromUSBIOPortPath: portPath) {
+                portName = name
             }
 
             var classBuf = [CChar](repeating: 0, count: 128)
@@ -184,6 +190,27 @@ public final class USBWatcher: ObservableObject {
         return (bus, portName)
     }
 
+    nonisolated static func busIndex(fromLocationID locationID: UInt32) -> Int {
+        Int((locationID >> 24) & 0xFF)
+    }
+
+    nonisolated static func usbIOPortPath(from value: Any) -> String? {
+        if let string = value as? String {
+            return string
+        }
+        if let data = value as? Data {
+            return String(data: data, encoding: .utf8)?
+                .trimmingCharacters(in: .controlCharacters)
+        }
+        return nil
+    }
+
+    nonisolated static func portName(fromUSBIOPortPath path: String) -> String? {
+        guard let last = path.split(separator: "/").last else { return nil }
+        let name = String(last)
+        return name.hasPrefix("Port-") ? name : nil
+    }
+
     private func formatBCD(_ value: UInt16) -> String {
         let major = (value >> 8) & 0xFF
         let minor = (value >> 4) & 0xF
@@ -201,3 +228,5 @@ public final class USBWatcher: ObservableObject {
         }
     }
 }
+
+#endif

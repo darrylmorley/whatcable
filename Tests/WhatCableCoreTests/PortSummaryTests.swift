@@ -60,6 +60,23 @@ final class PortSummaryTests: XCTestCase {
         )
     }
 
+    private func brickID(maxW: Int, winningW: Int) -> PowerSource {
+        let winning = PowerOption(
+            voltageMV: 20_000,
+            maxCurrentMA: winningW * 50,
+            maxPowerMW: winningW * 1000
+        )
+        let max = PowerOption(
+            voltageMV: 20_000,
+            maxCurrentMA: maxW * 50,
+            maxPowerMW: maxW * 1000
+        )
+        return PowerSource(
+            id: 2, name: "Brick ID", parentPortType: 0x11, parentPortNumber: 1,
+            options: [max], winning: winning
+        )
+    }
+
     // MARK: - Disconnected
 
     func testNothingConnectedHeadline() {
@@ -84,6 +101,13 @@ final class PortSummaryTests: XCTestCase {
         let summary = PortSummary(port: port)
         XCTAssertEqual(summary.status, .charging)
         XCTAssertEqual(summary.headline, "Charging only")
+    }
+
+    func testMagSafeBrickIDSourceCountsAsChargingPower() {
+        let port = makePort(connected: true, active: [], supported: [])
+        let summary = PortSummary(port: port, sources: [brickID(maxW: 140, winningW: 140)])
+        XCTAssertEqual(summary.status, .charging)
+        XCTAssertEqual(summary.headline, "Charging · 140W charger")
     }
 
     // MARK: - USB

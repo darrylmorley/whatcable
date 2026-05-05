@@ -1,12 +1,12 @@
 import Foundation
-import WhatCableCore
 
-enum TextFormatter {
-    static func render(
+public enum TextFormatter {
+    public static func render(
         ports: [USBCPort],
         sources: [PowerSource],
         identities: [PDIdentity],
-        showRaw: Bool
+        showRaw: Bool,
+        adapter: AdapterInfo? = nil
     ) -> String {
         if ports.isEmpty {
             return "No USB-C / MagSafe ports were found on this Mac.\n"
@@ -19,7 +19,8 @@ enum TextFormatter {
                 port,
                 sources: filterSources(port, all: sources),
                 identities: filterIdentities(port, all: identities),
-                showRaw: showRaw
+                showRaw: showRaw,
+                adapter: adapter
             )
         }
         return out
@@ -29,7 +30,8 @@ enum TextFormatter {
         _ port: USBCPort,
         sources: [PowerSource],
         identities: [PDIdentity],
-        showRaw: Bool
+        showRaw: Bool,
+        adapter: AdapterInfo?
     ) -> String {
         let summary = PortSummary(port: port, sources: sources, identities: identities)
         let label = port.portDescription ?? port.serviceName
@@ -49,7 +51,7 @@ enum TextFormatter {
             }
         }
 
-        if let diag = ChargingDiagnostic(port: port, sources: sources, identities: identities) {
+        if let diag = ChargingDiagnostic(port: port, sources: sources, identities: identities, adapter: adapter) {
             let diagColor = diag.isWarning ? ANSI.yellow : ANSI.green
             out += "\n" + ANSI.wrap(ANSI.bold, "Charging: ") + ANSI.wrap(diagColor, diag.summary) + "\n"
             out += "  " + ANSI.wrap(ANSI.dim, diag.detail) + "\n"

@@ -1,5 +1,7 @@
+#if os(macOS)
 import Foundation
 import IOKit
+import WhatCableCore
 
 /// Watches `IOPortTransportComponentCCUSBPDSOP` services. These hold the PD
 /// Discover Identity response for the port partner (SOP) and any e-marker
@@ -90,22 +92,14 @@ public final class PDIdentityWatcher: ObservableObject {
             return nil
         }
 
-        let endpointName = (dict["ComponentName"] as? String)
-            ?? (dict["AddressDescription"] as? String)
-            ?? (dict["Address Description"] as? String)
-            ?? "Unknown"
-        let endpoint = PDIdentity.Endpoint(rawValue: endpointName) ?? .unknown
-
-        let parentType = (dict["ParentPortType"] as? NSNumber)?.intValue ?? 0
-        let parentNum = (dict["ParentPortNumber"] as? NSNumber)?.intValue ?? 0
+        let endpoint = Self.endpoint(from: dict)
+        let parent = Self.parentPortIdentity(from: dict)
         let specRev = (dict["Specification Revision"] as? NSNumber)?.intValue ?? 0
 
-        let metadata = dict["Metadata"] as? [String: Any] ?? [:]
-        let vendorID = (metadata["Vendor ID"] as? NSNumber)?.intValue
-            ?? (dict["Vendor ID"] as? NSNumber)?.intValue ?? 0
-        let productID = (metadata["Product ID"] as? NSNumber)?.intValue
-            ?? (dict["Product ID"] as? NSNumber)?.intValue ?? 0
-        let bcdDevice = (metadata["bcdDevice"] as? NSNumber)?.intValue ?? 0
+        let metadata = Self.metadataDictionary(from: dict)
+        let vendorID = Self.vendorID(from: dict, metadata: metadata)
+        let productID = Self.productID(from: dict, metadata: metadata)
+        let bcdDevice = Self.bcdDevice(from: metadata)
 
         let vdos: [UInt32] = ((metadata["VDOs"] as? [Any]) ?? []).compactMap { value in
             guard let data = value as? Data else { return nil }
@@ -115,8 +109,8 @@ public final class PDIdentityWatcher: ObservableObject {
         return PDIdentity(
             id: entryID,
             endpoint: endpoint,
-            parentPortType: parentType,
-            parentPortNumber: parentNum,
+            parentPortType: parent.type,
+            parentPortNumber: parent.number,
             vendorID: vendorID,
             productID: productID,
             bcdDevice: bcdDevice,
@@ -125,8 +119,78 @@ public final class PDIdentityWatcher: ObservableObject {
         )
     }
 
+    nonisolated static func endpointName(from dict: [String: Any]) -> String {
+        (dict["ComponentName"] as? String)
+            ?? (dict["AddressDescription"] as? String)
+            ?? (dict["Address Description"] as? String)
+            ?? (dict["TransportTypeDescription"] as? String)
+            ?? "Unknown"
+    }
+
+    nonisolated static func endpoint(from dict: [String: Any]) -> PDIdentity.Endpoint {
+        if let name = (dict["ComponentName"] as? String)
+            ?? (dict["AddressDescription"] as? String)
+            ?? (dict["Address Description"] as? String) {
+            return PDIdentity.Endpoint(rawValue: name) ?? .unknown
+        }
+        // MagSafe CC transport has no ComponentName; map "CC" only from
+        // TransportTypeDescription so a future node with ComponentName="CC"
+        // is not misclassified as a cable e-marker.
+        switch dict["TransportTypeDescription"] as? String {
+        case "SOP": return .sop
+        case "SOP'", "CC": return .sopPrime
+        default: return .unknown
+        }
+    }
+
+    nonisolated static func parentPortIdentity(from dict: [String: Any]) -> (type: Int, number: Int) {
+        let type = (dict["ParentPortType"] as? NSNumber)?.intValue
+            ?? (dict["ParentBuiltInPortType"] as? NSNumber)?.intValue
+            ?? 0
+        let number = (dict["ParentPortNumber"] as? NSNumber)?.intValue
+            ?? (dict["ParentBuiltInPortNumber"] as? NSNumber)?.intValue
+            ?? 0
+        return (type, number)
+    }
+
+    nonisolated static func metadataDictionary(from dict: [String: Any]) -> [String: Any] {
+        if let metadata = dict["Metadata"] as? [String: Any] {
+            return metadata
+        }
+        if let nsMetadata = dict["Metadata"] as? NSDictionary {
+            var converted: [String: Any] = [:]
+            for case let (key, value) as (String, Any) in nsMetadata {
+                converted[key] = value
+            }
+            return converted
+        }
+        return [:]
+    }
+
+    nonisolated static func vendorID(from dict: [String: Any], metadata: [String: Any]) -> Int {
+        (metadata["Vendor ID"] as? NSNumber)?.intValue
+            ?? (metadata["Vendor ID (SOP1)"] as? NSNumber)?.intValue
+            ?? (dict["Vendor ID (SOP1)"] as? NSNumber)?.intValue
+            ?? (dict["Vendor ID"] as? NSNumber)?.intValue
+            ?? 0
+    }
+
+    nonisolated static func productID(from dict: [String: Any], metadata: [String: Any]) -> Int {
+        (metadata["Product ID"] as? NSNumber)?.intValue
+            ?? (metadata["Product ID (SOP1)"] as? NSNumber)?.intValue
+            ?? (dict["Product ID (SOP1)"] as? NSNumber)?.intValue
+            ?? (dict["Product ID"] as? NSNumber)?.intValue
+            ?? 0
+    }
+
+    nonisolated static func bcdDevice(from metadata: [String: Any]) -> Int {
+        (metadata["bcdDevice"] as? NSNumber)?.intValue ?? 0
+    }
+
     public func identities(for port: USBCPort) -> [PDIdentity] {
         guard let key = port.portKey else { return [] }
         return identities.filter { $0.portKey == key }
     }
 }
+
+#endif
