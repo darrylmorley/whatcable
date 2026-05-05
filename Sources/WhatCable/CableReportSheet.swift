@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import AppKit
 import WhatCableCore
@@ -77,3 +78,5 @@ struct CableReportSheet: View {
         .frame(width: 560)
     }
 }
+
+#endif

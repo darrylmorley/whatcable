@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import AppKit
 import Combine
@@ -286,3 +287,5 @@ final class RefreshSignal: ObservableObject {
 
     func bump() { tick &+= 1 }
 }
+
+#endif

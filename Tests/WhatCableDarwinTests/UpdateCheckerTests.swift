@@ -1,3 +1,4 @@
+#if os(macOS)
 import XCTest
 @testable import WhatCable
 
@@ -29,3 +30,5 @@ final class UpdateCheckerTests: XCTestCase {
         XCTAssertTrue(UpdateChecker.isNewer(remote: "0.3.0", current: "dev"))
     }
 }
+
+#endif

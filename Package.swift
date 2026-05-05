@@ -22,6 +22,11 @@ let package = Package(
             dependencies: ["WhatCableCore"],
             path: "Sources/WhatCableDarwinBackend"
         ),
+        .target(
+            name: "WhatCableLinuxBackend",
+            dependencies: ["WhatCableCore"],
+            path: "Sources/WhatCableLinuxBackend"
+        ),
         .executableTarget(
             name: "WhatCable",
             dependencies: ["WhatCableCore", "WhatCableDarwinBackend"],
@@ -31,19 +36,24 @@ let package = Package(
             name: "WhatCableCLI",
             dependencies: [
                 "WhatCableCore",
-                .target(name: "WhatCableDarwinBackend", condition: .when(platforms: [.macOS]))
+                .target(name: "WhatCableDarwinBackend", condition: .when(platforms: [.macOS])),
+                .target(name: "WhatCableLinuxBackend", condition: .when(platforms: [.linux]))
             ],
             path: "Sources/WhatCableCLI"
         ),
         .testTarget(
-            name: "WhatCableTests",
+            name: "WhatCableCoreTests",
+            dependencies: ["WhatCableCore"],
+            path: "Tests/WhatCableCoreTests"
+        ),
+        .testTarget(
+            name: "WhatCableDarwinTests",
             dependencies: [
-                "WhatCable",
                 "WhatCableCore",
-                "WhatCableCLI",
+                .target(name: "WhatCable", condition: .when(platforms: [.macOS])),
                 .target(name: "WhatCableDarwinBackend", condition: .when(platforms: [.macOS]))
             ],
-            path: "Tests/WhatCableTests"
+            path: "Tests/WhatCableDarwinTests"
         )
     ]
 )

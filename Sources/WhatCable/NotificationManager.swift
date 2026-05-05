@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import Combine
 import UserNotifications
@@ -126,3 +127,5 @@ final class NotificationManager {
         }
     }
 }
+
+#endif

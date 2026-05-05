@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import WhatCableCore
 import WhatCableDarwinBackend
@@ -546,3 +547,5 @@ struct AdvancedPortDetails: View {
         return v ? "Yes" : "No"
     }
 }
+
+#endif

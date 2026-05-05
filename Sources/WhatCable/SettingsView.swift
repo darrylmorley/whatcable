@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 
 /// Settings panel shown in place of the main popover content. Pushes a
@@ -74,3 +75,5 @@ struct SettingsForm: View {
         }
     }
 }
+
+#endif
