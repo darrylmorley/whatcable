@@ -211,6 +211,18 @@ final class ChargingDiagnosticTests: XCTestCase {
         XCTAssertNil(diag)
     }
 
+    func testZeroWattWinningPDOSuppressesDiagnostic() {
+        // A winning PDO with maxPowerMW rounding to 0 is just as useless as
+        // a missing one. Don't render "Charging well at 0W".
+        let zeroWinning = PowerSource(
+            id: 1, name: "USB-PD", parentPortType: 2, parentPortNumber: 1,
+            options: [],
+            winning: PowerOption(voltageMV: 0, maxCurrentMA: 0, maxPowerMW: 0)
+        )
+        let diag = ChargingDiagnostic(port: port, sources: [zeroWinning], identities: [])
+        XCTAssertNil(diag)
+    }
+
     func testTwoPortsWithDifferentChargersDoNotCrossContaminate() {
         // Issue #46: M1 MBA with an 87W adapter on @1 and a 30W power bank on
         // @2 that briefly reports a USB-PD source without a winning PDO.

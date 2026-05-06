@@ -53,8 +53,10 @@ extension ChargingDiagnostic {
         let negotiatedW = source.winning.map { Int((Double($0.maxPowerMW) / 1000).rounded()) }
 
         // No real per-port wattage to report. Don't fabricate one from
-        // system-wide signals; the charging block simply doesn't render.
-        if chargerMaxW <= 0 && negotiatedW == nil {
+        // system-wide signals, and don't render "Charging well at 0W" if a
+        // winning PDO rounds to zero. The charging block simply doesn't
+        // appear for this port.
+        if chargerMaxW <= 0 && (negotiatedW ?? 0) <= 0 {
             return nil
         }
 
