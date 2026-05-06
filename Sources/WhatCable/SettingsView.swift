@@ -26,8 +26,8 @@ struct SettingsView: View {
     private func header(dismiss: @escaping () -> Void) -> some View {
         HStack {
             Image(systemName: "gearshape")
-                .font(.title2)
-            Text("Settings").font(.headline)
+                .scaledFont(.title2)
+            Text("Settings").scaledFont(.headline, weight: .bold)
             Spacer()
             Button("Done", action: dismiss)
                 .keyboardShortcut(.defaultAction)
@@ -40,19 +40,36 @@ struct SettingsForm: View {
     @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            section("Display") {
-                Toggle("Show technical details", isOn: $settings.showTechnicalDetails)
-                Toggle("Hide empty ports", isOn: $settings.hideEmptyPorts)
-            }
+        VStack(alignment: .leading, spacing: 24) {
             section("Behavior") {
                 Toggle("Launch at login", isOn: $settings.launchAtLogin)
                 Toggle("Show in menu bar", isOn: $settings.useMenuBarMode)
                 Text(settings.useMenuBarMode
                      ? "Lives in the menu bar with no Dock icon."
                      : "Runs as a regular Dock app with a window.")
-                    .font(.caption)
+                    .scaledFont(.caption)
                     .foregroundStyle(.secondary)
+            }
+            section("Display") {
+                Toggle("Show technical details", isOn: $settings.showTechnicalDetails)
+                Toggle("Hide empty ports", isOn: $settings.hideEmptyPorts)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("Font size")
+                        Spacer()
+                        Text("\(Int((settings.fontSize * 100).rounded()))%")
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                    HStack(spacing: 8) {
+                        Image(systemName: "textformat.size.smaller")
+                            .foregroundStyle(.secondary)
+                        Slider(value: $settings.fontSize, in: AppSettings.fontSizeRange, step: 0.1)
+                        Image(systemName: "textformat.size.larger")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.top, 4)
             }
             section("Notifications") {
                 Toggle("Notify on cable changes", isOn: $settings.notifyOnChanges)
@@ -64,14 +81,14 @@ struct SettingsForm: View {
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title.uppercased())
-                .font(.caption2)
+                .scaledFont(.caption, weight: .semibold)
                 .foregroundStyle(.secondary)
             VStack(alignment: .leading, spacing: 6) {
                 content()
             }
+            .scaledFont(.body)
             .toggleStyle(.switch)
             .controlSize(.small)
         }
     }
 }
-

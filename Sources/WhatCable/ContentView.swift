@@ -2,6 +2,71 @@ import SwiftUI
 import WhatCableCore
 import WhatCableDarwinBackend
 
+// MARK: - Font scaling environment
+
+private struct FontScaleKey: EnvironmentKey {
+    static let defaultValue: Double = 1.0
+}
+
+extension EnvironmentValues {
+    var fontScale: Double {
+        get { self[FontScaleKey.self] }
+        set { self[FontScaleKey.self] = newValue }
+    }
+}
+
+/// View modifier that reads the fontScale environment and applies a scaled
+/// version of the given text style. Use `.scaledFont(.caption)` instead of
+/// `.font(.caption)` on any text that should respond to the slider.
+struct ScaledFontModifier: ViewModifier {
+    @Environment(\.fontScale) private var scale
+    let style: Font.TextStyle
+    let design: Font.Design?
+    let weight: Font.Weight?
+    let monospacedDigit: Bool
+
+    init(_ style: Font.TextStyle, design: Font.Design? = nil, weight: Font.Weight? = nil, monospacedDigit: Bool = false) {
+        self.style = style
+        self.design = design
+        self.weight = weight
+        self.monospacedDigit = monospacedDigit
+    }
+
+    func body(content: Content) -> some View {
+        let baseSize = Self.baseSize(for: style)
+        let size = baseSize * scale
+        var font: Font = design != nil
+            ? .system(size: size, design: design!)
+            : .system(size: size)
+        if let weight { font = font.weight(weight) }
+        if monospacedDigit { font = font.monospacedDigit() }
+        return content.font(font)
+    }
+
+    static func baseSize(for style: Font.TextStyle) -> Double {
+        switch style {
+        case .largeTitle: return 26
+        case .title: return 22
+        case .title2: return 17
+        case .title3: return 15
+        case .headline: return 13
+        case .body: return 13
+        case .callout: return 12
+        case .subheadline: return 11
+        case .footnote: return 10
+        case .caption: return 10
+        case .caption2: return 9
+        @unknown default: return 13
+        }
+    }
+}
+
+extension View {
+    func scaledFont(_ style: Font.TextStyle, design: Font.Design? = nil, weight: Font.Weight? = nil, monospacedDigit: Bool = false) -> some View {
+        modifier(ScaledFontModifier(style, design: design, weight: weight, monospacedDigit: monospacedDigit))
+    }
+}
+
 struct ContentView: View {
     @StateObject private var portWatcher = USBCPortWatcher()
     @StateObject private var deviceWatcher = USBWatcher()
@@ -26,6 +91,7 @@ struct ContentView: View {
                 mainContent
             }
         }
+        .environment(\.fontScale, settings.fontSize)
         .onAppear {
             portWatcher.start()
             deviceWatcher.start()
@@ -137,11 +203,11 @@ struct ContentView: View {
     private var header: some View {
         HStack {
             Image(systemName: "cable.connector.horizontal")
-                .font(.title2)
+                .scaledFont(.title2)
             VStack(alignment: .leading, spacing: 2) {
-                Text(AppInfo.name).font(.headline)
+                Text(AppInfo.name).scaledFont(.headline, weight: .bold)
                 Text(AppInfo.tagline)
-                    .font(.caption)
+                    .scaledFont(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -175,15 +241,15 @@ struct ContentView: View {
         HStack {
             Button("Quit") { NSApplication.shared.terminate(nil) }
                 .buttonStyle(.borderless)
-                .font(.caption)
+                .scaledFont(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
             Text("\(deviceWatcher.devices.count) USB device\(deviceWatcher.devices.count == 1 ? "" : "s")")
-                .font(.caption)
+                .scaledFont(.caption)
                 .foregroundStyle(.secondary)
-            Text("·").font(.caption).foregroundStyle(.secondary)
+            Text("·").scaledFont(.caption).foregroundStyle(.secondary)
             Text("v\(AppInfo.version) · \(AppInfo.credit)")
-                .font(.caption)
+                .scaledFont(.caption)
                 .foregroundStyle(.tertiary)
         }
         .padding(.horizontal, 12)
@@ -193,12 +259,12 @@ struct ContentView: View {
     private var noPortsState: some View {
         VStack(spacing: 8) {
             Image(systemName: "powerplug")
-                .font(.system(size: 40))
+                .scaledFont(.largeTitle)
                 .foregroundStyle(.secondary)
             Text("No USB-C ports detected")
-                .font(.headline)
-            Text("This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information → USB.")
-                .font(.caption)
+                .scaledFont(.headline, weight: .bold)
+            Text("This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB.")
+                .scaledFont(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 32)
@@ -210,12 +276,12 @@ struct ContentView: View {
     private var nothingConnectedState: some View {
         VStack(spacing: 8) {
             Image(systemName: "cable.connector.slash")
-                .font(.system(size: 40))
+                .scaledFont(.largeTitle)
                 .foregroundStyle(.secondary)
             Text("Nothing connected")
-                .font(.headline)
+                .scaledFont(.headline, weight: .bold)
             Text("\(portWatcher.ports.count) USB-C port\(portWatcher.ports.count == 1 ? "" : "s") detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.")
-                .font(.caption)
+                .scaledFont(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 32)
@@ -267,9 +333,9 @@ struct UpdateBanner: View {
                 .foregroundStyle(.tint)
             VStack(alignment: .leading, spacing: 2) {
                 Text("WhatCable \(update.version) is available")
-                    .font(.callout).bold()
+                    .scaledFont(.callout, weight: .bold)
                 statusLine
-                    .font(.caption).foregroundStyle(.secondary)
+                    .scaledFont(.caption).foregroundStyle(.secondary)
             }
             Spacer()
             actionButtons
@@ -366,17 +432,17 @@ struct PortCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: summary.icon)
-                    .font(.system(size: 28))
+                    .scaledFont(.title2)
                     .foregroundStyle(summary.iconColor)
                     .frame(width: 36)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(port.portDescription ?? port.serviceName)
-                        .font(.caption)
+                        .scaledFont(.caption)
                         .foregroundStyle(.secondary)
                     Text(summary.headline)
-                        .font(.title3).bold()
+                        .scaledFont(.title3, weight: .bold)
                     Text(summary.subtitle)
-                        .font(.callout)
+                        .scaledFont(.callout)
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
@@ -387,7 +453,7 @@ struct PortCard: View {
                     ForEach(summary.bullets, id: \.self) { bullet in
                         HStack(alignment: .top, spacing: 6) {
                             Text("•").foregroundStyle(.secondary)
-                            Text(bullet).font(.callout)
+                            Text(bullet).scaledFont(.callout)
                             Spacer()
                         }
                     }
@@ -398,10 +464,10 @@ struct PortCard: View {
             if !devices.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Connected device\(devices.count == 1 ? "" : "s")")
-                        .font(.caption).foregroundStyle(.secondary)
+                        .scaledFont(.caption).foregroundStyle(.secondary)
                     ForEach(devices) { d in
-                        Text("• \(d.productName ?? "Unknown") — \(d.speedLabel)")
-                            .font(.callout)
+                        Text("• \(d.productName ?? "Unknown") - \(d.speedLabel)")
+                            .scaledFont(.callout)
                     }
                 }
                 .padding(.leading, 48)
@@ -430,7 +496,7 @@ struct PortCard: View {
                         reportingCable = cable
                     } label: {
                         Label("Report this cable", systemImage: "exclamationmark.bubble")
-                            .font(.caption)
+                            .scaledFont(.caption)
                     }
                     .buttonStyle(.borderless)
                     .help("File a GitHub issue with this cable's e-marker fingerprint")
@@ -460,10 +526,10 @@ struct DiagnosticBanner: View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: diagnostic.icon)
                 .foregroundStyle(diagnostic.isWarning ? Color.orange : Color.green)
-                .font(.callout)
+                .scaledFont(.callout)
             VStack(alignment: .leading, spacing: 2) {
-                Text(diagnostic.summary).font(.callout).bold()
-                Text(diagnostic.detail).font(.caption).foregroundStyle(.secondary)
+                Text(diagnostic.summary).scaledFont(.callout, weight: .bold)
+                Text(diagnostic.detail).scaledFont(.caption).foregroundStyle(.secondary)
             }
             Spacer()
         }
@@ -485,17 +551,17 @@ struct PowerSourceList: View {
                 if !src.options.isEmpty {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("\(src.name) profiles")
-                            .font(.caption).foregroundStyle(.secondary)
+                            .scaledFont(.caption).foregroundStyle(.secondary)
                         ForEach(src.options.sorted(by: { $0.voltageMV < $1.voltageMV }), id: \.self) { opt in
                             let isWinning = opt == src.winning
                             HStack(spacing: 6) {
                                 Image(systemName: isWinning ? "checkmark.circle.fill" : "circle")
                                     .foregroundStyle(isWinning ? Color.green : Color.secondary)
-                                    .font(.caption)
-                                Text("\(opt.voltsLabel) @ \(opt.ampsLabel) — \(opt.wattsLabel)")
-                                    .font(.callout.monospacedDigit())
+                                    .scaledFont(.caption)
+                                Text("\(opt.voltsLabel) @ \(opt.ampsLabel) - \(opt.wattsLabel)")
+                                    .scaledFont(.callout, monospacedDigit: true)
                                 if isWinning {
-                                    Text("active").font(.caption2).foregroundStyle(.green)
+                                    Text("active").scaledFont(.caption2).foregroundStyle(.green)
                                 }
                                 Spacer()
                             }
@@ -533,10 +599,10 @@ struct AdvancedPortDetails: View {
                 VStack(alignment: .leading, spacing: 2) {
                     ForEach(port.rawProperties.sorted(by: { $0.key < $1.key }), id: \.key) { kv in
                         HStack(alignment: .top) {
-                            Text(kv.key).font(.system(.caption, design: .monospaced))
+                            Text(kv.key).scaledFont(.caption, design: .monospaced)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 200, alignment: .leading)
-                            Text(kv.value).font(.system(.caption, design: .monospaced))
+                            Text(kv.value).scaledFont(.caption, design: .monospaced)
                                 .textSelection(.enabled)
                             Spacer()
                         }
@@ -544,21 +610,21 @@ struct AdvancedPortDetails: View {
                 }
                 .padding(.top, 4)
             }
-            .font(.caption)
+            .scaledFont(.caption)
         }
     }
 
     private func group<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(title).font(.caption).bold().foregroundStyle(.secondary)
+            Text(title).scaledFont(.caption, weight: .bold).foregroundStyle(.secondary)
             content()
         }
     }
 
     private func row(_ key: String, _ value: String) -> some View {
         HStack {
-            Text(key).font(.caption).foregroundStyle(.secondary).frame(width: 120, alignment: .leading)
-            Text(value).font(.system(.caption, design: .monospaced))
+            Text(key).scaledFont(.caption).foregroundStyle(.secondary).frame(width: 120, alignment: .leading)
+            Text(value).scaledFont(.caption, design: .monospaced)
             Spacer()
         }
     }
@@ -579,7 +645,7 @@ struct ThunderboltFabricSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Thunderbolt fabric")
-                .font(.caption).bold().foregroundStyle(.secondary)
+                .scaledFont(.caption, weight: .bold).foregroundStyle(.secondary)
             ForEach(Array(chain.enumerated()), id: \.element.id) { index, sw in
                 hopRow(sw, index: index)
             }
@@ -596,10 +662,10 @@ struct ThunderboltFabricSection: View {
 
         HStack(alignment: .top) {
             Text("\(indent)\(arrow)\(name)")
-                .font(.system(.caption, design: .monospaced))
+                .scaledFont(.caption, design: .monospaced)
             Spacer()
             Text(linkLabel)
-                .font(.system(.caption, design: .monospaced))
+                .scaledFont(.caption, design: .monospaced)
                 .foregroundStyle(.secondary)
         }
     }
@@ -614,14 +680,14 @@ private struct TrustFlagsCard: View {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
                 Text("Cable trust signals")
-                    .font(.caption).bold()
+                    .scaledFont(.caption, weight: .bold)
                     .foregroundStyle(.secondary)
             }
             ForEach(flags, id: \.code) { flag in
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(flag.title).font(.callout).bold()
+                    Text(flag.title).scaledFont(.callout, weight: .bold)
                     Text(flag.detail)
-                        .font(.caption)
+                        .scaledFont(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
