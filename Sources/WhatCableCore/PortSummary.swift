@@ -47,6 +47,12 @@ extension PortSummary {
         let hasUSB2 = active.contains("USB2")
         let hasTB = active.contains("CIO") // Thunderbolt = Converged I/O
         let hasDP = active.contains("DisplayPort")
+        // Configuration Channel: required for USB-PD. Without CC the OS cannot
+        // run Discover Identity, so we can't infer anything about the cable's
+        // e-marker. M4 Mac Mini front USB-C ports are an example: they hang
+        // off a plain xHCI controller (no PD), so reporting "basic cable" on
+        // them wrongly blames the cable. See issue #50.
+        let pdCapable = supported.contains("CC")
         // E-marker presence is "did the cable respond to Discover Identity?",
         // which means we have an SOP'/SOP'' PDIdentity for this port. The
         // port's `ActiveCable` IOKit flag means "this cable contains active
@@ -85,7 +91,11 @@ extension PortSummary {
         if hasEmarker {
             bullets.append("Cable has an e-marker chip (advertises its capabilities)")
         } else if !active.isEmpty {
-            bullets.append("Cable does not advertise an e-marker (basic cable)")
+            if pdCapable {
+                bullets.append("Cable does not advertise an e-marker (basic cable)")
+            } else {
+                bullets.append("This port can't read cable details (USB-only port, no Power Delivery)")
+            }
         }
 
         if port.opticalCable == true {

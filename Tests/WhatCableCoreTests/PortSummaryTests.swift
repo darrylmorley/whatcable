@@ -170,11 +170,50 @@ final class PortSummaryTests: XCTestCase {
     }
 
     func testNoEmarkerCableProducesBasicCableBullet() {
-        let port = makePort(active: ["USB2"], emarker: false)
+        // PD-capable port (CC present) with no e-marker: existing wording.
+        let port = makePort(active: ["USB2"], supported: ["CC", "USB2"], emarker: false)
         let summary = PortSummary(port: port)
         XCTAssertTrue(
             summary.bullets.contains(where: { $0.contains("does not advertise") }),
             "expected a basic-cable bullet, got: \(summary.bullets)"
+        )
+    }
+
+    func testNoPDPortDoesNotClaimBasicCable() {
+        // USB-only port (no CC = no PD = no SOP' query possible). Don't blame
+        // the cable for a missing e-marker the OS could never have read. This
+        // is the M4 Mac Mini front-port case from issue #50.
+        let port = makePort(active: ["USB3"], supported: ["USB2", "USB3"], superSpeed: true)
+        let summary = PortSummary(port: port)
+        XCTAssertFalse(
+            summary.bullets.contains(where: { $0.contains("does not advertise") }),
+            "no-PD port should not claim 'basic cable', got: \(summary.bullets)"
+        )
+        XCTAssertTrue(
+            summary.bullets.contains(where: { $0.contains("can't read cable details") }),
+            "expected the 'port can't read cable details' bullet, got: \(summary.bullets)"
+        )
+    }
+
+    func testPDPortWithEmarkerStillShowsEmarker() {
+        // Sanity: presence of an e-marker means PD must have fired, regardless
+        // of whether the test fixture happens to set CC explicitly. We don't
+        // want the new gate to suppress legitimate e-marker bullets.
+        let port = makePort(
+            active: ["USB3"],
+            supported: ["CC", "USB2", "USB3"],
+            superSpeed: true
+        )
+        let cable = PDIdentity(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 0, parentPortNumber: 0,
+            vendorID: 0, productID: 0, bcdDevice: 0,
+            vdos: [], specRevision: 0
+        )
+        let summary = PortSummary(port: port, identities: [cable])
+        XCTAssertTrue(
+            summary.bullets.contains(where: { $0.contains("e-marker") && $0.contains("advertises") }),
+            "expected e-marker bullet on PD-capable port, got: \(summary.bullets)"
         )
     }
 

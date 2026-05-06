@@ -37,6 +37,7 @@ private struct PortDTO: Codable {
     let type: String?
     let className: String
     let connectionActive: Bool
+    let pdCapable: Bool
     let status: String
     let headline: String
     let subtitle: String
@@ -53,6 +54,7 @@ private struct PortDTO: Codable {
         self.type = port.portTypeDescription
         self.className = port.className
         self.connectionActive = port.connectionActive ?? false
+        self.pdCapable = port.transportsSupported.contains("CC")
 
         let summary = PortSummary(port: port, sources: sources, identities: identities)
         self.status = String(describing: summary.status)

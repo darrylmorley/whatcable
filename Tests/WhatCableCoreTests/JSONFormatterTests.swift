@@ -27,7 +27,7 @@ final class JSONFormatterTests: XCTestCase {
             superSpeedActive: true,
             usbModeType: nil,
             usbConnectString: nil,
-            transportsSupported: ["USB2", "USB3"],
+            transportsSupported: ["CC", "USB2", "USB3"],
             transportsActive: ["USB3"],
             transportsProvisioned: [],
             plugOrientation: nil,
@@ -98,7 +98,7 @@ final class JSONFormatterTests: XCTestCase {
         // rawProperties are optional and only appear when relevant data is
         // available; their presence is exercised in dedicated tests below.
         let expected: Set<String> = [
-            "name", "type", "className", "connectionActive", "status",
+            "name", "type", "className", "connectionActive", "pdCapable", "status",
             "headline", "subtitle", "bullets", "transports", "powerSources"
         ]
         let actual = Set(first.keys)
@@ -120,7 +120,7 @@ final class JSONFormatterTests: XCTestCase {
         let obj = parse(json)
         let port = (obj["ports"] as? [[String: Any]])?.first ?? [:]
         let transports = try XCTUnwrap(port["transports"] as? [String: Any])
-        XCTAssertEqual(transports["supported"] as? [String], ["USB2", "USB3"])
+        XCTAssertEqual(transports["supported"] as? [String], ["CC", "USB2", "USB3"])
         XCTAssertEqual(transports["active"] as? [String], ["USB3"])
         XCTAssertNotNil(transports["provisioned"] as? [String])
     }
@@ -249,6 +249,48 @@ final class JSONFormatterTests: XCTestCase {
         let port = (obj["ports"] as? [[String: Any]])?.first ?? [:]
         let raw = try XCTUnwrap(port["rawProperties"] as? [String: String])
         XCTAssertEqual(raw["PortType"], "2")
+    }
+
+    // MARK: - pdCapable
+
+    func testPDCapableTrueWhenCCPresent() throws {
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [], showRaw: false
+        )
+        let obj = parse(json)
+        let port = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        XCTAssertEqual(port["pdCapable"] as? Bool, true)
+    }
+
+    func testPDCapableFalseWhenCCAbsent() throws {
+        // Mimic an M4 Mac Mini front USB-C port: USB-only, no Configuration
+        // Channel, so no PD and no SOP' query possible.
+        let port = USBCPort(
+            id: 5, serviceName: "Port-USB-C@5", className: "IOPort",
+            portDescription: "Port-USB-C@5", portTypeDescription: "USB-C",
+            portNumber: 5, connectionActive: true, activeCable: nil,
+            opticalCable: nil, usbActive: true, superSpeedActive: true,
+            usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["USB2", "USB3"],
+            transportsActive: ["USB3"],
+            transportsProvisioned: ["USB2", "USB3"],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:],
+            powerCurrentLimits: [], firmwareVersion: nil, bootFlagsHex: nil,
+            rawProperties: [:]
+        )
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [], showRaw: false
+        )
+        let obj = parse(json)
+        let portJSON = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        XCTAssertEqual(portJSON["pdCapable"] as? Bool, false)
+        // And the port-level bullet should not claim "basic cable".
+        let bullets = portJSON["bullets"] as? [String] ?? []
+        XCTAssertFalse(bullets.contains(where: { $0.contains("does not advertise") }),
+                       "no-PD port should not claim 'basic cable', got: \(bullets)")
+        XCTAssertTrue(bullets.contains(where: { $0.contains("can't read cable details") }),
+                      "expected 'port can't read cable details' bullet, got: \(bullets)")
     }
 
     // MARK: - JSON validity
