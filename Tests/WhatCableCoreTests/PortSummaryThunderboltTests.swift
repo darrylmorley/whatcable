@@ -169,6 +169,41 @@ final class PortSummaryThunderboltTests: XCTestCase {
         )
     }
 
+    // MARK: - Single-hop must NOT trigger step-down
+
+    /// Regression: in Steve's TB3 sample, the host port reports
+    /// `Current Link Width = 2` while the Samsung's upstream port reports
+    /// `Current Link Width = 1` for the same physical cable. That's just
+    /// the controller-side view aggregating lanes the device-side view
+    /// doesn't; it's not a real step-down. Step-down only fires for
+    /// daisy-chains with two or more downstream switches.
+    func testSingleHopDoesNotEmitStepDown() {
+        let port = tbPort(socket: "1")
+        let host = sw(
+            uid: 100, depth: 0, parent: nil,
+            vendor: "Apple Inc.", model: "iOS",
+            ports: [lanePort(portNumber: 1, socketID: "1", speed: .tb3, widthRaw: 0x2)]
+        )
+        // Samsung-style single device: upstream port reports the same
+        // link from the device side with a different width value.
+        let samsung = sw(
+            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            vendor: "SAMSUNG ELECTRONICS CO.,LTD", model: "C34J79x",
+            ports: [lanePort(portNumber: 1, socketID: nil, speed: .tb3, widthRaw: 0x1)]
+        )
+
+        let summary = PortSummary(port: port, thunderboltSwitches: [host, samsung])
+        XCTAssertFalse(
+            summary.bullets.contains { $0.contains("Last leg drops") },
+            "single-hop must not emit step-down warning; got: \(summary.bullets)"
+        )
+        // Sanity: the single-hop bullets we DO want should still be there.
+        XCTAssertTrue(
+            summary.bullets.contains("Connected to SAMSUNG ELECTRONICS CO.,LTD C34J79x"),
+            "device label still required"
+        )
+    }
+
     // MARK: - Fallback when no matching switch is found
 
     func testFallsBackToGenericLabelWhenNoMatchingSwitch() {

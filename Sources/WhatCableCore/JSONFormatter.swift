@@ -301,7 +301,13 @@ private struct ThunderboltPortDTO: Codable {
         switch gen {
         case .tb3: return "tb3"
         case .usb4Tb4: return "usb4Tb4"
-        case .tb5: return "tb5"
+        // TB5 stays hedged in JSON for the same reason as the text
+        // renderer: the 0x2 -> TB5 mapping is inferred from Linux
+        // register definitions but not yet verified against an Apple
+        // Silicon TB5 paste-back. Machine consumers that want the raw
+        // code can read `rawSpeedCode` directly. The label flips to
+        // `"tb5"` once verified.
+        case .tb5: return "unknown(0x2_inferredTb5)"
         case .unknown(let raw): return "unknown(0x\(String(raw, radix: 16)))"
         }
     }

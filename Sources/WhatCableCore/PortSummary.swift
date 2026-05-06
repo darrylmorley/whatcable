@@ -241,10 +241,16 @@ private func thunderboltBullets(
         bullets.append("\(prefix) \(path)")
     }
 
-    // Step-down detection: compare the last leg's link to the host port's
-    // link. If the per-lane Gbps or lane count drops, surface it so the
-    // user knows the slowest leg.
-    if downstream.count >= 1,
+    // Step-down detection: only meaningful on real daisy-chains
+    // (two or more downstream switches). On a single-hop link, the
+    // host's downstream port and the device's upstream port describe
+    // the SAME physical cable from opposite ends; the two readings can
+    // disagree on lane count (the controller-side view aggregates lanes
+    // that the device-side view doesn't), and that disagreement is not
+    // a real step-down. With two or more hops, comparing the first link
+    // (host -> device 1) to the last link (device N-1 -> device N)
+    // genuinely contrasts two distinct cables.
+    if downstream.count >= 2,
        let hostPort = ThunderboltTopology.activeDownstreamLanePort(root),
        let last = downstream.last,
        let lastLeg = ThunderboltTopology.activeDownstreamLanePort(last)

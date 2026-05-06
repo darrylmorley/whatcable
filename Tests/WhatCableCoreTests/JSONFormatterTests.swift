@@ -373,6 +373,43 @@ final class JSONFormatterTests: XCTestCase {
         XCTAssertEqual(port["txLanes"] as? Int, 2)
     }
 
+    /// Regression: TB5 must stay hedged in JSON the same way it's hedged
+    /// in the text renderer. Otherwise a `--json` consumer that parses
+    /// `generation == "tb5"` would treat the inferred mapping as verified.
+    func testTb5JsonGenerationLabelStaysHedged() throws {
+        let host = ThunderboltSwitch(
+            id: 1, className: "IOThunderboltSwitchType9",
+            vendorID: 1452, vendorName: "Apple Inc.", modelName: "iOS",
+            routerID: 0, depth: 0, routeString: 0,
+            upstreamPortNumber: 7, maxPortNumber: 8,
+            supportedSpeed: SupportedSpeedMask(rawValue: 14),
+            ports: [
+                ThunderboltPort(
+                    portNumber: 1, socketID: "1", adapterType: .lane,
+                    currentSpeed: .tb5,
+                    currentWidth: LinkWidth(rawValue: 0x2),
+                    targetWidth: .dual,
+                    rawTargetSpeed: nil, linkBandwidthRaw: 800
+                )
+            ],
+            parentSwitchUID: nil
+        )
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [], showRaw: false,
+            thunderboltSwitches: [host]
+        )
+        let obj = parse(json)
+        let port = ((obj["thunderboltSwitches"] as? [[String: Any]])?.first?["ports"] as? [[String: Any]])?.first ?? [:]
+        let gen = port["generation"] as? String ?? ""
+        XCTAssertTrue(
+            gen.contains("inferredTb5") || gen.hasPrefix("unknown"),
+            "TB5 must stay hedged in JSON; got generation = \(gen)"
+        )
+        XCTAssertNotEqual(gen, "tb5", "must not promise verified TB5 yet")
+        // Raw speed code is still exposed for diagnostics consumers.
+        XCTAssertEqual(port["rawSpeedCode"] as? Int, 0x2)
+    }
+
     func testPortDtoCarriesThunderboltSwitchUidReference() throws {
         let host = ThunderboltSwitch(
             id: 12345,
