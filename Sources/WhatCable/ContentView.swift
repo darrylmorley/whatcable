@@ -218,20 +218,15 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    /// Live-signal check that bypasses the unreliable `port.connectionActive`
-    /// flag. A port is considered live if any of the three IOKit watchers
-    /// (devices, power sources, PD identities) has at least one entry tied
-    /// to it. Each watcher tracks add/terminate via real notifications, so
-    /// their union reflects the current physical state.
+    /// Live-signal check delegating to the pure helper in `WhatCableCore`,
+    /// so the same rules apply to both the GUI and any test harness.
     private func isPortLive(_ port: USBCPort) -> Bool {
-        if !powerWatcher.sources(for: port).isEmpty { return true }
-        if !pdWatcher.identities(for: port).isEmpty { return true }
-        if !matchingDevices(for: port).isEmpty { return true }
-        // MagSafe holds connectionActive=true for several seconds after unplug,
-        // so we only fall back to it for regular USB-C ports where it is reliable.
-        let isMagSafe = port.portTypeDescription?.hasPrefix("MagSafe") == true
-        if !isMagSafe && port.connectionActive == true { return true }
-        return false
+        WhatCableCore.isPortLive(
+            port: port,
+            powerSources: powerWatcher.sources(for: port),
+            identities: pdWatcher.identities(for: port),
+            matchingDevices: matchingDevices(for: port)
+        )
     }
 
     /// Match USB devices to their physical port. The IOKit relationship
