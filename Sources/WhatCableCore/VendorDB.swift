@@ -1,10 +1,19 @@
 import Foundation
 
-/// Tiny in-memory USB-IF vendor name lookup. We only carry vendors likely to
-/// appear in cables, chargers, hubs, docks, and storage devices — i.e. the
-/// stuff that ends up in the popover. Add more as needed.
+/// USB-IF vendor name lookup. Two layers:
 ///
-/// Source: usb.org public VID assignments. Names trimmed to common form.
+/// 1. A small hand-curated map of common vendors, where we want a clean
+///    short display name (e.g. "Apple" rather than the USB-IF's verbose
+///    "Apple Inc."). Add entries here when you want to override or
+///    shorten what the bundled list provides.
+///
+/// 2. The bundled USB-IF list (~13,000+ entries), refreshed by
+///    `scripts/update-vendor-db.sh`. Used as a fallback so cables and
+///    devices from any USB-IF registered vendor get a real name even if
+///    we haven't curated them.
+///
+/// Lookup checks the curated map first, then falls back to the bundled
+/// list. Returns nil only when the VID is in neither layer.
 public enum VendorDB {
     private static let names: [Int: String] = [
         0x05AC: "Apple",
@@ -95,7 +104,8 @@ public enum VendorDB {
     ]
 
     public static func name(for vendorID: Int) -> String? {
-        names[vendorID]
+        if let curated = names[vendorID] { return curated }
+        return USBIFVendors.name(for: vendorID)
     }
 
     /// Returns "Realtek (0x0BDA)" if known, else "0x0BDA".

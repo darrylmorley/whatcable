@@ -24,14 +24,37 @@ final class VendorDBTests: XCTestCase {
     }
 
     func testRetiredIncorrectEntries() {
-        // 0x2BCF was previously labelled "Anker" but is actually
-        // Magtrol, Inc. per USB-IF. 0x32AC was labelled "Apple
-        // (Thunderbolt 4)" but is actually Framework Computer Inc.
-        // We dropped both rather than re-labelling, since neither
-        // vendor is cable-relevant. Pin the removal so a future
-        // restore would have to come back through review.
-        XCTAssertNil(VendorDB.name(for: 0x2BCF))
-        XCTAssertNil(VendorDB.name(for: 0x32AC))
+        // 0x2BCF was previously labelled "Anker" in the curated list
+        // but is actually Magtrol, Inc. per USB-IF. 0x32AC was labelled
+        // "Apple (Thunderbolt 4)" but is actually Framework Computer.
+        // Both wrong labels are gone from the curated overrides; they
+        // now fall through to the bundled USB-IF list and resolve to
+        // the correct registered vendors. This test pins both the
+        // removal of the wrong overrides and the correct fallback.
+        XCTAssertEqual(VendorDB.name(for: 0x2BCF), "Magtrol, Inc.")
+        XCTAssertEqual(VendorDB.name(for: 0x32AC), "Framework Computer Inc")
+    }
+
+    func testBundledUSBIFListProvidesFallbackNames() {
+        // VIDs not in the curated list but registered with USB-IF
+        // should now resolve via the bundled list. 0x121A is
+        // TimeKeeping Systems per USB-IF March 2026.
+        XCTAssertEqual(VendorDB.name(for: 0x121A), "TimeKeeping Systems, Inc.")
+    }
+
+    func testCuratedNamesOverrideBundledList() {
+        // Apple's USB-IF entry says simply "Apple" in the bundled list,
+        // which matches our curated entry. Pick a VID where the curated
+        // form differs from USB-IF's verbose form to confirm the curated
+        // override wins.
+        // Hongkong Freeport: USB-IF lists the long form, our curated
+        // entry uses the shorter "Hongkong Freeport Electronics".
+        XCTAssertEqual(VendorDB.name(for: 0x201C), "Hongkong Freeport Electronics")
+    }
+
+    func testTotallyUnregisteredVIDStillReturnsNil() {
+        // 0xDEAD is not a registered VID; both layers should miss.
+        XCTAssertNil(VendorDB.name(for: 0xDEAD))
     }
 
     func testUnknownVendorReturnsNil() {

@@ -15,7 +15,8 @@ let package = Package(
     targets: [
         .target(
             name: "WhatCableCore",
-            path: "Sources/WhatCableCore"
+            path: "Sources/WhatCableCore",
+            resources: [.process("Resources")]
         ),
         .target(
             name: "WhatCableDarwinBackend",
