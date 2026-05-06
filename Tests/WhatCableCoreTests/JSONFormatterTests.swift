@@ -230,6 +230,24 @@ final class JSONFormatterTests: XCTestCase {
         }
     }
 
+    func testTrustFlagsEmitsH3ForUnregisteredVID() throws {
+        let port = makePort()
+        // 0xDEAD isn't in the curated map or the bundled USB-IF list.
+        let id = cableIdentity(vendorID: 0xDEAD, cableVDO: (0b10 << 5) | 0b011)
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [id], showRaw: false
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let cable = try XCTUnwrap(portObj["cable"] as? [String: Any])
+        let flags = try XCTUnwrap(cable["trustFlags"] as? [[String: Any]])
+        XCTAssertEqual(flags.count, 1)
+        XCTAssertEqual(flags.first?["code"] as? String, "vidNotInUSBIFList")
+        // Detail should reference the VID in hex so users can grep / search.
+        let detail = flags.first?["detail"] as? String ?? ""
+        XCTAssertTrue(detail.contains("0xDEAD"), "detail should include hex VID, got: \(detail)")
+    }
+
     // MARK: - Raw properties gating
 
     func testRawPropertiesOmittedByDefault() throws {

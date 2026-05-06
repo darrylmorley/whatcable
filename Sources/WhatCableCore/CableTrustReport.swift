@@ -25,6 +25,11 @@ public struct CableTrustReport: Hashable {
 
         if identity.vendorID == 0 {
             collected.append(.zeroVendorID)
+        } else if !VendorDB.isRegistered(identity.vendorID) {
+            // Only flag non-zero unregistered VIDs. The zeroed-VID case
+            // is already covered by .zeroVendorID with stronger wording;
+            // we don't want to double-flag.
+            collected.append(.vidNotInUSBIFList(identity.vendorID))
         }
 
         if let cv = identity.cableVDO {
@@ -54,12 +59,19 @@ public enum TrustFlag: Hashable {
     /// Cable VDO current field uses the reserved bit pattern (3).
     case reservedCurrentEncoding(Int)
 
+    /// E-marker reports a non-zero vendor ID that isn't in any of our
+    /// known sources (the curated VendorDB or the bundled USB-IF list).
+    /// Could be a post-bundle assignment, a copied number, or a typo
+    /// from a knock-off chip programmer. Hedged accordingly.
+    case vidNotInUSBIFList(Int)
+
     /// Short identifier suitable for JSON output. Stable across releases.
     public var code: String {
         switch self {
         case .zeroVendorID: return "zeroVendorID"
         case .reservedSpeedEncoding: return "reservedSpeedEncoding"
         case .reservedCurrentEncoding: return "reservedCurrentEncoding"
+        case .vidNotInUSBIFList: return "vidNotInUSBIFList"
         }
     }
 
@@ -72,6 +84,8 @@ public enum TrustFlag: Hashable {
             return "E-marker uses a reserved data-speed value"
         case .reservedCurrentEncoding:
             return "E-marker uses a reserved current-rating value"
+        case .vidNotInUSBIFList:
+            return "Vendor ID isn't in USB-IF's published list"
         }
     }
 
@@ -84,6 +98,9 @@ public enum TrustFlag: Hashable {
             return "The cable's e-marker reports speed value \(bits), which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values."
         case .reservedCurrentEncoding(let bits):
             return "The cable's e-marker reports current value \(bits), which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values."
+        case .vidNotInUSBIFList(let vid):
+            let hex = String(format: "0x%04X", vid)
+            return "The cable's e-marker reports vendor \(hex), which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies."
         }
     }
 }

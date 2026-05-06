@@ -69,10 +69,66 @@ final class CableTrustReportTests: XCTestCase {
         ])
     }
 
+    // MARK: - H3: VID not in USB-IF list
+
+    func testRegisteredVendorDoesNotFireH3() {
+        // 0x05AC (Apple) is in both the curated map and the bundled list.
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0x05AC))
+        XCTAssertTrue(report.isEmpty)
+    }
+
+    func testCableEmarkerChipVendorsDoNotFireH3() {
+        // The six chip vendors observed in real cable reports
+        // (#44, #45, #48, #49, #60, #62). All registered with USB-IF
+        // per the bundled March 2026 list, so H3 must not fire.
+        for vid in [0x20C2, 0x315C, 0x2095, 0x2E99, 0x201C, 0x2B1D] {
+            let report = CableTrustReport(identity: cableIdentity(vendorID: vid))
+            XCTAssertTrue(
+                report.isEmpty,
+                "H3 should not fire on registered VID \(String(format: "0x%04X", vid))"
+            )
+        }
+    }
+
+    func testUnregisteredVIDFiresH3() {
+        // 0xDEAD is not a USB-IF assignment in any source we carry.
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0xDEAD))
+        XCTAssertEqual(report.flags, [.vidNotInUSBIFList(0xDEAD)])
+    }
+
+    func testZeroVendorIDDoesNotDoubleFire() {
+        // VID 0 fires zeroVendorID (stronger signal); we don't also
+        // want H3 firing as a noisier "0x0000 not registered" message.
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0))
+        XCTAssertEqual(report.flags, [.zeroVendorID])
+        XCTAssertFalse(report.flags.contains { flag in
+            if case .vidNotInUSBIFList = flag { return true }
+            return false
+        })
+    }
+
+    func testH3CombinesWithReservedEncodings() {
+        // Unregistered VID + reserved speed bits = both flags.
+        let vdo = UInt32(0b111) | UInt32(2 << 5)
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0xDEAD, cableVDO: vdo))
+        XCTAssertEqual(report.flags, [
+            .vidNotInUSBIFList(0xDEAD),
+            .reservedSpeedEncoding(7)
+        ])
+    }
+
+    // MARK: - JSON contract
+
     func testFlagCodesAreStable() {
         // Codes are part of the JSON contract; pin them.
         XCTAssertEqual(TrustFlag.zeroVendorID.code, "zeroVendorID")
         XCTAssertEqual(TrustFlag.reservedSpeedEncoding(5).code, "reservedSpeedEncoding")
         XCTAssertEqual(TrustFlag.reservedCurrentEncoding(3).code, "reservedCurrentEncoding")
+        XCTAssertEqual(TrustFlag.vidNotInUSBIFList(0xDEAD).code, "vidNotInUSBIFList")
+    }
+
+    func testH3DetailIncludesVIDInHex() {
+        let detail = TrustFlag.vidNotInUSBIFList(0xABCD).detail
+        XCTAssertTrue(detail.contains("0xABCD"))
     }
 }

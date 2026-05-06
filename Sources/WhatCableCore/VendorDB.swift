@@ -108,6 +108,15 @@ public enum VendorDB {
         return USBIFVendors.name(for: vendorID)
     }
 
+    /// True if the VID is present in either the curated map or the
+    /// bundled USB-IF list. Distinct from `name(for:) != nil` only for
+    /// VID 0, which the bundled lookup hides for display purposes but
+    /// is still considered "registered" (USB-IF assigns 0 to itself).
+    public static func isRegistered(_ vendorID: Int) -> Bool {
+        if names[vendorID] != nil { return true }
+        return USBIFVendors.isRegistered(vendorID)
+    }
+
     /// Returns "Realtek (0x0BDA)" if known, else "0x0BDA".
     public static func label(for vendorID: Int) -> String {
         if let n = name(for: vendorID) {
