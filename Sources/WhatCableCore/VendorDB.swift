@@ -9,6 +9,16 @@ public enum VendorDB {
     private static let names: [Int: String] = [
         0x05AC: "Apple",
         0x004C: "Apple (legacy)",
+        // Cable e-marker silicon vendors. Cable e-markers carry the chip
+        // vendor's VID, not the cable brand's, so these come up far more
+        // often than the consumer-device VIDs further down. Verified
+        // against USB-IF's March 2026 vendor ID list.
+        0x20C2: "Sumitomo Electric Optical Comm",
+        0x315C: "Chengdu Convenientpower Semiconductor",
+        0x2095: "CE LINK",
+        0x2E99: "Hynetek Semiconductor",
+        0x201C: "Hongkong Freeport Electronics",
+        0x2B1D: "Lintes Technology",
         0x05E3: "Genesys Logic",
         0x0BDA: "Realtek",
         0x174C: "ASMedia",
@@ -48,8 +58,7 @@ public enum VendorDB {
         0x056D: "EIZO",
         0x0AF8: "Belkin",
         0x050D: "Belkin (older)",
-        0x2BCF: "Anker",
-        0x291A: "Anker (older)",
+        0x291A: "Anker",
         0x0BB8: "Plantronics / Poly",
         0x0763: "M-Audio",
         0x0FCE: "Sony Mobile",
@@ -75,7 +84,6 @@ public enum VendorDB {
         0x2C7C: "Quectel",
         0x2341: "Arduino",
         0x1A40: "Terminus (hub chips)",
-        0x32AC: "Apple (Thunderbolt 4)",
         0x1D6B: "Linux Foundation",
         0x0CF8: "Targus",
         0x0B05: "ASUS",
