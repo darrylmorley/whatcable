@@ -18,6 +18,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
         let powerWatcher = PowerSourceWatcher()
         let pdWatcher = PDIdentityWatcher()
         let usbWatcher = USBWatcher()
+        let tbWatcher = ThunderboltWatcher()
         var started = false
 
         func ensureStarted() {
@@ -26,6 +27,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
             powerWatcher.start()
             pdWatcher.start()
             usbWatcher.start()
+            tbWatcher.start()
             started = true
         }
 
@@ -36,12 +38,14 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
             portWatcher.refresh()
             powerWatcher.refresh()
             pdWatcher.refresh()
+            tbWatcher.refresh()
             return CableSnapshot(
                 ports: portWatcher.ports,
                 powerSources: powerWatcher.sources,
                 identities: pdWatcher.identities,
                 usbDevices: usbWatcher.devices,
-                adapter: SystemPower.currentAdapter()
+                adapter: SystemPower.currentAdapter(),
+                thunderboltSwitches: tbWatcher.switches
             )
         }
     }

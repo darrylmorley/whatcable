@@ -22,19 +22,26 @@ public struct CableSnapshot: Equatable {
     public let identities: [PDIdentity]
     public let usbDevices: [USBDevice]
     public let adapter: AdapterInfo?
+    /// Top-level array of every Thunderbolt switch the host can see. Empty
+    /// on machines without a Thunderbolt controller, or when IOKit returns
+    /// nothing (the JSON shape adds the key but with an empty array, so
+    /// downstream consumers can rely on the field always being present).
+    public let thunderboltSwitches: [ThunderboltSwitch]
 
     public init(
         ports: [USBCPort],
         powerSources: [PowerSource],
         identities: [PDIdentity],
         usbDevices: [USBDevice],
-        adapter: AdapterInfo?
+        adapter: AdapterInfo?,
+        thunderboltSwitches: [ThunderboltSwitch] = []
     ) {
         self.ports = ports
         self.powerSources = powerSources
         self.identities = identities
         self.usbDevices = usbDevices
         self.adapter = adapter
+        self.thunderboltSwitches = thunderboltSwitches
     }
 }
 
