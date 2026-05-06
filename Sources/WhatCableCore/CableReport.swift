@@ -32,6 +32,11 @@ public enum CableReport {
         public let maxWatts: Int?
         public let type: String?
         public let hasEmarker: Bool
+        /// Raw 32-bit VDOs as the cable returned them. Included in reports
+        /// so we can later distinguish "macOS dropped the field" from "the
+        /// cable genuinely sent zero" when calibrating heuristics like the
+        /// zero-PID flag.
+        public let vdos: [UInt32]
 
         public init(identity: PDIdentity) {
             self.vendorID = identity.vendorID
@@ -39,6 +44,7 @@ public enum CableReport {
             self.vendorIDHex = String(format: "0x%04X", identity.vendorID)
             self.productIDHex = String(format: "0x%04X", identity.productID)
             self.vendorName = VendorDB.name(for: identity.vendorID) ?? "Unregistered / unknown"
+            self.vdos = identity.vdos
             if let cv = identity.cableVDO {
                 self.speed = cv.speed.label
                 self.currentRating = cv.current.label
@@ -103,6 +109,19 @@ public enum CableReport {
 
     /// Issue endpoint the report is filed against.
     public static let issueBaseURL = URL(string: "https://github.com/darrylmorley/whatcable/issues/new")!
+
+    /// Map a VDO array index to its role per the USB-PD spec layout for a
+    /// passive / active cable Discover Identity response. Anything past the
+    /// known indices is "Other" so we still surface the raw value.
+    static func vdoRoleLabel(at index: Int) -> String {
+        switch index {
+        case 0: return "ID Header"
+        case 1: return "Cert Stat"
+        case 2: return "Product"
+        case 3: return "Cable"
+        default: return "Other"
+        }
+    }
 }
 
 extension CableReport.Payload {
@@ -128,6 +147,18 @@ extension CableReport.Payload {
         }
         lines.append("| Has e-marker | \(cable.hasEmarker ? "Yes" : "No") |")
         lines.append("")
+        if !cable.vdos.isEmpty {
+            lines.append("### Raw VDOs")
+            lines.append("")
+            lines.append("| Index | Role | Value |")
+            lines.append("|---|---|---|")
+            for (i, vdo) in cable.vdos.enumerated() {
+                let role = CableReport.vdoRoleLabel(at: i)
+                let hex = String(format: "0x%08X", vdo)
+                lines.append("| \(i) | \(role) | `\(hex)` |")
+            }
+            lines.append("")
+        }
         lines.append("### Environment")
         lines.append("")
         lines.append("- WhatCable: `\(appVersion)`")
