@@ -3,67 +3,69 @@ import XCTest
 
 final class VendorDBTests: XCTestCase {
 
-    func testKnownVendorReturnsName() {
+    // MARK: - Names come from the bundled USB-IF list
+
+    func testKnownVendorsReturnUSBIFNames() {
+        // No curated overrides. USB-IF's published name is what we show,
+        // verbatim. The legal-suffix forms are accurate and not misleading.
         XCTAssertEqual(VendorDB.name(for: 0x05AC), "Apple")
-        XCTAssertEqual(VendorDB.name(for: 0x0BDA), "Realtek")
-        // Anker's actual USB-IF VID is 0x291A (verified against the
-        // March 2026 USB-IF vendor list).
-        XCTAssertEqual(VendorDB.name(for: 0x291A), "Anker")
+        XCTAssertEqual(VendorDB.name(for: 0x0BDA), "Realtek Semiconductor Corp.")
+        XCTAssertEqual(VendorDB.name(for: 0x046D), "Logitech Inc.")
+        XCTAssertEqual(VendorDB.name(for: 0x291A), "Anker Innovations Limited")
+        XCTAssertEqual(VendorDB.name(for: 0x18D1), "Google Inc.")
     }
 
     func testCableEmarkerChipVendorsResolve() {
         // E-marker silicon vendors observed in real cable reports
-        // (#44, #45, #48, #49, #60, #62). Verified against USB-IF's
-        // March 2026 vendor list.
-        XCTAssertEqual(VendorDB.name(for: 0x20C2), "Sumitomo Electric Optical Comm")
-        XCTAssertEqual(VendorDB.name(for: 0x315C), "Chengdu Convenientpower Semiconductor")
-        XCTAssertEqual(VendorDB.name(for: 0x2095), "CE LINK")
-        XCTAssertEqual(VendorDB.name(for: 0x2E99), "Hynetek Semiconductor")
-        XCTAssertEqual(VendorDB.name(for: 0x201C), "Hongkong Freeport Electronics")
-        XCTAssertEqual(VendorDB.name(for: 0x2B1D), "Lintes Technology")
+        // (#44, #45, #48, #49, #60, #62). USB-IF carries each of them
+        // with its full legal name; we surface that as-is.
+        XCTAssertEqual(
+            VendorDB.name(for: 0x20C2),
+            "Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab"
+        )
+        XCTAssertEqual(
+            VendorDB.name(for: 0x315C),
+            "Chengdu Convenientpower Semiconductor Co., LTD"
+        )
+        XCTAssertEqual(VendorDB.name(for: 0x2095), "CE LINK LIMITED")
+        XCTAssertEqual(VendorDB.name(for: 0x2E99), "Hynetek Semiconductor Co., Ltd")
+        XCTAssertEqual(
+            VendorDB.name(for: 0x201C),
+            "Hongkong Freeport Electronics Co., Limited"
+        )
+        XCTAssertEqual(VendorDB.name(for: 0x2B1D), "Lintes Technology Co., Ltd.")
     }
 
-    func testRetiredIncorrectEntries() {
-        // 0x2BCF was previously labelled "Anker" in the curated list
-        // but is actually Magtrol, Inc. per USB-IF. 0x32AC was labelled
-        // "Apple (Thunderbolt 4)" but is actually Framework Computer.
-        // Both wrong labels are gone from the curated overrides; they
-        // now fall through to the bundled USB-IF list and resolve to
-        // the correct registered vendors. This test pins both the
-        // removal of the wrong overrides and the correct fallback.
+    // MARK: - Formerly-wrong curated entries now resolve correctly
+
+    func testFormerlyWrongCuratedEntriesNowReflectUSBIF() {
+        // Before this audit several curated entries attributed VIDs to
+        // the wrong companies. With the curated layer dropped, each
+        // resolves via the bundled USB-IF list to the correct vendor.
+        // Pin them so a future "let's add an override" can't silently
+        // restore the bad data without going through review.
         XCTAssertEqual(VendorDB.name(for: 0x2BCF), "Magtrol, Inc.")
         XCTAssertEqual(VendorDB.name(for: 0x32AC), "Framework Computer Inc")
+        XCTAssertEqual(VendorDB.name(for: 0x103C), "AMX Corp.")
+        XCTAssertEqual(VendorDB.name(for: 0x0FFE), "ASKA Corporation")
+        XCTAssertEqual(VendorDB.name(for: 0x152E), "HLDS (Hitachi-LG Data Storage, Inc.)")
+        XCTAssertEqual(VendorDB.name(for: 0x0AF8), "Taiwan Regular Electronics Co., Ltd.")
     }
 
-    func testBundledUSBIFListProvidesFallbackNames() {
-        // VIDs not in the curated list but registered with USB-IF
-        // should now resolve via the bundled list. 0x121A is
-        // TimeKeeping Systems per USB-IF March 2026.
-        XCTAssertEqual(VendorDB.name(for: 0x121A), "TimeKeeping Systems, Inc.")
-    }
+    // MARK: - Unregistered VIDs
 
-    func testCuratedNamesOverrideBundledList() {
-        // Apple's USB-IF entry says simply "Apple" in the bundled list,
-        // which matches our curated entry. Pick a VID where the curated
-        // form differs from USB-IF's verbose form to confirm the curated
-        // override wins.
-        // Hongkong Freeport: USB-IF lists the long form, our curated
-        // entry uses the shorter "Hongkong Freeport Electronics".
-        XCTAssertEqual(VendorDB.name(for: 0x201C), "Hongkong Freeport Electronics")
-    }
-
-    func testTotallyUnregisteredVIDStillReturnsNil() {
-        // 0xDEAD is not a registered VID; both layers should miss.
+    func testUnregisteredVIDReturnsNil() {
         XCTAssertNil(VendorDB.name(for: 0xDEAD))
     }
 
-    func testUnknownVendorReturnsNil() {
-        XCTAssertNil(VendorDB.name(for: 0xDEAD))
-    }
+    // MARK: - label()
 
     func testLabelIncludesNameAndHex() {
         XCTAssertEqual(VendorDB.label(for: 0x05AC), "Apple (0x05AC)")
-        XCTAssertEqual(VendorDB.label(for: 0x0BDA), "Realtek (0x0BDA)")
+        XCTAssertEqual(
+            VendorDB.label(for: 0x0BDA),
+            "Realtek Semiconductor Corp. (0x0BDA)"
+        )
     }
 
     func testLabelFallsBackToHexOnly() {
@@ -71,8 +73,11 @@ final class VendorDBTests: XCTestCase {
         XCTAssertEqual(VendorDB.label(for: 0x0001), "0x0001")
     }
 
-    func testLabelHexIsUppercaseFourDigits() {
-        // VID 0x004C should render as 004C (zero-padded), uppercase.
-        XCTAssertEqual(VendorDB.label(for: 0x004C), "Apple (legacy) (0x004C)")
+    // MARK: - isRegistered
+
+    func testIsRegisteredCoversBundledList() {
+        XCTAssertTrue(VendorDB.isRegistered(0x05AC))
+        XCTAssertTrue(VendorDB.isRegistered(0x291A))
+        XCTAssertFalse(VendorDB.isRegistered(0xDEAD))
     }
 }
