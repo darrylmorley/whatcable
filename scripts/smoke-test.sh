@@ -64,24 +64,19 @@ cp "${BIN_PATH}/${CLI_PRODUCT}" "${HELPERS_DIR}/${CLI_BIN_NAME}"
 
 # WhatCableCore ships the bundled USB-IF vendor list as a `.process`
 # resource. SPM wraps `Sources/WhatCableCore/Resources/` in a bundle
-# named `WhatCable_WhatCableCore.bundle` next to the per-arch build
-# output, but the universal --show-bin-path doesn't include it, and
-# the contents are just our TSV (no compile step). Build the bundle
-# directly from source so we don't depend on per-arch build paths.
-#
-# Bundle.module's lookup chain checks Bundle.main.resourceURL (the
-# .app's Contents/Resources) AND the directory containing the
-# executable. Copy to both locations so the GUI binary (in MacOS/)
-# and the CLI binary (in Helpers/) can both find the resource.
+# named `WhatCable_WhatCableCore.bundle`. Put it in Contents/Resources
+# so Bundle.main.resourceURL (which Bundle.module's lookup chain
+# checks first) resolves it for both the GUI binary and the CLI when
+# launched from inside the .app. We do not ship the bundle into
+# Contents/Helpers because codesign rejects non-bundle directories
+# placed there.
 SPM_BUNDLE_NAME="WhatCable_WhatCableCore.bundle"
 SPM_RESOURCES_SRC="Sources/WhatCableCore/Resources"
 if [[ -d "${SPM_RESOURCES_SRC}" ]]; then
-    for dest_dir in "${RESOURCES_DIR}" "${HELPERS_DIR}"; do
-        bundle_path="${dest_dir}/${SPM_BUNDLE_NAME}"
-        rm -rf "${bundle_path}"
-        mkdir -p "${bundle_path}"
-        cp -R "${SPM_RESOURCES_SRC}/." "${bundle_path}/"
-    done
+    bundle_path="${RESOURCES_DIR}/${SPM_BUNDLE_NAME}"
+    rm -rf "${bundle_path}"
+    mkdir -p "${bundle_path}"
+    cp -R "${SPM_RESOURCES_SRC}/." "${bundle_path}/"
 fi
 
 echo "==> Verifying universal binaries"
