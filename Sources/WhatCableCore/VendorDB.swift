@@ -20,15 +20,24 @@ public enum VendorDB {
 
     public static func name(for vendorID: Int) -> String? {
         if let override = curatedOverrides[vendorID] { return override }
+        // 0xFFFF is the USB-PD spec-defined "no vendor ID assigned"
+        // sentinel (PID forced to 0). Surface that neutrally rather
+        // than letting it look unregistered.
+        if vendorID == 0xFFFF {
+            return "No vendor ID assigned (USB-PD spec sentinel)"
+        }
         return USBIFVendors.name(for: vendorID)
     }
 
     /// True if the VID is present in either the override map or the
     /// bundled USB-IF list. Distinct from `name(for:) != nil` only for
-    /// VID 0, which the bundled lookup hides for display purposes but
-    /// is still considered "registered" (USB-IF assigns 0 to itself).
+    /// VID 0 (which the bundled lookup hides for display purposes but
+    /// is still considered "registered" — USB-IF assigns 0 to itself)
+    /// and the spec sentinel `0xFFFF`, which we name but treat as not
+    /// a registered assignment.
     public static func isRegistered(_ vendorID: Int) -> Bool {
         if curatedOverrides[vendorID] != nil { return true }
+        if vendorID == 0xFFFF { return false }
         return USBIFVendors.isRegistered(vendorID)
     }
 

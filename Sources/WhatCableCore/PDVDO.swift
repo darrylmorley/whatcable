@@ -114,6 +114,11 @@ public enum PDVDO {
     public enum DecodeWarning: Hashable {
         case reservedSpeedEncoding(Int)
         case reservedCurrentEncoding(Int)
+        /// Cable latency field uses a reserved value. Bounds depend on
+        /// cable type: passive cables treat 0000 and 1001..1111 as
+        /// invalid; active cables treat 0000 and 1011..1111 as invalid
+        /// (1001 and 1010 carry valid optical-cable latencies).
+        case reservedCableLatencyEncoding(Int)
     }
 
     public struct CableVDO: Hashable {
@@ -125,6 +130,10 @@ public enum PDVDO {
         public let vbusThroughCable: Bool
         /// Encoded "Maximum VBUS Voltage" field. 0=20V, 1=30V, 2=40V, 3=50V.
         public let maxVoltageEncoded: Int
+        /// Raw 4-bit "Cable Latency" field (bits 16..13). 0000 and reserved
+        /// values per cable type are flagged via `decodeWarnings`. Use
+        /// `latencyNanoseconds` for a typed interpretation.
+        public let cableLatencyEncoded: Int
         public let decodeWarnings: [DecodeWarning]
 
         public var maxVolts: Int {
@@ -134,6 +143,27 @@ public enum PDVDO {
             case 2: return 40
             case 3: return 50
             default: return 20
+            }
+        }
+
+        /// Approximate one-way cable latency in nanoseconds, decoded from
+        /// `cableLatencyEncoded`. Returns `nil` for the reserved values
+        /// flagged in `decodeWarnings`. The 0001..1000 range maps roughly
+        /// 10 ns per cable metre. Active cables additionally carry 1001
+        /// (~1000 ns) and 1010 (~2000 ns) for optical lengths.
+        public var latencyNanoseconds: Int? {
+            switch cableLatencyEncoded {
+            case 0b0001: return 10
+            case 0b0010: return 20
+            case 0b0011: return 30
+            case 0b0100: return 40
+            case 0b0101: return 50
+            case 0b0110: return 60
+            case 0b0111: return 70
+            case 0b1000: return 80    // ">70 ns" per spec; treat as 80 for display purposes
+            case 0b1001 where cableType == .active: return 1000
+            case 0b1010 where cableType == .active: return 2000
+            default: return nil
             }
         }
     }
@@ -147,6 +177,7 @@ public enum PDVDO {
         let decodedCurrent = CableCurrent(rawValue: currentBits)
         let current = decodedCurrent ?? .usbDefault
         let maxV = Int((vdo >> 9) & 0b11)
+        let latencyBits = Int((vdo >> 13) & 0b1111)
         let cableType: CableType = isActive ? .active : .passive
         var warnings: [DecodeWarning] = []
         if decodedSpeed == nil {
@@ -154,6 +185,28 @@ public enum PDVDO {
         }
         if decodedCurrent == nil {
             warnings.append(.reservedCurrentEncoding(currentBits))
+        }
+        // The PD spec also flags `00` as Invalid for VBUS Current
+        // Handling (treat as 3 A), but real-world cables — including
+        // basic USB 2.0 charging cables — emit `00` as a "default"
+        // routinely. We intentionally don't warn on `00` because the
+        // false-positive rate would be high, and we lack calibration
+        // data showing it correlating with counterfeits. Revisit if
+        // future cable reports show otherwise.
+        // Cable Latency field. 0000 is "Invalid" for both cable types.
+        // Passive cables also treat 1001..1111 as Invalid. Active cables
+        // accept 1001 (~1000 ns optical) and 1010 (~2000 ns optical),
+        // and treat 1011..1111 as Invalid.
+        let latencyInvalid: Bool
+        if latencyBits == 0 {
+            latencyInvalid = true
+        } else if isActive {
+            latencyInvalid = latencyBits >= 0b1011
+        } else {
+            latencyInvalid = latencyBits >= 0b1001
+        }
+        if latencyInvalid {
+            warnings.append(.reservedCableLatencyEncoding(latencyBits))
         }
 
         let volts: Double
@@ -173,8 +226,26 @@ public enum PDVDO {
             cableType: cableType,
             vbusThroughCable: vbusThrough,
             maxVoltageEncoded: maxV,
+            cableLatencyEncoded: latencyBits,
             decodeWarnings: warnings
         )
+    }
+
+    // MARK: Cert Stat VDO (always VDO[1])
+
+    /// USB-IF certification identity. Issued before product certification;
+    /// `0` means the e-marker carries no certification ID. Common on
+    /// reputable but uncertified cables, so we surface it as a neutral
+    /// fact rather than a trust flag.
+    public struct CertStat: Hashable {
+        public let xid: UInt32
+
+        public var isPresent: Bool { xid != 0 }
+    }
+
+    public static func decodeCertStat(_ vdo: UInt32) -> CertStat {
+        // Spec table 6.38: bits 31..0 carry the XID.
+        return CertStat(xid: vdo)
     }
 
     // MARK: Helpers

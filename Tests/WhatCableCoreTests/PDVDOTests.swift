@@ -38,9 +38,14 @@ final class PDVDOTests: XCTestCase {
     //
     // Layout (low bits): speed [2:0], _, vbus-through [4], current [6:5], _, maxV [10:9]
 
+    /// Valid cable-latency bits to OR into fixtures that don't care
+    /// about latency. 0001 = ~10 ns (~1 m), the most common real-world
+    /// value. Real cable reports we've collected use 0001 or 1000.
+    private static let validLatency: UInt32 = 1 << 13
+
     func testThunderboltCable_5A_40Gbps() {
         // speed=3 (USB4 Gen3), current=2 (5A) -> 2<<5=0x40, vbus-through bit 4=1
-        let vdo: UInt32 = 0b011 | (1 << 4) | (2 << 5)
+        let vdo: UInt32 = 0b011 | (1 << 4) | (2 << 5) | Self.validLatency
         let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
         XCTAssertEqual(cable.speed, .usb4Gen3)
         XCTAssertEqual(cable.current, .fiveAmp)
@@ -54,7 +59,7 @@ final class PDVDOTests: XCTestCase {
 
     func testCheap_USB2_3A() {
         // speed=0 (USB 2.0), current=1 (3A) -> 1<<5=0x20
-        let vdo: UInt32 = 0b000 | (1 << 5)
+        let vdo: UInt32 = 0b000 | (1 << 5) | Self.validLatency
         let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
         XCTAssertEqual(cable.speed, .usb20)
         XCTAssertEqual(cable.current, .threeAmp)
@@ -64,7 +69,7 @@ final class PDVDOTests: XCTestCase {
 
     func testEPRCable_50V_5A() {
         // speed=4 (USB4 Gen4 / 80 Gbps), current=2 (5A), maxV=3 (50V)
-        let vdo: UInt32 = 0b100 | (2 << 5) | (3 << 9)
+        let vdo: UInt32 = 0b100 | (2 << 5) | (3 << 9) | Self.validLatency
         let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
         XCTAssertEqual(cable.speed, .usb4Gen4)
         XCTAssertEqual(cable.current, .fiveAmp)
@@ -75,7 +80,7 @@ final class PDVDOTests: XCTestCase {
     }
 
     func testActiveCableType() {
-        let vdo: UInt32 = 0
+        let vdo: UInt32 = Self.validLatency
         let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
         XCTAssertEqual(cable.cableType, .active)
         XCTAssertTrue(cable.decodeWarnings.isEmpty)
@@ -83,7 +88,7 @@ final class PDVDOTests: XCTestCase {
 
     func testReservedSpeedEncodingFallsBackAndWarns() {
         for speedBits in 5...7 {
-            let vdo = UInt32(speedBits) | UInt32(1 << 5)
+            let vdo = UInt32(speedBits) | UInt32(1 << 5) | Self.validLatency
             let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
             XCTAssertEqual(cable.speed, .usb20)
             XCTAssertEqual(cable.current, .threeAmp)
@@ -92,7 +97,7 @@ final class PDVDOTests: XCTestCase {
     }
 
     func testReservedCurrentEncodingFallsBackAndWarns() {
-        let vdo: UInt32 = 0b001 | UInt32(3 << 5)
+        let vdo: UInt32 = 0b001 | UInt32(3 << 5) | Self.validLatency
         let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
         XCTAssertEqual(cable.speed, .usb32Gen1)
         XCTAssertEqual(cable.current, .usbDefault)
@@ -100,7 +105,7 @@ final class PDVDOTests: XCTestCase {
     }
 
     func testReservedSpeedAndCurrentEncodingsBothWarn() {
-        let vdo: UInt32 = 0b101 | UInt32(3 << 5)
+        let vdo: UInt32 = 0b101 | UInt32(3 << 5) | Self.validLatency
         let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
         XCTAssertEqual(cable.speed, .usb20)
         XCTAssertEqual(cable.current, .usbDefault)
@@ -108,6 +113,96 @@ final class PDVDOTests: XCTestCase {
             cable.decodeWarnings,
             [.reservedSpeedEncoding(5), .reservedCurrentEncoding(3)]
         )
+    }
+
+    // MARK: - Cable Latency
+
+    func testValidPassiveCableLatencyDoesNotWarn() {
+        for latencyBits in 1...8 {
+            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(latencyBits) << 13)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+            XCTAssertTrue(
+                cable.decodeWarnings.isEmpty,
+                "Latency \(latencyBits) should be valid for passive cables"
+            )
+            XCTAssertEqual(cable.cableLatencyEncoded, latencyBits)
+        }
+    }
+
+    func testInvalidPassiveCableLatencyWarns() {
+        // 0000 invalid
+        let zero = UInt32(0b011) | UInt32(2 << 5)
+        let zeroCable = PDVDO.decodeCableVDO(zero, isActive: false)
+        XCTAssertEqual(zeroCable.decodeWarnings, [.reservedCableLatencyEncoding(0)])
+
+        // 1001..1111 invalid for passive
+        for latencyBits in 9...15 {
+            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(latencyBits) << 13)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+            XCTAssertEqual(
+                cable.decodeWarnings,
+                [.reservedCableLatencyEncoding(latencyBits)],
+                "Latency \(latencyBits) should be invalid for passive"
+            )
+        }
+    }
+
+    func testActiveCableLatencyAccepts1001And1010() {
+        // Active cables carry optical-length latencies 1001 (~1000 ns)
+        // and 1010 (~2000 ns) that passive cables would treat as invalid.
+        for latencyBits in [9, 10] {
+            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(latencyBits) << 13)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
+            XCTAssertTrue(
+                cable.decodeWarnings.isEmpty,
+                "Latency \(latencyBits) should be valid for active cables"
+            )
+        }
+    }
+
+    func testActiveCableLatency_1011AndUpInvalid() {
+        for latencyBits in 11...15 {
+            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(latencyBits) << 13)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
+            XCTAssertEqual(
+                cable.decodeWarnings,
+                [.reservedCableLatencyEncoding(latencyBits)],
+                "Latency \(latencyBits) should be invalid even for active cables"
+            )
+        }
+    }
+
+    func testLatencyNanosecondsLookup() {
+        // Passive: 0001..1000 -> 10..80 ns
+        for (bits, ns) in [(1, 10), (4, 40), (8, 80)] {
+            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(bits) << 13)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+            XCTAssertEqual(cable.latencyNanoseconds, ns)
+        }
+        // Active 1001 -> 1000 ns, 1010 -> 2000 ns
+        for (bits, ns) in [(9, 1000), (10, 2000)] {
+            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(bits) << 13)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
+            XCTAssertEqual(cable.latencyNanoseconds, ns)
+        }
+        // Invalid passive 1001 -> nil
+        let invalidPassive = UInt32(0b011) | UInt32(2 << 5) | (UInt32(9) << 13)
+        let cable = PDVDO.decodeCableVDO(invalidPassive, isActive: false)
+        XCTAssertNil(cable.latencyNanoseconds)
+    }
+
+    // MARK: - Cert Stat VDO
+
+    func testCertStatPresentWhenNonZero() {
+        let stat = PDVDO.decodeCertStat(0x12345)
+        XCTAssertEqual(stat.xid, 0x12345)
+        XCTAssertTrue(stat.isPresent)
+    }
+
+    func testCertStatMissingWhenZero() {
+        let stat = PDVDO.decodeCertStat(0)
+        XCTAssertEqual(stat.xid, 0)
+        XCTAssertFalse(stat.isPresent)
     }
 
     // MARK: - VDO from Data

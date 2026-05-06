@@ -49,6 +49,14 @@ public struct PDIdentity: Identifiable, Hashable {
         return PDVDO.decodeIDHeader(v)
     }
 
+    /// The Cert Stat VDO is at index 1. Carries the USB-IF-issued XID,
+    /// or 0 for cables that haven't gone through certification.
+    public var certStatVDO: PDVDO.CertStat? {
+        guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
+              vdos.count > 1 else { return nil }
+        return PDVDO.decodeCertStat(vdos[1])
+    }
+
     /// The Cable VDO is at index 3 (VDO[3] in 1-indexed PD spec terms).
     public var cableVDO: PDVDO.CableVDO? {
         guard endpoint == .sopPrime || endpoint == .sopDoublePrime,

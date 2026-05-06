@@ -37,6 +37,10 @@ public enum CableReport {
         /// cable genuinely sent zero" when calibrating heuristics like the
         /// zero-PID flag.
         public let vdos: [UInt32]
+        /// USB-IF-issued certification ID from the Cert Stat VDO, or
+        /// `nil` when the e-marker carries no XID. Surfaced as neutral
+        /// information; many reputable cables ship without certification.
+        public let usbifCertID: UInt32?
 
         public init(identity: PDIdentity) {
             self.vendorID = identity.vendorID
@@ -45,6 +49,11 @@ public enum CableReport {
             self.productIDHex = String(format: "0x%04X", identity.productID)
             self.vendorName = VendorDB.name(for: identity.vendorID) ?? "Unregistered / unknown"
             self.vdos = identity.vdos
+            if let cs = identity.certStatVDO, cs.isPresent {
+                self.usbifCertID = cs.xid
+            } else {
+                self.usbifCertID = nil
+            }
             if let cv = identity.cableVDO {
                 self.speed = cv.speed.label
                 self.currentRating = cv.current.label
@@ -146,6 +155,21 @@ extension CableReport.Payload {
             lines.append("| Type | \(t) |")
         }
         lines.append("| Has e-marker | \(cable.hasEmarker ? "Yes" : "No") |")
+        if cable.hasEmarker {
+            // Neutral display: many reputable cables ship without an XID,
+            // so this is a fact about the e-marker, not a trust signal.
+            // We distinguish "macOS didn't surface VDO[1]" from "cable
+            // reports XID 0" so calibration data stays faithful.
+            if cable.vdos.count > 1 {
+                if let xid = cable.usbifCertID {
+                    lines.append("| USB-IF certification ID | `\(String(format: "0x%08X", xid))` |")
+                } else {
+                    lines.append("| USB-IF certification ID | none (XID = 0) |")
+                }
+            } else {
+                lines.append("| USB-IF certification ID | not provided by this Mac |")
+            }
+        }
         lines.append("")
         if !cable.vdos.isEmpty {
             lines.append("### Raw VDOs")

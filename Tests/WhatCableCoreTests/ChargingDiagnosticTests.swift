@@ -64,11 +64,16 @@ final class ChargingDiagnosticTests: XCTestCase {
     /// Build a cable e-marker identity advertising the given watt rating.
     /// We pin watts via maxV/current bits: 5A @ 20V = 100W, 3A @ 20V = 60W.
     private func cableIdentity(watts: Int) -> PDIdentity {
+        // Latency = 0001 (~10 ns / ~1 m). Real cables emit a non-zero
+        // latency; using 0 here would make every fixture trip the
+        // reservedCableLatencyEncoding warning even though these tests
+        // care only about the wattage maths.
+        let validLatency: UInt32 = 1 << 13
         let cableVDO: UInt32 = {
             switch watts {
-            case 100: return 0b011 | (1 << 4) | (2 << 5)  // 5A passive
-            case 60:  return 0b000 | (1 << 5)             // 3A USB2
-            case 240: return 0b011 | (2 << 5) | (3 << 9)  // 5A @ 50V (EPR)
+            case 100: return 0b011 | (1 << 4) | (2 << 5) | validLatency  // 5A passive
+            case 60:  return 0b000 | (1 << 5)            | validLatency  // 3A USB2
+            case 240: return 0b011 | (2 << 5) | (3 << 9) | validLatency  // 5A @ 50V (EPR)
             default:  fatalError("unhandled fixture wattage \(watts)")
             }
         }()

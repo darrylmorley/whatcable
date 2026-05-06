@@ -12,8 +12,11 @@ final class CableReportTests: XCTestCase {
             (3 << 27) | UInt32(0x05AC),
             0,
             0,
-            // Cable VDO: USB4 Gen 3 (0b011), 5A (0b10), passive
-            (0b10 << 5) | 0b011
+            // Cable VDO: USB4 Gen 3 (0b011), 5A (0b10), passive,
+            // latency 0001 (~1 m). A bare-zero VDO would trip the
+            // reservedCableLatencyEncoding warning even though these
+            // tests aren't about trust signals.
+            (0b10 << 5) | 0b011 | (1 << 13)
         ]
     ) -> PDIdentity {
         PDIdentity(
@@ -132,6 +135,71 @@ final class CableReportTests: XCTestCase {
         XCTAssertFalse(md.contains("### Raw VDOs"))
     }
 
+    // MARK: - USB-IF certification ID (from Cert Stat VDO)
+
+    func testUSBIFCertIDPresentWhenNonZero() {
+        let id = PDIdentity(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 0,
+            parentPortNumber: 0,
+            vendorID: 0x05AC,
+            productID: 0x1234,
+            bcdDevice: 0,
+            vdos: [
+                (3 << 27) | UInt32(0x05AC),
+                0x00012345,             // Cert Stat with XID
+                0,
+                (0b10 << 5) | 0b011 | (1 << 13)
+            ],
+            specRevision: 3
+        )
+        let payload = CableReport.payload(for: id)!
+        XCTAssertEqual(payload.cable.usbifCertID, 0x00012345)
+        let md = payload.markdown
+        XCTAssertTrue(md.contains("USB-IF certification ID"))
+        XCTAssertTrue(md.contains("0x00012345"))
+    }
+
+    func testUSBIFCertIDAbsentWhenZero() {
+        // Calibration: Anker #60 and Caldigit #62 both ship with XID = 0.
+        // We surface that as "none" rather than a trust signal.
+        let payload = CableReport.payload(for: cableIdentity())!
+        XCTAssertNil(payload.cable.usbifCertID)
+        let md = payload.markdown
+        XCTAssertTrue(md.contains("USB-IF certification ID"))
+        XCTAssertTrue(md.contains("none (XID = 0)"))
+    }
+
+    func testUSBIFCertIDDistinguishesAbsentVDOFromZeroValue() {
+        // Identity with only an ID Header VDO — macOS didn't surface a
+        // Cert Stat. The fingerprint should record that explicitly,
+        // not flatten it to "XID = 0", so calibration data stays
+        // faithful to what the cable actually reported.
+        let id = PDIdentity(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 0,
+            parentPortNumber: 0,
+            vendorID: 0x05AC,
+            productID: 0,
+            bcdDevice: 0,
+            vdos: [
+                (3 << 27) | UInt32(0x05AC) // only ID Header, no Cert Stat
+            ],
+            specRevision: 3
+        )
+        let payload = CableReport.payload(for: id)!
+        XCTAssertNil(payload.cable.usbifCertID)
+        let md = payload.markdown
+        XCTAssertTrue(md.contains("USB-IF certification ID"))
+        XCTAssertTrue(md.contains("not provided by this Mac"))
+        XCTAssertFalse(
+            md.contains("none (XID = 0)"),
+            "Missing VDO[1] must not be rendered the same as a real zero XID"
+        )
+    }
+
     func testMarkdownLabelsExtraVDOsAsOther() {
         // PD response can include up to 7 VDOs (ID Header + Cert Stat +
         // Product + up to 4 Product Type VDOs). Anything past index 3 we
@@ -148,7 +216,7 @@ final class CableReportTests: XCTestCase {
                 (3 << 27) | UInt32(0x05AC),
                 0,
                 0,
-                (0b10 << 5) | 0b011,
+                (0b10 << 5) | 0b011 | (1 << 13), // valid 1m latency
                 0xDEADBEEF,
                 0xCAFEBABE
             ],

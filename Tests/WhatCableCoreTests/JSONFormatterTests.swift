@@ -193,10 +193,13 @@ final class JSONFormatterTests: XCTestCase {
         )
     }
 
+    /// Valid cable-latency bits (0001 = ~10 ns / ~1 m).
+    private static let validLatency: UInt32 = 1 << 13
+
     func testTrustFlagsOmittedForCleanCable() throws {
         let port = makePort()
-        // VID 0x05AC (Apple), USB4 Gen3, 5A: no flags expected.
-        let id = cableIdentity(vendorID: 0x05AC, cableVDO: (0b10 << 5) | 0b011)
+        // VID 0x05AC (Apple), USB4 Gen3, 5A, valid latency: no flags expected.
+        let id = cableIdentity(vendorID: 0x05AC, cableVDO: (0b10 << 5) | 0b011 | Self.validLatency)
         let json = try JSONFormatter.render(
             ports: [port], sources: [], identities: [id], showRaw: false
         )
@@ -208,8 +211,8 @@ final class JSONFormatterTests: XCTestCase {
 
     func testTrustFlagsPopulatedForZeroVidAndReservedBits() throws {
         let port = makePort()
-        // VID=0, speed=6 (reserved), current=3 (reserved): all three flags.
-        let vdo = UInt32(0b110) | UInt32(3 << 5)
+        // VID=0, speed=6 (reserved), current=3 (reserved), valid latency: three flags.
+        let vdo = UInt32(0b110) | UInt32(3 << 5) | Self.validLatency
         let id = cableIdentity(vendorID: 0, cableVDO: vdo)
         let json = try JSONFormatter.render(
             ports: [port], sources: [], identities: [id], showRaw: false
@@ -233,7 +236,7 @@ final class JSONFormatterTests: XCTestCase {
     func testTrustFlagsEmitsH3ForUnregisteredVID() throws {
         let port = makePort()
         // 0xDEAD isn't in the curated map or the bundled USB-IF list.
-        let id = cableIdentity(vendorID: 0xDEAD, cableVDO: (0b10 << 5) | 0b011)
+        let id = cableIdentity(vendorID: 0xDEAD, cableVDO: (0b10 << 5) | 0b011 | Self.validLatency)
         let json = try JSONFormatter.render(
             ports: [port], sources: [], identities: [id], showRaw: false
         )
