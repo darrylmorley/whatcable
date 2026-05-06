@@ -98,6 +98,13 @@ final class UpdateChecker: ObservableObject {
                         self.notifiedVersion = remote
                         self.postNotification(update)
                     }
+                    if visible {
+                        // Manual "Check for Updates" click: surface a modal
+                        // alert so the user gets the same feedback they get
+                        // when already up-to-date, with a button to open the
+                        // release page directly.
+                        self.showUpdateAlert(update)
+                    }
                 } else {
                     self.available = nil
                     if visible {
@@ -136,6 +143,26 @@ final class UpdateChecker: ObservableObject {
         alert.runModal()
 
         NSApp.setActivationPolicy(originalPolicy)
+    }
+
+    private func showUpdateAlert(_ update: AvailableUpdate) {
+        let originalPolicy = NSApp.activationPolicy()
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+
+        let alert = NSAlert()
+        alert.messageText = "WhatCable \(update.version) is available"
+        alert.informativeText = "You're on \(AppInfo.version). Open the release page to read the notes and download."
+        alert.window.level = .floating
+        alert.addButton(withTitle: "View Release")
+        alert.addButton(withTitle: "Later")
+        let response = alert.runModal()
+
+        NSApp.setActivationPolicy(originalPolicy)
+
+        if response == .alertFirstButtonReturn {
+            NSWorkspace.shared.open(update.url)
+        }
     }
 
     /// Compare dot-separated numeric versions. Non-numeric segments compare lexically.
