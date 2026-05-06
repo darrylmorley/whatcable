@@ -124,6 +124,7 @@ private struct CableDTO: Codable {
     let maxVolts: Int?
     let maxWatts: Int?
     let type: String?
+    let trustFlags: [TrustFlagDTO]?
 
     init(identity: PDIdentity) {
         self.endpoint = identity.endpoint.rawValue
@@ -142,6 +143,21 @@ private struct CableDTO: Codable {
             self.maxWatts = nil
             self.type = nil
         }
+
+        let report = CableTrustReport(identity: identity)
+        self.trustFlags = report.isEmpty ? nil : report.flags.map(TrustFlagDTO.init)
+    }
+}
+
+private struct TrustFlagDTO: Codable {
+    let code: String
+    let title: String
+    let detail: String
+
+    init(_ flag: TrustFlag) {
+        self.code = flag.code
+        self.title = flag.title
+        self.detail = flag.detail
     }
 }
 

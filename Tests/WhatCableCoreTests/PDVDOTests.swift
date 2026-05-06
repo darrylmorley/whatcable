@@ -49,6 +49,7 @@ final class PDVDOTests: XCTestCase {
         XCTAssertEqual(cable.maxVolts, 20)
         XCTAssertEqual(cable.maxWatts, 100) // 20V * 5A
         XCTAssertEqual(cable.cableType, .passive)
+        XCTAssertTrue(cable.decodeWarnings.isEmpty)
     }
 
     func testCheap_USB2_3A() {
@@ -58,6 +59,7 @@ final class PDVDOTests: XCTestCase {
         XCTAssertEqual(cable.speed, .usb20)
         XCTAssertEqual(cable.current, .threeAmp)
         XCTAssertEqual(cable.maxWatts, 60) // 20V * 3A
+        XCTAssertTrue(cable.decodeWarnings.isEmpty)
     }
 
     func testEPRCable_50V_5A() {
@@ -69,12 +71,43 @@ final class PDVDOTests: XCTestCase {
         XCTAssertEqual(cable.maxVoltageEncoded, 3)
         XCTAssertEqual(cable.maxVolts, 50)
         XCTAssertEqual(cable.maxWatts, 250) // 50V * 5A — EPR cable
+        XCTAssertTrue(cable.decodeWarnings.isEmpty)
     }
 
     func testActiveCableType() {
         let vdo: UInt32 = 0
         let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
         XCTAssertEqual(cable.cableType, .active)
+        XCTAssertTrue(cable.decodeWarnings.isEmpty)
+    }
+
+    func testReservedSpeedEncodingFallsBackAndWarns() {
+        for speedBits in 5...7 {
+            let vdo = UInt32(speedBits) | UInt32(1 << 5)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+            XCTAssertEqual(cable.speed, .usb20)
+            XCTAssertEqual(cable.current, .threeAmp)
+            XCTAssertEqual(cable.decodeWarnings, [.reservedSpeedEncoding(speedBits)])
+        }
+    }
+
+    func testReservedCurrentEncodingFallsBackAndWarns() {
+        let vdo: UInt32 = 0b001 | UInt32(3 << 5)
+        let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+        XCTAssertEqual(cable.speed, .usb32Gen1)
+        XCTAssertEqual(cable.current, .usbDefault)
+        XCTAssertEqual(cable.decodeWarnings, [.reservedCurrentEncoding(3)])
+    }
+
+    func testReservedSpeedAndCurrentEncodingsBothWarn() {
+        let vdo: UInt32 = 0b101 | UInt32(3 << 5)
+        let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+        XCTAssertEqual(cable.speed, .usb20)
+        XCTAssertEqual(cable.current, .usbDefault)
+        XCTAssertEqual(
+            cable.decodeWarnings,
+            [.reservedSpeedEncoding(5), .reservedCurrentEncoding(3)]
+        )
     }
 
     // MARK: - VDO from Data

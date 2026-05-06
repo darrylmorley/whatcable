@@ -406,6 +406,12 @@ struct PortCard: View {
             }
 
             if let cable = cableEmarker {
+                let trust = CableTrustReport(identity: cable)
+                if !trust.isEmpty {
+                    TrustFlagsCard(flags: trust.flags)
+                        .padding(.leading, 48)
+                }
+
                 HStack {
                     Spacer()
                     Button {
@@ -544,6 +550,34 @@ struct AdvancedPortDetails: View {
     private func bool(_ v: Bool?) -> String {
         guard let v else { return "—" }
         return v ? "Yes" : "No"
+    }
+}
+
+private struct TrustFlagsCard: View {
+    let flags: [TrustFlag]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                Text("Cable trust signals")
+                    .font(.caption).bold()
+                    .foregroundStyle(.secondary)
+            }
+            ForEach(flags, id: \.code) { flag in
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(flag.title).font(.callout).bold()
+                    Text(flag.detail)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .padding(8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 

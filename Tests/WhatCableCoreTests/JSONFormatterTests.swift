@@ -172,6 +172,64 @@ final class JSONFormatterTests: XCTestCase {
         )
     }
 
+    // MARK: - Trust flags
+
+    private func cableIdentity(vendorID: Int, cableVDO: UInt32) -> PDIdentity {
+        PDIdentity(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 1,
+            vendorID: vendorID,
+            productID: 0x1234,
+            bcdDevice: 0,
+            vdos: [
+                (3 << 27) | UInt32(vendorID),
+                0,
+                0,
+                cableVDO
+            ],
+            specRevision: 3
+        )
+    }
+
+    func testTrustFlagsOmittedForCleanCable() throws {
+        let port = makePort()
+        // VID 0x05AC (Apple), USB4 Gen3, 5A: no flags expected.
+        let id = cableIdentity(vendorID: 0x05AC, cableVDO: (0b10 << 5) | 0b011)
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [id], showRaw: false
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let cable = try XCTUnwrap(portObj["cable"] as? [String: Any])
+        XCTAssertNil(cable["trustFlags"])
+    }
+
+    func testTrustFlagsPopulatedForZeroVidAndReservedBits() throws {
+        let port = makePort()
+        // VID=0, speed=6 (reserved), current=3 (reserved): all three flags.
+        let vdo = UInt32(0b110) | UInt32(3 << 5)
+        let id = cableIdentity(vendorID: 0, cableVDO: vdo)
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [id], showRaw: false
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let cable = try XCTUnwrap(portObj["cable"] as? [String: Any])
+        let flags = try XCTUnwrap(cable["trustFlags"] as? [[String: Any]])
+        XCTAssertEqual(flags.count, 3)
+
+        let codes = flags.compactMap { $0["code"] as? String }
+        XCTAssertEqual(codes, ["zeroVendorID", "reservedSpeedEncoding", "reservedCurrentEncoding"])
+
+        // Each flag carries title + detail.
+        for flag in flags {
+            XCTAssertNotNil(flag["title"] as? String)
+            XCTAssertNotNil(flag["detail"] as? String)
+        }
+    }
+
     // MARK: - Raw properties gating
 
     func testRawPropertiesOmittedByDefault() throws {

@@ -111,6 +111,11 @@ public enum PDVDO {
         case other = 2
     }
 
+    public enum DecodeWarning: Hashable {
+        case reservedSpeedEncoding(Int)
+        case reservedCurrentEncoding(Int)
+    }
+
     public struct CableVDO: Hashable {
         public let speed: CableSpeed
         public let current: CableCurrent
@@ -120,6 +125,7 @@ public enum PDVDO {
         public let vbusThroughCable: Bool
         /// Encoded "Maximum VBUS Voltage" field. 0=20V, 1=30V, 2=40V, 3=50V.
         public let maxVoltageEncoded: Int
+        public let decodeWarnings: [DecodeWarning]
 
         public var maxVolts: Int {
             switch maxVoltageEncoded {
@@ -134,12 +140,21 @@ public enum PDVDO {
 
     public static func decodeCableVDO(_ vdo: UInt32, isActive: Bool) -> CableVDO {
         let speedBits = Int(vdo & 0b111)
-        let speed = CableSpeed(rawValue: speedBits) ?? .usb20
+        let decodedSpeed = CableSpeed(rawValue: speedBits)
+        let speed = decodedSpeed ?? .usb20
         let vbusThrough = (vdo >> 4) & 1 == 1
         let currentBits = Int((vdo >> 5) & 0b11)
-        let current = CableCurrent(rawValue: currentBits) ?? .usbDefault
+        let decodedCurrent = CableCurrent(rawValue: currentBits)
+        let current = decodedCurrent ?? .usbDefault
         let maxV = Int((vdo >> 9) & 0b11)
         let cableType: CableType = isActive ? .active : .passive
+        var warnings: [DecodeWarning] = []
+        if decodedSpeed == nil {
+            warnings.append(.reservedSpeedEncoding(speedBits))
+        }
+        if decodedCurrent == nil {
+            warnings.append(.reservedCurrentEncoding(currentBits))
+        }
 
         let volts: Double
         switch maxV {
@@ -157,7 +172,8 @@ public enum PDVDO {
             maxWatts: watts,
             cableType: cableType,
             vbusThroughCable: vbusThrough,
-            maxVoltageEncoded: maxV
+            maxVoltageEncoded: maxV,
+            decodeWarnings: warnings
         )
     }
 
