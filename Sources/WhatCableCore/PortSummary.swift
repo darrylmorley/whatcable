@@ -38,6 +38,7 @@ extension PortSummary {
         sources: [PowerSource] = [],
         identities: [PDIdentity] = [],
         devices: [USBDevice] = [],
+        thunderboltSwitches: [ThunderboltSwitch] = [],
         isConnectedOverride: Bool? = nil
     ) {
         let connected = isConnectedOverride ?? (port.connectionActive == true)
@@ -76,7 +77,16 @@ extension PortSummary {
 
         // Speed
         if hasTB {
-            bullets.append("Thunderbolt / USB4 link active")
+            // If we have a matching Thunderbolt switch graph for this port,
+            // emit specific link-state bullets (negotiated speed, lane
+            // count, daisy-chain info). Otherwise fall back to the generic
+            // "active" line so older paths still work.
+            let tbBullets = thunderboltBullets(for: port, switches: thunderboltSwitches)
+            if tbBullets.isEmpty {
+                bullets.append("Thunderbolt / USB4 link active")
+            } else {
+                bullets.append(contentsOf: tbBullets)
+            }
         } else if hasUSB3 {
             bullets.append("SuperSpeed USB (5 Gbps or faster)")
         } else if hasUSB2 {
@@ -191,6 +201,73 @@ extension PortSummary {
 
         self.bullets = bullets
     }
+}
+
+/// Build the TB-specific bullets for a port whose `transportsActive`
+/// includes `"CIO"`. Returns an empty array if we can't find a matching
+/// switch (e.g. the port doesn't have an `@N` suffix, or the Thunderbolt
+/// watcher hasn't populated yet). Caller falls back to a generic bullet
+/// in that case.
+private func thunderboltBullets(
+    for port: USBCPort,
+    switches: [ThunderboltSwitch]
+) -> [String] {
+    guard !switches.isEmpty,
+          let socketID = ThunderboltTopology.socketID(fromServiceName: port.serviceName),
+          let root = ThunderboltTopology.hostRoot(forSocketID: socketID, in: switches) else {
+        return []
+    }
+
+    let chain = ThunderboltTopology.chain(from: root, in: switches)
+    var bullets: [String] = []
+
+    // First-hop link state: the host root's downstream lane port describes
+    // the cable's negotiated speed.
+    if let hostPort = ThunderboltTopology.activeDownstreamLanePort(root),
+       let label = ThunderboltLabels.linkLabel(for: hostPort) {
+        // label is e.g. "Up to 20 Gb/s × 2" — replace the leading "Up"
+        // with "up" for the bullet phrasing without lowercasing units.
+        bullets.append("Linked at " + label.replacingOccurrences(of: "Up to", with: "up to"))
+    }
+
+    // Connected-device line. Only meaningful when there's at least one
+    // downstream switch.
+    let downstream = chain.dropFirst()
+    if !downstream.isEmpty {
+        let names = downstream.map { ThunderboltLabels.deviceName(for: $0) }
+        let hops = downstream.count
+        let path = names.joined(separator: " → ")
+        let prefix = hops == 1 ? "Connected to" : "Connected via \(hops) hops:"
+        bullets.append("\(prefix) \(path)")
+    }
+
+    // Step-down detection: compare the last leg's link to the host port's
+    // link. If the per-lane Gbps or lane count drops, surface it so the
+    // user knows the slowest leg.
+    if downstream.count >= 1,
+       let hostPort = ThunderboltTopology.activeDownstreamLanePort(root),
+       let last = downstream.last,
+       let lastLeg = ThunderboltTopology.activeDownstreamLanePort(last)
+            ?? last.ports.first(where: { $0.adapterType.isLane && $0.hasActiveLink }),
+       let stepLabel = stepDownLabel(host: hostPort, lastLeg: lastLeg) {
+        bullets.append(stepLabel)
+    }
+
+    return bullets
+}
+
+/// If the last-leg link is slower than the host link (per-lane Gbps drop
+/// or lane count drop), describe the change. Returns nil for symmetric
+/// chains where every leg matches.
+private func stepDownLabel(host: ThunderboltPort, lastLeg: ThunderboltPort) -> String? {
+    guard let hostLabel = ThunderboltLabels.linkLabel(for: host),
+          let lastLabel = ThunderboltLabels.linkLabel(for: lastLeg) else {
+        return nil
+    }
+    if hostLabel == lastLabel { return nil }
+    let h = hostLabel.replacingOccurrences(of: "Up to", with: "up to")
+    let l = lastLabel.replacingOccurrences(of: "Up to", with: "up to")
+    return "Last leg drops from \(h) to \(l)"
 }
 
 private func subtitleForCapabilities(usb3: Bool, dp: Bool, emarker: Bool) -> String {

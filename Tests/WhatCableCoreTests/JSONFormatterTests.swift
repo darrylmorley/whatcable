@@ -306,4 +306,100 @@ final class JSONFormatterTests: XCTestCase {
         XCTAssertEqual(port["status"] as? String, "empty")
         XCTAssertEqual(port["headline"] as? String, "Nothing connected")
     }
+
+    // MARK: - Thunderbolt fabric
+
+    /// The `thunderboltSwitches` key must always be present at the top
+    /// level, even when the host has no Thunderbolt controller. The
+    /// docstring on `CableSnapshot.thunderboltSwitches` advertises this
+    /// to downstream consumers.
+    func testThunderboltSwitchesKeyPresentEvenWhenEmpty() throws {
+        let json = try JSONFormatter.render(
+            ports: [makePort(connected: false)], sources: [], identities: [], showRaw: false
+        )
+        let obj = parse(json)
+        XCTAssertNotNil(obj["thunderboltSwitches"], "top-level key must always exist")
+        XCTAssertEqual((obj["thunderboltSwitches"] as? [Any])?.count, 0)
+    }
+
+    func testThunderboltSwitchesEncodedAtTopLevel() throws {
+        let host = ThunderboltSwitch(
+            id: 408750268121704800,
+            className: "IOThunderboltSwitchType5",
+            vendorID: 1452,
+            vendorName: "Apple Inc.",
+            modelName: "iOS",
+            routerID: 0,
+            depth: 0,
+            routeString: 0,
+            upstreamPortNumber: 7,
+            maxPortNumber: 8,
+            supportedSpeed: SupportedSpeedMask(rawValue: 12),
+            ports: [
+                ThunderboltPort(
+                    portNumber: 1,
+                    socketID: "1",
+                    adapterType: .lane,
+                    currentSpeed: .usb4Tb4,
+                    currentWidth: LinkWidth(rawValue: 0x2),
+                    targetWidth: .dual,
+                    rawTargetSpeed: 12,
+                    linkBandwidthRaw: 400
+                )
+            ],
+            parentSwitchUID: nil
+        )
+
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [], showRaw: false,
+            thunderboltSwitches: [host]
+        )
+        let obj = parse(json)
+        let switches = obj["thunderboltSwitches"] as? [[String: Any]] ?? []
+        XCTAssertEqual(switches.count, 1)
+
+        let sw = switches[0]
+        XCTAssertEqual(sw["uid"] as? Int64, 408750268121704800)
+        XCTAssertEqual(sw["depth"] as? Int, 0)
+        XCTAssertEqual(sw["modelName"] as? String, "iOS")
+
+        let ports = sw["ports"] as? [[String: Any]] ?? []
+        let port = ports.first ?? [:]
+        XCTAssertEqual(port["adapterType"] as? String, "lane")
+        XCTAssertEqual(port["linkActive"] as? Bool, true)
+        XCTAssertEqual(port["linkLabel"] as? String, "Up to 20 Gb/s × 2")
+        XCTAssertEqual(port["generation"] as? String, "usb4Tb4")
+        XCTAssertEqual(port["perLaneGbps"] as? Int, 20)
+        XCTAssertEqual(port["txLanes"] as? Int, 2)
+    }
+
+    func testPortDtoCarriesThunderboltSwitchUidReference() throws {
+        let host = ThunderboltSwitch(
+            id: 12345,
+            className: "IOThunderboltSwitchType5",
+            vendorID: 1452, vendorName: "Apple Inc.", modelName: "iOS",
+            routerID: 0, depth: 0, routeString: 0,
+            upstreamPortNumber: 7, maxPortNumber: 8,
+            supportedSpeed: SupportedSpeedMask(rawValue: 12),
+            ports: [
+                ThunderboltPort(
+                    portNumber: 1, socketID: "1", adapterType: .lane,
+                    currentSpeed: .usb4Tb4,
+                    currentWidth: LinkWidth(rawValue: 0x2),
+                    targetWidth: .dual,
+                    rawTargetSpeed: 12, linkBandwidthRaw: 400
+                )
+            ],
+            parentSwitchUID: nil
+        )
+
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [], showRaw: false,
+            thunderboltSwitches: [host]
+        )
+        let obj = parse(json)
+        let port = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        // Port-USB-C@1 should resolve via Socket ID "1" → host switch UID.
+        XCTAssertEqual(port["thunderboltSwitchUID"] as? Int64, 12345)
+    }
 }

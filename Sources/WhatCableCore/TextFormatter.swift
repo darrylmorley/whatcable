@@ -6,7 +6,8 @@ public enum TextFormatter {
         sources: [PowerSource],
         identities: [PDIdentity],
         showRaw: Bool,
-        adapter: AdapterInfo? = nil
+        adapter: AdapterInfo? = nil,
+        thunderboltSwitches: [ThunderboltSwitch] = []
     ) -> String {
         if ports.isEmpty {
             return "No USB-C / MagSafe ports were found on this Mac.\n"
@@ -20,7 +21,8 @@ public enum TextFormatter {
                 sources: filterSources(port, all: sources),
                 identities: filterIdentities(port, all: identities),
                 showRaw: showRaw,
-                adapter: adapter
+                adapter: adapter,
+                thunderboltSwitches: thunderboltSwitches
             )
         }
         return out
@@ -31,9 +33,15 @@ public enum TextFormatter {
         sources: [PowerSource],
         identities: [PDIdentity],
         showRaw: Bool,
-        adapter: AdapterInfo?
+        adapter: AdapterInfo?,
+        thunderboltSwitches: [ThunderboltSwitch]
     ) -> String {
-        let summary = PortSummary(port: port, sources: sources, identities: identities)
+        let summary = PortSummary(
+            port: port,
+            sources: sources,
+            identities: identities,
+            thunderboltSwitches: thunderboltSwitches
+        )
         let label = port.portDescription ?? port.serviceName
         let typeSuffix = port.portTypeDescription.map { " (\($0))" } ?? ""
 

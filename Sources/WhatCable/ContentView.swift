@@ -7,6 +7,7 @@ struct ContentView: View {
     @StateObject private var deviceWatcher = USBWatcher()
     @StateObject private var powerWatcher = PowerSourceWatcher()
     @StateObject private var pdWatcher = PDIdentityWatcher()
+    @StateObject private var tbWatcher = ThunderboltWatcher()
     @EnvironmentObject private var refresh: RefreshSignal
     @ObservedObject private var settings = AppSettings.shared
     @ObservedObject private var updates = UpdateChecker.shared
@@ -30,6 +31,7 @@ struct ContentView: View {
             deviceWatcher.start()
             powerWatcher.start()
             pdWatcher.start()
+            tbWatcher.start()
             startPortPoll()
         }
         .onDisappear {
@@ -41,11 +43,13 @@ struct ContentView: View {
             deviceWatcher.stop()
             powerWatcher.stop()
             pdWatcher.stop()
+            tbWatcher.stop()
         }
         .onChange(of: refresh.tick) { _, _ in
             portWatcher.refresh()
             powerWatcher.refresh()
             pdWatcher.refresh()
+            tbWatcher.refresh()
         }
         // Port controller services don't fire IOKit match notifications when
         // their connection state flips, so we re-poll the port watcher
@@ -116,6 +120,7 @@ struct ContentView: View {
                                 devices: matchingDevices(for: port),
                                 powerSources: powerWatcher.sources(for: port),
                                 identities: pdWatcher.identities(for: port),
+                                thunderboltSwitches: tbWatcher.switches,
                                 isLive: isPortLive(port),
                                 showAdvanced: showAdvanced
                             )
@@ -322,6 +327,7 @@ struct PortCard: View {
     let devices: [USBDevice]
     let powerSources: [PowerSource]
     let identities: [PDIdentity]
+    let thunderboltSwitches: [ThunderboltSwitch]
     /// Authoritative connection state derived from the live IOKit watchers,
     /// passed in from the parent so we don't have to consult them from here
     /// and so PortSummary doesn't fall back to the unreliable
@@ -337,8 +343,19 @@ struct PortCard: View {
             sources: powerSources,
             identities: identities,
             devices: devices,
+            thunderboltSwitches: thunderboltSwitches,
             isConnectedOverride: isLive
         )
+    }
+
+    /// Switches in the chain from this port's host root to the deepest
+    /// connected device. Empty if the port doesn't map to any TB switch.
+    var thunderboltChain: [ThunderboltSwitch] {
+        guard let socketID = ThunderboltTopology.socketID(fromServiceName: port.serviceName),
+              let root = ThunderboltTopology.hostRoot(forSocketID: socketID, in: thunderboltSwitches) else {
+            return []
+        }
+        return ThunderboltTopology.chain(from: root, in: thunderboltSwitches)
     }
 
     private var cableEmarker: PDIdentity? {
@@ -423,7 +440,7 @@ struct PortCard: View {
 
             if showAdvanced {
                 Divider()
-                AdvancedPortDetails(port: port)
+                AdvancedPortDetails(port: port, thunderboltChain: thunderboltChain)
             }
         }
         .padding(14)
@@ -492,6 +509,7 @@ struct PowerSourceList: View {
 
 struct AdvancedPortDetails: View {
     let port: USBCPort
+    let thunderboltChain: [ThunderboltSwitch]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -507,6 +525,9 @@ struct AdvancedPortDetails: View {
                 row("Supported", port.transportsSupported.joined(separator: ", "))
                 row("Provisioned", port.transportsProvisioned.joined(separator: ", "))
                 row("Active", port.transportsActive.isEmpty ? "—" : port.transportsActive.joined(separator: ", "))
+            }
+            if !thunderboltChain.isEmpty {
+                ThunderboltFabricSection(chain: thunderboltChain)
             }
             DisclosureGroup("All raw IOKit properties (\(port.rawProperties.count))") {
                 VStack(alignment: .leading, spacing: 2) {
@@ -545,6 +566,42 @@ struct AdvancedPortDetails: View {
     private func bool(_ v: Bool?) -> String {
         guard let v else { return "—" }
         return v ? "Yes" : "No"
+    }
+}
+
+/// Compact tree view of the Thunderbolt fabric for one port. Shows the
+/// host root, every downstream switch in the chain, and the active
+/// downstream lane port's link state for each hop. Hidden behind the
+/// existing "show technical details" toggle.
+struct ThunderboltFabricSection: View {
+    let chain: [ThunderboltSwitch]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Thunderbolt fabric")
+                .font(.caption).bold().foregroundStyle(.secondary)
+            ForEach(Array(chain.enumerated()), id: \.element.id) { index, sw in
+                hopRow(sw, index: index)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func hopRow(_ sw: ThunderboltSwitch, index: Int) -> some View {
+        let indent = String(repeating: "  ", count: index)
+        let arrow = index == 0 ? "" : "↳ "
+        let name = sw.isHostRoot ? "Host (\(sw.className))" : ThunderboltLabels.deviceName(for: sw)
+        let port = ThunderboltTopology.activeDownstreamLanePort(sw)
+        let linkLabel = port.flatMap { ThunderboltLabels.linkLabel(for: $0) } ?? "no active link"
+
+        HStack(alignment: .top) {
+            Text("\(indent)\(arrow)\(name)")
+                .font(.system(.caption, design: .monospaced))
+            Spacer()
+            Text(linkLabel)
+                .font(.system(.caption, design: .monospaced))
+                .foregroundStyle(.secondary)
+        }
     }
 }
 

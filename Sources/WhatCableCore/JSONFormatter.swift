@@ -6,7 +6,8 @@ public enum JSONFormatter {
         sources: [PowerSource],
         identities: [PDIdentity],
         showRaw: Bool,
-        adapter: AdapterInfo? = nil
+        adapter: AdapterInfo? = nil,
+        thunderboltSwitches: [ThunderboltSwitch] = []
     ) throws -> String {
         let output = Output(
             version: AppInfo.version,
@@ -15,10 +16,12 @@ public enum JSONFormatter {
                     port: port,
                     sources: sources.filter { $0.portKey == port.portKey },
                     identities: identities.filter { $0.portKey == port.portKey },
+                    thunderboltSwitches: thunderboltSwitches,
                     showRaw: showRaw,
                     adapter: adapter
                 )
-            }
+            },
+            thunderboltSwitches: thunderboltSwitches.map { ThunderboltSwitchDTO(sw: $0) }
         )
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -30,6 +33,11 @@ public enum JSONFormatter {
 private struct Output: Codable {
     let version: String
     let ports: [PortDTO]
+    /// Top-level Thunderbolt fabric. Always present (empty array on
+    /// machines without a TB controller, or before the watcher has data).
+    /// Per-port `thunderboltSwitchUID` references this graph by UID rather
+    /// than nesting the whole switch under each port.
+    let thunderboltSwitches: [ThunderboltSwitchDTO]
 }
 
 private struct PortDTO: Codable {
@@ -47,20 +55,46 @@ private struct PortDTO: Codable {
     let cable: CableDTO?
     let device: DeviceDTO?
     let charging: ChargingDTO?
+    /// UID of the host root Thunderbolt switch this port maps to, if any.
+    /// Resolved via the `Socket ID` <-> `@N` join key. Encoded as Int64
+    /// (signed, matching IOKit's representation; some vendors use the
+    /// sign bit). nil for ports that aren't TB-protocol or for which the
+    /// watcher hasn't found a match.
+    let thunderboltSwitchUID: Int64?
     let rawProperties: [String: String]?
 
-    init(port: USBCPort, sources: [PowerSource], identities: [PDIdentity], showRaw: Bool, adapter: AdapterInfo?) {
+    init(
+        port: USBCPort,
+        sources: [PowerSource],
+        identities: [PDIdentity],
+        thunderboltSwitches: [ThunderboltSwitch],
+        showRaw: Bool,
+        adapter: AdapterInfo?
+    ) {
         self.name = port.portDescription ?? port.serviceName
         self.type = port.portTypeDescription
         self.className = port.className
         self.connectionActive = port.connectionActive ?? false
         self.pdCapable = port.transportsSupported.contains("CC")
 
-        let summary = PortSummary(port: port, sources: sources, identities: identities)
+        let summary = PortSummary(
+            port: port,
+            sources: sources,
+            identities: identities,
+            thunderboltSwitches: thunderboltSwitches
+        )
         self.status = String(describing: summary.status)
         self.headline = summary.headline
         self.subtitle = summary.subtitle
         self.bullets = summary.bullets
+
+        // Resolve the host-root switch UID via Socket ID matching.
+        if let socketID = ThunderboltTopology.socketID(fromServiceName: port.serviceName),
+           let root = ThunderboltTopology.hostRoot(forSocketID: socketID, in: thunderboltSwitches) {
+            self.thunderboltSwitchUID = root.id
+        } else {
+            self.thunderboltSwitchUID = nil
+        }
 
         self.transports = TransportsDTO(
             supported: port.transportsSupported,
@@ -177,6 +211,108 @@ private struct DeviceDTO: Codable {
         self.vendorID = identity.vendorID
         self.vendorName = VendorDB.name(for: identity.vendorID)
         self.productID = identity.productID
+    }
+}
+
+// MARK: - Thunderbolt fabric DTOs
+
+/// One Thunderbolt switch in JSON form. Encoded once at the top level of
+/// the snapshot; per-port references use `thunderboltSwitchUID`. Avoids
+/// duplicating the whole graph under every port.
+private struct ThunderboltSwitchDTO: Codable {
+    let uid: Int64
+    let className: String
+    let vendorID: Int
+    let vendorName: String
+    let modelName: String
+    let depth: Int
+    let routerID: Int
+    let routeString: Int64
+    let upstreamPortNumber: Int
+    let maxPortNumber: Int
+    let supportedSpeedMask: Int
+    let parentSwitchUID: Int64?
+    let ports: [ThunderboltPortDTO]
+
+    init(sw: ThunderboltSwitch) {
+        self.uid = sw.id
+        self.className = sw.className
+        self.vendorID = sw.vendorID
+        self.vendorName = sw.vendorName
+        self.modelName = sw.modelName
+        self.depth = sw.depth
+        self.routerID = sw.routerID
+        self.routeString = sw.routeString
+        self.upstreamPortNumber = sw.upstreamPortNumber
+        self.maxPortNumber = sw.maxPortNumber
+        self.supportedSpeedMask = Int(sw.supportedSpeed.rawValue)
+        self.parentSwitchUID = sw.parentSwitchUID
+        self.ports = sw.ports.map { ThunderboltPortDTO(port: $0) }
+    }
+}
+
+private struct ThunderboltPortDTO: Codable {
+    let portNumber: Int
+    let socketID: String?
+    let adapterType: String
+    let linkActive: Bool
+    let linkLabel: String?
+    let generation: String?
+    let perLaneGbps: Int?
+    let txLanes: Int?
+    let rxLanes: Int?
+    let rawSpeedCode: Int?
+    let rawWidthCode: Int?
+    let rawTargetSpeed: Int?
+    let linkBandwidthRaw: Int?
+
+    init(port: ThunderboltPort) {
+        self.portNumber = port.portNumber
+        self.socketID = port.socketID
+        self.adapterType = Self.adapterTypeLabel(port.adapterType)
+        self.linkActive = port.hasActiveLink
+        self.linkLabel = ThunderboltLabels.linkLabel(for: port)
+        self.generation = port.currentSpeed.map { Self.generationLabel($0) }
+        self.perLaneGbps = port.perLaneGbps
+        self.txLanes = port.txLanes
+        self.rxLanes = port.rxLanes
+        self.rawSpeedCode = port.currentSpeed.map { Self.rawSpeedCode($0) }
+        self.rawWidthCode = port.currentWidth.map { Int($0.rawValue) }
+        self.rawTargetSpeed = port.rawTargetSpeed.map { Int($0) }
+        self.linkBandwidthRaw = port.linkBandwidthRaw
+    }
+
+    private static func adapterTypeLabel(_ type: AdapterType) -> String {
+        switch type {
+        case .inactive: return "inactive"
+        case .lane: return "lane"
+        case .nhi: return "nhi"
+        case .dpIn: return "dpIn"
+        case .dpOut: return "dpOut"
+        case .pcieDown: return "pcieDown"
+        case .pcieUp: return "pcieUp"
+        case .usb3Down: return "usb3Down"
+        case .usb3Up: return "usb3Up"
+        case .other(let raw): return "other(0x\(String(raw, radix: 16)))"
+        }
+    }
+
+    private static func generationLabel(_ gen: LinkGeneration) -> String {
+        switch gen {
+        case .tb3: return "tb3"
+        case .usb4Tb4: return "usb4Tb4"
+        case .tb5: return "tb5"
+        case .unknown(let raw): return "unknown(0x\(String(raw, radix: 16)))"
+        }
+    }
+
+    private static func rawSpeedCode(_ gen: LinkGeneration) -> Int {
+        switch gen {
+        case .tb3: return 0x8
+        case .usb4Tb4: return 0x4
+        case .tb5: return 0x2
+        case .unknown(let raw): return Int(raw)
+        }
     }
 }
 
