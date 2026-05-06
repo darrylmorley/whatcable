@@ -18,13 +18,18 @@ struct WhatCableCLI {
             return
         }
 
+        if args.contains("--tb-debug") {
+            print(ThunderboltProbe.dump(), terminator: "")
+            return
+        }
+
         let showRaw = args.contains("--raw")
         let asJSON = args.contains("--json")
         let watch = args.contains("--watch")
         let report = args.contains("--report")
 
         // Reject unknown flags so typos don't silently produce default output.
-        let knownFlags: Set<String> = ["--raw", "--json", "--watch", "--report", "-h", "--help", "--version"]
+        let knownFlags: Set<String> = ["--raw", "--json", "--watch", "--report", "--tb-debug", "-h", "--help", "--version"]
         for arg in args where arg.hasPrefix("-") && !knownFlags.contains(arg) {
             FileHandle.standardError.write(Data("whatcable: unknown option \(arg)\n".utf8))
             FileHandle.standardError.write(Data(helpText.utf8))
@@ -63,6 +68,8 @@ struct WhatCableCLI {
       --json         Output as JSON instead of human-readable text
       --raw          Include raw IOKit properties for each port
       --report       Print a cable report (markdown + GitHub URL) and exit
+      --tb-debug     Dump the IOThunderboltSwitch tree (for contributors helping
+                     us design the Thunderbolt fabric feature). See issue tracker.
       --version      Print version and exit
       -h, --help     Show this help and exit
 
