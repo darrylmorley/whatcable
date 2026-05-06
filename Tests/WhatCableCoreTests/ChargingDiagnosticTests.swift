@@ -197,17 +197,46 @@ final class ChargingDiagnosticTests: XCTestCase {
         XCTAssertEqual(n, 96)
     }
 
-    func testSystemPowerAdapterWattsFallbackCanSupplyNegotiatedWattage() {
+    func testSystemAdapterWattsAreNotUsedAsPerPortFallback() {
+        // Regression for issue #46. Per-port USB-PD source has no winning PDO
+        // and no options, so we have nothing real to report. The system-wide
+        // adapter wattage must NOT be substituted, because on a Mac with two
+        // chargers attached it belongs to a different port.
         let diag = ChargingDiagnostic(
             port: port,
             sources: [brickIDWithoutPDOs()],
             identities: [],
             adapter: AdapterInfo(watts: 140, isCharging: nil, source: "AC")
         )
-        guard case .fine(let n) = diag?.bottleneck else {
-            return XCTFail("expected .fine from system adapter wattage, got \(String(describing: diag?.bottleneck))")
-        }
-        XCTAssertEqual(n, 140)
+        XCTAssertNil(diag)
+    }
+
+    func testTwoPortsWithDifferentChargersDoNotCrossContaminate() {
+        // Issue #46: M1 MBA with an 87W adapter on @1 and a 30W power bank on
+        // @2 that briefly reports a USB-PD source without a winning PDO.
+        // The diagnostic for @2 must not borrow the 87W system adapter watts.
+        let port2 = USBCPort(
+            id: 2, serviceName: "Port-USB-C@2", className: "AppleHPMInterfaceType10",
+            portDescription: nil, portTypeDescription: "USB-C", portNumber: 2,
+            connectionActive: true,
+            activeCable: nil, opticalCable: nil, usbActive: nil, superSpeedActive: nil,
+            usbModeType: nil, usbConnectString: nil,
+            transportsSupported: [], transportsActive: [], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil, rawProperties: [:]
+        )
+        let bareUSBPDOnPort2 = PowerSource(
+            id: 99, name: "USB-PD", parentPortType: 2, parentPortNumber: 2,
+            options: [], winning: nil
+        )
+        let diag = ChargingDiagnostic(
+            port: port2,
+            sources: [bareUSBPDOnPort2],
+            identities: [],
+            adapter: AdapterInfo(watts: 87, isCharging: nil, source: "AC")
+        )
+        XCTAssertNil(diag, "port @2 must not inherit port @1's adapter wattage")
     }
 
     // MARK: - Edge cases (#15)

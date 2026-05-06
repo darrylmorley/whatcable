@@ -30,6 +30,15 @@ extension ChargingDiagnostic {
         identities: [PDIdentity],
         adapter: AdapterInfo? = nil
     ) {
+        // `adapter` is retained for API compatibility but intentionally unused.
+        // Earlier versions used `IOPSCopyExternalPowerAdapterDetails().Watts`
+        // as a fallback when the per-port USB-PD source had no winning PDO.
+        // That value is system-wide, so on a Mac with two ports each carrying
+        // a different charger (e.g. an 87W adapter on @1 and a 30W power bank
+        // on @2), the adapter watts for @1 leaked into @2's diagnostic and
+        // claimed "Charging well at 87W" on the 30W port. See issue #46.
+        _ = adapter
+
         guard let source = PowerSource.preferredChargingSource(in: sources) else {
             return nil // No USB-PD or MagSafe Brick ID source on this port.
         }
@@ -40,16 +49,13 @@ extension ChargingDiagnostic {
         // the PowerSource node alone.
         guard port.connectionActive == true else { return nil }
 
-        var chargerMaxW = Int((Double(source.maxPowerMW) / 1000).rounded())
-        var negotiatedW = source.winning.map { Int((Double($0.maxPowerMW) / 1000).rounded()) }
+        let chargerMaxW = Int((Double(source.maxPowerMW) / 1000).rounded())
+        let negotiatedW = source.winning.map { Int((Double($0.maxPowerMW) / 1000).rounded()) }
 
-        if negotiatedW.map({ $0 <= 0 }) ?? true,
-           let watts = adapter?.watts,
-           watts > 0 {
-            negotiatedW = watts
-            if chargerMaxW <= 0 {
-                chargerMaxW = watts
-            }
+        // No real per-port wattage to report. Don't fabricate one from
+        // system-wide signals; the charging block simply doesn't render.
+        if chargerMaxW <= 0 && negotiatedW == nil {
+            return nil
         }
 
         let cableMaxW: Int? = identities
