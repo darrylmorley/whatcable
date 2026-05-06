@@ -195,6 +195,48 @@ final class PortSummaryTests: XCTestCase {
         )
     }
 
+    func testMagSafePortDoesNotClaimNoPowerDelivery() {
+        // Regression: a charging MagSafe port reports an empty
+        // TransportsSupported (MagSafe negotiates PD over its own pins,
+        // not the CC line). The previous logic tripped the "no Power
+        // Delivery" branch because `pdCapable` is gated on CC. MagSafe
+        // ports must not get any "can't read cable details" bullet at
+        // all, since the cable is built into the brick.
+        let magSafePort = USBCPort(
+            id: 1,
+            serviceName: "Port-MagSafe 3@1",
+            className: "AppleHPMInterfaceType11",
+            portDescription: "Port-MagSafe 3@1",
+            portTypeDescription: "MagSafe 3",
+            portNumber: 1,
+            connectionActive: true,
+            activeCable: nil, opticalCable: nil, usbActive: nil, superSpeedActive: nil,
+            usbModeType: nil, usbConnectString: nil,
+            transportsSupported: [],
+            transportsActive: ["CC"],
+            transportsProvisioned: ["CC"],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil, rawProperties: [:]
+        )
+        let summary = PortSummary(
+            port: magSafePort,
+            sources: [usbPD(maxW: 100, winningW: 100)]
+        )
+        XCTAssertFalse(
+            summary.bullets.contains(where: { $0.contains("no Power Delivery") }),
+            "MagSafe must not claim 'no Power Delivery', got: \(summary.bullets)"
+        )
+        XCTAssertFalse(
+            summary.bullets.contains(where: { $0.contains("can't read cable details") }),
+            "MagSafe must not show the 'can't read cable details' bullet, got: \(summary.bullets)"
+        )
+        XCTAssertFalse(
+            summary.bullets.contains(where: { $0.contains("does not advertise") }),
+            "MagSafe must not show the 'basic cable' bullet, got: \(summary.bullets)"
+        )
+    }
+
     func testPDPortWithEmarkerStillShowsEmarker() {
         // Sanity: presence of an e-marker means PD must have fired, regardless
         // of whether the test fixture happens to set CC explicitly. We don't

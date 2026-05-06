@@ -87,10 +87,16 @@ extension PortSummary {
             bullets.append("Carrying DisplayPort video")
         }
 
-        // E-marker
+        // E-marker. The whole cable-details bullet only makes sense on
+        // USB-C, where the user can swap cables and might wonder why
+        // details are missing. On MagSafe the cable is part of the brick
+        // (and MagSafe absolutely does negotiate Power Delivery, just over
+        // its own pins, not the CC line we test for `pdCapable`), so don't
+        // emit any "no e-marker" wording there.
+        let isMagSafe = port.portTypeDescription?.hasPrefix("MagSafe") == true
         if hasEmarker {
             bullets.append("Cable has an e-marker chip (advertises its capabilities)")
-        } else if !active.isEmpty {
+        } else if !active.isEmpty && !isMagSafe {
             if pdCapable {
                 bullets.append("Cable does not advertise an e-marker (basic cable)")
             } else {
