@@ -95,22 +95,28 @@ public final class ThunderboltWatcher: ObservableObject {
         }
         defer { IOObjectRelease(iter) }
 
-        // First pass: build a list of (service, props, parentService) so
+        // First pass: build a list of (service, props, parent entry ID) so
         // we can resolve parent UIDs in a second pass once every switch has
         // been parsed.
+        //
+        // The parent linkage is keyed by registry entry ID (the stable
+        // 64-bit identifier IOKit assigns per registry object), not by the
+        // raw `io_service_t` mach-port value. Different IOKit calls can
+        // hand back different mach-port handles for the same registry
+        // object, so a port-handle keyed lookup would silently miss and
+        // collapse the topology to "host only".
         struct RawEntry {
             let service: io_service_t
             let className: String
             let properties: [String: Any]
-            let parentService: io_service_t  // 0 if no IOThunderboltSwitch parent
             let entryID: UInt64
+            let parentEntryID: UInt64  // 0 if no IOThunderboltSwitch parent
         }
 
         var raw: [RawEntry] = []
         defer {
             for entry in raw {
                 IOObjectRelease(entry.service)
-                if entry.parentService != 0 { IOObjectRelease(entry.parentService) }
             }
         }
 
@@ -135,23 +141,26 @@ public final class ThunderboltWatcher: ObservableObject {
             // Walk up to the nearest IOThunderboltSwitch ancestor (skipping
             // adapter / port intermediaries). On Apple Silicon, downstream
             // switches sit below their parent switch in the IOService plane,
-            // so this gives us the parent linkage for free.
-            let parentService = nearestThunderboltSwitchAncestor(of: service)
+            // so this gives us the parent linkage for free. We resolve the
+            // parent's registry entry ID immediately and release the
+            // ancestor handle so we don't have to track its lifetime.
+            let parentEntryID = parentSwitchEntryID(of: service)
 
             raw.append(RawEntry(
                 service: service,
                 className: className,
                 properties: dict,
-                parentService: parentService,
-                entryID: entryID
+                entryID: entryID,
+                parentEntryID: parentEntryID
             ))
         }
 
-        // Build a UID lookup keyed by service so we can resolve parent UIDs.
-        var uidByService: [io_service_t: Int64] = [:]
+        // Build a UID lookup keyed by registry entry ID. Stable across
+        // separate IOKit calls, unlike the raw mach-port handle.
+        var uidByEntryID: [UInt64: Int64] = [:]
         for entry in raw {
             if let uidNum = entry.properties["UID"] as? NSNumber {
-                uidByService[entry.service] = uidNum.int64Value
+                uidByEntryID[entry.entryID] = uidNum.int64Value
             }
         }
 
@@ -160,8 +169,8 @@ public final class ThunderboltWatcher: ObservableObject {
 
         for entry in raw {
             let ports = parsePorts(of: entry.service)
-            let parentUID: Int64? = entry.parentService != 0
-                ? uidByService[entry.parentService]
+            let parentUID: Int64? = entry.parentEntryID != 0
+                ? uidByEntryID[entry.parentEntryID]
                 : nil
 
             if let model = ThunderboltSwitch.from(
@@ -221,32 +230,44 @@ public final class ThunderboltWatcher: ObservableObject {
         return ports
     }
 
-    /// Walk up the IOService plane and return the nearest ancestor whose
-    /// class is an IOThunderboltSwitch. Caller takes ownership of the
-    /// returned service and must `IOObjectRelease` it (returns 0 if none).
-    private func nearestThunderboltSwitchAncestor(of service: io_service_t) -> io_service_t {
+    /// Walk up the IOService plane and return the registry entry ID of the
+    /// nearest ancestor whose class is an IOThunderboltSwitch. Returns `0`
+    /// if no such ancestor is found. The walker manages all IOKit handle
+    /// lifetimes internally so callers don't have to track ownership.
+    ///
+    /// Returning the entry ID (a stable 64-bit identifier per registry
+    /// object) rather than the raw service handle avoids a class of bug
+    /// where two `io_service_t` values for the same registry object
+    /// compare unequal because IOKit can hand back distinct mach-port
+    /// handles for the same underlying entry.
+    private func parentSwitchEntryID(of service: io_service_t) -> UInt64 {
         var current = service
         IOObjectRetain(current)
+        defer { IOObjectRelease(current) }
+
         for _ in 0..<32 {
             var parent: io_service_t = 0
             guard IORegistryEntryGetParentEntry(current, kIOServicePlane, &parent) == KERN_SUCCESS else {
-                IOObjectRelease(current)
                 return 0
             }
+            // Move ownership into `current` for the next iteration / cleanup.
             IOObjectRelease(current)
+            current = parent
 
             var classBuf = [CChar](repeating: 0, count: 128)
-            if IOObjectGetClass(parent, &classBuf) == KERN_SUCCESS {
+            if IOObjectGetClass(current, &classBuf) == KERN_SUCCESS {
                 let name = String(cString: classBuf)
                 // Match the abstract prefix; covers Type3 / Type5 / Type7 /
                 // IntelJHL8440 / future variants.
                 if name.hasPrefix("IOThunderboltSwitch") {
-                    return parent  // caller releases
+                    var entryID: UInt64 = 0
+                    if IORegistryEntryGetRegistryEntryID(current, &entryID) == KERN_SUCCESS {
+                        return entryID
+                    }
+                    return 0
                 }
             }
-            current = parent
         }
-        IOObjectRelease(current)
         return 0
     }
 

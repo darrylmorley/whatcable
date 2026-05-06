@@ -140,7 +140,8 @@ private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Boo
                         sources: snapshot.powerSources,
                         identities: snapshot.identities,
                         showRaw: showRaw,
-                        adapter: snapshot.adapter
+                        adapter: snapshot.adapter,
+                        thunderboltSwitches: snapshot.thunderboltSwitches
                     )
                 } catch {
                     FileHandle.standardError.write(Data("whatcable: json encoding failed: \(error)\n".utf8))
@@ -152,7 +153,8 @@ private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Boo
                     sources: snapshot.powerSources,
                     identities: snapshot.identities,
                     showRaw: showRaw,
-                    adapter: snapshot.adapter
+                    adapter: snapshot.adapter,
+                    thunderboltSwitches: snapshot.thunderboltSwitches
                 )
             }
 
