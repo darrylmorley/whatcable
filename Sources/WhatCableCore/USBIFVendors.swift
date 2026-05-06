@@ -37,13 +37,8 @@ enum USBIFVendors {
     static var entryCount: Int { table.count }
 
     private static func loadTable() -> [Int: String] {
-        guard let url = Bundle.module.url(
-            forResource: "usbif-vendors",
-            withExtension: "tsv"
-        ) else {
-            return [:]
-        }
-        guard let text = try? String(contentsOf: url, encoding: .utf8) else {
+        guard let url = findResourceURL(),
+              let text = try? String(contentsOf: url, encoding: .utf8) else {
             return [:]
         }
 
@@ -60,4 +55,77 @@ enum USBIFVendors {
         }
         return map
     }
+
+    /// Resolve the bundled TSV's URL across the contexts WhatCableCore
+    /// runs in: SwiftPM tests / `swift run`, the .app's GUI binary in
+    /// Contents/MacOS/, and the CLI binary in Contents/Helpers/. We
+    /// avoid `Bundle.module` because its generated accessor calls
+    /// `fatalError` when the bundle isn't found, which would crash
+    /// the CLI inside the .app (none of its candidate paths resolve
+    /// to Contents/Resources/ for a helper executable). On failure we
+    /// return nil so the caller can fall back to an empty lookup,
+    /// degrading gracefully to "Unregistered / unknown" instead of
+    /// crashing.
+    private static func findResourceURL() -> URL? {
+        let bundleName = "WhatCable_WhatCableCore"
+        let resourceFile = "usbif-vendors"
+        let resourceExt = "tsv"
+        let fm = FileManager.default
+
+        var roots: [URL] = []
+
+        // SwiftPM tests set PACKAGE_RESOURCE_BUNDLE_PATH (or the older
+        // PACKAGE_RESOURCE_BUNDLE_URL) so the test runner can find the
+        // resource bundle next to the build output. Honor it first
+        // since SwiftPM's own Bundle.module does.
+        let env = ProcessInfo.processInfo.environment
+        if let override = env["PACKAGE_RESOURCE_BUNDLE_PATH"] ?? env["PACKAGE_RESOURCE_BUNDLE_URL"] {
+            roots.append(URL(fileURLWithPath: override))
+        }
+
+        // Standard SwiftPM Bundle.module candidates: the main bundle's
+        // resources (.app/Contents/Resources for the GUI) and the
+        // directory containing the running binary (covers `swift run`
+        // and statically-linked frameworks).
+        if let r = Bundle.main.resourceURL { roots.append(r) }
+        if let r = Bundle(for: BundleFinder.self).resourceURL { roots.append(r) }
+        roots.append(Bundle.main.bundleURL)
+        roots.append(Bundle.main.bundleURL.deletingLastPathComponent())
+
+        // For SwiftPM tests, the resource bundle is a sibling of the
+        // .xctest bundle, not inside it. Bundle(for: BundleFinder.self)
+        // resolves to the .xctest in tests; its parent directory is
+        // where SPM places the resource bundle.
+        roots.append(Bundle(for: BundleFinder.self).bundleURL.deletingLastPathComponent())
+
+        // For a CLI helper at .app/Contents/Helpers/whatcable, walk up
+        // to the .app and look in Contents/Resources/. Bundle.main for
+        // a non-bundled executable points at the executable itself,
+        // and SwiftPM's Bundle.module lookup chain doesn't cover this.
+        if let exe = Bundle.main.executableURL {
+            let parent = exe.deletingLastPathComponent()           // Contents/Helpers
+            let contents = parent.deletingLastPathComponent()      // Contents
+            roots.append(contents.appendingPathComponent("Resources"))
+        }
+
+        for root in roots {
+            // SwiftPM resource bundle layout.
+            let viaBundle = root
+                .appendingPathComponent("\(bundleName).bundle")
+                .appendingPathComponent("\(resourceFile).\(resourceExt)")
+            if fm.fileExists(atPath: viaBundle.path) {
+                return viaBundle
+            }
+            // Loose-file layout (not currently used, but cheap to check
+            // and means the loader keeps working if we ever simplify
+            // the bundling).
+            let loose = root.appendingPathComponent("\(resourceFile).\(resourceExt)")
+            if fm.fileExists(atPath: loose.path) {
+                return loose
+            }
+        }
+        return nil
+    }
 }
+
+private final class BundleFinder {}

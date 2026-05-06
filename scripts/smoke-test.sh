@@ -176,6 +176,18 @@ if [[ "${CLI_VERSION_OUTPUT}" != "${VERSION}" ]]; then
 fi
 echo "    CLI reports ${CLI_VERSION_OUTPUT}"
 
+# Exercise the JSON output path so we hit VendorDB / CableTrustReport
+# / ChargingDiagnostic, not just the Info.plist read. Catches regressions
+# where bundled resources (like the USB-IF vendor list) fail to load
+# in the deployed .app and crash on first use. Output goes to /dev/null;
+# we only care that the process exits 0.
+if ! "${HELPERS_DIR}/${CLI_BIN_NAME}" --json >/dev/null 2>&1; then
+    echo "    ERROR: CLI --json exited non-zero. A bundled resource may not be" >&2
+    echo "    loadable in the deployed .app context." >&2
+    exit 1
+fi
+echo "    CLI --json runs cleanly"
+
 echo "==> Creating zip"
 ( cd "${DIST_DIR}" && ditto -c -k --keepParent "${APP_NAME}.app" "${APP_NAME}.zip" )
 
