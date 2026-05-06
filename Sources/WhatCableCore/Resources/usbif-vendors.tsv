@@ -1,6 +1,6 @@
 # USB-IF Vendor ID lookup
 # Source: https://www.usb.org/sites/default/files/vendor_ids03102026_0.pdf
-# Fetched: 2026-05-06T16:11:05Z
+# Fetched: 2026-05-06T16:22:18Z
 # Format: <decimal_vid>\t<vendor_name>
 0	USB Implementers Forum
 34	Api error test company
@@ -18,7 +18,7 @@
 1008	HP Inc.
 1009	Genoa Technology
 1010	Oak Technology, Inc
-1011	Adaptec, Inc.
+1011	Adaptec, Inc.
 1012	Diebold, Inc.
 1013	Siemens Electromechanical
 1015	Tulip Computers International
@@ -71,7 +71,7 @@
 1065	Cirrus Logic Inc.
 1066	Ericsson Austrian, AG
 1068	Innovative Semiconductors, Inc.
-1069	Micronics
+1069	Micronics
 1070	Acer, Inc.(2)
 1071	Molex LLC
 1072	FCL Components Limited
@@ -183,7 +183,7 @@
 1193	Canon Inc.
 1194	Daewoo Teletech Co., Ltd.
 1195	Chromatic Research
-1196	Micro Audiometrics Corp.
+1196	Micro Audiometrics Corp.
 1197	Dooin Electronics
 1198	Brooktree Corporation
 1199	Winnov L.P.
@@ -206,7 +206,7 @@
 1219	Maxi Switch, Inc.
 1220	Lockheed Martin Energy Research
 1221	Fujitsu Ltd.
-1222	Toshiba America Electronic Components
+1222	Toshiba America Electronic Components
 1223	Micro Macro Technologies
 1224	Konica Corporation
 1226	Lite-On Technology Corp.
@@ -457,7 +457,7 @@
 1477	Digi International Inc.
 1478	Qualcomm, Inc
 1479	Qtronix Corp
-1480	Foxlink/Cheng Uei Precision Industry Co., Ltd
+1480	Foxlink/Cheng Uei Precision Industry Co., Ltd
 1481	Semtech
 1482	Ricoh Company Ltd.
 1483	PowerVision Technologies Inc.
@@ -490,7 +490,7 @@
 1511	EIZO Nanao Technologies Inc.
 1512	ICC, Inc.
 1513	Kawasaki Microelectronics America, Inc.
-1514	Evergreen Systems International
+1514	Evergreen Systems International
 1515	FFC Limited
 1516	COM21, Inc.
 1518	Cytechinfo Inc.
@@ -514,7 +514,7 @@
 1538	Vista Imaging Inc.
 1539	Novatek Microelectronics Corp.
 1540	Jean Co, Ltd.
-1541	Anchor C&C Co., Ltd.
+1541	Anchor C&C Co., Ltd.
 1542	Royal Information Electronics Co., Ltd.
 1543	Bridge Information Co., Ltd.
 1544	Genrad Ads
@@ -579,11 +579,11 @@
 1604	TEAC Corporation
 1605	Ethentica Inc.
 1607	Acton Research Corporation
-1609	Weli Science Co., Ltd
+1609	Weli Science Co., Ltd
 1610	Technical Corp.
 1611	Analog Devices, Inc. Development Tools
-1612	Ji-Haw Industrial Co., Ltd
-1613	TriTech Microelectronics Ltd
+1612	Ji-Haw Industrial Co., Ltd
+1613	TriTech Microelectronics Ltd
 1614	Suyin Corporation
 1615	WIBU-Systems AG
 1616	Dynapro Systems
@@ -686,7 +686,7 @@
 1716	Citron GmbH
 1717	Stanford Research Systems
 1718	Leda Media Products
-1720	Pixela Corporation
+1720	Pixela Corporation
 1721	Thomson Telecom
 1722	Smooth Cord & Connector Co., Ltd.
 1723	EDA Inc.
@@ -715,7 +715,7 @@
 1747	Mitsubishi Electric Corporation
 1748	Cisco Systems(2)
 1749	Toshiba America Electronic Components, Inc.
-1750	Aashima Technology B.V.
+1750	Aashima Technology B.V.
 1751	Network Computing Devices (NCD)
 1752	Technical Marketing Research, Inc.
 1753	Atmel-TEMIC Semiconductor GmbH
@@ -759,7 +759,7 @@
 1795	Bvtech Industry Inc.
 1796	Vorum Research Corporation
 1797	NKK Corporation
-1798	Ariel Corporation
+1798	Ariel Corporation
 1799	SMC Networks, Inc.
 1800	Putercom Co., Ltd.
 1801	Parthus Technologies
@@ -855,7 +855,7 @@
 1891	M-Audio
 1892	Cyber Power Systems, Inc.
 1893	X-Rite Incorporated
-1894	Jess-Link Products Co., Ltd. (JPC)
+1894	Jess-Link Products Co., Ltd. (JPC)
 1895	Tokheim Corporation
 1896	Camtel Technology Corp.
 1897	SURECOM Technology Corp.
@@ -879,7 +879,7 @@
 1915	Linksys
 1916	Forward Electronics Co., Ltd.
 1917	Griffin Technology LLC
-1918	Softing GmbH
+1918	Softing GmbH
 1919	Well Excellent & Most Corp.
 1920	ORGA Kartensysteme GmbH
 1921	Sandisk Technologies, Inc.
@@ -945,7 +945,7 @@
 1981	Webgear Inc.
 1982	Veridicom
 1983	TestQuest, Inc.
-1984	Code Mercenaries
+1984	Code Mercenaries
 1985	Keisokugiken Corporation
 1986	Varatouch Technology Inc.
 1987	J-Works, Inc.
@@ -961,7 +961,7 @@
 1997	Hteck Corp.
 1998	Nidec-Shimpo Corp.
 1999	Casio Computer Co., Ltd.
-2000	Dazzle Multimedia
+2000	Dazzle Multimedia
 2002	Aptio Products Inc.
 2003	Cyberdata Corp.
 2004	Aloka Co., Ltd.
@@ -1112,7 +1112,7 @@
 2149	MICROLAB
 2150	PEI Electronics, Inc.
 2151	Data Translation, Inc.
-2152	Electrical Geodesics, Inc.
+2152	Electrical Geodesics, Inc.
 2153	Visual Interaction
 2154	Emagic Soft-und Hardware Gmbh
 2155	ROHM Co. Ltd.
@@ -1181,10 +1181,10 @@
 2220	Macraigor Systems LLC
 2221	Toyota Technical Development Corporation (TTDC)
 2222	Macally (Mace Group, Inc.)
-2223	Hamilton Co.
+2223	Hamilton Co.
 2224	Metrohm Ltd.
 2225	High Technology Laboratory s.r.l
-2226	BIOTRONIK GmbH & Co.
+2226	BIOTRONIK GmbH & Co.
 2227	Voice It Worldwide, Inc.
 2228	Sorenson Communications
 2229	Correlator.com
@@ -1300,7 +1300,7 @@
 2340	Xerox Corporation
 2341	Lakeview Research
 2342	Sound Devices, LLC
-2343	Summus, Ltd.
+2343	Summus, Ltd.
 2344	Oxford Semiconductor Ltd.
 2345	American Biometric Company
 2346	Toshiba Information & Industrial Sys. And Services
@@ -1438,7 +1438,7 @@
 2480	Fargo Electronics, Inc.
 2481	Ositech Communications Incorporated
 2482	Franklin Electronic Publishers
-2483	Simplex Solution Inc.
+2483	Simplex Solution Inc.
 2484	MDS Gateways
 2485	Celltrix Technology Co., Ltd.
 2486	SmithMyers Communications Limited
@@ -1467,7 +1467,7 @@
 2509	Psion Connect Ltd.
 2510	City Electronics Ltd.
 2511	Taiwan Testing and Certification Center
-2513	NeoMagic Inc.
+2513	NeoMagic Inc.
 2514	Vreelin Engineering Inc.
 2515	COM ONE
 2516	Asahi Engineering Co., Ltd.
@@ -1475,12 +1475,12 @@
 2518	Berkeley Varitronics Systems
 2519	NovAtel Inc.
 2520	Elatec GmbH
-2521	Jungo
+2521	Jungo
 2522	A-FOUR TECH CO., LTD.
 2523	Measurement Computing Corporation
 2524	AIMEX Corporation
-2525	Fellowes Inc.
-2526	ViQuest Technology
+2525	Fellowes Inc.
+2526	ViQuest Technology
 2527	Addonics Technologies Corp.
 2528	Johnson Matthey PLC, Trading as Tracerco
 2529	Intellon Corporation
@@ -1489,7 +1489,7 @@
 2532	Unidata
 2533	Jo-Dan International, Inc.
 2534	Silutia, Inc.
-2535	Real 3D, Inc.
+2535	Real 3D, Inc.
 2536	AKAI professional M.I. Corp.
 2537	CHEN-SOURCE INC.
 2538	ShareCall Technologies
@@ -1536,7 +1536,7 @@
 2579	Telebyte Inc.
 2580	Spacelabs Healthcare
 2581	Scalar Corporation
-2582	Trek Technology (S) Pte Ltd
+2582	Trek Technology (S) Pte Ltd
 2583	HOYA Corporation
 2584	Heidelberger Druckmaschinen AG
 2585	Hua Geng Technologies Inc.
@@ -1551,10 +1551,10 @@
 2594	Century Semiconductor USA, Inc.
 2595	NDS Technologies Israel Ltd.
 2596	Boca Design, Inc.
-2597	3M Germany
+2597	3M Germany
 2598	Cyberware
 2599	Datacard Group
-2600	Ensure Technologies, Inc.
+2600	Ensure Technologies, Inc.
 2601	Marketcast
 2602	Fortune Electronics & Plastic (International) Ltd.
 2603	Muller & Sebastiani Elektronik GmbH
@@ -1586,7 +1586,7 @@
 2629	Look&Say co., Ltd.
 2630	Davicom Semiconductor, Inc.
 2631	Hirose Electric Co., Ltd.
-2632	I/O Interconnect
+2632	I/O Interconnect
 2634	propagamma kommunikation
 2635	Fujitsu Media Devices Limited
 2636	COMPUTEX Co., Ltd.
@@ -1596,7 +1596,7 @@
 2640	Mimaki Engineering Co., Ltd.
 2641	Sony Electronics Inc.
 2642	JEBSEE ELECTRONICS CO., LTD.
-2643	Portable Peripheral Co., Ltd.
+2643	Portable Peripheral Co., Ltd.
 2644	Applied Signal Technology, Inc.
 2645	ThermoQuest Corporation
 2646	EAE electronics GmbH
@@ -1618,7 +1618,7 @@
 2663	Medeli Electronics Co, Ltd.
 2664	COMAIDE Corporation
 2665	Chroma ate Inc.
-2666	Newcom Inc.
+2666	Newcom Inc.
 2667	Green House Co., Ltd.
 2668	Integrated Circuit Systems Inc.
 2669	UPS Manufacturing
@@ -1728,7 +1728,7 @@
 2773	kuwatec, Inc.
 2774	Vir A/S
 2775	Lynium L.L.C.
-2776	Aidonic Corporation
+2776	Aidonic Corporation
 2777	Avolites Ltd.
 2778	Data Encryption Systems Ltd
 2779	T.A.M. Co., Ltd.
@@ -1754,7 +1754,7 @@
 2799	Simple Systems, Ltd.
 2800	Option NV
 2801	KYOEI Co., Ltd.
-2802	CARTS, LLC
+2802	CARTS, LLC
 2803	Scale Master Technology, LLC.
 2804	ARTRONICS CO. LTD
 2805	Nakamichi
@@ -1943,11 +1943,11 @@
 2995	Ofuji Technology
 2996	HTC Corporation
 2997	Murata Manufacturing Co., Ltd.
-2998	Network Alchemy
+2998	Network Alchemy
 2999	Joytech Computer Company Limited
 3000	Renesas Technology Sales Co., Ltd.
 3001	Eiger M & C CO., LTD.
-3002	ZACCESS Systems
+3002	ZACCESS Systems
 3003	General Meters Corporation
 3004	Assistive Technology, Inc.
 3005	System Connection, Inc
@@ -1998,7 +1998,7 @@
 3050	Bryce Office Systems
 3051	RPA Electronics Design, LLC
 3052	Idaho Technology
-3053	MEI, Inc.
+3053	MEI, Inc.
 3054	LTK International Limited
 3055	Way2Call Communications
 3056	Pace Micro Technology PLC
@@ -2091,7 +2091,7 @@
 3143	TECAN Group AG
 3144	MARPOSS S.p.A.
 3145	Gigahertz-Optik GmbH
-3146	ALGE-TIMING GmbH & Co
+3146	ALGE-TIMING GmbH & Co
 3147	REINER Kartengeraete GmbH & Co.KG
 3148	Needham's Electronics Inc
 3149	ICHIRO.ORG
@@ -2109,7 +2109,7 @@
 3161	Dong Guan Shinko Wire Co., Ltd.
 3162	TRS International Mfg., Inc.
 3163	EDEC Co., Ltd.
-3164	Obbligato Objectives
+3164	Obbligato Objectives
 3165	Musitronics GmbH
 3166	Xytronix Research & Design
 3167	WAVESYSTEMS
@@ -2211,7 +2211,7 @@
 3264	Kuon Yi Industrial Corp.
 3266	Timex Corporation
 3267	Rimage Corporation
-3268	emsys Embedded Systems GmbH
+3268	emsys Embedded Systems GmbH
 3269	SENDO
 3270	INTERMAGIC CORP.
 3271	Kontron Medical AG
@@ -2387,7 +2387,7 @@
 3445	LET'S Corporation, Ltd.
 3446	MFP Korea, Inc.
 3447	Power Sentry/Newpoint
-3448	Japan Distributor Corporation
+3448	Japan Distributor Corporation
 3449	Assistive Technology Engineering Lab
 3450	MARX CryptoTech LP
 3451	Wellco Technology Co., Ltd.
@@ -2437,7 +2437,7 @@
 3496	softDSP Co., Ltd.
 3497	DigiLife Technology Inc.
 3498	Derelek
-3499	Diasonic Technology Co., Ltd.
+3499	Diasonic Technology Co., Ltd.
 3500	Smart Card Technology, Inc.
 3501	Westover Scientific
 3502	SERIAL SYSTEM LTD
@@ -2513,7 +2513,7 @@
 3574	Sitecom Europe B.V.
 3575	Mobile Action Technology Inc.
 3576	Hoya Computer Co., Ltd.
-3577	Nice Fountain Industrial Co., Ltd.
+3577	Nice Fountain Industrial Co., Ltd.
 3578	Toyo Networks & System Integration Co., Ltd.
 3579	Daisy Technology
 3580	General Touch Technology Co., Ltd.
@@ -2599,7 +2599,7 @@
 3660	Radica Games Ltd.
 3661	Hong Shi Precision Corp.
 3662	Lih Duo Intl. Co., Ltd.
-3663	Data Ray Corp.
+3663	Data Ray Corp.
 3664	TDi GmbH TechnoData Interware
 3665	Therapy Information & Communication System Inc.
 3666	Mindready Solutions (NI) Ltd.
@@ -2672,7 +2672,7 @@
 3733	Future Technology Co., Ltd
 3734	APLUX Communications Ltd.
 3735	Fingerworks, Inc.
-3736	Advanced Analogic Technologies, Inc.
+3736	Advanced Analogic Technologies, Inc.
 3737	Parallel Dice Co., Ltd.
 3738	TA HSING INDUSTRIES LTD.
 3739	ADTEC CORPORATION
@@ -2843,7 +2843,7 @@
 3906	Nital Consulting Services, Inc.
 3907	LiteON Semiconductor Corp.
 3908	Polhemus Incorporated
-3909	International Road Dynamics
+3909	International Road Dynamics
 3910	KIHOKU Electronic Co., Ltd.
 3911	SN Systems Ltd.
 3912	Durand Interstellar, Inc.
@@ -2942,14 +2942,14 @@
 4005	SOTEC CO., LTD.
 4006	CMD AG
 4007	EPOX COMPUTER CO., LTD.
-4008	Logic Controls, Inc.
+4008	Logic Controls, Inc.
 4009	Shenzhen Motion Control Technology Co., Ltd.
 4010	Changrime Telecom Co., Ltd.
 4011	ISZ
 4012	Current Stone Co., Ltd.
 4013	Ultravision Ltd.
 4014	Redsun Technology Corp.
-4015	Winpoint Electronic Corp.
+4015	Winpoint Electronic Corp.
 4016	Haurtian Wire & Cable Co., Ltd.
 4017	SuperGate Technologies
 4018	Conteck Co., Ltd.
@@ -2993,7 +2993,7 @@
 4056	LARSEN & BRUSGAARD
 4057	El Gato Software LLC
 4058	Quantec Networks GmbH
-4059	Comtech EF Data
+4059	Comtech EF Data
 4060	Micro Plus
 4061	Yuyama Mfg. Co., Ltd.
 4062	IDT DATA SYSTEM LIMITED
@@ -3001,7 +3001,7 @@
 4064	AONEPROTECH Co., Ltd.
 4065	MADWAVES ApS
 4066	Air Techniques, Inc.
-4067	ACCEL CORP.
+4067	ACCEL CORP.
 4068	IN-TECH ELECTRONICS LIMITED
 4069	TC&C ELECTRONIC CO.,LTD (SUNTECC, INC.)
 4070	Sospita ASA
@@ -3034,14 +3034,14 @@
 4097	Ritronics Components (S) Pte. Ltd.
 4098	Spa Design Ltd.
 4099	SIGMA CORPORATION
-4100	LG Electronics Inc.
+4100	LG Electronics Inc.
 4101	Apacer Technology Inc.
 4102	Reign Com Ltd.
 4103	Samphone Electronic Co., Ltd.
 4104	Futaba Corporation
 4105	Lumanate, Inc.
 4106	AVC Technology
-4107	Chou Chin Industrial Co., Ltd.
+4107	Chou Chin Industrial Co., Ltd.
 4108	eMachines, inc
 4109	NETOPIA, INC.
 4110	North American Pacific Industries, Corp.
@@ -3105,7 +3105,7 @@
 4168	Targus International LLC
 4169	Studio Technologies, Inc.
 4170	WACOH Corporation
-4171	CSM GmbH
+4171	CSM GmbH
 4172	AMCO TEC International Inc.
 4173	Newport Corporation
 4174	Halliburton Energy Services
@@ -3215,7 +3215,7 @@
 4278	Dynojet Research, Inc.
 4279	VSM Medtech Ltd.
 4280	DIBCOM
-4281	Prime Electronics & Satellitics, Inc.
+4281	Prime Electronics & Satellitics, Inc.
 4282	Dong-Guan Sintai Optical Co., Ltd.
 4283	TM Technology Inc.
 4284	Dinging Technology Co., Ltd.
@@ -3272,7 +3272,7 @@
 4335	Integrity Instruments Inc.
 4336	Etronics Corp.
 4337	Inventec Multimedia & Telecom Corp.
-4338	Autonics Co., Ltd.
+4338	Autonics Co., Ltd.
 4339	Vercel Development Inc.
 4340	INcoder Technology CO., Ltd.
 4341	Voyetra Turtle Beach, Inc.
@@ -3289,7 +3289,7 @@
 4352	VirTouch Ltd.
 4353	EASYPASS INDUSTRIAL CO., LTD.
 4354	Instrument Systems GmbH
-4355	Brain Products GmbH
+4355	Brain Products GmbH
 4356	TOA Corporation
 4357	MAP Medizin-Technologie GmbH
 4358	OrangeHouse Co., Ltd.
@@ -3319,7 +3319,7 @@
 4382	VSO Electronics Co., Ltd.
 4383	BANCOR S.R.L.
 4384	Voipac, s.r.o.
-4385	Kore Technology Limited
+4385	Kore Technology Limited
 4386	Klein & Melgert Developments B.V.
 4387	Hi-Tech Instruments, Inc.
 4388	REnex Technology Limited
@@ -3376,7 +3376,7 @@
 4440	Syn-Tech Systems Inc.
 4441	Micro Application Laboratory Corp.
 4442	Extreme Speed
-4443	Salix Technology Co., Ltd.
+4443	Salix Technology Co., Ltd.
 4444	CORESMA
 4445	ADTEK SYSTEM SCIENCE CO., LTD.
 4446	Group Sense Ltd.
@@ -3396,7 +3396,7 @@
 4460	SecureEye, Inc.
 4461	Filmetrics, Inc.
 4462	Gigastorage Corp.
-4463	Silicon 10 Technology Corp.
+4463	Silicon 10 Technology Corp.
 4464	Tadiran Com. Ltd.
 4465	CRE Technology Co., Ltd.
 4466	Telegate Co., Ltd.
@@ -3446,7 +3446,7 @@
 4510	Engineered Audio, LLC.
 4511	TECNOS CO., LTD.
 4512	Chipcon
-4513	Mikrap AG
+4513	Mikrap AG
 4514	SitecSoft Co., Ltd.
 4515	Technovas Co., Ltd.
 4516	THE FURUKAWA ELECTRIC CO., LTD.
@@ -3455,7 +3455,7 @@
 4519	SNAPSHIELD LTD.
 4520	Hoeft & Wessel AG
 4521	Parker Hannifin
-4522	GlobalMedia Group, LLC
+4522	GlobalMedia Group, LLC
 4523	Exito Electronics Co., Ltd.
 4524	Nike, Inc.
 4525	SANWA ELECTRIC INSTRUMENT CO., LTD.
@@ -3528,7 +3528,7 @@
 4592	Matthew Ward Solutions
 4593	Cal-Comp Electronics (Thailand) Public Co., Ltd.
 4594	Chain Tay Technology Co., Ltd.
-4595	ROUND Co., Ltd.
+4595	ROUND Co., Ltd.
 4596	Kyoritsu Electric Corporation
 4597	Siemens Mobile Phones
 4598	NetIndex Inc.
@@ -3536,7 +3536,7 @@
 4600	BodyMedia, Inc.
 4601	Cryptocard Corporation
 4602	Code Corporation
-4603	HORIBA, Ltd.
+4603	HORIBA, Ltd.
 4604	ANCOT CORPORATION
 4605	EKE-Electronics Ltd.
 4606	SHENZHEN CHANGXUNXING ELECTRONIC CO., LTD.
@@ -3621,7 +3621,7 @@
 4686	YEM Inc.
 4687	Beijing JingHuiJiaDe Tech. Co., Ltd.
 4688	TECMAG
-4689	Iwaya Corporation
+4689	Iwaya Corporation
 4690	Nextway Co., Ltd.
 4691	Erebus Limited
 4692	Empirical Systems
@@ -3706,7 +3706,7 @@
 4771	KENT WORLD CO., LTD.
 4772	Guangdong Matsunichi Communications Technology Co., Ltd
 4773	Sola/Hevi-Duty
-4774	ULVAC-PHI, Inc.
+4774	ULVAC-PHI, Inc.
 4775	Trendchip Technologies Corp.
 4776	Clovertech Inc.
 4777	Sunwave Technology Corp.
@@ -3777,7 +3777,7 @@
 4842	Microlink Systems
 4843	MITSUI & CO., LTD.
 4844	KYORITSU ELECTRICAL INSTRUMENTS WORKS, LTD. (R&D Center
-4845	Techno Kit Corporation
+4845	Techno Kit Corporation
 4846	Avery Dennison Deutschland GmbH
 4847	Tapwave, Inc.
 4848	KROHNE
@@ -3831,13 +3831,13 @@
 4896	Jaguar International Corporation
 4897	Lectrosonics, Inc.
 4898	Z/I Imaging
-4899	Zeustech Company Limited
+4899	Zeustech Company Limited
 4900	H-Mod, Inc.
 4901	Austriamicrosystems AG
 4902	Force Control Industries Inc.
 4903	Avtec, Inc.
 4904	Iris Power Engineering
-4905	Appairent Technologies, Inc.
+4905	Appairent Technologies, Inc.
 4906	Envara
 4907	Konica Minolta, Inc.
 4908	Le Prestique International (H.K.) Ltd.
@@ -3883,7 +3883,7 @@
 4948	FACTS Engineering LLC
 4949	Ethicon Endo-Surgery, Inc.
 4950	Techpoint Electric Wire & Cable Co., Ltd.
-4951	P & E Microcomputer Systems, Inc.
+4951	P & E Microcomputer Systems, Inc.
 4952	SKYLIGHT DIGITAL INC.
 4953	RKC INSTRUMENT INC.
 4954	URMET TLC S.p.A. - Servizio Amministrativo
@@ -3921,7 +3921,7 @@
 4986	Weldon Technologies, Inc.
 4987	SCAPS GmbH
 4988	Yaskawa Electric Corporation
-4989	Diodes Incorporated
+4989	Diodes Incorporated
 4990	XL Microwave, Inc.
 4991	Sata Hi Tech Services
 4992	Staveley Instruments
@@ -3992,9 +3992,9 @@
 5057	Vivitar Corporation
 5058	SATO KEIRYOKI MFG. CO., LTD.
 5059	SCT Performance, LLC
-5060	StationZ Inc.
+5060	StationZ Inc.
 5061	MELFAS, INC.
-5062	Hasointech Co., Ltd.
+5062	Hasointech Co., Ltd.
 5063	ANDO ELECTRIC CO., LTD.
 5064	Togami Electric Mfg. Co., Ltd.
 5065	LinearX Systems Inc.
@@ -4005,7 +4005,7 @@
 5070	Cypherix (Pty) Ltd.
 5071	Wisair Ltd.
 5072	Swedect AB
-5073	A-Max Technology Macao Commercial Offshore Co. Ltd.
+5073	A-Max Technology Macao Commercial Offshore Co. Ltd.
 5074	Intelligraphics, Inc.
 5075	AzureWave Technologies, Inc.
 5076	IWATSU TEST INSTRUMENTS CORPORATION
@@ -4029,7 +4029,7 @@
 5094	TechnoScope Co., Ltd.
 5095	Gantner Pigeon Systems GmbH
 5096	PalmSource Inc.
-5097	Ununpentium, LLC
+5097	Ununpentium, LLC
 5098	I/F - COM A/S
 5099	PILZ GMBH & CO. KG
 5100	Chyau Yuan Technology Co., Ltd.
@@ -4074,7 +4074,7 @@
 5139	Telsey S.p.A.
 5141	Sony Computer Entertainment Europe
 5142	Axeon Limited
-5143	Butterfly Media
+5143	Butterfly Media
 5144	MediaPower Technology Corporation
 5145	ABILITY ENTERPRISE CO., LTD.
 5146	Realm Systems Inc.
@@ -4196,7 +4196,7 @@
 5262	EVATRONIX SA
 5263	Ralink Technology, Corp.
 5264	Digitek Spa
-5265	Futronic Technology Co., Ltd.
+5265	Futronic Technology Co., Ltd.
 5266	Farsharp Imaging Technology Corp.
 5267	Suunto
 5269	Elprotronic Inc.
@@ -4281,7 +4281,7 @@
 5348	S.CAM Co., Ltd.
 5349	Zinitix Co., Ltd
 5350	Micromed Biotecnologia Ltda.
-5351	ISS Incorporated
+5351	ISS Incorporated
 5352	Animated Lighting LC
 5353	Lifetouch, Inc.
 5354	Kosaka Laboratory Ltd.
@@ -4311,7 +4311,7 @@
 5378	Peavey Electronics
 5379	Stretch Inc.
 5380	Bixolon Co., Ltd.
-5381	Extraordinary Technologies Pty. Ltd.-Trading as Halcro
+5381	Extraordinary Technologies Pty. Ltd.-Trading as Halcro
 5382	T.D. Technecon Ltd.
 5383	APIM INFORMATIQUE
 5384	MAATEL
@@ -4339,7 +4339,7 @@
 5406	Circad Design Ltd.
 5407	Opal Kelly Incorporated
 5408	Bitwire Corp.
-5409	S++ Simulation Services
+5409	S++ Simulation Services
 5410	Educational Insights
 5411	Hitachi High-Tech Analysis Corporation
 5412	SCIENTEX Inc.
@@ -4370,7 +4370,7 @@
 5437	Adam Tech
 5438	abKey ptd ltd.
 5439	UNIBRAIN S.A.
-5440	Phihong Technology Co., Ltd.
+5440	Phihong Technology Co., Ltd.
 5441	Better Light, Inc.
 5442	Gemini Industries, Inc.
 5443	Buxco Research Systems
@@ -4379,7 +4379,7 @@
 5446	u-blox AG
 5447	S. Goers IT-Solutions
 5448	Centrepoint Technologies
-5449	Beamex Oy Ab
+5449	Beamex Oy Ab
 5450	ID Innovations Incorporated
 5451	PNY Technologies Inc.
 5452	AutoXray Inc.
@@ -4423,7 +4423,7 @@
 5490	Ricreations, Inc.
 5491	Gradiente Eletronica S.A.
 5492	HKW-Elektronik GmbH
-5493	Video Associates Labs, Inc.
+5493	Video Associates Labs, Inc.
 5494	Maretron
 5495	MIYUKI ELEX CO., LTD.
 5496	Beijing Huaqi Information Digital Technology Co., Ltd.
@@ -4449,7 +4449,7 @@
 5516	LINFOS CO., LTD.
 5517	Oakley Inc.
 5518	Acterna Germany GmbH
-5519	Tai Yip Electrical Co., Ltd.
+5519	Tai Yip Electrical Co., Ltd.
 5520	Onsu Data Telecommunication Technology (Shenzhen) Fty.
 5521	Advanced Product Design & Mfg. Inc.
 5522	Tokyo Drawing Ltd.
@@ -4518,7 +4518,7 @@
 5585	Hokuyo Automatic Co., Ltd.
 5586	REA Elektronik GmbH
 5587	Symmetric Research
-5588	Opinionmeter International, Ltd.
+5588	Opinionmeter International, Ltd.
 5589	Coulomb Electronics Ltd.
 5590	Fitness Expert
 5591	amaxa GmbH
@@ -4588,7 +4588,7 @@
 5655	Navman
 5656	Redpine Signals, Inc.
 5657	L & K Precision Technology Co., Ltd.
-5658	Celeraise Investments Ltd.
+5658	Celeraise Investments Ltd.
 5659	MYCOM, INC.
 5660	DigiTech Systems Co., Ltd.
 5661	Delfin Technologies Ltd.
@@ -4627,7 +4627,7 @@
 5694	Huizhou Bohui Connection Technology Co., Ltd
 5695	AVEX Technologies, Inc.
 5696	M3 Electronics, Inc.
-5697	eMagin Corporation
+5697	eMagin Corporation
 5698	AquaSensors LLC
 5699	Sanwa Newtec Co., Ltd.
 5700	Active Technologies SRL
@@ -4661,7 +4661,7 @@
 5728	Creatix Polymedia GmbH
 5729	DVS Korea Co., Ltd.
 5730	Positivo Tecnologia S/A
-5731	Sercel, Inc.
+5731	Sercel, Inc.
 5732	ARGOX INFORMATION CO., LTD.
 5733	General Dynamics Canada
 5734	Vanguard Instruments Co., Inc.
@@ -4734,7 +4734,7 @@
 5802	Symtx Inc.
 5803	InnoWireless Co. Ltd.
 5804	Dongguan ChingLung Wire & Cable Co., Ltd.
-5805	Siemens VDO Trading GmbH
+5805	Siemens VDO Trading GmbH
 5806	ELSA Japan Inc.
 5807	Intelligent Mechatronic Systems
 5808	Infosight Corp.
@@ -4769,7 +4769,7 @@
 5837	Brian Moore Guitars, Inc.
 5838	IPFlex Inc.
 5839	YAZAKI PARTS CO., LTD.
-5841	Xperix Inc.
+5841	Xperix Inc.
 5842	TOMEY
 5843	Frontline Test Equipment, Inc.
 5844	SRTechnologies
@@ -4781,7 +4781,7 @@
 5850	Linkam Scientific Instruments Ltd.
 5851	Eridon Corporation
 5852	W-IE-NE-R, Plein & Baus GmbH
-5853	YOSHIDA SEIKI CO., LTD.
+5853	YOSHIDA SEIKI CO., LTD.
 5854	Schneider Electric
 5855	King Billion Electronics Co., Ltd.
 5856	Lumex Ltd.
@@ -4793,7 +4793,7 @@
 5862	Diginfo Technology Corporation
 5863	United Keys, Inc.
 5864	Frontier Information Enterprise, Inc.
-5865	Dr. Gal Ben-David
+5865	Dr. Gal Ben-David
 5866	Avionica, Inc.
 5867	Helvar
 5868	ASAHI GLASS CO., LTD.
@@ -4866,9 +4866,9 @@
 5936	MERCURY
 5937	DATA DISPLAY AG
 5938	NETENRICH INC.
-5939	NUBYTECH INC.
+5939	NUBYTECH INC.
 5940	IPdrum AB
-5941	Satloc LLC (CSI Wireless)
+5941	Satloc LLC (CSI Wireless)
 5942	CANON IMAGING SYSTEMS INC.
 5943	Hong Kong Applied Science and Technology Research Inst.
 5944	Asicen Technology Corp.
@@ -4925,7 +4925,7 @@
 5996	Advanced Electronic Designs
 5997	Mbridge Systems, Inc.
 5998	UD electronic corp.
-5999	Astralink Technology Pte Ltd
+5999	Astralink Technology Pte Ltd
 6000	precisionWave Corporation
 6001	Shenzhen Alex Connector Co., Ltd.
 6002	System Level Solutions, Inc.
@@ -4992,10 +4992,10 @@
 6064	Weinmann Geraete fuer Medizen GmbH+Co. KG
 6065	ViaSat, Inc.
 6066	Metec GmbH
-6067	Grey Innovation Pty., Ltd.
+6067	Grey Innovation Pty., Ltd.
 6068	Apres Health & Fitness
 6069	Lunatone Industrielle Elektronik GmbH
-6070	Hydronix Limited
+6070	Hydronix Limited
 6071	Sinter Information Corp.
 6072	Trojan Technologies Private Limited
 6073	THALES DIS IBS ITALIA S.p.A.
@@ -5026,7 +5026,7 @@
 6098	Radiometer Medical ApS
 6099	Korea Techtron Co., Ltd.
 6100	Kenetics Innovations Pte. Ltd., Singapore
-6101	ImageMap Inc.
+6101	ImageMap Inc.
 6102	Samsung Electronics Research Institute
 6103	Copley Controls Corp.
 6104	Rapattoni Corporation
@@ -5082,7 +5082,7 @@
 6154	Technosystem Co., Ltd.
 6155	Photo Research, Inc.
 6156	Power Digital Card Co., Ltd.
-6157	U3, LLC
+6157	U3, LLC
 6158	Audisoft Technologies
 6159	Phonak Communications AG
 6160	Wanshih Electronic Co., Ltd.
@@ -5093,7 +5093,7 @@
 6165	Horizon Semiconductors Ltd.
 6166	Directed Electronics
 6167	Digital Authentication Technologies, Inc.
-6168	Osteosys Co., Ltd.
+6168	Osteosys Co., Ltd.
 6169	Quality Vision International, Inc.
 6170	Fotonation
 6171	Current Designs, Inc.
@@ -5124,14 +5124,14 @@
 6196	SONEL S.A.
 6197	Lust Drivetronics GmbH
 6198	ePoint Technology
-6199	Hokuto Denko Corporation
+6199	Hokuto Denko Corporation
 6200	Real Networks, Inc.
 6201	AnexTEK Global Inc.
 6202	Mediafour Corporation
 6203	SIDACON Systemtechnik GmbH
 6204	Saab AB
 6205	F3 Inc.
-6206	Robonik India Pvt. Ltd.
+6206	Robonik India Pvt. Ltd.
 6207	i-BEAD Co., Ltd.
 6208	Cognitive Solutions, Inc.
 6209	SEIKO TIME SYSTEM INC.
@@ -5158,7 +5158,7 @@
 6230	Imaginova
 6231	Picosecond Pulse Labs
 6232	CELLSYSTEM CO., LTD
-6233	Speech Technology Center, Ltd.
+6233	Speech Technology Center, Ltd.
 6234	WinProbe Corporation
 6235	IG-Development
 6236	Omnisec AG
@@ -5213,7 +5213,7 @@
 6285	Across Techno, Inc.
 6286	Neopost Technologies
 6287	Zefatek Co., Ltd.
-6288	MEDIAN Inc.
+6288	MEDIAN Inc.
 6289	XSENSOR Technology Corp.
 6290	Accuri Instruments, Inc.
 6291	Ginga Software, Inc.
@@ -5329,7 +5329,7 @@
 6401	GE Healthcare
 6402	CSIRO Marine & Atmospheric Research
 6403	ANEX SYSTEM LTD.
-6404	LVI Low Vision International AB
+6404	LVI Low Vision International AB
 6405	EGEMEN Bilgisayar Muh ve San LTD STI
 6406	Seoro Tech Co., Ltd.
 6407	Elcoteq Design Center Oy
@@ -5367,7 +5367,7 @@
 6439	Vulcan Portals Inc.
 6440	PROCEQ SA
 6441	Wagner Owen Corporation
-6442	Intek
+6442	Intek
 6443	KVH Industries, Inc.
 6444	Twig Com Oy
 6445	AgileTV
@@ -5380,7 +5380,7 @@
 6452	SAKAI Medical Co., Ltd.
 6453	Elektron Music Machines AB
 6454	Asaka Riken Co., Ltd
-6455	Dynjab Technologies Pty. Ltd.
+6455	Dynjab Technologies Pty. Ltd.
 6456	Meinberg Funkuhren GmbH & Co. KG
 6457	Hilscher GmbH
 6458	Lipman Electronic Engineering Ltd.
@@ -5522,7 +5522,7 @@
 6594	TARGA GmbH
 6595	Riskema Informatica e Automacao Ltda.
 6596	Control Gaging, Inc.
-6597	Danaher Sensors and Controls
+6597	Danaher Sensors and Controls
 6598	Harmony Microelectronic Inc.
 6599	WEG Equipamentos Elétricos S.A. - Automação
 6600	Secure Key LLC
@@ -5539,7 +5539,7 @@
 6611	Zucchetti Centro Sistemi SPA
 6612	I Bee, K.K.
 6613	CNB Technology Inc.
-6614	WIDE Corporation
+6614	WIDE Corporation
 6615	Unitop New Technology Co., Ltd.
 6616	Smart Point SA
 6617	Denso Ten Limited
@@ -5591,7 +5591,7 @@
 6663	HID
 6664	Bellwood International, Inc.
 6665	DILANO GmbH
-6667	Teleste OYJ
+6667	Teleste OYJ
 6668	Sunkorea Electronics Co., Ltd.
 6669	Ladybug Technologies LLC
 6670	Sasse Elektronik GmbH
@@ -5604,7 +5604,7 @@
 6677	Amphenol-Tuchel Electronics GmbH
 6678	General Dynamics
 6679	Oticon A/S
-6680	Quadzilla Performance Technologies, Inc.
+6680	Quadzilla Performance Technologies, Inc.
 6681	DDTIC Corporation Ltd.
 6682	ASIACORP INTERNATIONAL LTD.
 6683	Fischer-Zoth GmbH
@@ -5633,7 +5633,7 @@
 6706	Verint Video Technology GmbH
 6707	Schmid & Partner Engineering AG
 6708	King Chuang Tech & Electronic Co., Ltd.
-6709	Artesyn Technologies Inc.
+6709	Artesyn Technologies Inc.
 6710	Topdisk Technology Limited
 6711	Stayhealthy Inc.
 6712	Nemo-Q International AB
@@ -5652,7 +5652,7 @@
 6725	Wavelength Electronics Inc.
 6726	JAVAD GNSS, Inc.
 6727	iQBio, Inc.
-6728	KYOHRITSU ELECTRONIC INDUSTRY Co., Ltd.
+6728	KYOHRITSU ELECTRONIC INDUSTRY Co., Ltd.
 6729	TOKYO SEIMITSU CO., LTD.
 6730	Silicon Image
 6731	SafeBoot International B.V.
@@ -5707,7 +5707,7 @@
 6780	Evoluent LLC
 6781	Systex Corporation
 6782	MELTEC Systementwicklung
-6783	SSD COMPANY LIMITED
+6783	SSD COMPANY LIMITED
 6784	Zhong Ming Wire Cable Technology (Xiamen) Co., Ltd.
 6785	G.Tech Technology Ltd.
 6786	Proconn Technology Co., Ltd.
@@ -5770,7 +5770,7 @@
 6843	Airo Wireless Media Inc.
 6844	Fuji Photo Film USA
 6845	PERTO S.A.
-6846	MP3Car.com Inc
+6846	MP3Car.com Inc
 6847	ANIMA Corporation
 6848	SOKKIA Co., Ltd.
 6849	LIANHE TECHNOLOGIES, INC.
@@ -5790,7 +5790,7 @@
 6863	International Manufacturing & Engineering Services Co.
 6864	Cygnetron, Inc.
 6865	Desan Wire Co., Ltd.
-6866	Mesa Imaging AG
+6866	Mesa Imaging AG
 6867	Advanced Technetix, Inc.
 6868	Advanced Printing Systems
 6869	Gentec-EO
@@ -5803,7 +5803,7 @@
 6876	Turbolinux, Inc.
 6877	Marshall Electronics, Inc.
 6878	SpinMaster Ltd.
-6879	digital design GmbH
+6879	digital design GmbH
 6880	Axiomatic Technologies Corp.
 6881	Hoffman Engineering
 6882	A-JET Technology Co., LTD.
@@ -5856,7 +5856,7 @@
 6929	OneClick Technologies Ltd.
 6930	Eventide, Inc.
 6931	Neuf Cegetel
-6932	Ergotron, Inc.
+6932	Ergotron, Inc.
 6933	i3micro technology ab
 6934	LinTech GmbH Berlin
 6935	SHENZHEN e-loam Technology Co., Ltd.
@@ -6120,7 +6120,7 @@
 7193	Charder Electronic Co., Ltd.
 7194	Datel Electronics Ltd.
 7195	Volkswagen of America, Inc.
-7196	Schmartz Inc.
+7196	Schmartz Inc.
 7197	GASTEC CORPORATION
 7198	Focused Test, Inc.
 7199	Goldvish S.A.
@@ -6141,7 +6141,7 @@
 7214	LiveWire Test Labs, Inc.
 7215	Wessex Advanced Switching Products Ltd.
 7216	Li Creative Technologies, Inc.
-7217	LS Mtron Ltd.
+7217	LS Mtron Ltd.
 7218	INTELBANQ
 7219	EK-TEAM GmbH
 7220	Pro-Active
@@ -6289,7 +6289,7 @@
 7362	CC Systems AB
 7363	Biocomfort Diagnostics GmbH & Co. KG
 7364	Byte Paradigm sprl
-7365	Rane Corporation
+7365	Rane Corporation
 7366	Digital Force Technologies
 7367	GELOGIC
 7368	Iofy Corporation
@@ -6310,13 +6310,13 @@
 7383	GMC-I Gossen-Metrawatt GmbH
 7384	Dash Navigation, Inc.
 7385	TL Industries
-7386	NAVICO
+7386	NAVICO
 7387	Cat Technologies Ltd.
 7388	Advanced Medical Electronics Corp.
 7389	YOOSAMFLUTE CO., LTD.
 7390	Telecommunications Technology Association (TTA)
 7391	WonTen Technology Co., Ltd.
-7392	EDIMAX TECHNOLOGY CO., LTD.
+7392	EDIMAX TECHNOLOGY CO., LTD.
 7393	Amphenol KAE
 7394	Extron Electronics
 7395	Australian Simulation Control Systems Pty., Ltd.
@@ -6377,7 +6377,7 @@
 7450	Boeckeler Instruments, Inc.
 7451	HumanBeams Inc.
 7452	Novatron Oy
-7453	SYNESTHESIA CORPORATION
+7453	SYNESTHESIA CORPORATION
 7454	OFFCODE
 7455	Diostech Co., Ltd.
 7456	SAMTACK INC.
@@ -6408,7 +6408,7 @@
 7481	XECURENEXUS Co., LTD.
 7482	P. R. Glassel & Associates, Inc.
 7483	J & C Technology Co., Ltd.
-7484	Tomei Tsushin Kogyo Co., Ltd.
+7484	Tomei Tsushin Kogyo Co., Ltd.
 7485	R&D Center of Biometric Technology-BMSTU
 7486	EMCON Emanation Control Limited
 7487	Photon Control Inc.
@@ -6480,7 +6480,7 @@
 7554	HERTZ SYSTEMTECHNIK GmbH
 7555	Mantech International
 7556	Kechenda Plastic Electronic Factory
-7557	NINGBO SHUNSHENG COMMUNICATION APPARATUS CO., LTD.
+7557	NINGBO SHUNSHENG COMMUNICATION APPARATUS CO., LTD.
 7558	C.D.N. CORPORATION
 7559	RHK TECHNOLOGY, INC.
 7560	Mahr GmbH
@@ -6536,7 +6536,7 @@
 7610	BancTec, Inc.
 7611	Condalo GmbH
 7612	Shenzhen HOJY Technology Co., Ltd.
-7613	Terawins
+7613	Terawins
 7614	S.R.N. Corporation
 7615	Signostics Pty. Ltd.
 7616	DATAFIELD INDIA PVT.LTD.
@@ -6654,7 +6654,7 @@
 7728	Kohler Co.
 7729	Greatbatch
 7730	Opti-Sciences, Inc.
-7731	KOBIAN CANADA INC.
+7731	KOBIAN CANADA INC.
 7732	Sensory, Inc.
 7733	BELLING Co., Ltd.
 7734	Insulet Corporation
@@ -6693,17 +6693,17 @@
 7767	Bundesdruckerei GmbH
 7768	Horner APG
 7769	inTera Tecnologia
-7770	VOXTRONIC TECHNOLOGY
+7770	VOXTRONIC TECHNOLOGY
 7771	APRICO A/S
 7772	Enova Technology Corp.
 7773	SAT Corporation
 7774	Touch International
 7775	Relpol SA
 7776	SEA Signalisation
-7777	Anoto AB
+7777	Anoto AB
 7778	Uriver Inc.
 7779	DRAEGER MEDICAL
-7780	IMSTORAGE CO., LTD.
+7780	IMSTORAGE CO., LTD.
 7781	THE BOEING CO.
 7782	KAPSYS
 7783	Orban/CRL Systems, Inc.
@@ -6744,7 +6744,7 @@
 7818	Hibest Electronic Co., Ltd
 7819	ImTech, Inc.
 7820	Data Conversion Systems Ltd.
-7821	HIGHVOLT Prueftechnik Dresden GmbH
+7821	HIGHVOLT Prueftechnik Dresden GmbH
 7822	EADS Secure Networks
 7823	PublicSolution GmbH
 7824	Mego Afek
@@ -6801,7 +6801,7 @@
 7875	ANDREAS STIHL AG & Co. KG
 7876	ELTRONIC SOLUTION A/S
 7877	SIDSA
-7878	PHYWORKS LTD.
+7878	PHYWORKS LTD.
 7879	Gefen Inc.
 7880	TelePath Technologies Co., Ltd.
 7881	MOSER BAER INDIA LIMITED
@@ -6824,7 +6824,7 @@
 7898	AIRTIES WIRELESS NETWORKS
 7899	BLACKMAGIC DESIGN PTY.
 7900	B-DeltaCom
-7901	IRIDIUM SATELLITE LLC
+7901	IRIDIUM SATELLITE LLC
 7902	steute Schaltgerate GmbH & Co. KG
 7903	Selectwireless Co., Ltd.
 7904	KYUDEN TECHNOSYSTEMS CORPORATION
@@ -6836,7 +6836,7 @@
 7910	SHENZHEN EVERWIN PRECISION TECHNOLOGY CO., LTD.
 7911	EPCOS
 7912	ONDA COMMUNICATION S.p.a.
-7913	ZOTAC International (Macao Commercial Offshore) Limited
+7913	ZOTAC International (Macao Commercial Offshore) Limited
 7914	Yullin Technologies Co., Ltd.
 7915	GEOTATE
 7916	CTC Analytics AG
@@ -6891,7 +6891,7 @@
 7965	How Weih Precision Technology (Shenzhen) Co., Ltd.
 7966	TSIEN (UK) LTD.
 7967	RaaX Co., Ltd.
-7968	Shenzhen Tenwei Electronics Co., Ltd.
+7968	Shenzhen Tenwei Electronics Co., Ltd.
 7969	Scosche Industries
 7970	STAr Technologies, Inc.
 7971	KOUEI SYSTEM, LTD.
@@ -6944,7 +6944,7 @@
 8018	Systems & Electronic Development FZCO (SEDCO)
 8019	SK telesys
 8020	LOEC, INC.
-8021	Fujitsu Electronics Europe GmbH
+8021	Fujitsu Electronics Europe GmbH
 8022	MUT
 8023	PIGNOLO S.P.A.
 8024	Inmarsat
@@ -6960,7 +6960,7 @@
 8034	Elquest Corporation
 8035	IriTech, Inc.
 8036	actionXL, Inc.
-8037	Taylor Technologies, Co., Ltd.
+8037	Taylor Technologies, Co., Ltd.
 8038	Hokkaido Electronics Corporation
 8039	MICRO INNOVATIONS CORP.
 8040	General Dynamics UK Limited
@@ -6985,17 +6985,17 @@
 8059	AVMAP SRL
 8060	Voltopia e.U.
 8061	UNICARD S.A.
-8062	Canon India Private Limited
-8063	NOVA Sensors
+8062	Canon India Private Limited
+8063	NOVA Sensors
 8064	MagicPixel Inc.
 8065	HYB D.O.O.
 8066	TANDBERG TELECOM AS
 8067	Beauty Up Co., Ltd.
 8068	Inverness Medical Innovations, Inc.
 8069	Netronix Inc.
-8070	Skyworth Overseas Development Limited
+8070	Skyworth Overseas Development Limited
 8071	STANTUM
-8072	Modu Ltd.
+8072	Modu Ltd.
 8073	Dongguan Goldconn Precision Electronics Co., Ltd.
 8074	Morning Star Industrial Co., Ltd.
 8075	Rittal GmbH & Co. KG
@@ -7024,7 +7024,7 @@
 8098	AMETEK DENMARK A/S
 8099	Ezurio Inc
 8100	BRIDGEPORT INSTRUMENTS, LLC
-8101	DELTA DORE
+8101	DELTA DORE
 8102	Daylight Solutions, Inc.
 8103	COSMOS WEB CO., LTD.
 8104	TCL Technoly Electronics (Hui Zhou) Co., Ltd.
@@ -7074,13 +7074,13 @@
 8148	FINSECUR
 8149	Dream Multimedia GmbH
 8150	Logitek Electronic Systems, Inc.
-8151	ASELSAN Elektronik Sanayi ve Ticaret. A.S.
+8151	ASELSAN Elektronik Sanayi ve Ticaret. A.S.
 8152	Guangzhou Tianhe Changjiang Communication Industrial Co
 8153	Knox Company
 8154	Beckwith Electric Co., Inc.
 8155	Delphin Technology AG
 8156	HOSA TECHNOLOGY, INC.
-8157	CHASE GLORY INDUSTRIAL LTD.
+8157	CHASE GLORY INDUSTRIAL LTD.
 8158	ILX Lightwave
 8159	SEPURA PLC
 8160	REALFLEET Co., Ltd.
@@ -7118,7 +7118,7 @@
 8192	RongTong Info & Tech Co., Ltd.
 8193	D-Link Corporation
 8194	DAP Technologies Ltd.
-8195	detectomat GmbH
+8195	detectomat GmbH
 8196	Shanghai Bellmann Digital Source Co., Ltd.
 8197	Balluff GmbH
 8198	Lenovo Mobile Communication Technology Ltd.
@@ -7130,7 +7130,7 @@
 8204	HANPIN ELECTRON CO., LTD.
 8205	Belkin Electronic (Changzhou) Co., Ltd.
 8206	DAIICHI PARTS (HK) CO., LTD.
-8207	Progind Srl
+8207	Progind Srl
 8208	Tectonica Australia Pty. Ltd.
 8209	SHENZHEN HEXIN COM. TECH. CO., LTD.
 8210	Applied Radar, Inc.
@@ -7181,7 +7181,7 @@
 8255	WPG System Pte. Ltd.
 8256	Hauppauge Computer Works, Inc.
 8257	WILL BEST (ELECTRONICS) LTD.
-8258	Eberspaecher Electronics GmbH & Co. KG
+8258	Eberspaecher Electronics GmbH & Co. KG
 8259	Mobius Microsystems
 8260	NOVUS PRODUTOS ELETRONICOS LTDA.
 8261	EMH - Energie-Messtechnik GmbH
@@ -7240,7 +7240,7 @@
 8314	C.E.T.W.I.N System Solutions Sweden AB
 8315	Technetix Group Ltd.
 8316	NESA International, Inc.
-8317	CESI Technology Co., Ltd.
+8317	CESI Technology Co., Ltd.
 8318	ENHANCED VIDEO DEVICES, INC.
 8319	Profound BV
 8320	Barnes and Noble
@@ -7268,7 +7268,7 @@
 8342	Shenzhen Microconn Investment and Development Co., Ltd.
 8343	USBPARTNER
 8344	TouchTable, Inc.
-8345	Systematic Development Group, LLC
+8345	Systematic Development Group, LLC
 8346	Avedis Zildjian Company
 8347	SATEL OY
 8348	iPulse Systems
@@ -7328,7 +7328,7 @@
 8402	ROBOTEQ INC.
 8403	Provo Craft
 8404	SCDi
-8405	Panduit-Atlona
+8405	Panduit-Atlona
 8406	PowerA
 8407	SHENZHEN ZILI ELECTRONICS CO. LTD.
 8408	Changzhou Xinchao Technologies, Inc.
@@ -7347,7 +7347,7 @@
 8421	Cardreader, Inc.
 8422	Brooks Automation, Inc.
 8423	Scientific Digital Imaging plc
-8424	Jow Tong Technology Co., Ltd.
+8424	Jow Tong Technology Co., Ltd.
 8425	adp Gauselmann GmbH
 8426	CACTUS TECHNOLOGIES, LIMITED
 8427	AOS Technologies AG
@@ -7454,7 +7454,7 @@
 8528	AZOTEQ (PTY) LTD.
 8529	SeaSpace Corporation
 8530	AD Semiconductor Co., Ltd.
-8531	Mastertouch Solutions Electronics Co., Ltd.
+8531	Mastertouch Solutions Electronics Co., Ltd.
 8532	Trace Lighting Ltd.
 8533	Teledyne Controls
 8534	Weistech Technology Co., Ltd.
@@ -7520,7 +7520,7 @@
 8594	FlexRadio Systems
 8595	Schnick-Schnack-Systems GmbH
 8596	ROTH + WEBER GmbH
-8597	Hans Eckes Hardware & Software
+8597	Hans Eckes Hardware & Software
 8598	XPMOBILE
 8599	W & D, LLC
 8600	Wonde Proud Technology Co., Ltd.
@@ -7570,7 +7570,7 @@
 8644	Longsys Electronics (HK) Co., Ltd.
 8645	Vukic Computer Instruments GmbH
 8646	PSS Hong Kong Limited
-8647	Unisoku Co., Ltd.
+8647	Unisoku Co., Ltd.
 8648	IDONDEMAND INC.
 8649	Innoteletek, Inc.
 8650	RAE Systems Inc.
@@ -7596,14 +7596,14 @@
 8670	Cloud Engines, Inc.
 8671	Quanser Consulting Inc.
 8672	OpenPattern
-8673	CAEN S.P.A.
+8673	CAEN S.P.A.
 8674	Ascension Technology Corp.
 8675	Crest Technology Inc.
 8676	Xcellen Co., Ltd.
 8677	Kruglov Evgeniy Vladimirovich
 8678	OCZ Technology Group
 8679	Sagemcom Broadband SAS
-8680	BOEHNKE + PARTNER GmbH Steuerungssysteme
+8680	BOEHNKE + PARTNER GmbH Steuerungssysteme
 8681	Jiafuh Metal & Plastic (ShenZhen) Co., Ltd.
 8682	JUST MAKE ELECTRONICS CO., LTD.
 8683	KOKORO CO., LTD.
@@ -7890,7 +7890,7 @@
 8964	Pinnacle
 8965	Lindemann Audiotechnik GmbH
 8966	Syba Multimedia, Inc.
-8967	Madboy Audio International Oy
+8967	Madboy Audio International Oy
 8968	UV Networks, Inc.
 8969	TimeLink Inc.
 8970	Data Locker Inc.
@@ -7917,14 +7917,14 @@
 8991	FandF Co., Ltd.
 8992	Redring AB
 8993	iKingdom Corp. (d.b.a. iConnectivity)
-8994	RichWave Technology Corp.
+8994	RichWave Technology Corp.
 8995	EFI TECHNOLOGY s.r.l.
 8996	Ubisense Limited
 8997	Simbex
 8998	CKM Electronics Co., Ltd.
 8999	DreamSecurity
 9000	Radio Systems Corporation
-9001	Infinite Technologies JLT
+9001	Infinite Technologies JLT
 9002	Skalar Analytical b.v.
 9003	Zhuhai Pantum Electronics Co., Ltd.
 9004	Digital Lumens
@@ -7976,7 +7976,7 @@
 9050	Top Yang Technology Enterprise Co., Ltd.
 9051	Dongguan KangXiang Electronic Co., Ltd.
 9052	Neuralieve
-9053	Wavepod Technologies LLC
+9053	Wavepod Technologies LLC
 9054	Sage Electronic Engineering LLC
 9055	Delux Technology Co., Ltd.
 9056	AudioProbe Inc.
@@ -8062,7 +8062,7 @@
 9136	Seniorsoft Development Co., Ltd.
 9137	Riken Keiki Co., Ltd.
 9138	SEER Technology, Inc.
-9139	Straubtec GmbH & Co. KG
+9139	Straubtec GmbH & Co. KG
 9140	Dental Wings Inc.
 9141	Crowcon Detection Instruments Limited
 9142	FULL ELECTRONIC system
@@ -8087,7 +8087,7 @@
 9161	IRM Touch Inc.
 9162	IHP GmbH Innovations for High Performance Microelectro
 9163	Point Core SARL
-9164	Avitech International Corp.
+9164	Avitech International Corp.
 9165	Avconn Precise Connector Co., Ltd.
 9166	Gembird Electronics Ltd.
 9167	Admesy BV
@@ -8122,7 +8122,7 @@
 9196	Alacer Biomedica Industria Eletronica Ltda.
 9197	Optomotive, mehatronika d.o.o.
 9198	Sofird, Inc.
-9199	PPHU "AWEX" RAFAL STANUCH
+9199	PPHU "AWEX" RAFAL STANUCH
 9200	Ecotronics Limited
 9201	WIMM Labs
 9202	Northern Digital Inc.
@@ -8411,12 +8411,12 @@
 9485	Alstom Grid SAS
 9486	Beijing MOPS Technology Co., Ltd.
 9487	itplants ltd.
-9488	SE Elektronische Systeme
+9488	SE Elektronische Systeme
 9489	Morita Tech Co., Ltd.
 9490	RNDPLUS Co., Ltd.
 9491	RMI Laser, LLC
 9492	Fullpower Technologies
-9493	AMITEK
+9493	AMITEK
 9494	Cooler Master Co., Ltd.
 9495	Marel EHF
 9496	Anite Telecoms Inc.
@@ -8436,13 +8436,13 @@
 9510	Weide Electronics Co., Ltd.
 9511	Software Bisque, Inc.
 9512	BittWare Inc.
-9513	SUZHOU XINYA ELECTRIC COMMUNICATION CO., LTD.
+9513	SUZHOU XINYA ELECTRIC COMMUNICATION CO., LTD.
 9514	SUZHOU KELI TECHNOLOGY DEVELOPMENT CO., LTD.
 9515	TOP Exactitude Industry (ShenZhen) Co., Ltd.
 9516	VIGO System S.A.
 9517	Nokia Siemens Networks
 9518	Heliox Technologies, Inc.
-9519	Pentronic AB
+9519	Pentronic AB
 9520	STT Emtec AB
 9521	Proteus Industries Inc.
 9522	C.R.D.E. (Cahors Group)
@@ -8588,7 +8588,7 @@
 9662	zSpace, Inc.
 9663	Elegant Invention
 9664	Beyond Music Industrial Co., Ltd.
-9665	Vaddio
+9665	Vaddio
 9666	Smith + Nephew Inc.
 9667	Phorus
 9668	A & R Cambridge Ltd.
@@ -8610,7 +8610,7 @@
 9684	LOOPCOMM TECHNOLOGY, INC.
 9685	DATATON AB
 9686	KOUZIRO Co., Ltd.
-9687	Audiomatica srl
+9687	Audiomatica srl
 9688	Serious Integrated, Inc.
 9689	Monarch Innovative Technologies Pvt. Ltd.
 9690	NETATMO
@@ -8619,7 +8619,7 @@
 9693	bit4id srl
 9694	Gasmet Technologies OY
 9695	TTE Systems Ltd.
-9696	MULTIPLEX Modellsport GmbH & Co. KG
+9696	MULTIPLEX Modellsport GmbH & Co. KG
 9697	Daimler AG
 9698	Domain Surgical
 9699	SCI Innovations Ltd.
@@ -8658,7 +8658,7 @@
 9732	Shenzhen Tenda Technology, Ltd.
 9733	OSRAM SYLVANIA
 9734	O-Network Engineering AB
-9735	Prox Dynamics AS
+9735	Prox Dynamics AS
 9736	OLHO tronic GmbH
 9737	FICOSA
 9738	SPEMOT AG
@@ -8666,15 +8666,15 @@
 9740	Saiko Systems Ltd.
 9741	DongGuan Togran Electronic Co., Ltd.
 9742	DongGuan HYX Industrial Co., Ltd.
-9743	VITY
+9743	VITY
 9744	Egan Teamboard Inc.
 9745	I.C.E. Co., Ltd.
 9746	Crave Innovations
 9747	Gerd Bar GmbH
 9748	VMC Consulting Corporation
-9749	Gammaflux L.P.
+9749	Gammaflux L.P.
 9750	PS Audio
-9751	Front-End Technology, Inc.
+9751	Front-End Technology, Inc.
 9752	MicroGate Systems Ltd.
 9753	Advanced Silicon SA
 9754	Shandong Synthesis Electronic Technology Co., Ltd.
@@ -8715,20 +8715,20 @@
 9789	pls Programmierbare Logik & Systeme GmbH
 9790	Odin TeleSystems Inc.
 9791	ES-Experts, Ltd.
-9792	Banner Engineering
+9792	Banner Engineering
 9793	PRO TUNE ELECTRONIC SYSTEMS
 9794	NPP ELIKS America Inc. DBA T&M Atlantic
 9795	COMVOX AUDIO CO., LTD.
 9796	Sioux Electronics B.V.
 9797	Lead Data Inc.
 9798	Bel Canto Design, Ltd.
-9799	FORMER ENGINEERING SERVICE CO., LTD.
+9799	FORMER ENGINEERING SERVICE CO., LTD.
 9800	Telongo LLC
 9801	Soundspring Audio, Inc
-9802	THERMALTAKE Technology Co., Ltd.
+9802	THERMALTAKE Technology Co., Ltd.
 9803	Industrial Indexing Systems
 9804	Si14 SpA
-9805	Wolfrum Elektronik & Avionik
+9805	Wolfrum Elektronik & Avionik
 9806	3i Corporation
 9807	RF Controls, LLC
 9808	Electronics For Imaging, Inc.
@@ -8848,7 +8848,7 @@
 9923	HARLEY-DAVIDSON MOTOR COMPANY
 9924	Logic Way GmbH
 9925	TOKAI RUBBER INDUSTRIES, LTD.
-9926	GRAF-SYTECO GmbH & Co. KG
+9926	GRAF-SYTECO GmbH & Co. KG
 9927	Beijing Stone New Technology Industry Co., Ltd.
 9928	SCHMID mme - electronic product engineering
 9929	SPM INSTRUMENT AB
@@ -8864,7 +8864,7 @@
 9939	VIBRATION INSTRUMENTS CO., LTD.
 9940	Truesense Imaging
 9941	Equinox Payments
-9942	Sistemi Elettronici Di Addonizio Luisa
+9942	Sistemi Elettronici Di Addonizio Luisa
 9943	POPSPA (HK) LTD.
 9944	APR, LLC
 9945	ATC-NY
@@ -8930,7 +8930,7 @@
 10005	Photron Limited
 10006	YUEN DA ELECTRONIC PRODUCTS FACTORY
 10007	Xiaomi Communications Co., Ltd.
-10008	Tamaggo
+10008	Tamaggo
 10009	4iiii Innovations Inc.
 10010	KONE Industrial Ltd.
 10011	Tec.to
@@ -8951,7 +8951,7 @@
 10026	StarLeaf Limited
 10027	VAT Vakuumventile AG
 10028	IAR Systems
-10029	AKAR GAME LTD.
+10029	AKAR GAME LTD.
 10030	Teratronik elektronische Systeme GmbH
 10031	tommis gmbh, Ingenieurburo f. Nachrichtentechnik u. Aut
 10032	Camozzi spa
@@ -9078,7 +9078,7 @@
 10154	Just Connector Kunshan Co., Ltd.
 10155	Shenzhen Maxmade Technology Co., Ltd.
 10156	GP Electronics (HK) Limited
-10157	PAUL HARTMANN AG
+10157	PAUL HARTMANN AG
 10158	TeleOrbit GmbH
 10159	HANNA Instruments, Inc.
 10160	FOXPRO Inc.
@@ -9135,7 +9135,7 @@
 10211	Chemyx Inc.
 10212	Easybotics LLC
 10213	Shiroshita Industrial Co., Ltd.
-10214	SENECA srl
+10214	SENECA srl
 10215	AVIWEST
 10216	takwak GmbH
 10217	Soeks Limited
@@ -9149,7 +9149,7 @@
 10225	VERTU Corporation Limited
 10226	Softnautics LLP
 10227	Indutherm Erwaermungsanlagen GmbH
-10228	LEGIC Identsystems Ltd.
+10228	LEGIC Identsystems Ltd.
 10229	Relume Technologies, Inc.
 10230	Advanced Simulation Technology Inc.
 10231	Wyred 4 Sound
@@ -9194,7 +9194,7 @@
 10270	Symphodia Phil
 10271	Motion Control, Inc.
 10272	Sanovas
-10273	Aclima Inc.
+10273	Aclima Inc.
 10274	REFLEXdigital
 10275	Guangdong Jiumutong Communication Technology Co., Ltd.
 10276	Vollsun Ltd.
@@ -9207,7 +9207,7 @@
 10283	Aevoe Inc. (Moshi)
 10284	Reichert, Inc.
 10285	Aeromax Technology Co., Ltd.
-10286	Vectawave Technology Ltd.
+10286	Vectawave Technology Ltd.
 10287	SANKEN ELECTRIC CO., LTD.
 10288	GD-Broadband
 10289	Power Integrations
@@ -9235,7 +9235,7 @@
 10311	TMG TE GmbH
 10312	Sentons USA, Inc.
 10313	Astronics Advanced Electronic Systems Corp.
-10314	Yangtze Optical Fibre and Cable Company Ltd.
+10314	Yangtze Optical Fibre and Cable Company Ltd.
 10315	Leadingui Co., Ltd.
 10316	Full in Hope Co., Ltd.
 10317	Qltouch Tech Co., Ltd.
@@ -9256,7 +9256,7 @@
 10332	URMET S.p.a.
 10333	Alarm.com, Inc.
 10334	Occam Robotics
-10335	CyWee Group Limited
+10335	CyWee Group Limited
 10336	WISYCOM S.R.L.
 10337	Pacific Image Electronics Co., Ltd.
 10338	DeVilbiss Healthcare LLC
@@ -9318,7 +9318,7 @@
 10394	Scan-Sense A.S.
 10395	DRACAL Technologies Inc.
 10396	TLS Corp.
-10397	Seek Thermal
+10397	Seek Thermal
 10398	Esselte Leitz GmbH & Co. KG
 10399	inoage GmbH
 10400	I-CUBE TECHNOLOGY Co., Ltd.
@@ -9334,10 +9334,10 @@
 10410	Realta Entertainment Group
 10411	Navigil Ltd.
 10412	euroBRAILLE
-10413	iDTRONIC GmbH
+10413	iDTRONIC GmbH
 10414	Zynaptic Limited
 10415	Sharkbay Technologies Pte. Ltd.
-10416	PMC - Sierra
+10416	PMC - Sierra
 10417	EcoTech, Inc.
 10418	Siemens Infrastructure & Cities
 10419	Profoto AB
@@ -9429,7 +9429,7 @@
 10505	Active Mind Technology
 10506	Electronic Systems Technology, Inc.
 10507	Beats Electronics LLC
-10508	R. Hamilton & Co. Ltd.
+10508	R. Hamilton & Co. Ltd.
 10509	IBCONN Technologies (Shenzhen) Co., Ltd.
 10510	Fugoo Inc.
 10511	AFL Noyes
@@ -9461,7 +9461,7 @@
 10537	Shenzhen Taishan Online Technology Co., Ltd.
 10538	T1Visions, Inc.
 10539	Precision Audio Device Lab Limited
-10540	GENUSION, Inc.
+10540	GENUSION, Inc.
 10541	Wellitec Development Limited
 10542	HOYA Service Corporation
 10543	Nanotec Electronic GmbH & Co. KG
@@ -9487,7 +9487,7 @@
 10563	ZAGG Inc.
 10564	RailComm
 10565	Matrix Design Group, LLC
-10566	OnAsset Intelligence Inc.
+10566	OnAsset Intelligence Inc.
 10567	KAPELSE
 10568	Access Network Technology Limited
 10569	Shenzhen JSR Technology Co., Ltd.
@@ -9571,7 +9571,7 @@
 10648	EOS S.r.l.
 10649	Fourtec Technologies Ltd.
 10650	Ogi Systems Ltd. by A.A. Lab Systems
-10651	Ohio Semitronics, Inc.
+10651	Ohio Semitronics, Inc.
 10652	WINTOUCH Co., Ltd.
 10653	Horst Platz Beratungs und Vertriebs GmbH
 10654	TRE INNOVATORER AB
@@ -9612,7 +9612,7 @@
 10689	TazTag
 10690	Lewitt GmbH
 10691	Noviga
-10692	SoundHawk Corporation
+10692	SoundHawk Corporation
 10693	Peachtree Audio
 10694	Shenzhen Jiali Asia Industry Co., Ltd.
 10695	HANRICO ANFU ELECTRONICS CO., LTD.
@@ -9633,7 +9633,7 @@
 10710	Ara Hub Design Inc.
 10711	Suritel
 10712	Vigor Electric Corporation
-10713	San-Eisha, Ltd.
+10713	San-Eisha, Ltd.
 10714	The Modal Shop
 10715	Shenzhen iBoard Technology Co., Ltd.
 10716	TOHO Electronics Inc.
@@ -9671,7 +9671,7 @@
 10748	Namsung Corporation
 10749	Bad Elf, LLC
 10750	GEO Semiconductor Inc.
-10751	Thalmic Labs Inc.
+10751	Thalmic Labs Inc.
 10752	NTLab
 10753	Amuseway Korea Co., Ltd.
 10754	OWEN JOHN INDUSTRIES LTD.
@@ -9750,7 +9750,7 @@
 10827	EMULEX Corporation
 10828	Tianjin SharpNow Technology Co., Ltd.
 10829	Wilder Technologies
-10830	Henge Docks, LLC
+10830	Henge Docks, LLC
 10831	L-3 Communications Avionics Systems
 10832	Akizuki Denshi Tsusho Co., Ltd.
 10833	Multiclet Corp.
@@ -9794,7 +9794,7 @@
 10872	mySkin, Inc.
 10873	S.E. Technologies Limited
 10874	Beijing Casue Technology Co., Ltd.
-10875	Bellwether Electronic Corp.
+10875	Bellwether Electronic Corp.
 10876	Acute Technology Inc.
 10877	ParTech, Inc.
 10878	VAIO Corporation
@@ -9822,11 +9822,11 @@
 10900	G2 Touch Co., Ltd.
 10901	Flipkart Internet Pvt. Ltd.
 10902	Micromax Informatics Ltd
-10903	Broadway Semiconductor, Inc.
+10903	Broadway Semiconductor, Inc.
 10904	Calix
 10905	Humanistic Robotics, Inc.
 10906	SRAM, LLC
-10907	Doblet Inc.
+10907	Doblet Inc.
 10908	Olorin AB
 10909	LawMate International Co., Ltd.
 10910	SEIKO SOLUTIONS Inc.
@@ -9843,10 +9843,10 @@
 10921	Infrared Cameras Inc.
 10922	Virtium Technology, Inc.
 10923	Field and Company LLC, dba Leef USA
-10924	Elinchrom S.A.
+10924	Elinchrom S.A.
 10925	iCatch Technology, Inc.
 10926	Chipone Technology (Beijing) Co., Ltd.
-10927	Xiamen Hanin Electronic Technology Co., Ltd.
+10927	Xiamen Hanin Electronic Technology Co., Ltd.
 10928	GM Global Technology Operations LLC
 10929	Tesco Stores Ltd.
 10930	Maktar, Inc.
@@ -9913,7 +9913,7 @@
 10991	Coronado Electronics, Inc.
 10992	Zhejiang Yuesui Electron Stock Co., Ltd.
 10993	Innovation Spring Tech, Inc.
-10994	CIS Corporation
+10994	CIS Corporation
 10995	Rehan Electronics Ltd.
 10996	ROLI Ltd.
 10997	Libratone A/S
@@ -9933,7 +9933,7 @@
 11011	STEREOLABS
 11012	Spark Labs, Inc.
 11013	Warn Industries
-11014	TEControl
+11014	TEControl
 11015	ESA Elektroschaltanlagen Grimma GmbH
 11016	KYOEI ENGINEERING Co., Ltd.
 11017	Shenzhen Lidacheng Technology Co., Ltd.
@@ -9990,7 +9990,7 @@
 11068	Technikos Sports Inc.
 11069	Yuanfeng Technology Co., Ltd.
 11070	NewAE Technology Inc.
-11071	ATL-SD Co., Ltd.
+11071	ATL-SD Co., Ltd.
 11072	Matsumura Engineering Co., Ltd.
 11073	Image Match Design Inc.
 11074	NEXO S.A.
@@ -10025,7 +10025,7 @@
 11103	b-plus technologies GmbH
 11104	Viking Technology
 11105	Universal Biosensors, Inc.
-11106	ICP Entwicklungs GmbH
+11106	ICP Entwicklungs GmbH
 11107	Inora Technologies, Inc.
 11108	Cyanogen Inc.
 11109	Atelier Vision Corporation
@@ -10050,7 +10050,7 @@
 11128	Elyctis
 11129	Radio Sound, Inc.
 11130	Spin Master Far East Ltd.
-11131	Gigaset Digital Technology (Shenzhen) Co., Ltd.
+11131	Gigaset Digital Technology (Shenzhen) Co., Ltd.
 11132	Noveltek Semiconductor Corp.
 11133	ZEITEC Semiconductor Co., Ltd.
 11134	Shenzhen Kingcome Optoelectronic Co., Ltd.
@@ -10066,7 +10066,7 @@
 11144	Socionext Inc.
 11145	Ugreen Group Limited
 11146	PATEO CONNECT Technology (Shanghai) Corporation
-11147	Inner Mongolia Yinan Science & Technology Dev. Co., Ltd
+11147	Inner Mongolia Yinan Science & Technology Dev. Co., Ltd
 11148	EDGE I&D
 11149	Dr. Fritz Faulhaber GmbH & Co. KG
 11150	Pentair PLC
@@ -10087,10 +10087,10 @@
 11165	HARTING Electric GmbH & Co. KG
 11166	ZPower LLC
 11167	Scietera Technologies, Inc.
-11168	InVue Security Products
+11168	InVue Security Products
 11169	I-Sheng Electric Wire & Cable Co., Ltd.
 11170	China Daheng Group Inc Beijing Image Vision Tech Branc
-11171	Shenzhen FeiTianXia Technology Ltd.
+11171	Shenzhen FeiTianXia Technology Ltd.
 11172	Shenzhen HengJia New Energy Auto Part Co., Ltd.
 11173	Yueguan Network Technology (Shanghai) Co., Ltd.
 11174	Cyberith GmbH
@@ -10124,7 +10124,7 @@
 11202	JNTC Co., Ltd.
 11203	Nihon Mechatronics Co., Ltd.
 11204	SR Research Ltd.
-11205	Orbbec 3D Tech. Int'l Inc.
+11205	Orbbec 3D Tech. Int'l Inc.
 11206	Server Technology, Inc.
 11207	Zounds Hearing Inc.
 11208	DONGGUAN POLIXIN ELECTRIC CO., LTD.
@@ -10141,7 +10141,7 @@
 11219	Dongguan ULT-unite Electronic Technology Co., LTD
 11220	JL Audio, Inc.
 11221	Cable Matters Inc.
-11222	CoroWare, Inc.
+11222	CoroWare, Inc.
 11223	EcuTek International Ltd.
 11224	ROPEX Industrie-Elektronik GmbH
 11225	Huddly
@@ -10198,7 +10198,7 @@
 11276	IC Realtech
 11277	Embrava Pty Ltd
 11278	KPM Analytics
-11279	Mantra Softech (India) Pvt Ltd
+11279	Mantra Softech (India) Pvt Ltd
 11280	Sinotronics Co., Ltd.
 11281	ALLBEST ELECTRONICS TECHNOLOGY CO., LTD.
 11282	Shenzhen Xin Kai Feng Electronics Factory
@@ -10245,7 +10245,7 @@
 11323	Shenzhen Hangsheng Electronics Corp., Ltd.
 11324	Beartooth Radio, Inc.
 11325	Audience, A Knowles Company
-11326	Verizon Telematics, Inc.
+11326	Verizon Telematics, Inc.
 11327	Nextbit Systems, Inc.
 11328	Leadtrend
 11329	Adaptertek Technology Co., Ltd.
@@ -10256,7 +10256,7 @@
 11334	Soehnle Industrial Solutions GmbH
 11335	Chunghsin International Electronics Co., Ltd.
 11336	Aptiv Electrical Centers (Shanghai) Co., Ltd.
-11337	Chikuma Seiki Co., Ltd.
+11337	Chikuma Seiki Co., Ltd.
 11338	System Industrie Electronic GmbH
 11339	Arjo AB
 11340	Double Robotics, Inc.
@@ -10265,7 +10265,7 @@
 11343	Canon Electronic Business Machines (H.K.) Co., Ltd.
 11344	Vinghog AS
 11345	Lambda Acoustic
-11346	Comio Communication Co., Ltd.
+11346	Comio Communication Co., Ltd.
 11347	Huizhou Foryou General Electronics Co., Ltd.
 11348	LifeWatch Technologies Ltd.
 11349	Magicleap
@@ -10319,12 +10319,12 @@
 11397	Audientes
 11398	Ultraflux
 11399	ISKN
-11400	K-Tronic SRL
+11400	K-Tronic SRL
 11401	Younes Medical Technologies
 11402	Closed Loop Design, LLC
 11403	Huizhou Dehong Technology Co., Ltd.
 11404	PowerCenter Technology Limited
-11405	Mizco International, Inc.
+11405	Mizco International, Inc.
 11406	Unique Secure Limited
 11407	Regulus Company Ltd.
 11408	I. AM. PLUS, LLC
@@ -10388,7 +10388,7 @@
 11467	USB Memory Direct
 11468	Silicon Mitus Inc.
 11469	ITOS Inc.
-11470	SMARTY Performance King SA
+11470	SMARTY Performance King SA
 11471	Hypersecu Information Systems, Inc.
 11472	Technics Global Electronics & JCE Co., Ltd.
 11473	Tamron Co., Ltd.
@@ -10447,7 +10447,7 @@
 11527	MSI.TOKYO, Inc.
 11528	ZIT Ltd.
 11529	Dongguan Evervictory Electronic Co., Ltd.
-11530	Kingsignal Technology Co., Ltd.
+11530	Kingsignal Technology Co., Ltd.
 11531	IPD CO., LTD
 11532	B & P Automation Dynamics Ltd
 11533	Star Vision Electronics Limited
@@ -10546,7 +10546,7 @@
 11628	Sphericam Inc.
 11629	Shenzhen HaiWei Technology Co., LTD
 11630	Jiangsu Jing Lian Electronic Technology Co., Ltd
-11631	Tobii Dynavox
+11631	Tobii Dynavox
 11632	Zhongshan Winner Electronic Technology CO., LTD
 11633	OVERKIZ
 11634	DOGAWIST - Investment GmbH
@@ -10625,7 +10625,7 @@
 11708	Mikroelektronika d.o.o
 11709	Shanghai Xiaoyi Technology Co., Ltd
 11710	MA Lighting Technology GmbH
-11711	Tul Corporation
+11711	Tul Corporation
 11712	Chipsea Technologies (Shenzhen) Corp
 11713	Sphero, Inc.
 11714	MintWave Co., Ltd.
@@ -10634,7 +10634,7 @@
 11717	Cytek Biosciences, Inc.
 11718	Dongguan Kingtron Electronics Technology Co., Ltd.
 11719	Lacroix Sofrel
-11720	Shenzhen 8Bitdo Tech Co., Ltd.
+11720	Shenzhen 8Bitdo Tech Co., Ltd.
 11721	3T B.V.
 11722	OEM Systems Co., Ltd.
 11723	i-Money Technology Co., Ltd.
@@ -10696,7 +10696,7 @@
 11780	HMD Global Oy
 11781	CKD Corporation
 11782	Shenzhen Junlan Electronic Ltd
-11783	Lafayette Instrument Company
+11783	Lafayette Instrument Company
 11784	Zhongshan Dumei Weite Electronics Co., Ltd
 11785	Beijing LLVision Technology Co. LTD
 11786	Dytran Instruments
@@ -10778,7 +10778,7 @@
 11863	MEGWARE Computer Vertrieb und Service GmbH
 11864	GONGNIU GROUP CO., LTD.
 11865	Maui Imaging, Inc.
-11866	Mysher Technology Co., Ltd.
+11866	Mysher Technology Co., Ltd.
 11867	Jadard Technology Inc.
 11868	Y.H.S. Co., Ltd
 11869	Dong Guan LM-Link Precise Electronic Co., Ltd.
@@ -10839,7 +10839,7 @@
 11924	Graviton Inc.
 11925	Scuf Gaming International, LLC
 11926	Aspect Microsystems Corp.
-11927	Aerocool Advanced Technologies Corporation
+11927	Aerocool Advanced Technologies Corporation
 11928	Nekteck, Inc.
 11929	Hynetek Semiconductor Co., Ltd
 11930	MS Solutions Co., Ltd.
@@ -10878,7 +10878,7 @@
 11963	Shanghai Tuzheng Information Technology Co., Ltd.
 11964	RAIDON Technology Inc.
 11965	Netstor Technology Co., Ltd.
-11966	Aptiv Services US, LLC
+11966	Aptiv Services US, LLC
 11967	Shenzhen D&D Technology Co., Ltd
 11968	GuideTech
 11969	Avid Identification Systems, Inc.
@@ -10911,7 +10911,7 @@
 11996	Nippon Techno Lab., Inc.
 11997	reMarkable AS
 11998	Linkplex Technology Limited
-11999	Huizhou Wealth Metal Micro Control Limited
+11999	Huizhou Wealth Metal Micro Control Limited
 12000	Pogotec Inc.
 12001	Safetrust Inc
 12002	Kashimura Co., Ltd.
@@ -11072,7 +11072,7 @@
 12157	IMV Corporation
 12158	Leader Electronics Inc.
 12159	Shenzhen Tuoshuo Electronics Co., Ltd.
-12160	Kandou Bus SA
+12160	Kandou Bus SA
 12161	Shanghai MindMotion Microelectronics Co., Ltd.
 12162	Guizhou Huaxintong Semiconductor Technology Co., Ltd.
 12163	Shenzhen Reflying Electronic Co., Ltd
@@ -11085,7 +11085,7 @@
 12170	Norav Medical
 12171	Lubelskie Fabryki Wag FAWAG S.A.
 12172	Cylite Pty Ltd
-12173	Supercomputing Systems AG
+12173	Supercomputing Systems AG
 12174	TESA SA
 12175	PARKEON
 12176	Zetec
@@ -11139,7 +11139,7 @@
 12225	Product Works, LLC
 12226	Dongguan Baolaipo Communication Technology Co., Ltd.
 12227	Shinka Information System Co., Ltd.
-12228	Dongguan Arun Industrial CO., Ltd.
+12228	Dongguan Arun Industrial CO., Ltd.
 12229	Changzhou Wistar Electronics Co., Ltd
 12230	Comtrue Inc.
 12231	Jiangsu Tenwei Electronic Co., Ltd.
@@ -11226,11 +11226,11 @@
 12312	Audinate
 12313	Pickering Labs
 12314	Zhuhai Smartlink Technology Co., Ltd
-12315	Alpha and Omega Semiconductor Limited
+12315	Alpha and Omega Semiconductor Limited
 12316	DENTALL Co., Ltd.
 12318	Shenzhen Tianjuntong Technology Co., Ltd.
 12319	UPI Semiconductor Corp.
-12320	WADAX SA
+12320	WADAX SA
 12321	PowerChord Limited
 12322	MORSON JAPAN Co., Ltd.
 12323	Applied Technologies Associates
@@ -11244,7 +11244,7 @@
 12331	Paromed GmbH & Co KG
 12332	Hannto Technology Co., Ltd.
 12333	Shenzhen Maxmade Auto Elec. Co., Ltd
-12334	Zhuhai EEasy Technology Co., Ltd
+12334	Zhuhai EEasy Technology Co., Ltd
 12335	AcBel Polytech Inc.
 12336	J&M Corporation
 12337	HSC CO., LTD
@@ -11252,7 +11252,7 @@
 12339	Premier Accessory Group
 12340	TVS REGZA Corporation
 12341	M3 Mobile
-12342	Control iD
+12342	Control iD
 12343	Beijing Chushifengmang Technology Development Co., Ltd.
 12344	Wentronic Holding GmbH
 12345	SCSpro Co., Ltd
@@ -11340,9 +11340,9 @@
 12427	Geophysical Technology, Inc.
 12428	Control Module
 12429	Dong Guan Ankuoxin Precision Electronics Co., Ltd.
-12430	Clinx Science Instruments Co., Ltd.
-12431	Input Club
-12432	Credo Semiconductor, Inc.
+12430	Clinx Science Instruments Co., Ltd.
+12431	Input Club
+12432	Credo Semiconductor, Inc.
 12433	Secure T&S Co., Ltd.
 12434	IMPRINC Co., Ltd.
 12435	Precision Planting, LLC
@@ -11355,7 +11355,7 @@
 12442	Central Engineering Co., Ltd.
 12443	Queclink Wireless Solutions Co., Ltd.
 12444	IXIMega Pte. Ltd.
-12445	DongGuan LeeConn Electronic Technology Co., Ltd
+12445	DongGuan LeeConn Electronic Technology Co., Ltd
 12446	PHC Corporation
 12447	Dong Guan Vigoo Electronics Co., Ltd
 12448	Maxio Technology (Hangzhou) Ltd.
@@ -11420,7 +11420,7 @@
 12508	VL CENTRUM SP Z O O
 12509	GS Elektromedizinische Gerate G. Stemple GmbH
 12510	Kioxia Corporation
-12511	Nanchang UniteTec Technology Co., Ltd.
+12511	Nanchang UniteTec Technology Co., Ltd.
 12512	DotLine GmbH
 12513	BAUT Co., Ltd.
 12514	Silver Invention Co., Ltd.
@@ -11500,7 +11500,7 @@
 12588	Prokord
 12589	Dolsonmuse Electronic Co., Ltd
 12590	Shenzhen Monoko Technology Co., Limited
-12591	Shenzhen Mofhie Wireless Charging Technology Co., LTD
+12591	Shenzhen Mofhie Wireless Charging Technology Co., LTD
 12592	Group Intellect Power Technology Limited
 12593	Authentik Systems
 12594	Opto Engineering Srl
@@ -11528,7 +11528,7 @@
 12616	Cyrus Audio LTD
 12617	Viet Nam Broad Telecommunication Co., Ltd.
 12618	Beurer GmbH
-12619	Geehy Semiconductor Co., Ltd.
+12619	Geehy Semiconductor Co., Ltd.
 12620	Shenzhen KTC Commercial Display Technology CO., LTD.
 12621	Dongguan PCBA Digital Technology Co., LTD.
 12622	ODOYO International Limited
@@ -11537,7 +11537,7 @@
 12625	Yichip Microelectronics (Hangzhou) Co., Ltd
 12626	sigboost, inc.
 12627	Ritec
-12628	Reed Electronics AG
+12628	Reed Electronics AG
 12629	Dongguan Tian Pu Jialiya Electronic Technology
 12630	Oxford Metrics plc
 12631	Join-Link International Technology (kunshan) Co., Ltd.
@@ -11592,7 +11592,7 @@
 12681	SysTelPro
 12682	PowerArc
 12683	Shenzhen Jinfulian Technology Co., Ltd.
-12684	Shenzhen Zongyi Technology Co., Ltd.
+12684	Shenzhen Zongyi Technology Co., Ltd.
 12685	Kinara Inc
 12686	360 Electrical, LLC
 12687	KAMIYAMA Circuit Design Office
@@ -11619,7 +11619,7 @@
 12708	Marking System Technology Co., Ltd.
 12709	Guangzhou SuperSound Information Technology Co., Ltd.
 12710	ShenZhen Etong Electronic Technology Co., Ltd.
-12711	Shenzhen Safedcar Technology Co., Ltd.
+12711	Shenzhen Safedcar Technology Co., Ltd.
 12712	BFO Mobility GmbH
 12713	Xi'an Tomorrow Blueprint Information Technology Co., Ltd.
 12714	AB Circle Limited
@@ -11633,7 +11633,7 @@
 12722	KTMicro Inc.
 12723	BTBL Co., Ltd.
 12724	FPChip
-12725	Shenzhen Chip Hope Micro-Electronics Ltd.
+12725	Shenzhen Chip Hope Micro-Electronics Ltd.
 12726	Third Reality, Inc.
 12727	Keenetic Limited
 12728	DTM Print GmbH
@@ -11674,7 +11674,7 @@
 12764	Arthrex, Inc.
 12765	Super Duper Cellular Co., Ltd.
 12766	HP Tuners
-12767	Goldfinger
+12767	Goldfinger
 12768	ShenZhen KRCONN Technology Co., Ltd.
 12769	Dongguan YTCONN Electronics Technology Co., Ltd.
 12770	BDMICRO LLC
@@ -11728,7 +11728,7 @@
 12818	Ningbo Aiyinmei Electroacoustic Technology Co., Ltd.
 12819	ALM Co
 12820	AT&T
-12821	Dongguan Guangduan Electronics Limited Company
+12821	Dongguan Guangduan Electronics Limited Company
 12822	Beijing Winmage Science & Technology Ltd.
 12823	DMZ Connection
 12824	Allegro MicroSystems, LLC
@@ -11761,7 +11761,7 @@
 12851	DuckyChannel International Co., Ltd.
 12852	Shenzhen Lintop Technology Co., Ltd.
 12853	Optris GmbH
-12854	TRA Company Ltd.
+12854	TRA Company Ltd.
 12855	ALT LLC
 12856	Katerra Inc
 12857	Kagwerks DBA SKT2 LLC
@@ -11809,7 +11809,7 @@
 12899	Telsy SpA
 12900	Eastern Partner Limited
 12901	Yushakobo Co., Ltd.
-12902	Shenzhen Kosun Industrial Co., Ltd.
+12902	Shenzhen Kosun Industrial Co., Ltd.
 12903	Shining 3D Tech Co., Ltd.
 12904	Red Panda LLC
 12905	Dongguan Automilink Electronics Technology Co., Ltd.
@@ -11832,7 +11832,7 @@
 12922	POS-mate
 12923	CaseMetro LLC
 12924	Xanaly Products LLC
-12925	NLU Products, LLC
+12925	NLU Products, LLC
 12926	GuangDong LDNIO Electronic Technology Co., Ltd.
 12927	G-Printec, Inc.
 12928	Wartsila Voyage Limited
@@ -12007,7 +12007,7 @@
 13097	Audeze
 13098	Mitsubishi Electric Power Products, Inc.
 13099	ALO audio
-13100	D-TEG Security Co., Ltd.
+13100	D-TEG Security Co., Ltd.
 13101	Verbatim GmbH
 13102	Dongguan Kalian Electronic Technology Co., Ltd.
 13103	Typecs Industrial (Shenzhen) Co., Ltd.
@@ -12055,9 +12055,9 @@
 13145	MaxLinear, Inc.
 13146	Precision Biometrics, Inc.
 13147	Tula Microphones LLC
-13148	FANUC CORPORATION
+13148	FANUC CORPORATION
 13149	Arun Microelectronics Ltd.
-13150	Eight Amps, LLC
+13150	Eight Amps, LLC
 13151	Motrex Co., Ltd.
 13152	SHIFT GmbH
 13153	HiSilicon (Shanghai) Technologies Co., LIMITED
@@ -12076,7 +12076,7 @@
 13166	SARL XPLORER
 13167	StreamGear Inc
 13168	Shenzhen Longqiang Precision Industry Co., Ltd
-13169	Kee Tat Manufactory Holdings Ltd.
+13169	Kee Tat Manufactory Holdings Ltd.
 13170	Analog & Digital Microelectronics Limited
 13171	Inateck Technology Co., Ltd
 13172	Nextorage Corporation
@@ -12150,7 +12150,7 @@
 13240	Zhejiang Jinjia Electronics Co. Ltd.
 13241	Tosei Corporation
 13242	Haerbin DongLin Technology Co., Ltd.
-13243	Shenzhen XinZhen Electronic Co., LTD.
+13243	Shenzhen XinZhen Electronic Co., LTD.
 13244	Semi-High Technology Limited
 13245	Zhuhai POSKEY Technology Co., Ltd.
 13246	Syncopated Engineering Inc
@@ -12181,17 +12181,17 @@
 13271	CyOne Security AG
 13272	Benimatsu Co., Limited
 13273	Verifone Systems (China) Inc.
-13274	Mira Labs Inc.
+13274	Mira Labs Inc.
 13275	Turn Racing LLC
 13276	National Company of Telecommunications & Information Security (NTIS)
 13277	ZUIKI Inc.
 13278	Celeno Communications (Israel) Ltd.
-13279	Mayflash Limited
+13279	Mayflash Limited
 13280	Pattern art laboratory Corp.
 13281	Beijing Total Information Technology Inc
 13282	Liquid Instruments Pty. Ltd
 13283	Chengdu Mercury Microelectronics Technology Co., Ltd
-13284	Beijing Jingyunmake Technology Co., Ltd.
+13284	Beijing Jingyunmake Technology Co., Ltd.
 13285	Joyan Tech Co., Ltd.
 13286	UAB Brolis Semiconductors
 13287	Moritex Corporation
@@ -12271,9 +12271,9 @@
 13361	Shenzhen Corechips Microelectronics Co., Ltd.
 13362	Brigates Microelectronics Co., Ltd
 13363	Cowbell Engineering Co., Ltd.
-13364	Keychron, Inc.
+13364	Keychron, Inc.
 13365	PolyScience, a Division of Preston Industries
-13366	Dongguan Sixpure Intelligent Technology Co., Ltd.
+13366	Dongguan Sixpure Intelligent Technology Co., Ltd.
 13367	Shenzhen ChuangCheng Microelectronic CO., LTD
 13368	eYs3D Microelectronics, Co.
 13369	Laplace Instruments Ltd
@@ -12306,7 +12306,7 @@
 13396	Prodesign Semicondctor Co., Ltd
 13397	Atomos Global Pty Ltd
 13398	Dongfeng Electric Drive Systems Co., Ltd.
-13399	Finetooling Technology (Guangzhou) Co., Ltd.
+13399	Finetooling Technology (Guangzhou) Co., Ltd.
 13400	Krisp Technologies, Inc.
 13401	Cembre S.p.A.
 13402	ShenZhen Houshuxia Technology Co., LTD
@@ -12453,7 +12453,7 @@
 13543	Square Route Co., Ltd.
 13544	Fermionic Design Private Limited
 13545	Hoplite Industries, Inc.
-13546	Azure Computing, Inc.
+13546	Azure Computing, Inc.
 13547	Tianjin Wavecreating Micro Intelligent Technology Co., Ltd.
 13548	LeRain Technology Co., Ltd.
 13549	Dongguan Youjiemei Electronic Co., Ltd
@@ -12574,7 +12574,7 @@
 13664	ECOBOT LLC
 13665	Chengdu Accsoon Technology Co., Ltd.
 13666	NuMiner Technologies Ltd.
-13667	Guixin Technology (Shenzhen) Co., Ltd.
+13667	Guixin Technology (Shenzhen) Co., Ltd.
 13668	REMO TECH Co., Ltd.
 13669	Tesmec Automation Srl
 13670	ZOWEE TECHNOLOGY (HEYUAN) CO., LTD.
@@ -12705,7 +12705,7 @@
 13795	xDevelop
 13796	Toll Microelectronics Co., Ltd
 13797	REDCOM Laboratories, Inc.
-13798	Purplelec lnc. Co., Ltd
+13798	Purplelec lnc. Co., Ltd
 13799	NTN corporation
 13800	Moore Threads Technology Co., Ltd.
 13801	edevis GmbH
@@ -12875,7 +12875,7 @@
 13965	Aris Micro Corp
 13966	1010music LLC
 13967	HCTEK Co., Ltd.
-13968	Shenzhen Hongtian Electronics Co., LTD
+13968	Shenzhen Hongtian Electronics Co., LTD
 13969	UNIVERSOFT IT Ltd
 13970	JRC Mobility Germany GmbH
 13971	MatrixSpace, Inc.
@@ -12930,10 +12930,10 @@
 14020	iLOQ Oy
 14021	Humane Inc
 14022	MINIX Group Company Limited
-14023	Guangdong Shibang Electronics Co., Ltd.
+14023	Guangdong Shibang Electronics Co., Ltd.
 14024	Zund Systemtechnik AG
 14025	Megatronix (Beijing) Technology Co., Ltd.
-14026	Blecon Ltd
+14026	Blecon Ltd
 14027	Shenzhen Aovlex-link Technology Co., Ltd
 14028	MONOCOZZI Limited
 14029	Serafim Technologies Inc.
@@ -12941,10 +12941,10 @@
 14031	Yongzhou SanYu Electronic Technology Co., LTD
 14032	CTL
 14033	Vitalthings AS
-14034	Lind Electronics, LLC
+14034	Lind Electronics, LLC
 14035	Dongguan Jinxing Electronic Technology Co. , Ltd
 14036	bHaptics Inc.
-14037	LaVision GmbH
+14037	LaVision GmbH
 14038	DONG GUAN LETCON ELECTRON CO., LTD.
 14039	Toyo Denki Seizo K.K.
 14040	Joint Power eXponent
@@ -12968,7 +12968,7 @@
 14058	Dongguan Yue Yang Wire & Cable Co Ltd
 14059	Shenzhen GTAI Technology Co., Ltd.
 14060	MANGOSLAB Co., Ltd.
-14061	ETA Semiconductor Limited
+14061	ETA Semiconductor Limited
 14062	Nimbus Data, Inc.
 14063	Egis Vision Inc.
 14064	Taiwan Technik Industrial Co, Ltd.
@@ -13018,7 +13018,7 @@
 14108	Arbiter LLC
 14109	Desktop Pilot, Inc.
 14110	Rascom Computerdistribution Ges.m.b.H
-14111	Tier One, Inc.
+14111	Tier One, Inc.
 14112	Vivacity Tech PBC
 14113	MoFi Electronics
 14114	JINS Inc.
@@ -13063,7 +13063,7 @@
 14153	Ingram Micro Inc.
 14154	Myth.Cool
 14155	Lisheng Automotive Technology (Guangzhou) Co., Ltd.
-14156	Shoogee GmbH & Co. KG
+14156	Shoogee GmbH & Co. KG
 14157	Lime Microsystems Ltd
 14158	ModRetro Inc
 14159	M's Style Technology Corp.
@@ -13072,7 +13072,7 @@
 14162	Arculus
 14163	Mecc Alte SpA
 14164	AIM TECH
-14166	Shanghai Bright Power Semiconductor Co., LTD.
+14166	Shanghai Bright Power Semiconductor Co., LTD.
 14167	WDS Co., Ltd.
 14168	Amelia World Corporation DBA LINSAY
 14169	IXECLOUD Corp.
@@ -13100,7 +13100,7 @@
 14191	ABAR Industrial (HongKong) Co., Limited.
 14192	Hitscan LLC
 14193	Shanghai Spectrov Technology Co., Ltd.
-14194	Research Engineering
+14194	Research Engineering
 14195	Expert Sleepers Ltd
 14196	MicroRidge Systems
 14197	Han Cheng Electronics (Shenzhen) Co. Ltd
@@ -13113,7 +13113,7 @@
 14204	Shenzhen Recenda Electronics Co., Ltd
 14205	Dongguan Hongduan Precision Electronic Hardware Co., Ltd.
 14206	SG MICRO CORP
-14207	Bien Air Dental SA
+14207	Bien Air Dental SA
 14208	Transom Post OpCo, LLC dba Bose Professional
 14209	Shenzhen Mike Morgen Technology Co., Ltd
 14210	Wuhu Mengbo Technology Co., Ltd.
@@ -13180,7 +13180,7 @@
 14271	Tundra Labs
 14272	Xiamen MeituEve Technology Co., Ltd.
 14273	Flipper Devices Inc
-14274	Dongguan Yingke Electronics Co., Ltd
+14274	Dongguan Yingke Electronics Co., Ltd
 14275	ChipWon Technology Co., Ltd.
 14276	JP Morgan Chase Bank N.A.
 14277	OpenMV, LLC
@@ -13245,7 +13245,7 @@
 14336	Guangdong FUYINXINGYE Precision Electronic Technology Co., LTD.
 14337	comma.ai, Inc.
 14338	LDA Technologies Ltd.
-14339	MorningCore Holdings Co., Ltd
+14339	MorningCore Holdings Co., Ltd
 14340	Jiangsu XinTongda Electric Technology Co., Ltd.
 14341	tonies GmbH
 14342	Jiangsu Sunway I-Auto lnterconnect Tech Co.. Ltd.
@@ -13319,7 +13319,7 @@
 14410	SZ Knowact Robot Technology Co., Ltd
 14411	INVISIO A/S
 14412	Si Chuan An Xin Pu Electronics Co., Ltd.
-14413	FLEXOPTIX GmbH
+14413	FLEXOPTIX GmbH
 14414	Shenzhen Hejincheng Electronic Technology Co., Ltd.
 14415	Huizhou Sonetek Technology Co. Ltd.
 14416	Shenzhen Yuanrui Technology Co., Ltd.
@@ -13350,7 +13350,7 @@
 14441	IQUNIX LIMITED
 14442	EGYM SE
 14443	TOP WING Corporation
-14444	Shanghai Xiangcheng Communication Technology Co., Ltd.
+14444	Shanghai Xiangcheng Communication Technology Co., Ltd.
 14445	Akeeko Medical Pty Ltd
 14446	XTX Markets Technologies Limited
 14447	Zinno Print Technology (Suzhou) Company Limited
@@ -13451,7 +13451,7 @@
 14542	KeeTech (Shenzhen) Co., Ltd.
 14543	Haensch Engineering GmbH
 14544	FIRST RF Corporation
-14545	H-Tech Group
+14545	H-Tech Group
 14546	AndGAMER Inc.
 14547	ASTI CORPORATION
 14548	Deep Mine SAS
@@ -13500,7 +13500,7 @@
 14591	Chengdu Longcang Technology Co., Ltd.
 14592	World Star Tech
 14593	Single integrator - UZINFOCOM LLC
-14594	Wuxi IMVISION INNOVATION Technology Development Co., Ltd.
+14594	Wuxi IMVISION INNOVATION Technology Development Co., Ltd.
 14595	NICHIBAN CO., LTD.
 14596	ARCTIC (HK) Ltd.
 14597	AsiaRF Co., Ltd.
@@ -13512,7 +13512,7 @@
 14603	Lumi United Technology Co., Ltd.
 14604	Nzyme LLC
 14605	Top Den Electronics Co., Ltd
-14606	Lisconn (Dongguan) Technology Co. Ltd
+14606	Lisconn (Dongguan) Technology Co. Ltd
 14607	SILENTSYS
 14608	UTA WIRELESS S.R.L.
 14609	GG - GAMING GEAR SASU
@@ -13569,7 +13569,7 @@
 14661	Volkswagen China Technical Company
 14662	Shenzhen Shouhan Technology Co., Ltd.
 14663	Foshan Aomeien Audio Co., Ltd.
-14664	Cyber Cogs Corp.
+14664	Cyber Cogs Corp.
 14665	MOBILINT
 14666	SmartSens Technology (Shanghai) Co., Ltd.
 14667	Anodyne Electronics Manufacturing Corp
@@ -13588,7 +13588,7 @@
 14680	RedOctane Games
 14681	OYT Electronic Technology Co., Ltd.
 14682	Shenzhen Scyrox Electronic Co., Ltd.
-14683	Sonetics Corporation
+14683	Sonetics Corporation
 14684	Alphatron Medical Innovations BV
 14685	A7 Tech. Corp. Limited
 14686	Chengdu Kunhong Electronics Technology Co., Ltd.
@@ -13617,7 +13617,7 @@
 18245	Beijing Tiertime Technology Co., Ltd.
 18321	Western Digital, G-Tech
 18697	Cytiva Sweden AB
-18801	HITACHI GLOBAL STORAGE TECHNOLOGIES
+18801	HITACHI GLOBAL STORAGE TECHNOLOGIES
 19283	Key Soft Service
 19526	DSPecialists GmbH
 19932	Data Device Corporation

@@ -39,6 +39,27 @@ final class USBIFVendorsTests: XCTestCase {
         XCTAssertFalse(USBIFVendors.isRegistered(0xDEAD))
     }
 
+    func testNoControlCharactersInBundledNames() {
+        // pdftotext emits form-feed (\u{000C}) at the start of each
+        // page, which can land glued onto vendor names if the parser
+        // doesn't strip control chars. Pin specific entries that were
+        // affected before the parser fix (page-boundary vendors per
+        // USB-IF March 2026), and a generic "vendor names contain no
+        // ASCII control characters" check on a couple more.
+        XCTAssertEqual(VendorDB.name(for: 1011), "Adaptec, Inc.")
+        XCTAssertEqual(VendorDB.name(for: 1069), "Micronics")
+        XCTAssertEqual(VendorDB.name(for: 1196), "Micro Audiometrics Corp.")
+        for vid in [1011, 1069, 1196, 1222, 1480] {
+            let name = VendorDB.name(for: vid) ?? ""
+            for scalar in name.unicodeScalars {
+                XCTAssertFalse(
+                    scalar.value < 0x20 || scalar.value == 0x7F,
+                    "vendor name for \(String(format: "0x%04X", vid)) contains control char U+\(String(scalar.value, radix: 16))"
+                )
+            }
+        }
+    }
+
     func testCableEmarkerChipVendorsAllResolve() {
         // The six chip vendors observed in real cable reports.
         // Bundled list carries them with their full USB-IF names

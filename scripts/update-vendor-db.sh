@@ -48,10 +48,16 @@ echo "==> Parsing vendor entries"
     echo "# Fetched: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     echo "# Format: <decimal_vid>\t<vendor_name>"
     perl -ne '
+        # pdftotext emits a form-feed (\x0C) at the start of each page,
+        # which can land glued onto a vendor name. Strip any control
+        # characters from the line before parsing.
+        s/[\x00-\x08\x0B-\x1F\x7F]+//g;
         next if /^\s*$/;
         next if /^\s*(Company|Vendor ID|\(Decimal Format\))/;
         if (/^(.*?\S)\s{2,}(\d+)\s*$/) {
-            print "$2\t$1\n";
+            my ($name, $vid) = ($1, $2);
+            $name =~ s/^\s+|\s+$//g;
+            print "$vid\t$name\n";
         }
     ' "$TMP_TXT" | sort -n -u
 } > "$OUTPUT"
