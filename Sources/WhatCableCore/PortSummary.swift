@@ -209,29 +209,43 @@ extension PortSummary {
         }()
         let chargerSuffix = chargerW.map { " · \($0)W charger" } ?? ""
 
+        // Cable limit suffix: only emitted when the cable's e-marker
+        // reports a maxWatts that is strictly less than what the charger
+        // advertises. The diagnostic banner already explains this in
+        // detail when a cable is plugged in; the headline suffix is the
+        // at-a-glance equivalent so the user can spot a cable mismatch
+        // without reading further.
+        let cableLimitSuffix: String = {
+            guard let chargerW,
+                  let cableW = cableEmarker?.cableVDO?.maxWatts,
+                  cableW > 0,
+                  cableW < chargerW else { return "" }
+            return " · \(cableW)W cable"
+        }()
+
         if hasTB {
             self.status = .thunderboltCable
-            self.headline = "Thunderbolt / USB4" + chargerSuffix
+            self.headline = "Thunderbolt / USB4" + chargerSuffix + cableLimitSuffix
             self.subtitle = subtitleForCapabilities(usb3: true, dp: hasDP, emarker: hasEmarker)
         } else if hasUSB3 && hasDP {
             self.status = .displayCable
-            self.headline = "USB-C with video" + chargerSuffix
+            self.headline = "USB-C with video" + chargerSuffix + cableLimitSuffix
             self.subtitle = "Carrying both data and DisplayPort video."
         } else if hasDP {
             self.status = .displayCable
-            self.headline = "Display connected" + chargerSuffix
+            self.headline = "Display connected" + chargerSuffix + cableLimitSuffix
             self.subtitle = "DisplayPort video over USB-C alt mode."
         } else if hasUSB3 {
             self.status = .dataDevice
-            self.headline = "USB device" + chargerSuffix
+            self.headline = "USB device" + chargerSuffix + cableLimitSuffix
             self.subtitle = "SuperSpeed data link is active."
         } else if hasUSB2 && !hasUSB3 {
             self.status = .dataDevice
-            self.headline = "Slow USB device or charge-only cable" + chargerSuffix
+            self.headline = "Slow USB device or charge-only cable" + chargerSuffix + cableLimitSuffix
             self.subtitle = "Only USB 2.0 is active. If you expected high speed, the cable may not support it."
         } else if chargingSource != nil {
             self.status = .charging
-            self.headline = "Charging" + chargerSuffix
+            self.headline = "Charging" + chargerSuffix + cableLimitSuffix
             self.subtitle = "Power is flowing. No data connection."
         } else if active.isEmpty && supported.contains("USB2") {
             self.status = .charging

@@ -268,6 +268,69 @@ final class PortSummaryTests: XCTestCase {
         )
     }
 
+    // MARK: - Cable wattage limit suffix
+
+    /// Helper: build an SOP' cable identity with the given current bits.
+    /// Uses USB4 Gen 3 (3) as the speed baseline and a valid latency.
+    /// `currentBits = 1` => 3A (60W); `currentBits = 2` => 5A (100W).
+    private func cableIdentity(currentBits: Int) -> PDIdentity {
+        let vdo: UInt32 = UInt32(0b011) | UInt32(currentBits << 5) | UInt32(1 << 13)
+        return PDIdentity(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0, bcdDevice: 0,
+            vdos: [(3 << 27) | UInt32(0x05AC), 0, 0, vdo],
+            specRevision: 3
+        )
+    }
+
+    func testCableLimitSuffixAppearsWhenCableUnderAdvertised() {
+        // Charger says 96W; cable rated 60W (3A * 20V).
+        let port = makePort(active: ["USB3"], superSpeed: true)
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 60)],
+            identities: [cableIdentity(currentBits: 1)]
+        )
+        XCTAssertEqual(summary.headline, "USB device · 96W charger · 60W cable")
+    }
+
+    func testCableLimitSuffixAbsentWhenCableMatchesCharger() {
+        // Charger 96W, cable 100W (5A * 20V): cable can carry full power.
+        let port = makePort(active: ["CIO"], superSpeed: true)
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 60)],
+            identities: [cableIdentity(currentBits: 2)]
+        )
+        XCTAssertEqual(summary.headline, "Thunderbolt / USB4 · 96W charger")
+    }
+
+    func testCableLimitSuffixAbsentWhenNoCharger() {
+        // No charger: nothing to compare against, so no cable suffix.
+        let port = makePort(active: ["USB3"], superSpeed: true)
+        let summary = PortSummary(port: port, identities: [cableIdentity(currentBits: 1)])
+        XCTAssertEqual(summary.headline, "USB device")
+    }
+
+    func testCableLimitSuffixAbsentWhenNoCable() {
+        // No e-marker: no cable wattage to surface.
+        let port = makePort(active: ["USB3"], superSpeed: true)
+        let summary = PortSummary(port: port, sources: [usbPD(maxW: 96, winningW: 60)])
+        XCTAssertEqual(summary.headline, "USB device · 96W charger")
+    }
+
+    func testCableLimitSuffixOnChargingOnlyHeadline() {
+        // The charging-only state path also gets the suffix when relevant.
+        let port = makePort(connected: true, active: [], supported: ["USB2"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 60)],
+            identities: [cableIdentity(currentBits: 1)]
+        )
+        XCTAssertEqual(summary.headline, "Charging · 96W charger · 60W cable")
+    }
+
     // MARK: - Bullet ordering / grouping
 
     /// Pins the three-block grouping in the bullet list. Concrete
