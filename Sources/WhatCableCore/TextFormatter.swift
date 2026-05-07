@@ -65,6 +65,21 @@ public enum TextFormatter {
             out += "  " + ANSI.wrap(ANSI.dim, diag.detail) + "\n"
         }
 
+        // Cable trust signals: hedged flags raised against the e-marker.
+        // Match the popover's behaviour: only render when at least one flag
+        // fires, and use the same titles + details so wording stays
+        // consistent across surfaces.
+        if let cable = identities.first(where: { $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime }) {
+            let trust = CableTrustReport(identity: cable)
+            if !trust.isEmpty {
+                out += "\n" + ANSI.wrap(ANSI.bold + ANSI.yellow, "Cable trust signals:") + "\n"
+                for flag in trust.flags {
+                    out += "  " + ANSI.wrap(ANSI.yellow, "⚠") + " " + ANSI.wrap(ANSI.bold, flag.title) + "\n"
+                    out += "    " + ANSI.wrap(ANSI.dim, flag.detail) + "\n"
+                }
+            }
+        }
+
         if showRaw {
             out += "\n" + ANSI.wrap(ANSI.bold, "Raw IOKit properties:") + "\n"
             for key in port.rawProperties.keys.sorted() {
