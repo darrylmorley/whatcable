@@ -337,6 +337,167 @@ final class PDVDOTests: XCTestCase {
         XCTAssertTrue(cable.decodeWarnings.isEmpty)
     }
 
+    // MARK: - Active Cable VDO 2
+
+    func testDecodeActiveCableVDO2_AllFields() {
+        // Build a VDO2 exercising every field. Note that USB4 / USB 3.2 /
+        // USB 2.0 "Supported" bits are inverted in the spec: 0 = supported,
+        // 1 = not supported. Test fixture sets them to 0 to mean "all
+        // protocols supported" and asserts our decoder reports `true`.
+        //   31..24: maxOperatingTemp = 100°C
+        //   23..16: shutdownTemp     = 120°C
+        //   14..12: u3CLdPower       = 011 (0.5-1 mW)
+        //   11    : u3 transition through U3S = 1
+        //   10    : physicalConnection = 1 (optical)
+        //   9     : activeElement   = 1 (re-timer)
+        //   8     : USB4 bit = 0     (supported)
+        //   7..6  : hubHopsConsumed = 10 = 2
+        //   5     : USB 2.0 bit = 0  (supported)
+        //   4     : USB 3.2 bit = 0  (supported)
+        //   3     : twoLanesSupported = 1
+        //   2     : opticallyIsolated = 1
+        //   1     : usb4AsymmetricMode = 1
+        //   0     : usbGen2+ = 1
+        var vdo: UInt32 = 0
+        vdo |= UInt32(100) << 24
+        vdo |= UInt32(120) << 16
+        vdo |= UInt32(0b011) << 12
+        vdo |= UInt32(1) << 11
+        vdo |= UInt32(1) << 10
+        vdo |= UInt32(1) << 9
+        // bit 8 left as 0 (USB4 supported)
+        vdo |= UInt32(0b10) << 6
+        // bits 5 and 4 left as 0 (USB 2.0 + USB 3.2 supported)
+        vdo |= UInt32(1) << 3
+        vdo |= UInt32(1) << 2
+        vdo |= UInt32(1) << 1
+        vdo |= UInt32(1)
+        let v2 = PDVDO.decodeActiveCableVDO2(vdo)
+        XCTAssertEqual(v2.maxOperatingTempC, 100)
+        XCTAssertEqual(v2.shutdownTempC, 120)
+        XCTAssertEqual(v2.u3CLdPower, .halfTo1mW)
+        XCTAssertTrue(v2.u3ToU0TransitionThroughU3S)
+        XCTAssertEqual(v2.physicalConnection, .optical)
+        XCTAssertEqual(v2.activeElement, .retimer)
+        XCTAssertTrue(v2.usb4Supported)
+        XCTAssertEqual(v2.usb2HubHopsConsumed, 2)
+        XCTAssertTrue(v2.usb2Supported)
+        XCTAssertTrue(v2.usb32Supported)
+        XCTAssertTrue(v2.twoLanesSupported)
+        XCTAssertTrue(v2.opticallyIsolated)
+        XCTAssertTrue(v2.usb4AsymmetricMode)
+        XCTAssertTrue(v2.usbGen2OrHigher)
+    }
+
+    func testDecodeActiveCableVDO2_AllZero() {
+        // All-zeros VDO. Counter-intuitive but spec-correct: the protocol
+        // "supported" bits read 0 = supported, so an all-zero VDO claims
+        // USB4, USB 3.2, and USB 2.0 are all supported.
+        let v2 = PDVDO.decodeActiveCableVDO2(0)
+        XCTAssertEqual(v2.maxOperatingTempC, 0)
+        XCTAssertEqual(v2.shutdownTempC, 0)
+        XCTAssertEqual(v2.u3CLdPower, .greaterThan10mW)
+        XCTAssertFalse(v2.u3ToU0TransitionThroughU3S)
+        XCTAssertEqual(v2.physicalConnection, .copper)
+        XCTAssertEqual(v2.activeElement, .redriver)
+        XCTAssertTrue(v2.usb4Supported)
+        XCTAssertTrue(v2.usb32Supported)
+        XCTAssertTrue(v2.usb2Supported)
+        XCTAssertEqual(v2.usb2HubHopsConsumed, 0)
+        XCTAssertFalse(v2.opticallyIsolated)
+    }
+
+    func testDecodeActiveCableVDO2_ProtocolBitsAreInverted() {
+        // Setting bits 8, 5, 4 all to 1 means "not supported."
+        var vdo: UInt32 = 0
+        vdo |= UInt32(1) << 8
+        vdo |= UInt32(1) << 5
+        vdo |= UInt32(1) << 4
+        let v2 = PDVDO.decodeActiveCableVDO2(vdo)
+        XCTAssertFalse(v2.usb4Supported, "bit 8 = 1 means USB4 NOT supported")
+        XCTAssertFalse(v2.usb2Supported, "bit 5 = 1 means USB 2.0 NOT supported")
+        XCTAssertFalse(v2.usb32Supported, "bit 4 = 1 means USB 3.2 NOT supported")
+    }
+
+    func testDecodeActiveCableVDO2_ReservedPower() {
+        // 111 in bits 14..12 maps to .reserved.
+        let vdo: UInt32 = UInt32(0b111) << 12
+        let v2 = PDVDO.decodeActiveCableVDO2(vdo)
+        XCTAssertEqual(v2.u3CLdPower, .reserved)
+    }
+
+    func testActiveCableVDO2AccessorRequiresActiveCable() {
+        // Passive cable (ufpProductType=3) shouldn't expose VDO2 even if
+        // vdos[4] is present.
+        let passive = PDIdentity(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 1,
+            vendorID: 0x05AC,
+            productID: 0,
+            bcdDevice: 0,
+            vdos: [
+                (3 << 27) | UInt32(0x05AC),    // passive product type
+                0,
+                0,
+                UInt32(0b011) | UInt32(2 << 5) | (1 << 13), // valid passive cable VDO
+                0xDEADBEEF                    // would-be VDO2
+            ],
+            specRevision: 3
+        )
+        XCTAssertNil(passive.activeCableVDO2)
+    }
+
+    func testActiveCableVDO2AccessorWorksOnActiveCable() {
+        // Active cable (ufpProductType=4) with five VDOs.
+        let vdo3: UInt32 = UInt32(0b011) | UInt32(2 << 5) | (1 << 13) | (UInt32(0b10) << 11) // valid active termination
+        let vdo4: UInt32 = (1 << 10) | (1 << 9) | (1 << 2) // optical, re-timer, isolated
+        let active = PDIdentity(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 1,
+            vendorID: 0x05AC,
+            productID: 0,
+            bcdDevice: 0,
+            vdos: [
+                (4 << 27) | UInt32(0x05AC),
+                0,
+                0,
+                vdo3,
+                vdo4
+            ],
+            specRevision: 3
+        )
+        let v2 = active.activeCableVDO2
+        XCTAssertNotNil(v2)
+        XCTAssertEqual(v2?.physicalConnection, .optical)
+        XCTAssertEqual(v2?.activeElement, .retimer)
+        XCTAssertEqual(v2?.opticallyIsolated, true)
+    }
+
+    func testActiveCableVDO2AccessorReturnsNilWhenVDO4Missing() {
+        // Active cable but only 4 VDOs (no VDO2 present).
+        let active = PDIdentity(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 1,
+            vendorID: 0x05AC,
+            productID: 0,
+            bcdDevice: 0,
+            vdos: [
+                (4 << 27) | UInt32(0x05AC),
+                0,
+                0,
+                UInt32(0b011) | UInt32(2 << 5) | (1 << 13) | (UInt32(0b10) << 11)
+            ],
+            specRevision: 3
+        )
+        XCTAssertNil(active.activeCableVDO2)
+    }
+
     // MARK: - Cert Stat VDO
 
     func testCertStatPresentWhenNonZero() {

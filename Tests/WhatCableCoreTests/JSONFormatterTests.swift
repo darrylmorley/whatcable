@@ -251,6 +251,66 @@ final class JSONFormatterTests: XCTestCase {
         XCTAssertTrue(detail.contains("0xDEAD"), "detail should include hex VID, got: \(detail)")
     }
 
+    // MARK: - Active Cable VDO 2 surfacing
+
+    private func activeCableIdentity(vdo4: UInt32, vendorID: Int = 0x05AC) -> PDIdentity {
+        // Active cable: ufpProductType bits 29..27 = 100 = 4.
+        // Cable VDO with valid active termination + USB4 Gen3 + 5A + valid latency.
+        let cableVDO: UInt32 = UInt32(0b011) | UInt32(2 << 5) | Self.validLatency | UInt32(0b10 << 11)
+        return PDIdentity(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 1,
+            vendorID: vendorID,
+            productID: 0x1234,
+            bcdDevice: 0,
+            vdos: [
+                (4 << 27) | UInt32(vendorID),
+                0,
+                0,
+                cableVDO,
+                vdo4
+            ],
+            specRevision: 3
+        )
+    }
+
+    func testActiveBlockOmittedForPassiveCable() throws {
+        let port = makePort()
+        let passive = cableIdentity(vendorID: 0x05AC, cableVDO: (0b10 << 5) | 0b011 | Self.validLatency)
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [passive], showRaw: false
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let cable = try XCTUnwrap(portObj["cable"] as? [String: Any])
+        XCTAssertNil(cable["active"], "Passive cables should not surface an active VDO2 block")
+    }
+
+    func testActiveBlockPresentForActiveCable() throws {
+        let port = makePort()
+        // VDO2: optical (bit 10) + retimer (bit 9) + isolated (bit 2).
+        // USB4 / USB 3.2 / USB 2.0 supported = leave bits 8, 5, 4 at 0
+        // (the spec-defined "supported" value is 0, not 1).
+        var vdo4: UInt32 = 0
+        vdo4 |= UInt32(1) << 10
+        vdo4 |= UInt32(1) << 9
+        vdo4 |= UInt32(1) << 2
+        let id = activeCableIdentity(vdo4: vdo4)
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [id], showRaw: false
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let cable = try XCTUnwrap(portObj["cable"] as? [String: Any])
+        let active = try XCTUnwrap(cable["active"] as? [String: Any])
+        XCTAssertEqual(active["physicalConnection"] as? String, "Optical")
+        XCTAssertEqual(active["activeElement"] as? String, "Re-timer")
+        XCTAssertEqual(active["opticallyIsolated"] as? Bool, true)
+        XCTAssertEqual(active["usb4Supported"] as? Bool, true)
+    }
+
     // MARK: - Raw properties gating
 
     func testRawPropertiesOmittedByDefault() throws {

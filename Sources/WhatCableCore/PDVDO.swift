@@ -297,6 +297,133 @@ public enum PDVDO {
         )
     }
 
+    // MARK: Active Cable VDO 2 (active cables only, VDO[4] in PD 3.0+)
+
+    /// Physical medium the cable uses to carry data.
+    public enum PhysicalConnection: Int {
+        case copper = 0
+        case optical = 1
+
+        public var label: String {
+            switch self {
+            case .copper: return "Copper"
+            case .optical: return "Optical"
+            }
+        }
+    }
+
+    /// What the active silicon inside the cable's connector does to the
+    /// signal. A re-driver boosts the signal in place; a re-timer fully
+    /// decodes and re-emits it. Re-timers are more capable and usually
+    /// found in higher-end cables.
+    public enum ActiveElement: Int {
+        case redriver = 0
+        case retimer = 1
+
+        public var label: String {
+            switch self {
+            case .redriver: return "Re-driver"
+            case .retimer: return "Re-timer"
+            }
+        }
+    }
+
+    /// Idle-state power consumption of the active chip while the cable
+    /// is in U3 / CLd. Matters for thermal and battery-life accounting on
+    /// portable hosts. Bits 14..12.
+    public enum U3CLdPower: Int {
+        case greaterThan10mW = 0      // > 10 mW
+        case fiveTo10mW = 1           // 5-10 mW
+        case oneTo5mW = 2             // 1-5 mW
+        case halfTo1mW = 3            // 0.5-1 mW
+        case fifthToHalfmW = 4        // 0.2-0.5 mW
+        case fiftyTo200uW = 5         // 50-200 µW
+        case lessThan50uW = 6         // < 50 µW
+        case reserved = 7
+
+        public var label: String {
+            switch self {
+            case .greaterThan10mW: return "> 10 mW"
+            case .fiveTo10mW: return "5-10 mW"
+            case .oneTo5mW: return "1-5 mW"
+            case .halfTo1mW: return "0.5-1 mW"
+            case .fifthToHalfmW: return "0.2-0.5 mW"
+            case .fiftyTo200uW: return "50-200 µW"
+            case .lessThan50uW: return "< 50 µW"
+            case .reserved: return "Reserved"
+            }
+        }
+    }
+
+    public struct ActiveCableVDO2: Hashable {
+        /// Bits 31..24, in degrees C. 0 means "not specified."
+        public let maxOperatingTempC: Int
+        /// Bits 23..16, in degrees C. 0 means "not specified."
+        public let shutdownTempC: Int
+        /// Bits 14..12.
+        public let u3CLdPower: U3CLdPower
+        /// Bit 11. `true` = transition through U3S (saves power but slower
+        /// to wake), `false` = direct.
+        public let u3ToU0TransitionThroughU3S: Bool
+        /// Bit 10.
+        public let physicalConnection: PhysicalConnection
+        /// Bit 9.
+        public let activeElement: ActiveElement
+        /// Bit 8.
+        public let usb4Supported: Bool
+        /// Bits 7..6. Number of USB 2.0 hub hops the cable consumes from
+        /// the topology budget.
+        public let usb2HubHopsConsumed: Int
+        /// Bit 5.
+        public let usb2Supported: Bool
+        /// Bit 4. Set when USB 3.2 signalling is supported.
+        public let usb32Supported: Bool
+        /// Bit 3. `true` = two USB lanes supported, `false` = one lane.
+        public let twoLanesSupported: Bool
+        /// Bit 2. Optical cables that carry their signal on glass fiber
+        /// are physically isolated by construction; cables that bring
+        /// power or ground continuity through copper alongside the fiber
+        /// will set this to `false`.
+        public let opticallyIsolated: Bool
+        /// Bit 1.
+        public let usb4AsymmetricMode: Bool
+        /// Bit 0. `true` = Gen2 or higher, `false` = Gen1.
+        public let usbGen2OrHigher: Bool
+    }
+
+    public static func decodeActiveCableVDO2(_ vdo: UInt32) -> ActiveCableVDO2 {
+        let maxTemp = Int((vdo >> 24) & 0xFF)
+        let shutdownTemp = Int((vdo >> 16) & 0xFF)
+        let powerBits = Int((vdo >> 12) & 0b111)
+        let power = U3CLdPower(rawValue: powerBits) ?? .reserved
+        let physBits = Int((vdo >> 10) & 1)
+        let phys = PhysicalConnection(rawValue: physBits) ?? .copper
+        let elemBits = Int((vdo >> 9) & 1)
+        let elem = ActiveElement(rawValue: elemBits) ?? .redriver
+
+        // The protocol-supported bits (USB4, USB 3.2, USB 2.0) are
+        // *inverted* in the spec: a 0 bit means "supported," a 1 means
+        // "not supported." The other Bool fields use the conventional
+        // 1 = yes encoding. Keep the API ergonomic (`usb4Supported = true`
+        // when the cable actually supports USB4) by inverting here.
+        return ActiveCableVDO2(
+            maxOperatingTempC: maxTemp,
+            shutdownTempC: shutdownTemp,
+            u3CLdPower: power,
+            u3ToU0TransitionThroughU3S: (vdo >> 11) & 1 == 1,
+            physicalConnection: phys,
+            activeElement: elem,
+            usb4Supported: (vdo >> 8) & 1 == 0,
+            usb2HubHopsConsumed: Int((vdo >> 6) & 0b11),
+            usb2Supported: (vdo >> 5) & 1 == 0,
+            usb32Supported: (vdo >> 4) & 1 == 0,
+            twoLanesSupported: (vdo >> 3) & 1 == 1,
+            opticallyIsolated: (vdo >> 2) & 1 == 1,
+            usb4AsymmetricMode: (vdo >> 1) & 1 == 1,
+            usbGen2OrHigher: vdo & 1 == 1
+        )
+    }
+
     // MARK: Cert Stat VDO (always VDO[1])
 
     /// USB-IF certification identity. Issued before product certification;

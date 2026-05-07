@@ -65,4 +65,15 @@ public struct PDIdentity: Identifiable, Hashable {
         let isActive = header?.ufpProductType == .activeCable
         return PDVDO.decodeCableVDO(vdos[3], isActive: isActive)
     }
+
+    /// Active Cable VDO 2 lives at index 4 and is only present on active
+    /// cables. Carries info that doesn't fit in VDO[3]: physical medium
+    /// (copper/optical), active element (re-driver/re-timer), thermal
+    /// limits, idle-state power, and per-lane / per-protocol support.
+    public var activeCableVDO2: PDVDO.ActiveCableVDO2? {
+        guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
+              vdos.count > 4,
+              idHeader?.ufpProductType == .activeCable else { return nil }
+        return PDVDO.decodeActiveCableVDO2(vdos[4])
+    }
 }

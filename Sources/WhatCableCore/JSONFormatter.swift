@@ -160,6 +160,7 @@ private struct CableDTO: Codable {
     let maxVolts: Int?
     let maxWatts: Int?
     let type: String?
+    let active: ActiveCableDTO?
     let trustFlags: [TrustFlagDTO]?
 
     init(identity: PDIdentity) {
@@ -180,8 +181,38 @@ private struct CableDTO: Codable {
             self.type = nil
         }
 
+        self.active = identity.activeCableVDO2.map(ActiveCableDTO.init)
+
         let report = CableTrustReport(identity: identity)
         self.trustFlags = report.isEmpty ? nil : report.flags.map(TrustFlagDTO.init)
+    }
+}
+
+private struct ActiveCableDTO: Codable {
+    let physicalConnection: String
+    let activeElement: String
+    let opticallyIsolated: Bool
+    let twoLanesSupported: Bool
+    let usb4Supported: Bool
+    let usb32Supported: Bool
+    let usb2Supported: Bool
+    let usbGen2OrHigher: Bool
+    let maxOperatingTempC: Int
+    let shutdownTempC: Int
+    let u3CLdPower: String
+
+    init(_ v2: PDVDO.ActiveCableVDO2) {
+        self.physicalConnection = v2.physicalConnection.label
+        self.activeElement = v2.activeElement.label
+        self.opticallyIsolated = v2.opticallyIsolated
+        self.twoLanesSupported = v2.twoLanesSupported
+        self.usb4Supported = v2.usb4Supported
+        self.usb32Supported = v2.usb32Supported
+        self.usb2Supported = v2.usb2Supported
+        self.usbGen2OrHigher = v2.usbGen2OrHigher
+        self.maxOperatingTempC = v2.maxOperatingTempC
+        self.shutdownTempC = v2.shutdownTempC
+        self.u3CLdPower = v2.u3CLdPower.label
     }
 }
 

@@ -139,7 +139,21 @@ extension PortSummary {
             bullets.append("Cable speed: \(cv.speed.label)")
             bullets.append("Cable rated for \(cv.current.label) at up to \(cv.maxVolts)V (~\(cv.maxWatts)W)")
             if cv.cableType == .active {
-                bullets.append("Active cable (contains signal-conditioning electronics)")
+                if let v2 = cable.activeCableVDO2 {
+                    // Lead with the most user-relevant facts: medium and
+                    // active element. Optional follow-up for optical
+                    // cables noting whether they're isolated.
+                    bullets.append("Active \(v2.physicalConnection.label.lowercased()) cable, \(v2.activeElement.label.lowercased())")
+                    if v2.physicalConnection == .optical {
+                        if v2.opticallyIsolated {
+                            bullets.append("Optical fibres are electrically isolated end-to-end")
+                        } else {
+                            bullets.append("Optical cable, not electrically isolated (carries copper alongside the fibres)")
+                        }
+                    }
+                } else {
+                    bullets.append("Active cable (contains signal-conditioning electronics)")
+                }
             }
         }
 
