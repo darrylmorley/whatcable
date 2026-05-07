@@ -98,7 +98,7 @@ final class CableTrustReportTests: XCTestCase {
                 UInt32(4 << 27) | UInt32(0x05AC), // active cable ID header
                 0,
                 0,
-                UInt32(0b011) | UInt32(2 << 5) | (UInt32(0b1010) << 13) // ~2000 ns
+                UInt32(0b011) | UInt32(2 << 5) | (UInt32(0b1010) << 13) | UInt32(0b10 << 11) // ~2000 ns, valid active termination
             ],
             specRevision: 3
         )
@@ -180,6 +180,29 @@ final class CableTrustReportTests: XCTestCase {
         ])
     }
 
+    // MARK: - H6 / H7 / H9a propagate from decoder to trust report
+
+    func testInvalidVDOVersionSurfacesAsTrustFlag() {
+        // Passive cable with VDO version 001 (any non-zero) is invalid.
+        let vdo = UInt32(0b011) | UInt32(2 << 5) | Self.validLatency | (UInt32(1) << 21)
+        let report = CableTrustReport(identity: cableIdentity(cableVDO: vdo))
+        XCTAssertEqual(report.flags, [.invalidVDOVersion(1)])
+    }
+
+    func testInvalidCableTerminationSurfacesAsTrustFlag() {
+        // Passive cable with termination 11 (invalid for passive).
+        let vdo = UInt32(0b011) | UInt32(2 << 5) | Self.validLatency | UInt32(0b11 << 11)
+        let report = CableTrustReport(identity: cableIdentity(cableVDO: vdo))
+        XCTAssertEqual(report.flags, [.invalidCableTermination(0b11)])
+    }
+
+    func testEPRClaimedWithLowMaxVoltageSurfacesAsTrustFlag() {
+        // Passive cable, EPR Capable set, max VBUS 20V.
+        let vdo = UInt32(0b011) | UInt32(2 << 5) | Self.validLatency | UInt32(1 << 17)
+        let report = CableTrustReport(identity: cableIdentity(cableVDO: vdo))
+        XCTAssertEqual(report.flags, [.eprClaimedWithLowMaxVoltage])
+    }
+
     // MARK: - JSON contract
 
     func testFlagCodesAreStable() {
@@ -189,6 +212,9 @@ final class CableTrustReportTests: XCTestCase {
         XCTAssertEqual(TrustFlag.reservedCurrentEncoding(3).code, "reservedCurrentEncoding")
         XCTAssertEqual(TrustFlag.reservedCableLatencyEncoding(0).code, "reservedCableLatencyEncoding")
         XCTAssertEqual(TrustFlag.vidNotInUSBIFList(0xDEAD).code, "vidNotInUSBIFList")
+        XCTAssertEqual(TrustFlag.invalidVDOVersion(1).code, "invalidVDOVersion")
+        XCTAssertEqual(TrustFlag.invalidCableTermination(0b11).code, "invalidCableTermination")
+        XCTAssertEqual(TrustFlag.eprClaimedWithLowMaxVoltage.code, "eprClaimedWithLowMaxVoltage")
     }
 
     func testH3DetailIncludesVIDInHex() {

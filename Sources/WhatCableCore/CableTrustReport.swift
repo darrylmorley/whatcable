@@ -49,6 +49,12 @@ public struct CableTrustReport: Hashable {
                     collected.append(.reservedCurrentEncoding(bits))
                 case .reservedCableLatencyEncoding(let bits):
                     collected.append(.reservedCableLatencyEncoding(bits))
+                case .invalidVDOVersion(let bits):
+                    collected.append(.invalidVDOVersion(bits))
+                case .invalidCableTermination(let bits):
+                    collected.append(.invalidCableTermination(bits))
+                case .eprClaimedWithLowMaxVoltage:
+                    collected.append(.eprClaimedWithLowMaxVoltage)
                 }
             }
         }
@@ -85,6 +91,18 @@ public enum TrustFlag: Hashable {
     /// from a knock-off chip programmer. Hedged accordingly.
     case vidNotInUSBIFList(Int)
 
+    /// Cable VDO Version (bits 23..21) is a value the spec marks as
+    /// Invalid for this cable type.
+    case invalidVDOVersion(Int)
+
+    /// Cable Termination (bits 12..11) is a value the spec marks as
+    /// Invalid for this cable type.
+    case invalidCableTermination(Int)
+
+    /// Passive cable claims EPR Capable but reports only 20V Max VBUS.
+    /// The two fields contradict each other: EPR requires 48V or 50V.
+    case eprClaimedWithLowMaxVoltage
+
     /// Short identifier suitable for JSON output. Stable across releases.
     public var code: String {
         switch self {
@@ -93,6 +111,9 @@ public enum TrustFlag: Hashable {
         case .reservedCurrentEncoding: return "reservedCurrentEncoding"
         case .reservedCableLatencyEncoding: return "reservedCableLatencyEncoding"
         case .vidNotInUSBIFList: return "vidNotInUSBIFList"
+        case .invalidVDOVersion: return "invalidVDOVersion"
+        case .invalidCableTermination: return "invalidCableTermination"
+        case .eprClaimedWithLowMaxVoltage: return "eprClaimedWithLowMaxVoltage"
         }
     }
 
@@ -109,6 +130,12 @@ public enum TrustFlag: Hashable {
             return "E-marker uses a reserved cable-latency value"
         case .vidNotInUSBIFList:
             return "Vendor ID isn't in USB-IF's published list"
+        case .invalidVDOVersion:
+            return "E-marker uses an invalid VDO version"
+        case .invalidCableTermination:
+            return "E-marker uses an invalid cable-termination value"
+        case .eprClaimedWithLowMaxVoltage:
+            return "E-marker claims EPR support but reports only 20V max VBUS"
         }
     }
 
@@ -126,6 +153,12 @@ public enum TrustFlag: Hashable {
         case .vidNotInUSBIFList(let vid):
             let hex = String(format: "0x%04X", vid)
             return "The cable's e-marker reports vendor \(hex), which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies."
+        case .invalidVDOVersion(let bits):
+            return "The cable's e-marker reports VDO version \(bits), which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values."
+        case .invalidCableTermination(let bits):
+            return "The cable's e-marker reports cable termination \(bits), which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here."
+        case .eprClaimedWithLowMaxVoltage:
+            return "The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other."
         }
     }
 }

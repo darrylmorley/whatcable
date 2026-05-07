@@ -43,6 +43,11 @@ final class PDVDOTests: XCTestCase {
     /// value. Real cable reports we've collected use 0001 or 1000.
     private static let validLatency: UInt32 = 1 << 13
 
+    /// Valid Cable Termination bits for active cables (bits 12..11).
+    /// `10` = one end active. Active cable fixtures need this OR'd in,
+    /// otherwise the new H7 termination check fires.
+    private static let validActiveTermination: UInt32 = 0b10 << 11
+
     func testThunderboltCable_5A_40Gbps() {
         // speed=3 (USB4 Gen3), current=2 (5A) -> 2<<5=0x40, vbus-through bit 4=1
         let vdo: UInt32 = 0b011 | (1 << 4) | (2 << 5) | Self.validLatency
@@ -80,7 +85,7 @@ final class PDVDOTests: XCTestCase {
     }
 
     func testActiveCableType() {
-        let vdo: UInt32 = Self.validLatency
+        let vdo: UInt32 = Self.validLatency | Self.validActiveTermination
         let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
         XCTAssertEqual(cable.cableType, .active)
         XCTAssertTrue(cable.decodeWarnings.isEmpty)
@@ -151,7 +156,7 @@ final class PDVDOTests: XCTestCase {
         // Active cables carry optical-length latencies 1001 (~1000 ns)
         // and 1010 (~2000 ns) that passive cables would treat as invalid.
         for latencyBits in [9, 10] {
-            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(latencyBits) << 13)
+            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(latencyBits) << 13) | Self.validActiveTermination
             let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
             XCTAssertTrue(
                 cable.decodeWarnings.isEmpty,
@@ -162,7 +167,7 @@ final class PDVDOTests: XCTestCase {
 
     func testActiveCableLatency_1011AndUpInvalid() {
         for latencyBits in 11...15 {
-            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(latencyBits) << 13)
+            let vdo = UInt32(0b011) | UInt32(2 << 5) | (UInt32(latencyBits) << 13) | Self.validActiveTermination
             let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
             XCTAssertEqual(
                 cable.decodeWarnings,
@@ -189,6 +194,147 @@ final class PDVDOTests: XCTestCase {
         let invalidPassive = UInt32(0b011) | UInt32(2 << 5) | (UInt32(9) << 13)
         let cable = PDVDO.decodeCableVDO(invalidPassive, isActive: false)
         XCTAssertNil(cable.latencyNanoseconds)
+    }
+
+    // MARK: - VDO Version (H6)
+
+    func testPassiveVDOVersionZeroIsValid() {
+        // 000 = v1.0, the only valid passive value.
+        let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency
+        let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+        XCTAssertEqual(cable.vdoVersionEncoded, 0)
+        XCTAssertTrue(cable.decodeWarnings.isEmpty)
+    }
+
+    func testPassiveVDOVersionNonZeroFlags() {
+        // Anything other than 000 is invalid for passive cables.
+        for version in 1...7 {
+            let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency | (UInt32(version) << 21)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+            XCTAssertEqual(
+                cable.decodeWarnings,
+                [.invalidVDOVersion(version)],
+                "VDO version \(version) should be invalid for passive"
+            )
+        }
+    }
+
+    func testActiveVDOVersionAcceptsDeprecatedAndV13() {
+        // 000 (deprecated v1.0), 010 (deprecated v1.2), 011 (v1.3) all valid.
+        for version in [0, 0b010, 0b011] {
+            let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency
+                | Self.validActiveTermination | (UInt32(version) << 21)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
+            XCTAssertTrue(
+                cable.decodeWarnings.isEmpty,
+                "VDO version \(version) should be valid for active"
+            )
+        }
+    }
+
+    func testActiveVDOVersionInvalidValuesFlag() {
+        // 001 and 100..111 are invalid for active cables.
+        for version in [0b001, 0b100, 0b101, 0b110, 0b111] {
+            let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency
+                | Self.validActiveTermination | (UInt32(version) << 21)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
+            XCTAssertEqual(
+                cable.decodeWarnings,
+                [.invalidVDOVersion(version)],
+                "VDO version \(version) should be invalid for active"
+            )
+        }
+    }
+
+    // MARK: - Cable Termination (H7)
+
+    func testPassiveCableTerminationValid() {
+        // 00 (VCONN not required) and 01 (VCONN required) both valid.
+        for term in [0, 0b01] {
+            let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency | (UInt32(term) << 11)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+            XCTAssertEqual(cable.cableTerminationEncoded, term)
+            XCTAssertTrue(
+                cable.decodeWarnings.isEmpty,
+                "Termination \(term) should be valid for passive"
+            )
+        }
+    }
+
+    func testPassiveCableTerminationInvalid() {
+        // 10 and 11 are invalid for passive cables.
+        for term in [0b10, 0b11] {
+            let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency | (UInt32(term) << 11)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+            XCTAssertEqual(
+                cable.decodeWarnings,
+                [.invalidCableTermination(term)],
+                "Termination \(term) should be invalid for passive"
+            )
+        }
+    }
+
+    func testActiveCableTerminationValid() {
+        // 10 (one end active) and 11 (both ends active) valid.
+        for term in [0b10, 0b11] {
+            let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency | (UInt32(term) << 11)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
+            XCTAssertTrue(
+                cable.decodeWarnings.isEmpty,
+                "Termination \(term) should be valid for active"
+            )
+        }
+    }
+
+    func testActiveCableTerminationInvalid() {
+        // 00 and 01 invalid for active cables.
+        for term in [0, 0b01] {
+            let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency | (UInt32(term) << 11)
+            let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
+            XCTAssertEqual(
+                cable.decodeWarnings,
+                [.invalidCableTermination(term)],
+                "Termination \(term) should be invalid for active"
+            )
+        }
+    }
+
+    // MARK: - EPR / VBUS contradiction (H9a)
+
+    func testPassiveEPRWith20VFlags() {
+        // EPR Capable bit 17 set, max VBUS encoding 00 (20V).
+        let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency | UInt32(1 << 17)
+        let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+        XCTAssertTrue(cable.eprCapable)
+        XCTAssertEqual(cable.maxVoltageEncoded, 0)
+        XCTAssertEqual(cable.decodeWarnings, [.eprClaimedWithLowMaxVoltage])
+    }
+
+    func testPassiveEPRWith50VDoesNotFlag() {
+        // EPR + 50V max is consistent.
+        let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency
+            | UInt32(1 << 17) | UInt32(0b11 << 9)
+        let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+        XCTAssertTrue(cable.eprCapable)
+        XCTAssertEqual(cable.maxVoltageEncoded, 0b11)
+        XCTAssertTrue(cable.decodeWarnings.isEmpty)
+    }
+
+    func testPassiveNoEPRWith20VDoesNotFlag() {
+        // Plain 20V cable that doesn't claim EPR is fine.
+        let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency
+        let cable = PDVDO.decodeCableVDO(vdo, isActive: false)
+        XCTAssertFalse(cable.eprCapable)
+        XCTAssertTrue(cable.decodeWarnings.isEmpty)
+    }
+
+    func testActiveEPRWith20VDoesNotFlag() {
+        // H9a is passive-only; active cable EPR semantics need VDO2 decoder.
+        let vdo: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency
+            | Self.validActiveTermination | UInt32(1 << 17)
+        let cable = PDVDO.decodeCableVDO(vdo, isActive: true)
+        XCTAssertTrue(cable.eprCapable)
+        XCTAssertTrue(cable.decodeWarnings.isEmpty)
     }
 
     // MARK: - Cert Stat VDO

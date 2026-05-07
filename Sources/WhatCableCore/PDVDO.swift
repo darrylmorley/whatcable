@@ -119,6 +119,19 @@ public enum PDVDO {
         /// invalid; active cables treat 0000 and 1011..1111 as invalid
         /// (1001 and 1010 carry valid optical-cable latencies).
         case reservedCableLatencyEncoding(Int)
+        /// Cable VDO Version field (bits 23..21) uses a value the spec
+        /// marks as Invalid for this cable type. Passive cables: only
+        /// `000` (v1.0) is valid. Active cables: `000` (deprecated v1.0),
+        /// `010` (deprecated v1.2), and `011` (v1.3) are accepted.
+        case invalidVDOVersion(Int)
+        /// Cable Termination field (bits 12..11) uses a value the spec
+        /// marks as Invalid for this cable type. Passive cables: `00`
+        /// and `01` valid. Active cables: `10` and `11` valid.
+        case invalidCableTermination(Int)
+        /// Passive cable's e-marker advertises EPR Capable but reports
+        /// only 20V Max VBUS. EPR requires 48V or 50V VBUS, so this
+        /// pair of fields is internally contradictory.
+        case eprClaimedWithLowMaxVoltage
     }
 
     public struct CableVDO: Hashable {
@@ -134,6 +147,15 @@ public enum PDVDO {
         /// values per cable type are flagged via `decodeWarnings`. Use
         /// `latencyNanoseconds` for a typed interpretation.
         public let cableLatencyEncoded: Int
+        /// Raw 3-bit "VDO Version" field (bits 23..21). Validity depends
+        /// on cable type and is reported via `decodeWarnings`.
+        public let vdoVersionEncoded: Int
+        /// Raw 2-bit "Cable Termination" field (bits 12..11). Validity
+        /// depends on cable type and is reported via `decodeWarnings`.
+        public let cableTerminationEncoded: Int
+        /// Bit 17, "EPR Capable." When true, the cable claims to be safe
+        /// for Extended Power Range operation (48V / 50V).
+        public let eprCapable: Bool
         public let decodeWarnings: [DecodeWarning]
 
         public var maxVolts: Int {
@@ -179,6 +201,9 @@ public enum PDVDO {
         let maxV = Int((vdo >> 9) & 0b11)
         let latencyBits = Int((vdo >> 13) & 0b1111)
         let cableType: CableType = isActive ? .active : .passive
+        let cableTerminationBits = Int((vdo >> 11) & 0b11)
+        let vdoVersionBits = Int((vdo >> 21) & 0b111)
+        let eprCapable = (vdo >> 17) & 1 == 1
         var warnings: [DecodeWarning] = []
         if decodedSpeed == nil {
             warnings.append(.reservedSpeedEncoding(speedBits))
@@ -209,6 +234,44 @@ public enum PDVDO {
             warnings.append(.reservedCableLatencyEncoding(latencyBits))
         }
 
+        // VDO Version (bits 23..21).
+        // Passive: only 000 (v1.0) is valid; everything else Invalid.
+        // Active: 000 (deprecated v1.0), 010 (deprecated v1.2), 011 (v1.3)
+        // are accepted. 001 and 100..111 are Invalid per Table 6.43.
+        let vdoVersionInvalid: Bool
+        if isActive {
+            vdoVersionInvalid = !(vdoVersionBits == 0 || vdoVersionBits == 0b010 || vdoVersionBits == 0b011)
+        } else {
+            vdoVersionInvalid = vdoVersionBits != 0
+        }
+        if vdoVersionInvalid {
+            warnings.append(.invalidVDOVersion(vdoVersionBits))
+        }
+
+        // Cable Termination (bits 12..11).
+        // Passive: 00 (VCONN not required) and 01 (VCONN required) are
+        // valid; 10 and 11 are Invalid.
+        // Active: 00 and 01 are Invalid; 10 (one end active) and 11
+        // (both ends active) are valid.
+        let cableTerminationInvalid: Bool
+        if isActive {
+            cableTerminationInvalid = cableTerminationBits < 0b10
+        } else {
+            cableTerminationInvalid = cableTerminationBits >= 0b10
+        }
+        if cableTerminationInvalid {
+            warnings.append(.invalidCableTermination(cableTerminationBits))
+        }
+
+        // H9a: Passive cable claims EPR Capable but reports 20V Max VBUS.
+        // EPR requires 48V or 50V; only encoding 11 (50V) is consistent
+        // with an EPR claim. We flag the 20V case (encoding 0) explicitly,
+        // matching what the planning doc calls out. Active cables aren't
+        // flagged here: their EPR semantics need the Active VDO2 decoder.
+        if !isActive && eprCapable && maxV == 0 {
+            warnings.append(.eprClaimedWithLowMaxVoltage)
+        }
+
         let volts: Double
         switch maxV {
         case 1: volts = 30
@@ -227,6 +290,9 @@ public enum PDVDO {
             vbusThroughCable: vbusThrough,
             maxVoltageEncoded: maxV,
             cableLatencyEncoded: latencyBits,
+            vdoVersionEncoded: vdoVersionBits,
+            cableTerminationEncoded: cableTerminationBits,
+            eprCapable: eprCapable,
             decodeWarnings: warnings
         )
     }
