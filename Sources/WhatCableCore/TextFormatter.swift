@@ -81,6 +81,30 @@ public enum TextFormatter {
         }
 
         if showRaw {
+            // Active Cable VDO 2 deep view: every decoded field. Surfaced
+            // here (not in the bullet list) because most users don't care
+            // about idle power or thermal limits, but engineers diagnosing
+            // a cable do.
+            if let cable = identities.first(where: {
+                $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime
+            }), let v2 = cable.activeCableVDO2 {
+                out += "\n" + ANSI.wrap(ANSI.bold, "Active cable (VDO 2):") + "\n"
+                out += rawRow("Physical connection", v2.physicalConnection.label)
+                out += rawRow("Active element", v2.activeElement.label)
+                out += rawRow("Optically isolated", yesNo(v2.opticallyIsolated))
+                out += rawRow("USB lanes", v2.twoLanesSupported ? "Two" : "One")
+                out += rawRow("USB Gen", v2.usbGen2OrHigher ? "Gen 2 or higher" : "Gen 1")
+                out += rawRow("USB4 supported", yesNo(v2.usb4Supported))
+                out += rawRow("USB 3.2 supported", yesNo(v2.usb32Supported))
+                out += rawRow("USB 2.0 supported", yesNo(v2.usb2Supported))
+                out += rawRow("USB 2.0 hub hops", String(v2.usb2HubHopsConsumed))
+                out += rawRow("USB4 asymmetric", yesNo(v2.usb4AsymmetricMode))
+                out += rawRow("U3 to U0 transition", v2.u3ToU0TransitionThroughU3S ? "Through U3S" : "Direct")
+                out += rawRow("Idle power (U3/CLd)", v2.u3CLdPower.label)
+                out += rawRow("Max operating temp", tempLabel(v2.maxOperatingTempC))
+                out += rawRow("Shutdown temp", tempLabel(v2.shutdownTempC))
+            }
+
             out += "\n" + ANSI.wrap(ANSI.bold, "Raw IOKit properties:") + "\n"
             for key in port.rawProperties.keys.sorted() {
                 let value = port.rawProperties[key] ?? ""
@@ -89,6 +113,17 @@ public enum TextFormatter {
         }
 
         return out
+    }
+
+    private static func rawRow(_ key: String, _ value: String) -> String {
+        "  " + ANSI.wrap(ANSI.gray, key) + " = \(value)\n"
+    }
+
+    private static func yesNo(_ v: Bool) -> String { v ? "Yes" : "No" }
+
+    /// 0 in the temperature fields means "not specified" per the spec.
+    private static func tempLabel(_ v: Int) -> String {
+        v == 0 ? "—" : "\(v)°C"
     }
 
     private static func color(for status: PortSummary.Status) -> String {

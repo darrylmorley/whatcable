@@ -139,6 +139,54 @@ final class TextFormatterTests: XCTestCase {
         XCTAssertTrue(output.contains(TrustFlag.reservedSpeedEncoding(7).title))
     }
 
+    // MARK: - Active Cable VDO 2 raw view
+
+    func testActiveCableVDO2SectionAppearsInRawMode() {
+        let port = makePort()
+        // VDO2 with optical + retimer + isolated + USB4 supported (bit 8 = 0).
+        var vdo4: UInt32 = 0
+        vdo4 |= UInt32(1) << 10  // optical
+        vdo4 |= UInt32(1) << 9   // retimer
+        vdo4 |= UInt32(1) << 2   // isolated
+        // bits 8 / 5 / 4 left at 0 = USB4 / USB 3.2 / USB 2.0 supported.
+        let vdo3: UInt32 = UInt32(0b011) | UInt32(2 << 5) | UInt32(1 << 13) | UInt32(0b10 << 11)
+        let active = PDIdentity(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: port.portNumber ?? 1,
+            vendorID: 0x05AC, productID: 0, bcdDevice: 0,
+            vdos: [(4 << 27) | UInt32(0x05AC), 0, 0, vdo3, vdo4],
+            specRevision: 3
+        )
+        let output = TextFormatter.render(
+            ports: [port], sources: [], identities: [active], showRaw: true
+        )
+        XCTAssertTrue(output.contains("Active cable (VDO 2)"))
+        XCTAssertTrue(output.contains("Physical connection") && output.contains("Optical"))
+        XCTAssertTrue(output.contains("Active element") && output.contains("Re-timer"))
+        XCTAssertTrue(output.contains("USB4 supported") && output.contains("Yes"))
+    }
+
+    func testActiveCableVDO2SectionAbsentWithoutRawFlag() {
+        let port = makePort()
+        let vdo3: UInt32 = UInt32(0b011) | UInt32(2 << 5) | UInt32(1 << 13) | UInt32(0b10 << 11)
+        let active = PDIdentity(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: port.portNumber ?? 1,
+            vendorID: 0x05AC, productID: 0, bcdDevice: 0,
+            vdos: [(4 << 27) | UInt32(0x05AC), 0, 0, vdo3, 0],
+            specRevision: 3
+        )
+        let output = TextFormatter.render(
+            ports: [port], sources: [], identities: [active], showRaw: false
+        )
+        XCTAssertFalse(
+            output.contains("Active cable (VDO 2)"),
+            "VDO 2 deep view should only render with --raw"
+        )
+    }
+
     func testTrustSignalsSuppressedForNonCableEndpoint() {
         // SOP (port partner) shouldn't be evaluated as a cable, so even
         // a zero VID on a port-partner identity shouldn't trip the section.
