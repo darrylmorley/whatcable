@@ -3,10 +3,14 @@
 DerivedData/
 build/
 dist/
+dist-mas/
 *.xcodeproj
 .DS_Store
 .env
 .claude/
+
+# App Store provisioning profile and any other local-only signing material.
+secrets/
 
 # Local planning / design / scratch docs (kept uncommitted by convention)
 planning/

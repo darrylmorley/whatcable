@@ -17,11 +17,13 @@ struct WhatCableApp: App {
                         delegate.showAboutPanel()
                     }
                 }
+                #if !WHATCABLE_MAS
                 CommandGroup(after: .appInfo) {
                     Button("Check for Updates…") {
                         UpdateChecker.shared.check(silent: false)
                     }
                 }
+                #endif
                 CommandGroup(replacing: .help) {
                     Button("WhatCable on GitHub") {
                         NSWorkspace.shared.open(AppInfo.helpURL)
@@ -57,7 +59,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         ProcessInfo.processInfo.setValue(AppInfo.name, forKey: "processName")
 
         NotificationManager.shared.start()
+        #if !WHATCABLE_MAS
         UpdateChecker.shared.start()
+        #endif
 
         applyDisplayMode(menuBar: AppSettings.shared.useMenuBarMode)
 
@@ -188,7 +192,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         menu.addItem(pinItem)
         menu.addItem(.separator())
         menu.addItem(.init(title: "Settings…", action: #selector(menuSettings), keyEquivalent: ","))
+        #if !WHATCABLE_MAS
         menu.addItem(.init(title: "Check for Updates…", action: #selector(menuCheckUpdates), keyEquivalent: ""))
+        #endif
         menu.addItem(.separator())
         menu.addItem(.init(title: "About \(AppInfo.name)", action: #selector(showAboutPanel), keyEquivalent: ""))
         menu.addItem(.init(title: "WhatCable on GitHub", action: #selector(menuHelp), keyEquivalent: ""))
@@ -252,9 +258,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         ])
     }
 
+    #if !WHATCABLE_MAS
     @objc private func menuCheckUpdates() {
         UpdateChecker.shared.check(silent: false)
     }
+    #endif
 
     @objc private func menuHelp() {
         NSWorkspace.shared.open(AppInfo.helpURL)

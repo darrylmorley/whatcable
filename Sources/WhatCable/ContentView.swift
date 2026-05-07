@@ -75,7 +75,9 @@ struct ContentView: View {
     @StateObject private var tbWatcher = ThunderboltWatcher()
     @EnvironmentObject private var refresh: RefreshSignal
     @ObservedObject private var settings = AppSettings.shared
+    #if !WHATCABLE_MAS
     @ObservedObject private var updates = UpdateChecker.shared
+    #endif
     @State private var portRefreshTask: Task<Void, Never>?
     @State private var portPollTask: Task<Void, Never>?
 
@@ -164,9 +166,11 @@ struct ContentView: View {
     private var mainContent: some View {
         VStack(spacing: 0) {
             header
+            #if !WHATCABLE_MAS
             if let update = updates.available {
                 UpdateBanner(update: update)
             }
+            #endif
             Divider()
             let visiblePorts = settings.hideEmptyPorts
                 ? portWatcher.ports.filter { isPortLive($0) }
@@ -323,6 +327,7 @@ struct ContentView: View {
     }
 }
 
+#if !WHATCABLE_MAS
 struct UpdateBanner: View {
     let update: AvailableUpdate
     @ObservedObject private var installer = Installer.shared
@@ -385,6 +390,7 @@ struct UpdateBanner: View {
         }
     }
 }
+#endif // !WHATCABLE_MAS
 
 // MARK: - Port card
 
