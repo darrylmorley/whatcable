@@ -267,4 +267,68 @@ final class PortSummaryTests: XCTestCase {
             "expected a negotiated PDO bullet, got: \(summary.bullets)"
         )
     }
+
+    // MARK: - Bullet ordering / grouping
+
+    /// Pins the three-block grouping in the bullet list. Concrete
+    /// expectation: link state and connected device come before any
+    /// cable-specific lines, and cable-specific lines come before the
+    /// charger-power numbers. Refactors that move bullets between these
+    /// blocks should fail this test.
+    func testBulletsAreGroupedLinkThenCableThenPower() {
+        let port = makePort(active: ["USB3"], superSpeed: true)
+        let cable = PDIdentity(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0, bcdDevice: 0,
+            vdos: [
+                (3 << 27) | UInt32(0x05AC),
+                0,
+                0,
+                UInt32(0b011) | UInt32(2 << 5) | UInt32(1 << 13) // USB4 Gen3, 5A, ~1m
+            ],
+            specRevision: 3
+        )
+        let partner = PDIdentity(
+            id: 100, endpoint: .sop,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0, bcdDevice: 0,
+            vdos: [(2 << 27) | UInt32(0x05AC)], // USB Peripheral
+            specRevision: 3
+        )
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 60)],
+            identities: [cable, partner]
+        )
+
+        func index(_ predicate: (String) -> Bool) -> Int? {
+            summary.bullets.firstIndex(where: predicate)
+        }
+
+        let speedIdx = index { $0.contains("SuperSpeed USB") }
+        let deviceIdx = index { $0.contains("Connected device") }
+        let cableSpeedIdx = index { $0.contains("Cable speed") }
+        let cableMakerIdx = index { $0.contains("Cable made by") }
+        let chargerIdx = index { $0.contains("Charger advertises") }
+        let negotiatedIdx = index { $0.contains("Currently negotiated") }
+
+        XCTAssertNotNil(speedIdx)
+        XCTAssertNotNil(deviceIdx)
+        XCTAssertNotNil(cableSpeedIdx)
+        XCTAssertNotNil(cableMakerIdx)
+        XCTAssertNotNil(chargerIdx)
+        XCTAssertNotNil(negotiatedIdx)
+
+        // A: link + connected device come first
+        XCTAssertLessThan(speedIdx!, deviceIdx!, "Speed should come before connected device")
+        XCTAssertLessThan(deviceIdx!, cableSpeedIdx!, "Connected device should come before cable details")
+
+        // B: cable details (speed -> maker) come before power numbers
+        XCTAssertLessThan(cableSpeedIdx!, cableMakerIdx!, "Cable speed should come before cable maker")
+        XCTAssertLessThan(cableMakerIdx!, chargerIdx!, "Cable maker should come before charger numbers")
+
+        // C: power negotiation tail
+        XCTAssertLessThan(chargerIdx!, negotiatedIdx!, "Charger max should come before currently negotiated")
+    }
 }

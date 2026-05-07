@@ -75,7 +75,27 @@ extension PortSummary {
 
         var bullets: [String] = []
 
-        // Speed
+        // Bullets are grouped by the question the user is mentally asking,
+        // so related facts sit next to each other:
+        //
+        //   A. What's happening on this port and what's plugged in?
+        //      - link speed / Thunderbolt link
+        //      - DisplayPort note
+        //      - connected device
+        //   B. What does the cable advertise?
+        //      - e-marker presence
+        //      - cable speed and power rating
+        //      - active-cable details (medium, element, isolation)
+        //      - port-level optical flag
+        //      - cable maker
+        //   C. What does the power negotiation look like?
+        //      - charger max
+        //      - currently negotiated PDO
+
+        // ------------------------------------------------------------
+        // A. Live link / what's plugged in
+        // ------------------------------------------------------------
+
         if hasTB {
             // If we have a matching Thunderbolt switch graph for this port,
             // emit specific link-state bullets (negotiated speed, lane
@@ -97,12 +117,23 @@ extension PortSummary {
             bullets.append("Carrying DisplayPort video")
         }
 
-        // E-marker. The whole cable-details bullet only makes sense on
-        // USB-C, where the user can swap cables and might wonder why
-        // details are missing. On MagSafe the cable is part of the brick
-        // (and MagSafe absolutely does negotiate Power Delivery, just over
-        // its own pins, not the CC line we test for `pdCapable`), so don't
-        // emit any "no e-marker" wording there.
+        // Partner identity (SOP): what's connected.
+        if let partner = identities.first(where: { $0.endpoint == .sop }),
+           let header = partner.idHeader {
+            let kind = header.ufpProductType != .undefined ? header.ufpProductType.label : header.dfpProductType.label
+            bullets.append("Connected device: \(kind) — \(VendorDB.label(for: partner.vendorID))")
+        }
+
+        // ------------------------------------------------------------
+        // B. The cable
+        // ------------------------------------------------------------
+
+        // E-marker presence. The whole cable-details bullet only makes
+        // sense on USB-C, where the user can swap cables and might wonder
+        // why details are missing. On MagSafe the cable is part of the
+        // brick (and MagSafe absolutely does negotiate Power Delivery,
+        // just over its own pins, not the CC line we test for
+        // `pdCapable`), so don't emit any "no e-marker" wording there.
         let isMagSafe = port.portTypeDescription?.hasPrefix("MagSafe") == true
         if hasEmarker {
             bullets.append("Cable has an e-marker chip (advertises its capabilities)")
@@ -114,24 +145,7 @@ extension PortSummary {
             }
         }
 
-        if port.opticalCable == true {
-            bullets.append("Optical cable")
-        }
-
-        // Power summary from PD or MagSafe power sources.
-        let chargingSource = PowerSource.preferredChargingSource(in: sources)
-        if let chargingSource {
-            let maxW = Int((Double(chargingSource.maxPowerMW) / 1000).rounded())
-            let hasOptions = !chargingSource.options.isEmpty
-            if hasOptions && maxW > 0 {
-                bullets.append("Charger advertises up to \(maxW)W")
-            }
-            if let win = chargingSource.winning {
-                bullets.append("Currently negotiated: \(win.voltsLabel) @ \(win.ampsLabel) (\(win.wattsLabel))")
-            }
-        }
-
-        // Cable e-marker (SOP'): the cable's own capabilities
+        // Cable e-marker (SOP'): the cable's own capabilities.
         let cableEmarker = identities.first(where: {
             $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime
         })
@@ -157,16 +171,32 @@ extension PortSummary {
             }
         }
 
-        // Partner identity (SOP): what's connected
-        if let partner = identities.first(where: { $0.endpoint == .sop }),
-           let header = partner.idHeader {
-            let kind = header.ufpProductType != .undefined ? header.ufpProductType.label : header.dfpProductType.label
-            bullets.append("Connected device: \(kind) — \(VendorDB.label(for: partner.vendorID))")
+        // Port-level optical flag. Independent of the e-marker's claim;
+        // kept on its own line for now so users can see both signals.
+        if port.opticalCable == true {
+            bullets.append("Optical cable")
         }
 
-        // Cable e-marker vendor (SOP'): who made the cable
+        // Cable e-marker vendor (SOP'): who made the cable.
         if let cable = cableEmarker, cable.vendorID != 0 {
             bullets.append("Cable made by \(VendorDB.label(for: cable.vendorID))")
+        }
+
+        // ------------------------------------------------------------
+        // C. Charging numbers
+        // ------------------------------------------------------------
+
+        // Power summary from PD or MagSafe power sources.
+        let chargingSource = PowerSource.preferredChargingSource(in: sources)
+        if let chargingSource {
+            let maxW = Int((Double(chargingSource.maxPowerMW) / 1000).rounded())
+            let hasOptions = !chargingSource.options.isEmpty
+            if hasOptions && maxW > 0 {
+                bullets.append("Charger advertises up to \(maxW)W")
+            }
+            if let win = chargingSource.winning {
+                bullets.append("Currently negotiated: \(win.voltsLabel) @ \(win.ampsLabel) (\(win.wattsLabel))")
+            }
         }
 
         // Headline + status
