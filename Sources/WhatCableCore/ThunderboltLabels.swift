@@ -5,17 +5,17 @@ import Foundation
 /// matching Apple's `system_profiler SPThunderboltDataType` output so the
 /// labels line up with what users see in About This Mac → System Information.
 ///
-/// Conservative on TB5: even though the model decodes raw speed code `0x2`
-/// to `LinkGeneration.tb5`, the renderer treats that as unverified and emits
-/// a hedge label until we have a real Apple Silicon TB5 paste-back. See
-/// planning/thunderbolt-fabric.md for the reasoning.
+/// TB5 was confirmed against a real M5 Pro + UGreen JHL9580 dock sample on
+/// issue #52, so the renderer now emits a confirmed TB5 label for raw speed
+/// code `0x2`. See planning/thunderbolt-fabric.md for the reasoning.
 public enum ThunderboltLabels {
     /// Compact human label for an active TB link.
     /// Returns nil if the port has no active link.
     /// Examples:
     /// - `"Up to 20 Gb/s × 2"` (USB4 / TB4 dual-lane)
     /// - `"Up to 10 Gb/s × 1"` (TB3 single-lane)
-    /// - `"Unknown generation (raw speed code 0x2)"` (TB5 inferred but not verified)
+    /// - `"Up to 40 Gb/s × 2"` (TB5 / USB4 v2 dual-lane)
+    /// - `"Up to 40 Gb/s (3 TX / 1 RX)"` (TB5 asymmetric)
     public static func linkLabel(for port: ThunderboltPort) -> String? {
         guard port.hasActiveLink,
               let gen = port.currentSpeed,
@@ -23,15 +23,11 @@ public enum ThunderboltLabels {
             return nil
         }
 
-        // Hedge wording when we don't have a verified label. TB5 is in
-        // this bucket until a real Apple Silicon TB5 sample lands.
         switch gen {
-        case .tb3, .usb4Tb4:
+        case .tb3, .usb4Tb4, .tb5:
             guard let perLane = gen.perLaneGbps else { return nil }
             let lanes = describeLanes(width)
             return String(localized: "Up to \(perLane) Gb/s \(lanes)", bundle: .module)
-        case .tb5:
-            return String(localized: "Unknown generation (raw speed code 0x2, inferred TB5)", bundle: .module)
         case .unknown(let raw):
             let hex = String(raw, radix: 16)
             return String(localized: "Unknown generation (raw speed code 0x\(hex))", bundle: .module)

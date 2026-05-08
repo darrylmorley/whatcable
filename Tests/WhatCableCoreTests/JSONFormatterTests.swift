@@ -454,10 +454,10 @@ final class JSONFormatterTests: XCTestCase {
         XCTAssertEqual(port["txLanes"] as? Int, 2)
     }
 
-    /// Regression: TB5 must stay hedged in JSON the same way it's hedged
-    /// in the text renderer. Otherwise a `--json` consumer that parses
-    /// `generation == "tb5"` would treat the inferred mapping as verified.
-    func testTb5JsonGenerationLabelStaysHedged() throws {
+    /// TB5 was confirmed against a real M5 Pro + UGreen JHL9580 dock
+    /// sample on issue #52, so JSON consumers now get `generation == "tb5"`
+    /// alongside the per-lane label and the raw speed code.
+    func testTb5JsonGenerationLabelIsConfirmed() throws {
         let host = ThunderboltSwitch(
             id: 1, className: "IOThunderboltSwitchType9",
             vendorID: 1452, vendorName: "Apple Inc.", modelName: "iOS",
@@ -482,11 +482,9 @@ final class JSONFormatterTests: XCTestCase {
         let obj = parse(json)
         let port = ((obj["thunderboltSwitches"] as? [[String: Any]])?.first?["ports"] as? [[String: Any]])?.first ?? [:]
         let gen = port["generation"] as? String ?? ""
-        XCTAssertTrue(
-            gen.contains("inferredTb5") || gen.hasPrefix("unknown"),
-            "TB5 must stay hedged in JSON; got generation = \(gen)"
-        )
-        XCTAssertNotEqual(gen, "tb5", "must not promise verified TB5 yet")
+        XCTAssertEqual(gen, "tb5", "TB5 should be reported as confirmed")
+        XCTAssertEqual(port["linkLabel"] as? String, "Up to 40 Gb/s × 2")
+        XCTAssertEqual(port["perLaneGbps"] as? Int, 40)
         // Raw speed code is still exposed for diagnostics consumers.
         XCTAssertEqual(port["rawSpeedCode"] as? Int, 0x2)
     }

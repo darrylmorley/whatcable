@@ -218,9 +218,9 @@ final class PortSummaryThunderboltTests: XCTestCase {
         )
     }
 
-    // MARK: - TB5 hedging — must NOT promise "TB5"
+    // MARK: - TB5 confirmed (issue #52: M5 Pro + UGreen JHL9580 dock)
 
-    func testTb5LinkRendersAsHedgedLabel() {
+    func testTb5LinkRendersWithPerLaneLabel() {
         let port = tbPort(socket: "1")
         let host = sw(
             uid: 100, depth: 0, parent: nil,
@@ -229,12 +229,12 @@ final class PortSummaryThunderboltTests: XCTestCase {
         )
         let summary = PortSummary(port: port, thunderboltSwitches: [host])
         XCTAssertTrue(
-            summary.bullets.contains { $0.contains("Unknown generation (raw speed code 0x2") },
-            "TB5 must stay hedged until verified; got: \(summary.bullets)"
+            summary.bullets.contains { $0.contains("40 Gb/s") },
+            "TB5 should report per-lane 40 Gb/s; got: \(summary.bullets)"
         )
         XCTAssertFalse(
-            summary.bullets.contains { $0.contains("40 Gb/s") },
-            "must not promise 40 Gb/s yet"
+            summary.bullets.contains { $0.contains("Unknown generation") },
+            "TB5 should no longer be hedged; got: \(summary.bullets)"
         )
     }
 }

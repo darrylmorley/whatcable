@@ -7,10 +7,8 @@ import Foundation
 // the same USB4 lane-adapter registers Apple's IOThunderbolt fields appear
 // to mirror. See planning/thunderbolt-fabric.md for the field-by-field
 // reasoning and the contributor samples that confirmed the mapping for
-// TB3 and TB4 / USB4. TB5 (raw speed code 0x2) is supported in the model
-// but the renderer should not produce a TB5 label until we have a real
-// sample — the `LinkGeneration.unknown(rawSpeedCode:)` escape hatch
-// exists for exactly that.
+// TB3, TB4 / USB4, and TB5. TB5 (raw speed code 0x2) was confirmed against
+// an M5 Pro + UGreen JHL9580 dock paste-back on issue #52.
 
 /// Negotiated lane-rate generation for a Thunderbolt link.
 /// Decoded from `Current Link Speed` on a TB-protocol port (Adapter Type = 1).
@@ -22,8 +20,9 @@ public enum LinkGeneration: Hashable {
     /// renderer treats them as one bucket.
     case usb4Tb4
     /// Speed code `0x2`. 40 Gb/s per lane. USB4 v2 / TB5.
-    /// Inferred from Linux register definitions; not yet verified against
-    /// an Apple Silicon TB5 hardware sample.
+    /// Confirmed via M5 Pro + UGreen JHL9580 dock paste-back on issue #52
+    /// (system_profiler reports "Mode: USB4 v2, Speed: 120 Gb/s" for the
+    /// same active link).
     case tb5
     /// Speed code we don't have a mapping for. Forward-compat: future
     /// generations or unexpected encodings won't break the model.

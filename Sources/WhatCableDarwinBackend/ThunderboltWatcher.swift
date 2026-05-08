@@ -6,8 +6,8 @@ import WhatCableCore
 /// list of `ThunderboltSwitch` models. Modelled on `USBCPortWatcher`:
 ///
 /// - Match notification on the abstract parent class so all subclass variants
-///   come in (we've seen `Type3`, `Type5`, `Type7`, `IntelJHL8440` so far,
-///   and there will be more once TB5 silicon ships).
+///   come in (we've seen `Type3`, `Type5`, `Type7`, `IntelJHL8440`, and
+///   `IntelJHL9580` so far, and there will be more once new silicon ships).
 /// - Per-service interest notifications for property changes (link state
 ///   moves, dock plug/unplug). Mirrors the USB-C watcher's pattern.
 /// - `refresh()` re-walks the registry; `read()`-style consumers can call it
@@ -258,7 +258,7 @@ public final class ThunderboltWatcher: ObservableObject {
             if IOObjectGetClass(current, &classBuf) == KERN_SUCCESS {
                 let name = String(cString: classBuf)
                 // Match the abstract prefix; covers Type3 / Type5 / Type7 /
-                // IntelJHL8440 / future variants.
+                // IntelJHL8440 / IntelJHL9580 / future variants.
                 if name.hasPrefix("IOThunderboltSwitch") {
                     var entryID: UInt64 = 0
                     if IORegistryEntryGetRegistryEntryID(current, &entryID) == KERN_SUCCESS {

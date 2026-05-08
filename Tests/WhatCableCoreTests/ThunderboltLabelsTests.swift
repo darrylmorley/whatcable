@@ -4,7 +4,7 @@ import XCTest
 /// Tests for the user-facing label helpers and topology walker.
 /// These cover the rendering convention chosen for Phase 3:
 ///   - per-lane Gb/s × lane count, matching Apple's `system_profiler`
-///   - hedge wording for unknown / TB5 (TB5 stays hedged until verified)
+///   - hedge wording for unknown speed codes
 ///   - daisy-chain detection by `parentSwitchUID`
 final class ThunderboltLabelsTests: XCTestCase {
 
@@ -25,13 +25,19 @@ final class ThunderboltLabelsTests: XCTestCase {
         XCTAssertEqual(ThunderboltLabels.linkLabel(for: port), "Up to 20 Gb/s × 2")
     }
 
-    /// TB5 stays hedged until verified against real hardware. Even though
-    /// the model decodes raw 0x2 to .tb5, the renderer must not promise
-    /// "TB5" or "40 Gb/s" yet.
-    func testLabelForTb5IsHedged() {
+    /// TB5 was confirmed against a real M5 Pro + UGreen JHL9580 dock
+    /// sample on issue #52, so the renderer now emits the same per-lane
+    /// label format as TB3 and TB4 / USB4.
+    func testLabelForTb5DualLane() {
         let port = makeLanePort(speed: .tb5, widthRaw: 0x2)
-        let label = ThunderboltLabels.linkLabel(for: port)
-        XCTAssertEqual(label, "Unknown generation (raw speed code 0x2, inferred TB5)")
+        XCTAssertEqual(ThunderboltLabels.linkLabel(for: port), "Up to 40 Gb/s × 2")
+    }
+
+    /// TB5 asymmetric 3 TX / 1 RX is the 120 Gb/s configuration reported
+    /// by `system_profiler` on the M5 Pro + UGreen dock sample.
+    func testLabelForTb5Asymmetric() {
+        let port = makeLanePort(speed: .tb5, widthRaw: 0x4)
+        XCTAssertEqual(ThunderboltLabels.linkLabel(for: port), "Up to 40 Gb/s (3 TX / 1 RX)")
     }
 
     func testLabelForUnknownGenerationIsHedged() {
