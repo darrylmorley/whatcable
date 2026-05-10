@@ -155,13 +155,19 @@ final class UpdateChecker: ObservableObject {
         alert.messageText = "WhatCable \(update.version) is available"
         alert.informativeText = "You're on \(AppInfo.version). Open the release page to read the notes and download."
         alert.window.level = .floating
+        let hasDownload = update.downloadURL != nil
+        if hasDownload {
+            alert.addButton(withTitle: "Update")
+        }
         alert.addButton(withTitle: "View Release")
         alert.addButton(withTitle: "Later")
         let response = alert.runModal()
 
         NSApp.setActivationPolicy(originalPolicy)
 
-        if response == .alertFirstButtonReturn {
+        if hasDownload && response == .alertFirstButtonReturn {
+            Installer.shared.install(update)
+        } else if response == (hasDownload ? .alertSecondButtonReturn : .alertFirstButtonReturn) {
             NSWorkspace.shared.open(update.url)
         }
     }
