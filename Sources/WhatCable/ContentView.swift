@@ -176,7 +176,7 @@ struct ContentView: View {
             if isDesktopMac {
                 HStack(spacing: 4) {
                     Image(systemName: "info.circle")
-                    Text("Desktop Mac: per-port PD diagnostics are not available.")
+                    Text("Desktop Mac: charger identity (FedDetails) is not available.")
                 }
                 .scaledFont(.caption)
                 .foregroundStyle(.secondary)

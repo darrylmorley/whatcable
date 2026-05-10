@@ -17,7 +17,7 @@ public enum TextFormatter {
 
         var out = ""
         if isDesktopMac {
-            out += ANSI.wrap(ANSI.dim, "Desktop Mac: per-port PD diagnostics are not available (no battery controller).") + "\n\n"
+            out += ANSI.wrap(ANSI.dim, "Desktop Mac: charger identity (FedDetails) is not available (no battery controller).") + "\n\n"
         }
         for (i, port) in ports.enumerated() {
             if i > 0 { out += "\n" }
