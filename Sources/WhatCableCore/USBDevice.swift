@@ -58,15 +58,19 @@ public struct USBDevice: Identifiable, Hashable {
     }
 
     public var speedLabel: String {
+        speedLabel(language: .default)
+    }
+
+    public func speedLabel(language: WhatCableLanguage = .default) -> String {
         // IOUSBHostDevice "Device Speed" enum values
         switch speedRaw {
-        case 0: return "Low Speed (1.5 Mbps)"
-        case 1: return "Full Speed (12 Mbps)"
-        case 2: return "High Speed (480 Mbps)"
-        case 3: return "Super Speed (5 Gbps)"
-        case 4: return "Super Speed+ (10 Gbps)"
-        case 5: return "Super Speed+ Gen 2x2 (20 Gbps)"
-        default: return "Unknown speed"
+        case 0: return LocalizedCopy.string("Low Speed (1.5 Mbps)", language: language)
+        case 1: return LocalizedCopy.string("Full Speed (12 Mbps)", language: language)
+        case 2: return LocalizedCopy.string("High Speed (480 Mbps)", language: language)
+        case 3: return LocalizedCopy.string("Super Speed (5 Gbps)", language: language)
+        case 4: return LocalizedCopy.string("Super Speed+ (10 Gbps)", language: language)
+        case 5: return LocalizedCopy.string("Super Speed+ Gen 2x2 (20 Gbps)", language: language)
+        default: return LocalizedCopy.string("Unknown speed", language: language)
         }
     }
 }

@@ -9,10 +9,11 @@ struct CableWidgetEntryView: View {
     let entry: CableWidgetEntry
 
     var body: some View {
+        let language = entry.snapshot?.language ?? WhatCableLanguage.persistedForWidget()
         if let snapshot = entry.snapshot, !snapshot.ports.isEmpty {
             switch family {
             case .systemSmall:
-                SmallWidgetView(port: mostInteresting(snapshot.ports))
+                SmallWidgetView(port: mostInteresting(snapshot.ports, language: language))
             case .systemMedium:
                 MediumWidgetView(ports: snapshot.ports)
             case .systemLarge:
@@ -21,7 +22,7 @@ struct CableWidgetEntryView: View {
                 MediumWidgetView(ports: snapshot.ports)
             }
         } else {
-            EmptyStateView()
+            EmptyStateView(language: language)
         }
     }
 }
@@ -172,14 +173,16 @@ struct DeviceCountBadge: View {
 // MARK: - Empty state
 
 struct EmptyStateView: View {
+    let language: WhatCableLanguage
+
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: "cable.connector.horizontal")
                 .font(.largeTitle)
                 .foregroundStyle(.secondary)
-            Text("No cable data")
+            Text(LocalizedCopy.string("No cable data", bundle: .main, language: language))
                 .font(.headline)
-            Text("Open WhatCable to start monitoring.")
+            Text(LocalizedCopy.string("Open WhatCable to start monitoring.", bundle: .main, language: language))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -213,7 +216,10 @@ extension WidgetSnapshot.Status {
 /// Ranking: connected ports beat empty ones. Among connected ports,
 /// richer connections rank higher (Thunderbolt > display > data > charging).
 /// Ties break by port ID for stability.
-func mostInteresting(_ ports: [WidgetSnapshot.PortEntry]) -> WidgetSnapshot.PortEntry {
+func mostInteresting(
+    _ ports: [WidgetSnapshot.PortEntry],
+    language: WhatCableLanguage = .default
+) -> WidgetSnapshot.PortEntry {
     ports.sorted { a, b in
         let aRank = a.status.interestRank
         let bRank = b.status.interestRank
@@ -223,8 +229,8 @@ func mostInteresting(_ ports: [WidgetSnapshot.PortEntry]) -> WidgetSnapshot.Port
         id: 0,
         portName: "USB-C",
         status: .empty,
-        headline: "Nothing connected",
-        subtitle: "Plug a cable in to see what it can do.",
+        headline: LocalizedCopy.string("Nothing connected", language: language),
+        subtitle: LocalizedCopy.string("Plug a cable in to see what it can do.", bundle: .main, language: language),
         topBullet: nil,
         iconName: "powerplug",
         deviceCount: 0
@@ -250,19 +256,19 @@ private extension WidgetSnapshot.Status {
 #Preview("Small", as: .systemSmall) {
     CableStatusWidget()
 } timeline: {
-    CableWidgetEntry.placeholder
+    CableWidgetEntry.placeholder()
 }
 
 #Preview("Medium", as: .systemMedium) {
     CableStatusWidget()
 } timeline: {
-    CableWidgetEntry.placeholder
+    CableWidgetEntry.placeholder()
 }
 
 #Preview("Large", as: .systemLarge) {
     CableStatusWidget()
 } timeline: {
-    CableWidgetEntry.placeholder
+    CableWidgetEntry.placeholder()
 }
 
 #Preview("Empty", as: .systemMedium) {

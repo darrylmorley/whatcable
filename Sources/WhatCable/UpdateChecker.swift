@@ -74,7 +74,7 @@ final class UpdateChecker: ObservableObject {
 
                 if let error {
                     Self.log.error("Update check failed: \(error.localizedDescription, privacy: .public)")
-                    if visible { self.showAlert(title: "Couldn't check for updates", message: error.localizedDescription) }
+                    if visible { self.showAlert(title: appString("Couldn't check for updates"), message: error.localizedDescription) }
                     return
                 }
 
@@ -83,7 +83,7 @@ final class UpdateChecker: ObservableObject {
                       let tag = json["tag_name"] as? String,
                       let urlString = json["html_url"] as? String,
                       let url = URL(string: urlString) else {
-                    if visible { self.showAlert(title: "Couldn't check for updates", message: "Unexpected response from GitHub.") }
+                    if visible { self.showAlert(title: appString("Couldn't check for updates"), message: appString("Unexpected response from GitHub.")) }
                     return
                 }
 
@@ -113,8 +113,8 @@ final class UpdateChecker: ObservableObject {
                     self.available = nil
                     if visible {
                         self.showAlert(
-                            title: "You're up to date",
-                            message: "WhatCable \(AppInfo.version) is the latest version."
+                            title: appString("You're up to date"),
+                            message: appString("WhatCable \(AppInfo.version) is the latest version.")
                         )
                     }
                 }
@@ -125,8 +125,8 @@ final class UpdateChecker: ObservableObject {
     private func postNotification(_ update: AvailableUpdate) {
         guard AppSettings.shared.notifyOnChanges else { return }
         let content = UNMutableNotificationContent()
-        content.title = "WhatCable \(update.version) available"
-        content.body = "You're on \(AppInfo.version). Click to view release notes."
+        content.title = appString("WhatCable \(update.version) available")
+        content.body = appString("You're on \(AppInfo.version). Click to view release notes.")
         UNUserNotificationCenter.current().add(
             UNNotificationRequest(identifier: "update-\(update.version)", content: content, trigger: nil)
         )
@@ -155,11 +155,11 @@ final class UpdateChecker: ObservableObject {
         NSApp.activate(ignoringOtherApps: true)
 
         let alert = NSAlert()
-        alert.messageText = "WhatCable \(update.version) is available"
-        alert.informativeText = "You're on \(AppInfo.version). Open the release page to read the notes and download."
+        alert.messageText = appString("WhatCable \(update.version) is available")
+        alert.informativeText = appString("You're on \(AppInfo.version). Open the release page to read the notes and download.")
         alert.window.level = .floating
-        alert.addButton(withTitle: "View Release")
-        alert.addButton(withTitle: "Later")
+        alert.addButton(withTitle: appString("View release"))
+        alert.addButton(withTitle: appString("Later"))
         let response = alert.runModal()
 
         NSApp.setActivationPolicy(originalPolicy)
@@ -184,4 +184,3 @@ final class UpdateChecker: ObservableObject {
 }
 
 #endif // !WHATCABLE_MAS
-

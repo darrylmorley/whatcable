@@ -1,6 +1,7 @@
 import Foundation
 import ServiceManagement
 import os.log
+import WhatCableCore
 
 /// User-facing preferences, persisted in UserDefaults and (where relevant)
 /// reflected into system services like SMAppService.
@@ -16,6 +17,7 @@ final class AppSettings: ObservableObject {
         static let useMenuBarMode = "useMenuBarMode"
         static let showTechnicalDetails = "showTechnicalDetails"
         static let fontSize = "fontSize"
+        static let languageCode = WhatCableLanguage.preferenceKey
     }
 
     @Published var launchAtLogin: Bool {
@@ -74,6 +76,13 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    @Published var language: WhatCableLanguage {
+        didSet {
+            guard language != oldValue else { return }
+            persistLanguage(language)
+        }
+    }
+
     private init() {
         // Launch at Login is owned by the system; read its current state.
         self.launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -91,6 +100,16 @@ final class AppSettings: ObservableObject {
         let stored = UserDefaults.standard.double(forKey: Keys.fontSize)
         let raw = stored > 0 ? stored : 1.0
         self.fontSize = min(max(raw, Self.fontSizeRange.lowerBound), Self.fontSizeRange.upperBound)
+        let appDefaults = UserDefaults(suiteName: WhatCableLanguage.appDefaultsSuiteName) ?? .standard
+        let storedCode = appDefaults.string(forKey: Keys.languageCode)
+            ?? UserDefaults.standard.string(forKey: Keys.languageCode)
+        self.language = WhatCableLanguage(code: storedCode)
+    }
+
+    private func persistLanguage(_ language: WhatCableLanguage) {
+        UserDefaults.standard.set(language.code, forKey: Keys.languageCode)
+        language.persist(in: UserDefaults(suiteName: WhatCableLanguage.appDefaultsSuiteName))
+        language.persist(in: UserDefaults(suiteName: WidgetSnapshot.appGroupID))
     }
 
     private func applyLaunchAtLogin(_ enabled: Bool) {
@@ -113,4 +132,3 @@ final class AppSettings: ObservableObject {
         }
     }
 }
-

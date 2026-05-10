@@ -6,6 +6,7 @@ import WhatCableCore
 @main
 struct WhatCableApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
+    @StateObject private var settings = AppSettings.shared
 
     var body: some Scene {
         // Headless — UI is owned by AppDelegate (status item + popover, or
@@ -13,24 +14,24 @@ struct WhatCableApp: App {
         Settings { EmptyView() }
             .commands {
                 CommandGroup(replacing: .appInfo) {
-                    Button(String(localized: "About \(AppInfo.name)", bundle: .module)) {
+                    Button(appString("About \(AppInfo.name)", language: settings.language)) {
                         delegate.showAboutPanel()
                     }
                 }
                 #if !WHATCABLE_MAS
                 CommandGroup(after: .appInfo) {
-                    Button(String(localized: "Check for Updates…", bundle: .module)) {
+                    Button(appString("Check for Updates…", language: settings.language)) {
                         UpdateChecker.shared.check(silent: false)
                     }
                 }
                 #endif
                 CommandGroup(replacing: .help) {
-                    Button(String(localized: "WhatCable on GitHub", bundle: .module)) {
+                    Button(appString("WhatCable on GitHub", language: settings.language)) {
                         NSWorkspace.shared.open(AppInfo.helpURL)
                     }
                 }
                 CommandGroup(replacing: .appSettings) {
-                    Button(String(localized: "Settings…", bundle: .module)) {
+                    Button(appString("Settings…", language: settings.language)) {
                         delegate.showSettingsPanel(nil)
                     }
                     .keyboardShortcut(",", modifiers: .command)
@@ -187,20 +188,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private func showMenu(from button: NSStatusBarButton) {
         guard let statusItem else { return }
         let menu = NSMenu()
-        menu.addItem(.init(title: String(localized: "Refresh", bundle: .module), action: #selector(menuRefresh), keyEquivalent: "r"))
-        let pinItem = NSMenuItem(title: String(localized: "Keep window open", bundle: .module), action: #selector(menuTogglePin), keyEquivalent: "p")
+        menu.addItem(.init(title: appString("Refresh"), action: #selector(menuRefresh), keyEquivalent: "r"))
+        let pinItem = NSMenuItem(title: appString("Keep window open"), action: #selector(menuTogglePin), keyEquivalent: "p")
         pinItem.state = isPinned ? .on : .off
         menu.addItem(pinItem)
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "Settings…", bundle: .module), action: #selector(menuSettings), keyEquivalent: ","))
+        menu.addItem(.init(title: appString("Settings…"), action: #selector(menuSettings), keyEquivalent: ","))
         #if !WHATCABLE_MAS
-        menu.addItem(.init(title: String(localized: "Check for Updates…", bundle: .module), action: #selector(menuCheckUpdates), keyEquivalent: ""))
+        menu.addItem(.init(title: appString("Check for Updates…"), action: #selector(menuCheckUpdates), keyEquivalent: ""))
         #endif
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "About \(AppInfo.name)", bundle: .module), action: #selector(showAboutPanel), keyEquivalent: ""))
-        menu.addItem(.init(title: String(localized: "WhatCable on GitHub", bundle: .module), action: #selector(menuHelp), keyEquivalent: ""))
+        menu.addItem(.init(title: appString("About \(AppInfo.name)"), action: #selector(showAboutPanel), keyEquivalent: ""))
+        menu.addItem(.init(title: appString("WhatCable on GitHub"), action: #selector(menuHelp), keyEquivalent: ""))
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "Quit \(AppInfo.name)", bundle: .module), action: #selector(menuQuit), keyEquivalent: "q"))
+        menu.addItem(.init(title: appString("Quit \(AppInfo.name)"), action: #selector(menuQuit), keyEquivalent: "q"))
         for item in menu.items where item.action != nil { item.target = self }
 
         statusItem.menu = menu
@@ -244,7 +245,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     @objc func showAboutPanel() {
         NSApp.activate(ignoringOtherApps: true)
         let credits = NSAttributedString(
-            string: "\(AppInfo.tagline)\n\n\(AppInfo.credit)",
+            string: "\(AppInfo.tagline(language: AppSettings.shared.language))\n\n\(AppInfo.credit)",
             attributes: [
                 .foregroundColor: NSColor.labelColor,
                 .font: NSFont.systemFont(ofSize: 11)

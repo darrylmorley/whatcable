@@ -138,7 +138,7 @@ final class WidgetDataWriter {
 
     /// Unconditional write with a fresh timestamp. Called by the heartbeat
     /// timer to keep the snapshot from going stale during idle periods.
-    private func forceWrite() {
+    func forceWrite() {
         let snapshot = buildSnapshot()
         guard writeToDefaults(snapshot) else { return }
         lastSnapshot = snapshot
@@ -165,7 +165,8 @@ final class WidgetDataWriter {
                 identities: identities,
                 devices: devices,
                 thunderboltSwitches: tbWatcher.switches,
-                isConnectedOverride: isLive
+                isConnectedOverride: isLive,
+                language: AppSettings.shared.language
             )
 
             let status = WidgetSnapshot.Status(from: summary.status)
@@ -182,7 +183,7 @@ final class WidgetDataWriter {
             )
         }
 
-        return WidgetSnapshot(ports: entries)
+        return WidgetSnapshot(ports: entries, languageCode: AppSettings.shared.language.code)
     }
 
     @discardableResult

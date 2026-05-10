@@ -41,6 +41,9 @@ targets:
         GENERATE_INFOPLIST_FILE: true
         INFOPLIST_FILE: Sources/WhatCableWidget/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: WhatCable Widget
+        INFOPLIST_KEY_CFBundleLocalizations:
+          - en
+          - zh-Hans
         CODE_SIGN_ENTITLEMENTS: scripts/WhatCableWidget.entitlements
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: ""

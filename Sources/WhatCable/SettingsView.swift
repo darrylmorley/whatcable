@@ -1,4 +1,5 @@
 import SwiftUI
+import WhatCableCore
 
 /// Settings panel shown in place of the main popover content. Pushes a
 /// "Done" header and groups toggles by purpose. All preferences live on
@@ -27,9 +28,9 @@ struct SettingsView: View {
         HStack {
             Image(systemName: "gearshape")
                 .scaledFont(.title2)
-            Text(String(localized: "Settings", bundle: .module)).scaledFont(.headline, weight: .bold)
+            Text(appString("Settings")).scaledFont(.headline, weight: .bold)
             Spacer()
-            Button(String(localized: "Done", bundle: .module), action: dismiss)
+            Button(appString("Done"), action: dismiss)
                 .keyboardShortcut(.defaultAction)
         }
         .padding(12)
@@ -41,21 +42,27 @@ struct SettingsForm: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            section(String(localized: "Behavior", bundle: .module)) {
-                Toggle(String(localized: "Launch at login", bundle: .module), isOn: $settings.launchAtLogin)
-                Toggle(String(localized: "Show in menu bar", bundle: .module), isOn: $settings.useMenuBarMode)
+            section(appString("Behavior")) {
+                Toggle(appString("Launch at login"), isOn: $settings.launchAtLogin)
+                Toggle(appString("Show in menu bar"), isOn: $settings.useMenuBarMode)
                 Text(settings.useMenuBarMode
-                     ? String(localized: "Lives in the menu bar with no Dock icon.", bundle: .module)
-                     : String(localized: "Runs as a regular Dock app with a window.", bundle: .module))
+                     ? appString("Lives in the menu bar with no Dock icon.")
+                     : appString("Runs as a regular Dock app with a window."))
                     .scaledFont(.caption)
                     .foregroundStyle(.secondary)
             }
-            section(String(localized: "Display", bundle: .module)) {
-                Toggle(String(localized: "Show technical details", bundle: .module), isOn: $settings.showTechnicalDetails)
-                Toggle(String(localized: "Hide empty ports", bundle: .module), isOn: $settings.hideEmptyPorts)
+            section(appString("Display")) {
+                Picker(appString("Language"), selection: $settings.language) {
+                    ForEach(WhatCableLanguage.allCases) { language in
+                        Text(languageName(language)).tag(language)
+                    }
+                }
+                .pickerStyle(.menu)
+                Toggle(appString("Show technical details"), isOn: $settings.showTechnicalDetails)
+                Toggle(appString("Hide empty ports"), isOn: $settings.hideEmptyPorts)
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(String(localized: "Font size", bundle: .module))
+                        Text(appString("Font size"))
                         Spacer()
                         Text(verbatim: "\(Int((settings.fontSize * 100).rounded()))%")
                             .foregroundStyle(.secondary)
@@ -71,8 +78,8 @@ struct SettingsForm: View {
                 }
                 .padding(.top, 4)
             }
-            section(String(localized: "Notifications", bundle: .module)) {
-                Toggle(String(localized: "Notify on cable changes", bundle: .module), isOn: $settings.notifyOnChanges)
+            section(appString("Notifications")) {
+                Toggle(appString("Notify on cable changes"), isOn: $settings.notifyOnChanges)
             }
         }
     }
@@ -89,6 +96,15 @@ struct SettingsForm: View {
             .scaledFont(.body)
             .toggleStyle(.switch)
             .controlSize(.small)
+        }
+    }
+
+    private func languageName(_ language: WhatCableLanguage) -> String {
+        switch language {
+        case .english:
+            return appString("English")
+        case .simplifiedChinese:
+            return appString("Simplified Chinese")
         }
     }
 }

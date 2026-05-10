@@ -8,10 +8,33 @@ import Foundation
 public struct WidgetSnapshot: Codable, Equatable {
     public let ports: [PortEntry]
     public let timestamp: Date
+    public let languageCode: String
 
-    public init(ports: [PortEntry], timestamp: Date = Date()) {
+    public init(
+        ports: [PortEntry],
+        timestamp: Date = Date(),
+        languageCode: String = WhatCableLanguage.default.code
+    ) {
         self.ports = ports
         self.timestamp = timestamp
+        self.languageCode = languageCode
+    }
+
+    public var language: WhatCableLanguage {
+        WhatCableLanguage(code: languageCode)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case ports
+        case timestamp
+        case languageCode
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        ports = try c.decode([PortEntry].self, forKey: .ports)
+        timestamp = try c.decode(Date.self, forKey: .timestamp)
+        languageCode = try c.decodeIfPresent(String.self, forKey: .languageCode) ?? WhatCableLanguage.default.code
     }
 
     /// One port's display-ready state. Every field is pre-computed by the

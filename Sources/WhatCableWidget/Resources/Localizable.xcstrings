@@ -1,0 +1,55 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Cable Status" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "线缆状态"
+          }
+        }
+      }
+    },
+    "No cable data" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无线缆数据"
+          }
+        }
+      }
+    },
+    "Open WhatCable to start monitoring." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开 WhatCable 开始监测。"
+          }
+        }
+      }
+    },
+    "Plug a cable in to see what it can do." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接入线缆即可查看它能做什么。"
+          }
+        }
+      }
+    },
+    "See what your USB-C cables can do at a glance." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快速查看你的 USB-C 线缆能做什么。"
+          }
+        }
+      }
+    }
+  }
+}

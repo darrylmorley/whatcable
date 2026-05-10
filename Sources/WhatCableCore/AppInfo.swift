@@ -31,7 +31,7 @@ public enum AppInfo {
         return "dev"
     }()
     public static let credit = "WhatCable"
-    public static let tagline = String(localized: "What can this USB-C cable actually do?", bundle: .module)
+    public static let tagline = tagline(language: .default)
     public static let copyright = "© \(Calendar.current.component(.year, from: Date())) \(credit)"
     public static let helpURL = URL(string: "https://github.com/darrylmorley/whatcable")!
 
@@ -49,5 +49,9 @@ public enum AppInfo {
 
     private static func parts(_ version: String) -> [Int] {
         version.split(separator: ".").map { Int($0) ?? 0 }
+    }
+
+    public static func tagline(language: WhatCableLanguage = .default) -> String {
+        LocalizedCopy.string("What can this USB-C cable actually do?", language: language)
     }
 }

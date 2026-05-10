@@ -17,16 +17,18 @@ public enum PDVDO {
         case vpd = 6            // VCONN-Powered Device
         case other = 7
 
-        public var label: String {
+        public var label: String { label(language: .default) }
+
+        public func label(language: WhatCableLanguage = .default) -> String {
             switch self {
-            case .undefined: return String(localized: "Unspecified", bundle: .module)
-            case .pdusbHub: return String(localized: "USB Hub", bundle: .module)
-            case .pdusbPeripheral: return String(localized: "USB Peripheral", bundle: .module)
-            case .passiveCable: return String(localized: "Passive cable", bundle: .module)
-            case .activeCable: return String(localized: "Active cable", bundle: .module)
-            case .ama: return String(localized: "Alternate Mode Adapter", bundle: .module)
-            case .vpd: return String(localized: "VCONN-powered device", bundle: .module)
-            case .other: return String(localized: "Other", bundle: .module)
+            case .undefined: return LocalizedCopy.string("Unspecified", language: language)
+            case .pdusbHub: return LocalizedCopy.string("USB Hub", language: language)
+            case .pdusbPeripheral: return LocalizedCopy.string("USB Peripheral", language: language)
+            case .passiveCable: return LocalizedCopy.string("Passive cable", language: language)
+            case .activeCable: return LocalizedCopy.string("Active cable", language: language)
+            case .ama: return LocalizedCopy.string("Alternate Mode Adapter", language: language)
+            case .vpd: return LocalizedCopy.string("VCONN-powered device", language: language)
+            case .other: return LocalizedCopy.string("Other", language: language)
             }
         }
     }
@@ -62,13 +64,15 @@ public enum PDVDO {
         case usb4Gen3 = 3    // 20 Gbps (PD 3.0) / 40 Gbps (PD 3.1)
         case usb4Gen4 = 4    // 80 Gbps
 
-        public var label: String {
+        public var label: String { label(language: .default) }
+
+        public func label(language: WhatCableLanguage = .default) -> String {
             switch self {
-            case .usb20: return String(localized: "USB 2.0 (480 Mbps)", bundle: .module)
-            case .usb32Gen1: return String(localized: "USB 3.2 Gen 1 (5 Gbps)", bundle: .module)
-            case .usb32Gen2: return String(localized: "USB 3.2 Gen 2 (10 Gbps)", bundle: .module)
-            case .usb4Gen3: return String(localized: "USB4 Gen 3 (20 / 40 Gbps)", bundle: .module)
-            case .usb4Gen4: return String(localized: "USB4 Gen 4 (80 Gbps)", bundle: .module)
+            case .usb20: return LocalizedCopy.string("USB 2.0 (480 Mbps)", language: language)
+            case .usb32Gen1: return LocalizedCopy.string("USB 3.2 Gen 1 (5 Gbps)", language: language)
+            case .usb32Gen2: return LocalizedCopy.string("USB 3.2 Gen 2 (10 Gbps)", language: language)
+            case .usb4Gen3: return LocalizedCopy.string("USB4 Gen 3 (20 / 40 Gbps)", language: language)
+            case .usb4Gen4: return LocalizedCopy.string("USB4 Gen 4 (80 Gbps)", language: language)
             }
         }
 
@@ -96,11 +100,13 @@ public enum PDVDO {
             }
         }
 
-        public var label: String {
+        public var label: String { label(language: .default) }
+
+        public func label(language: WhatCableLanguage = .default) -> String {
             switch self {
-            case .usbDefault: return String(localized: "USB default", bundle: .module)
-            case .threeAmp: return String(localized: "3 A", bundle: .module)
-            case .fiveAmp: return String(localized: "5 A", bundle: .module)
+            case .usbDefault: return LocalizedCopy.string("USB default", language: language)
+            case .threeAmp: return LocalizedCopy.string("3 A", language: language)
+            case .fiveAmp: return LocalizedCopy.string("5 A", language: language)
             }
         }
     }
@@ -304,10 +310,12 @@ public enum PDVDO {
         case copper = 0
         case optical = 1
 
-        public var label: String {
+        public var label: String { label(language: .default) }
+
+        public func label(language: WhatCableLanguage = .default) -> String {
             switch self {
-            case .copper: return String(localized: "Copper", bundle: .module)
-            case .optical: return String(localized: "Optical", bundle: .module)
+            case .copper: return LocalizedCopy.string("Copper", language: language)
+            case .optical: return LocalizedCopy.string("Optical", language: language)
             }
         }
     }
@@ -320,10 +328,12 @@ public enum PDVDO {
         case redriver = 0
         case retimer = 1
 
-        public var label: String {
+        public var label: String { label(language: .default) }
+
+        public func label(language: WhatCableLanguage = .default) -> String {
             switch self {
-            case .redriver: return String(localized: "Re-driver", bundle: .module)
-            case .retimer: return String(localized: "Re-timer", bundle: .module)
+            case .redriver: return LocalizedCopy.string("Re-driver", language: language)
+            case .retimer: return LocalizedCopy.string("Re-timer", language: language)
             }
         }
     }
@@ -341,16 +351,18 @@ public enum PDVDO {
         case lessThan50uW = 6         // < 50 µW
         case reserved = 7
 
-        public var label: String {
+        public var label: String { label(language: .default) }
+
+        public func label(language: WhatCableLanguage = .default) -> String {
             switch self {
-            case .greaterThan10mW: return String(localized: "> 10 mW", bundle: .module)
-            case .fiveTo10mW: return String(localized: "5-10 mW", bundle: .module)
-            case .oneTo5mW: return String(localized: "1-5 mW", bundle: .module)
-            case .halfTo1mW: return String(localized: "0.5-1 mW", bundle: .module)
-            case .fifthToHalfmW: return String(localized: "0.2-0.5 mW", bundle: .module)
-            case .fiftyTo200uW: return String(localized: "50-200 µW", bundle: .module)
-            case .lessThan50uW: return String(localized: "< 50 µW", bundle: .module)
-            case .reserved: return String(localized: "Reserved", bundle: .module)
+            case .greaterThan10mW: return LocalizedCopy.string("> 10 mW", language: language)
+            case .fiveTo10mW: return LocalizedCopy.string("5-10 mW", language: language)
+            case .oneTo5mW: return LocalizedCopy.string("1-5 mW", language: language)
+            case .halfTo1mW: return LocalizedCopy.string("0.5-1 mW", language: language)
+            case .fifthToHalfmW: return LocalizedCopy.string("0.2-0.5 mW", language: language)
+            case .fiftyTo200uW: return LocalizedCopy.string("50-200 µW", language: language)
+            case .lessThan50uW: return LocalizedCopy.string("< 50 µW", language: language)
+            case .reserved: return LocalizedCopy.string("Reserved", language: language)
             }
         }
     }

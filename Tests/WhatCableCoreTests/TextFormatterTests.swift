@@ -167,6 +167,33 @@ final class TextFormatterTests: XCTestCase {
         XCTAssertTrue(output.contains("USB4 supported") && output.contains("Yes"))
     }
 
+    func testActiveCableVDO2SectionUsesChineseInRawMode() {
+        let port = makePort()
+        var vdo4: UInt32 = 0
+        vdo4 |= UInt32(1) << 10
+        vdo4 |= UInt32(1) << 9
+        vdo4 |= UInt32(1) << 2
+        let vdo3: UInt32 = UInt32(0b011) | UInt32(2 << 5) | UInt32(1 << 13) | UInt32(0b10 << 11)
+        let active = PDIdentity(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: port.portNumber ?? 1,
+            vendorID: 0x05AC, productID: 0, bcdDevice: 0,
+            vdos: [(4 << 27) | UInt32(0x05AC), 0, 0, vdo3, vdo4],
+            specRevision: 3
+        )
+        let output = TextFormatter.render(
+            ports: [port],
+            sources: [],
+            identities: [active],
+            showRaw: true,
+            language: .simplifiedChinese
+        )
+        XCTAssertTrue(output.contains("物理连接") && output.contains("光纤"))
+        XCTAssertTrue(output.contains("有源元件") && output.contains("Re-timer"))
+        XCTAssertTrue(output.contains("USB4 支持") && output.contains("是"))
+    }
+
     func testActiveCableVDO2SectionAbsentWithoutRawFlag() {
         let port = makePort()
         let vdo3: UInt32 = UInt32(0b011) | UInt32(2 << 5) | UInt32(1 << 13) | UInt32(0b10 << 11)

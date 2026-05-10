@@ -16,7 +16,10 @@ public enum ThunderboltLabels {
     /// - `"Up to 10 Gb/s × 1"` (TB3 single-lane)
     /// - `"Up to 40 Gb/s × 2"` (TB5 / USB4 v2 dual-lane)
     /// - `"Up to 40 Gb/s (3 TX / 1 RX)"` (TB5 asymmetric)
-    public static func linkLabel(for port: ThunderboltPort) -> String? {
+    public static func linkLabel(
+        for port: ThunderboltPort,
+        language: WhatCableLanguage = .default
+    ) -> String? {
         guard port.hasActiveLink,
               let gen = port.currentSpeed,
               let width = port.currentWidth else {
@@ -27,10 +30,10 @@ public enum ThunderboltLabels {
         case .tb3, .usb4Tb4, .tb5:
             guard let perLane = gen.perLaneGbps else { return nil }
             let lanes = describeLanes(width)
-            return String(localized: "Up to \(perLane) Gb/s \(lanes)", bundle: .module)
+            return LocalizedCopy.string("Up to \(perLane) Gb/s \(lanes)", language: language)
         case .unknown(let raw):
             let hex = String(raw, radix: 16)
-            return String(localized: "Unknown generation (raw speed code 0x\(hex))", bundle: .module)
+            return LocalizedCopy.string("Unknown generation (raw speed code 0x\(hex))", language: language)
         }
     }
 
@@ -48,14 +51,17 @@ public enum ThunderboltLabels {
     /// Human-readable name for a downstream switch ("ASUS PA32QCV",
     /// "CalDigit, Inc. TS3 Plus"). Falls back to "Unknown device" if the
     /// DROM didn't decode (rare but possible).
-    public static func deviceName(for sw: ThunderboltSwitch) -> String {
+    public static func deviceName(
+        for sw: ThunderboltSwitch,
+        language: WhatCableLanguage = .default
+    ) -> String {
         let vendor = sw.vendorName.trimmingCharacters(in: .whitespaces)
         let model = sw.modelName.trimmingCharacters(in: .whitespaces)
         switch (vendor.isEmpty, model.isEmpty) {
         case (false, false): return "\(vendor) \(model)"
         case (false, true): return vendor
         case (true, false): return model
-        case (true, true): return String(localized: "Unknown device", bundle: .module)
+        case (true, true): return LocalizedCopy.string("Unknown device", language: language)
         }
     }
 }
