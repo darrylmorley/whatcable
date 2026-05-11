@@ -1,773 +1,1249 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "": {},
-    "%@ profiles": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ 供电档位"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "%@ negotiated" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "համաձայնեցված է %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已协商 %@"
           }
         }
       }
     },
-    "%lld USB devices": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld USB device"
+    "%@ profiles" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ռեժիմ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 供电档位"
+          }
+        }
+      }
+    },
+    "%lld devices removed" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld device removed"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld USB devices"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld devices removed"
                 }
               }
             }
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 个 USB 设备"
-          }
-        }
-      }
-    },
-    "%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "检测到 %lld 个 USB-C 端���，但当前没有接入设备。可在\"设置\"中关闭\"隐藏空端口\"查看它们。"
-          }
-        }
-      }
-    },
-    "%lld devices removed": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld device removed"
+        "hy" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld սարք հեռացվեց"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld devices removed"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld սարք հեռացվեց"
                 }
               }
             }
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已移除 %lld 个设备"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已移除 %lld 个设备"
+          }
+        }
+      }
+    },
+    "%lld USB devices" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld USB device"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld USB devices"
+                }
+              }
+            }
+          }
+        },
+        "hy" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld USB սարք"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld USB սարք"
+                }
+              }
+            }
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个 USB 设备"
+          }
+        }
+      }
+    },
+    "%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Հայտնաբերվել է %lld USB-C պորտ, սակայն այս պահին ոչինչ միացված չէ։ Դրանք տեսնելու համար «Կարգավորումներում» անջատեք «Թաքցնել դատարկ պորտերը» ֆունկցիան:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检测到 %lld 个 USB-C 端���，但当前没有接入设备。可在\"设置\"中关闭\"隐藏空端口\"查看它们。"
+          }
         }
       }
     },
-    "About %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关于 %@"
+    "About %@" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@-ի մասին"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于 %@"
+          }
         }
       }
     },
-    "Active": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "活跃"
+    "active" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ակտիվ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前"
+          }
         }
       }
     },
-    "Active cable electronics": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "有源线缆电子组件"
+    "Active" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ակտիվ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活跃"
           }
         }
       }
     },
-    "All raw IOKit properties (%lld)": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "全部原始 IOKit 属性（%lld）"
+    "Active cable electronics" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Կաբելի ակտիվ էլեկտրոնիկա"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有源线缆电子组件"
+          }
         }
       }
     },
-    "Behavior": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "行为"
+    "All raw IOKit properties (%lld)" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IOKit-ի բոլոր անմշակ տվյալները (%lld)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部原始 IOKit 属性（%lld）"
           }
         }
       }
     },
-    "Built by %@.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "由 %@ 构建。"
+    "Behavior" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Վարքագիծ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行为"
+          }
         }
       }
     },
-    "Cable trust signals": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "线缆可信度信号"
+    "Built by %@." : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ստեղծվել է %@-ի կողմից:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由 %@ 构建。"
           }
         }
       }
     },
-    "Cancel": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "取消"
+    "Cable trust signals" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Կաբելի վստահելիության ազդանշաններ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "线缆可信度信号"
+          }
         }
       }
     },
-    "Charger connected": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "充电器已连接"
+    "Cancel" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Չեղարկել"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }
     },
-    "Charger disconnected": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "充电器已断开"
+    "Charger connected" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Լիցքավորիչը միացված է"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "充电器已连接"
+          }
         }
       }
     },
-    "Check for Updates…": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "检查更新…"
+    "Charger disconnected" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Լիցքավորիչը անջատված է"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "充电器已断开"
+          }
         }
       }
     },
-    "Connected devices": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已连接设备"
+    "Check for Updates…" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ստուգել թարմացումները…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查更新…"
           }
         }
       }
     },
-    "Connected: %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已连接：%@"
+    "Connected devices" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Միացված սարքեր"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已连接设备"
+          }
         }
       }
     },
-    "Connection": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "连接"
+    "Connected: %@" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Միացված է՝ %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已连接：%@"
           }
         }
       }
     },
-    "Display": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示"
+    "Connection" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Կապ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
         }
       }
     },
-    "Done": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "完成"
+    "Display" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Էկրան"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示"
           }
         }
       }
     },
-    "Downloading…": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在下载…"
+    "Done" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Կատարված է"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
         }
       }
     },
-    "File a GitHub issue with this cable's e-marker fingerprint": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用这条线缆的 e-marker 指纹提交 GitHub issue"
+    "Downloading…" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ներբեռնվում է"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在下载…"
           }
         }
       }
     },
-    "Font size": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "字体大小"
+    "File a GitHub issue with this cable's e-marker fingerprint" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ստեղծել GitHub issue այս կաբելի e-marker մատնահետքով"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用这条线缆的 e-marker 指纹提交 GitHub issue"
+          }
         }
       }
     },
-    "Helps the maintainer reproduce charger / cable behavior tied to specific hardware.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "帮助维护者复现与特定硬件相关的充电器/线缆行为。"
+    "Font size" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Տառատեսակի չափը"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "字体大小"
+          }
         }
       }
     },
-    "Hide empty ports": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "隐藏空端口"
+    "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Օգնում է մշակողին վերարտադրել լիցքավորիչի/կաբելի վարքագիծը՝ կապված կոնկրետ սարքակազմի հետ:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助维护者复现与特定硬件相关的充电器/线缆行为。"
           }
         }
       }
     },
-    "Host (%@)": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "主机（%@）"
+    "Hide empty ports" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Թաքցնել դատարկ պորտերը"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏空端口"
+          }
         }
       }
     },
-    "Include Mac model and macOS version": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "包含 Mac 机型和 macOS 版本"
+    "Host (%@)" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Հոսթ (%@)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主机（%@）"
           }
         }
       }
     },
-    "Install failed: %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "安装失败：%@"
+    "Include Mac model and macOS version" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ներառել Mac-ի մոդելը և macOS-ի տարբերակը"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "包含 Mac 机型和 macOS 版本"
+          }
         }
       }
     },
-    "Install update": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "安装更新"
+    "Install failed: %@" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Տեղադրումը ձախողվեց՝ %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安装失败：%@"
+          }
         }
       }
     },
-    "Installing, WhatCable will relaunch": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在安装，WhatCable 将重新启动"
+    "Install update" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Տեղադրել թարմացումը"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安装更新"
           }
         }
       }
     },
-    "Keep window open": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保持窗口打开"
+    "Installing, WhatCable will relaunch" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Տեղադրվում է. WhatCable-ը կվերագործարկվի"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在安装，WhatCable 将重新启动"
+          }
         }
       }
     },
-    "Launch at login": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "登录时启动"
+    "Keep window open" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Պատուհանը բաց թողնել"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保持窗口打开"
           }
         }
       }
     },
-    "Lives in the menu bar with no Dock icon.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "驻留在菜单栏，不显示 Dock 图标。"
+    "Key" : {
+      "comment" : "Մեկնաբանություն",
+      "extractionState" : "manual",
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Բանալի"
           }
         }
       }
     },
-    "No": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "否"
+    "Launch at login" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Գործարկել համակարգ մուտք գործելիս"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录时启动"
+          }
         }
       }
     },
-    "No USB-C ports detected": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未检测到 USB-C 端口"
+    "Lives in the menu bar with no Dock icon." : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Գտնվում է մենյուի տողում՝ առանց Dock-ի պատկերակի:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "驻留在菜单栏，不显示 Dock 图标。"
+          }
         }
       }
     },
-    "Nothing connected": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未连接任何设备"
+    "No" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ոչ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "否"
           }
         }
       }
     },
-    "Notifications": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通知"
+    "no active link" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ակտիվ կապ չկա"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无活跃链路"
+          }
         }
       }
     },
-    "Notify on cable changes": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "线缆变化时通知"
+    "No USB-C ports detected" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB-C պորտեր չեն հայտնաբերվել"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未检测到 USB-C 端口"
           }
         }
       }
     },
-    "Open in GitHub": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 GitHub 中打开"
+    "Nothing connected" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ոչինչ միացված չէ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未连接任何设备"
+          }
         }
       }
     },
-    "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "会在浏览器中打开预填好的 GitHub issue。只有你在那里提交后才会发送内容。"
+    "Notifications" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ծանուցումներ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知"
           }
         }
       }
     },
-    "Optical": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "光纤"
+    "Notify on cable changes" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ծանուցել կաբելի փոփոխությունների մասին"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "线缆变化时通知"
+          }
         }
       }
     },
-    "PD source": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PD 供电源"
+    "Open in GitHub" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Բացել GitHub-ում"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 GitHub 中打开"
           }
         }
       }
     },
-    "%@ negotiated": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已协商 %@"
+    "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ձեր բրաուզերում կբացվի նախապես լրացված GitHub issue: Ոչինչ չի ուղարկվի, մինչև դուք չհաստատեք այնտեղ:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会在浏览器中打开预填好的 GitHub issue。只有你在那里提交后才会发送内容。"
+          }
         }
       }
     },
-    "Plug events": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插拔事件"
+    "Optical" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Օպտիկական"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "光纤"
+          }
         }
       }
     },
-    "Preview of what will be included:": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "将包含内容的预览："
+    "PD source" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PD հոսանքի աղբյուր"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PD 供电源"
           }
         }
       }
     },
-    "Provisioned": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已配置"
+    "Plug events" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Միացման իրադարձություններ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插拔事件"
+          }
         }
       }
     },
-    "Quit": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "退出"
+    "Preview of what will be included:" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ներառվող տվյալների նախադիտում."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将包含内容的预览："
           }
         }
       }
     },
-    "Quit %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "退出 %@"
+    "Provisioned" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Կարգավորված"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已配置"
+          }
         }
       }
     },
-    "Refresh": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "刷新"
+    "Quit" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ելք"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出"
           }
         }
       }
     },
-    "Report this cable": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "报告这条线缆"
+    "Quit %@" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Փակել %@-ը"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 %@"
+          }
         }
       }
     },
-    "Runs as a regular Dock app with a window.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "作为普通 Dock 应用运行并显示窗口。"
+    "Refresh" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Թարմացնել"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刷新"
           }
         }
       }
     },
-    "Settings": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置"
+    "Report this cable" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Զեկուցել այս կաբելի մասին"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "报告这条线缆"
+          }
         }
       }
     },
-    "Settings…": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置…"
+    "Runs as a regular Dock app with a window." : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Աշխատում է որպես սովորական հավելված՝ Dock-ում և պատուհանով:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作为普通 Dock 应用运行并显示窗口。"
+          }
         }
       }
     },
-    "Show in menu bar": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示在菜单栏"
+    "Settings" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Կարգավորումներ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置"
           }
         }
       }
     },
-    "Show technical details": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示技术详情"
+    "Settings…" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Կարգավորումներ…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置…"
+          }
         }
       }
     },
-    "SuperSpeed": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SuperSpeed"
+    "Show in menu bar" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ցուցադրել մենյուի տողում"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示在菜单栏"
           }
         }
       }
     },
-    "Supported": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "支持"
+    "Show technical details" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ցուցադրել տեխնիկական մանրամասները"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示技术详情"
+          }
         }
       }
     },
-    "This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "这台 Mac 似乎没有暴露端口控制器服务。请点按刷新，或检查“系统信息”>“USB”。"
+    "SuperSpeed" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SuperSpeed"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SuperSpeed"
           }
         }
       }
     },
-    "Thunderbolt fabric": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Thunderbolt 拓扑"
+    "Supported" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Աջակցվում է"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持"
+          }
         }
       }
     },
-    "Transports": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "传输"
+    "This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Այս Mac-ը կարծես թե չի տրամադրում պորտերի վերահսկման ծառայությունները: Սեղմեք թարմացնել կամ ստուգեք System Information > USB բաժինը:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这台 Mac 似乎没有暴露端口控制器服务。请点按刷新，或检查“系统信息”>“USB”。"
           }
         }
       }
     },
-    "USB active": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "USB 活跃"
+    "Thunderbolt fabric" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thunderbolt կառուցվածք"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thunderbolt 拓扑"
+          }
         }
       }
     },
-    "USB device": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "USB 设备"
+    "Transports" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Տվյալների փոխանցում"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "传输"
+          }
         }
       }
     },
-    "USB device disconnected": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "USB 设备已断开"
+    "Unknown" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Անհայտ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知"
           }
         }
       }
     },
-    "Unknown": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未知"
+    "USB active" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB-ն ակտիվ է"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 活跃"
+          }
         }
       }
     },
-    "Verifying signature…": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在验证签名…"
+    "USB device" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB սարք"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 设备"
           }
         }
       }
     },
-    "View release": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "查看发布页"
+    "USB device disconnected" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB սարքն անջատվեց"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 设备已断开"
+          }
         }
       }
     },
-    "What gets shared?": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "会分享哪些内容？"
+    "Verifying signature…" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ստուգվում է թվային ստորագրությունը…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在验证签名…"
+          }
         }
       }
     },
-    "WhatCable %@ is available": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WhatCable %@ 可用"
+    "View release" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Տեսնել թողարկումը"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看发布页"
           }
         }
       }
     },
-    "WhatCable on GitHub": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GitHub 上的 WhatCable"
+    "What gets shared?" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ի՞նչ տվյալներ են ուղարկվելու:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会分享哪些内容？"
+          }
         }
       }
     },
-    "Yes": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "是"
+    "WhatCable %@ is available" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WhatCable %@-ը հասանելի է"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WhatCable %@ 可用"
           }
         }
       }
     },
-    "You're on %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "当前版本 %@"
+    "WhatCable on GitHub" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Բացել GitHub-ում"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub 上的 WhatCable"
+          }
         }
       }
     },
-    "active": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "当前"
+    "Yes" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Այո"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是"
+          }
         }
       }
     },
-    "no active link": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "无活跃链路"
+    "You're on %@" : {
+      "localizations" : {
+        "hy" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Դուք օգտագործում եք %@ տարբերակը"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前版本 %@"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
