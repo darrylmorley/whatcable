@@ -3,6 +3,12 @@
   "strings": {
     "0.2-0.5 mW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0.2-0.5 mW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -13,6 +19,12 @@
     },
     "0.5-1 mW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0.5-1 mW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -23,6 +35,12 @@
     },
     "1-5 mW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1-5 mW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -33,6 +51,12 @@
     },
     "3 A": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 A"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -43,6 +67,12 @@
     },
     "5 A": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 A"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -53,6 +83,12 @@
     },
     "5-10 mW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5-10 mW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -63,6 +99,12 @@
     },
     "50-200 µW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50-200 µW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -73,6 +115,12 @@
     },
     "< 50 µW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "< 50 µW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -83,6 +131,12 @@
     },
     "> 10 mW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "> 10 mW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -99,6 +153,12 @@
             "value": "Active %1$@ cable, %2$@"
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Cavo attivo %1$@, %2$@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -109,6 +169,12 @@
     },
     "Active cable": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cavo attivo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -119,6 +185,12 @@
     },
     "Active cable (contains signal-conditioning electronics)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cavo attivo (contiene elettronica di condizionamento segnale)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -129,6 +201,12 @@
     },
     "Alternate Mode Adapter": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adattatore modalità alternativa"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -139,6 +217,12 @@
     },
     "Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sia il caricabatterie che il cavo possono fare di più, ma attualmente il Mac chiede di meno. Ciò è normale quando la batteria è quasi carica o quando il sistema non è attivo."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -149,6 +233,12 @@
     },
     "Cable does not advertise an e-marker (basic cable)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cavo non contiene un e-marker (cavo base)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -159,6 +249,12 @@
     },
     "Cable has an e-marker chip (advertises its capabilities)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cavo ha un chip e-marker (dichiara le sue capacità)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -169,6 +265,12 @@
     },
     " · %lldW cable": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · cavo %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -179,6 +281,12 @@
     },
     "Active cable (VDO 2):": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cavo attivo (VDO 2):"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -189,6 +297,12 @@
     },
     "Cable is limiting charging speed": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cavo limita la velocità di ricarica"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -199,6 +313,12 @@
     },
     "Cable made by %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cavo realizzato da %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -215,6 +335,12 @@
             "value": "Cable rated for %1$@ at up to %2$lldV (~%3$lldW)"
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Cavo classificato per %1$@ fino a %2$lldV (~%3$lldW)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -225,6 +351,12 @@
     },
     "Cable speed: %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Velocità cavo: %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -235,6 +367,12 @@
     },
     "Cable trust signals:": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segnali affidabilità cavo:"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -245,6 +383,12 @@
     },
     "Carrying DisplayPort video": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supporta video DisplayPort"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -255,6 +399,12 @@
     },
     "Carrying both data and DisplayPort video.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supporta sia dati che video DisplayPort."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -265,6 +415,12 @@
     },
     "Charger advertises up to %lldW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il caricabatterie supporta fino a %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -275,6 +431,12 @@
     },
     "Charger and cable are well-matched.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caricabatterie e cavo sono ben abbinati."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -291,6 +453,12 @@
             "value": "Charger can deliver up to %1$lldW, but this cable is only rated to carry %2$lldW. Replace the cable to charge faster."
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Il caricabatterie può fornire fino a %1$lldW, ma questo cavo è classificato per supportare solo %2$lldW. Per caricare più velocemente sostituisci il cavo."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -301,6 +469,12 @@
     },
     "Charging": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In carica"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -317,6 +491,12 @@
             "value": "Charging at %1$lldW (charger can do up to %2$lldW)"
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Carica a %1$lldW (il caricabatterie può caricare fino a %2$lldW)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -327,6 +507,12 @@
     },
     "Charging only": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo carica"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -337,6 +523,12 @@
     },
     "Charging well at %lldW": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "carica corretta a %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -347,6 +539,12 @@
     },
     "Charging · %lldW charger": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In carica · caricabatterie %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -357,6 +555,12 @@
     },
     "Charging: ": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": In carica： "
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -367,6 +571,12 @@
     },
     "Connected": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conensso"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -383,6 +593,12 @@
             "value": "Connected device: %1$@, %2$@"
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Dispositivo connesso: %1$@, %2$@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -393,6 +609,12 @@
     },
     "Connected to %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connesso a %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -409,6 +631,12 @@
             "value": "Connected via %1$lld hops: %2$@"
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Connesso via %1$lld hop: %2$@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -419,6 +647,12 @@
     },
     "Connected.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connesso."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -429,6 +663,12 @@
     },
     "Copper": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rame"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -439,6 +679,12 @@
     },
     "Couldn't determine cable type from this port.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile determinare il tipo di cavo in questa porta."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -455,6 +701,12 @@
             "value": "Currently negotiated: %1$@ @ %2$@ (%3$@)"
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Attualmente negoziati: %1$@ @ %2$@ (%3$@)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -465,6 +717,12 @@
     },
     "Display connected": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display connesso"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -475,6 +733,12 @@
     },
     "Display connected · %lldW charger": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Displaay connesso · caricabatterie %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -485,6 +749,12 @@
     },
     "DisplayPort video over USB-C alt mode.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video DisplayPort su modalità alternativa USB-C."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -495,6 +765,12 @@
     },
     "E-marker claims EPR support but reports only 20V max VBUS": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker dichiara il supporto EPR ma riporta solo VBUS max 20 V"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -505,6 +781,12 @@
     },
     "E-marker reports no vendor identity": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker non riporta l'identità del produttore"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -515,6 +797,12 @@
     },
     "E-marker uses a reserved cable-latency value": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker usa un valore di latenza del cavo riservato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -525,6 +813,12 @@
     },
     "E-marker uses a reserved current-rating value": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker usa un valore di corrente nominale riservato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -535,6 +829,12 @@
     },
     "E-marker uses a reserved data-speed value": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'E-marker usa un valore di velocità dati riservato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -545,6 +845,12 @@
     },
     "E-marker uses an invalid VDO version": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker usa una versione VDO non valida"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -555,6 +861,12 @@
     },
     "E-marker uses an invalid cable-termination value": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker usa un valore di terminazione del cavo non valido"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -571,6 +883,12 @@
             "value": "Last leg drops from %1$@ to %2$@"
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "L'ultima tratto decade da %1$@ a %2$@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -581,6 +899,12 @@
     },
     "Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I membri legittimi di USB-IF spediscono cavi con un ID fornitore diverso da zero. Un VID a zero è una comune firma contraffatta."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -591,6 +915,12 @@
     },
     "Linked at %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collegato a %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -601,6 +931,12 @@
     },
     "Negotiation hasn't completed yet.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La negoziazione non è ancora stata completata."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -611,6 +947,12 @@
     },
     "No USB-C / MagSafe ports were found on this Mac.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna porta USB-C/MagSafe trovata in questo Mac."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -621,6 +963,12 @@
     },
     "Nothing connected": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niente di collegato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -631,6 +979,12 @@
     },
     "Only USB 2.0 is active. If you expected high speed, the cable may not support it.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È attivo solo USB 2.0. Se ti aspettavi un'alta velocità, il cavo potrebbe non supportarla."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -641,6 +995,12 @@
     },
     "Optical": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ottico"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -651,6 +1011,12 @@
     },
     "Optical cable": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cavo ottico"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -661,6 +1027,12 @@
     },
     "Optical cable, not electrically isolated (carries copper alongside the fibres)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cavo ottico, non isolato elettricamente (contiene rame lungo le fibre)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -671,6 +1043,12 @@
     },
     "Optical fibres are electrically isolated end-to-end": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fibre ottiche sono isolate elettricamente end-to-end"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -681,6 +1059,12 @@
     },
     "Other": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Altro"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -691,6 +1075,12 @@
     },
     "Passive cable": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cavo passivo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -701,6 +1091,12 @@
     },
     "Plug a cable into %@ to see what it can do.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collega un cavo a %@ per vedere cosa può fare."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -711,6 +1107,12 @@
     },
     "Power is flowing but no data link is established.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connessione alimentazione attiva ma non è stato stabilito alcun collegamento dati."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -721,6 +1123,12 @@
     },
     "Power is flowing. No data connection.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connessione alimentazione attiva. Nessuna connessione dati."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -731,6 +1139,12 @@
     },
     "Raw IOKit properties:": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proprietà IOKit RAW:"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -741,6 +1155,12 @@
     },
     "Re-driver": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Re-driver"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -751,6 +1171,12 @@
     },
     "Re-timer": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Re-timer"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -761,6 +1187,12 @@
     },
     "Reserved": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riservato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -771,6 +1203,12 @@
     },
     "Slow USB device or charge-only cable": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivo USB lento o cavo di sola ricarica"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -781,6 +1219,12 @@
     },
     "Slow USB device or charge-only cable · %lldW charger": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivo USB lento o cavo di sola ricarica · Caricabatterie %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -791,6 +1235,12 @@
     },
     "SuperSpeed USB (5 Gbps or faster)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB SuperSpeed （5 Gbps o maggiore）"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -801,6 +1251,12 @@
     },
     "SuperSpeed data link is active.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collegamento dati SuperSpeed attivo."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -811,6 +1267,12 @@
     },
     "Supports %@.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supporta %@。"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -821,6 +1283,12 @@
     },
     "The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker del cavo riporta la funzionalità EPR, ma segnala una tensione VBUS massima pari a 20V. Il funzionamento dell'EPR richiede VBUS da 48V o 50V, quindi i due campi si contraddicono a vicenda."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -831,6 +1299,12 @@
     },
     "The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker del cavo riporta la versione VDO %lld, che è riservata o contrassegnata dalle specifiche USB-PD per questo tipo di cavo come non valida. Il vero e-marker non dovrebbe emettere valori di versione non validi."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -841,6 +1315,12 @@
     },
     "The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker del cavo riporta la terminazione del cavo %lld, che le specifiche USB-PD per questo tipo di cavo contrassegnano come non valida. Gli e-marker che lampeggiano erroneamente spesso non sono d'accordo con l'effettivo cablaggio fisico del cavo."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -851,6 +1331,12 @@
     },
     "The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker del cavo riporta il valore di latenza del cavo %lld, riservato dalle specifiche USB-PD per questo tipo di cavo. I veri chip e-marker non dovrebbero riportare valori riservati."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -861,6 +1347,12 @@
     },
     "The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker del cavo riporta il valore corrente %lld, riservato dalle specifiche USB-PD. I veri chip e-marker non dovrebbero riportare valori riservati."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -871,6 +1363,12 @@
     },
     "The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker del cavo riporta il valore di velocità %lld, riservato dalle specifiche USB-PD. I veri chip e-marker non dovrebbero riportare valori riservati."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -881,6 +1379,12 @@
     },
     "The cable's e-marker reports vendor %@, which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'e-marker del cavo riporta il produttore %@, che non è nell'elenco USB-IF in bundle. Il numero potrebbe essere annullato, copiato o assegnato dopo la generazione dell'elenco raggruppato. Di per sé questo non è la prova di un problema, ma su un cavo clone appare spesso insieme ad altre incongruenze."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -891,6 +1395,12 @@
     },
     "This port can't read cable details (USB-only port, no Power Delivery)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questa porta non può leggere i dettagli del cavo (porta solo USB, nessuna alimentazione)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -901,16 +1411,28 @@
     },
     "Thunderbolt / USB4": {
       "localizations": {
-        "zh-Hans": {
+        "it": {
           "stringUnit": {
             "state": "translated",
             "value": "Thunderbolt / USB4"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thunderbolt/USB4"
           }
         }
       }
     },
     "Thunderbolt / USB4 link active": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collegamento attivo Thunderbolt/USB4"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -921,6 +1443,12 @@
     },
     "Thunderbolt / USB4 · %lldW charger": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thunderbolt/USB4 · caricabatterie %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -931,6 +1459,12 @@
     },
     "USB 2.0 (480 Mbps)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB 2.0（480 Mbps）"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -941,6 +1475,12 @@
     },
     "USB 2.0 only (480 Mbps), no high-speed data": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo USB 2.0 (480 Mbps), no dati ad alta velocità"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -951,6 +1491,12 @@
     },
     "USB 3.2 Gen 1 (5 Gbps)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB 3.2 Gen 1（5 Gbps）"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -961,6 +1507,12 @@
     },
     "USB 3.2 Gen 2 (10 Gbps)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB 3.2 Gen 2（10 Gbps）"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -971,6 +1523,12 @@
     },
     "USB Hub": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hub USB"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -981,6 +1539,12 @@
     },
     "USB Peripheral": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Periferica USB"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -991,6 +1555,12 @@
     },
     "USB default": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Predefinito USB"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1001,6 +1571,12 @@
     },
     "USB device": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivo USB"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1011,6 +1587,12 @@
     },
     "USB device · %lldW charger": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivo USB · caricabatterie %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1021,6 +1603,12 @@
     },
     "USB-C with video": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB-C con video"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1031,6 +1619,12 @@
     },
     "USB-C with video · %lldW charger": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB-C con video · caricabatterie %lldW"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1041,6 +1635,12 @@
     },
     "USB4 Gen 3 (20 / 40 Gbps)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB4 Gen 3 （20/40 Gbps）"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1051,6 +1651,12 @@
     },
     "USB4 Gen 4 (80 Gbps)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB4 Gen 4 （80 Gbps）"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1061,6 +1667,12 @@
     },
     "Unknown device": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivo sconosciuto"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1071,6 +1683,12 @@
     },
     "Unknown generation (raw speed code 0x%@)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generazione sconosciuta (codice velocità raw 0x%@)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1081,6 +1699,12 @@
     },
     "Unknown generation (raw speed code 0x2, inferred TB5)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generazione sconosciuta (codice velocità raw 0x2, dedotto TB5)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1091,6 +1715,12 @@
     },
     "Unspecified": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non specificato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1107,6 +1737,12 @@
             "value": "Up to %1$lld Gb/s %2$@"
           }
         },
+        "it": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Fino a %1$lld Gb/s %2$@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1117,6 +1753,12 @@
     },
     "VCONN-powered device": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivo alimentato da VCONN"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1127,6 +1769,12 @@
     },
     "Vendor ID isn't in USB-IF's published list": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'ID produttore non è nell'elenco pubblicato di USB-IF"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1137,6 +1785,12 @@
     },
     "What can this USB-C cable actually do?": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quali caratteristiche effettive ha questo cavo USB-C?"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1147,6 +1801,12 @@
     },
     "high-speed data": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dati ad alta velocità"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1157,6 +1817,12 @@
     },
     "smart cable": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cavo con e-marker"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1167,6 +1833,12 @@
     },
     "video": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "video"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
