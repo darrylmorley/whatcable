@@ -4,6 +4,12 @@
     "": {},
     "%@ profiles": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ profili"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -32,6 +38,24 @@
             }
           }
         },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld dispostitivo USB"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld dispositivi USB"
+                }
+              }
+            }
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -42,6 +66,12 @@
     },
     "%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld porte USB-C rilevate, ma al momento non è collegato nulla. Per visualizzarle disattiva 'Nascondi porte vuote' in Impostazioni."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -70,6 +100,24 @@
             }
           }
         },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld dispositivo rimosso"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld dispositivi rimossi"
+                }
+              }
+            }
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -80,6 +128,11 @@
     },
     "About %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Info su %@"
+          },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -90,6 +143,12 @@
     },
     "Active": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attivo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -100,6 +159,12 @@
     },
     "Active cable electronics": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elettronica attiva via cavo"
+          },
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -110,6 +175,12 @@
     },
     "All raw IOKit properties (%lld)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutte le proprietà IOKit RAW (%lld)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -120,6 +191,12 @@
     },
     "Behavior": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comportamento"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -130,6 +207,12 @@
     },
     "Built by %@.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilato da %@."
+          },
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -140,6 +223,12 @@
     },
     "Cable trust signals": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segnali affidabili via cavo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -150,6 +239,12 @@
     },
     "Cancel": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annulla"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -160,6 +255,12 @@
     },
     "Charger connected": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caricatore collegato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -170,6 +271,12 @@
     },
     "Charger disconnected": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caricatore scollegato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -180,6 +287,12 @@
     },
     "Check for Updates…": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Controlla aggiornamenti…"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -190,6 +303,12 @@
     },
     "Connected devices": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivi connessi"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -200,6 +319,12 @@
     },
     "Connected: %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connesso: @"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -210,6 +335,12 @@
     },
     "Connection": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connessione"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -220,6 +351,12 @@
     },
     "Display": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -230,6 +367,12 @@
     },
     "Done": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -240,6 +383,12 @@
     },
     "Downloading…": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download…"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -250,6 +399,12 @@
     },
     "File a GitHub issue with this cable's e-marker fingerprint": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segnala un problema su GitHub con la firma digitale e-marker di questo cavo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -260,6 +415,12 @@
     },
     "Font size": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dimensioen font"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -270,6 +431,12 @@
     },
     "Helps the maintainer reproduce charger / cable behavior tied to specific hardware.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aiuta l'autore del programma a riprodurre il comportamento del caricabatterie/cavo legato all'hardware specifico."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -280,6 +447,12 @@
     },
     "Hide empty ports": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nascondi porte con cavi non collegati"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -290,6 +463,12 @@
     },
     "Host (%@)": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Host （%@）:"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -300,6 +479,12 @@
     },
     "Include Mac model and macOS version": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Includi modello Mac e versione macOS"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -310,6 +495,12 @@
     },
     "Install failed: %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installazione fallita %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -320,6 +511,12 @@
     },
     "Install update": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installa aggiornamento"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -330,6 +527,12 @@
     },
     "Installing, WhatCable will relaunch": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installazione, WhatCable verrà riavviato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -340,6 +543,12 @@
     },
     "Keep window open": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantieni finestra aperta"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -350,6 +559,12 @@
     },
     "Launch at login": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esegui all'accesso"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -360,6 +575,12 @@
     },
     "Lives in the menu bar with no Dock icon.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si trova nella barra dei menu senza l'icona del Dock."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -370,6 +591,12 @@
     },
     "No": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -380,6 +607,12 @@
     },
     "No USB-C ports detected": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna porta USB-C rilevata-"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -390,6 +623,12 @@
     },
     "Nothing connected": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niente di collegato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -400,6 +639,12 @@
     },
     "Notifications": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifiche"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -410,6 +655,12 @@
     },
     "Notify on cable changes": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifica cambio cavo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -420,6 +671,12 @@
     },
     "Open in GitHub": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri in GitHub"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -430,6 +687,12 @@
     },
     "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri nel browser un ticket di assistenza GitHub precompilato. Non viene inviato nulla finché non lo invii."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -440,6 +703,12 @@
     },
     "Optical": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ottico"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -450,6 +719,12 @@
     },
     "PD source": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorgente PD"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -460,6 +735,12 @@
     },
     "%@ negotiated": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ negoziato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -470,6 +751,12 @@
     },
     "Plug events": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eventi collegamento"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -480,6 +767,12 @@
     },
     "Preview of what will be included:": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anteprima di cosa sarà incluso:"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -490,6 +783,12 @@
     },
     "Provisioned": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provvisto"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -500,6 +799,12 @@
     },
     "Quit": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -510,6 +815,12 @@
     },
     "Quit %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esci da %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -520,6 +831,12 @@
     },
     "Refresh": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -530,6 +847,12 @@
     },
     "Report this cable": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segnala questo cavo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -540,6 +863,12 @@
     },
     "Runs as a regular Dock app with a window.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funziona come una normale app Dock con una finestra."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -550,6 +879,12 @@
     },
     "Settings": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostazioni"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -560,6 +895,12 @@
     },
     "Settings…": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostazioni…"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -570,6 +911,12 @@
     },
     "Show in menu bar": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visualizza nella barra menu"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -580,6 +927,12 @@
     },
     "Show technical details": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visualizza dettagli tecnici"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -590,6 +943,12 @@
     },
     "SuperSpeed": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SuperSpeed"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -600,6 +959,12 @@
     },
     "Supported": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supportato"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -610,6 +975,12 @@
     },
     "This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB.": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo Mac non sembra esporre i servizi di controller di porta. Seleziona 'Aggiorna' o controlla Informazioni di sistema > USB.”。"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -620,6 +991,12 @@
     },
     "Thunderbolt fabric": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thunderbolt di fabbrica"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -630,6 +1007,12 @@
     },
     "Transports": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trasporti"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -640,6 +1023,12 @@
     },
     "USB active": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB attivo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -650,6 +1039,12 @@
     },
     "USB device": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivo USB"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -660,6 +1055,12 @@
     },
     "USB device disconnected": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dispositivo USB disconnesso"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -670,6 +1071,12 @@
     },
     "Unknown": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sconosciuto"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -680,6 +1087,12 @@
     },
     "Verifying signature…": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verifica firma…"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -690,6 +1103,12 @@
     },
     "View release": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visualizza rilasci"
+          }
+        },-
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -700,6 +1119,12 @@
     },
     "What gets shared?": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cosa viene condiviso?"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -710,6 +1135,12 @@
     },
     "WhatCable %@ is available": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È disponibile WhatCable %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -720,6 +1151,12 @@
     },
     "WhatCable on GitHub": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WhatCable su GitHub"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -730,6 +1167,12 @@
     },
     "Yes": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sì"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -740,6 +1183,12 @@
     },
     "You're on %@": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sei su %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -750,6 +1199,12 @@
     },
     "active": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "attivo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -760,6 +1215,12 @@
     },
     "no active link": {
       "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nessun collegamento attivo"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
