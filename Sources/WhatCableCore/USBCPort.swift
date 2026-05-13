@@ -22,6 +22,7 @@ public struct USBCPort: Identifiable, Hashable {
     public let connectionCount: Int?
     public let overcurrentCount: Int?
     public let pinConfiguration: [String: String]
+    public let displayPortPinAssignment: Int?
     public let powerCurrentLimits: [Int]
     public let firmwareVersion: String?
     public let bootFlagsHex: String?
@@ -77,6 +78,7 @@ public struct USBCPort: Identifiable, Hashable {
             connectionCount: (properties["ConnectionCount"] as? NSNumber)?.intValue,
             overcurrentCount: (properties["Overcurrent Count"] as? NSNumber)?.intValue,
             pinConfiguration: pinConfigProperty(properties["Pin Configuration"]),
+            displayPortPinAssignment: (properties["DisplayPortPinAssignment"] as? NSNumber)?.intValue,
             powerCurrentLimits: intArrayProperty(properties["IOAccessoryPowerCurrentLimits"]),
             firmwareVersion: hexDataProperty(properties["FW Version"]),
             bootFlagsHex: hexDataProperty(properties["Boot Flags"]),
@@ -107,6 +109,7 @@ public struct USBCPort: Identifiable, Hashable {
         connectionCount: Int?,
         overcurrentCount: Int?,
         pinConfiguration: [String: String],
+        displayPortPinAssignment: Int? = nil,
         powerCurrentLimits: [Int],
         firmwareVersion: String?,
         bootFlagsHex: String?,
@@ -134,11 +137,18 @@ public struct USBCPort: Identifiable, Hashable {
         self.connectionCount = connectionCount
         self.overcurrentCount = overcurrentCount
         self.pinConfiguration = pinConfiguration
+        self.displayPortPinAssignment = displayPortPinAssignment
         self.powerCurrentLimits = powerCurrentLimits
         self.firmwareVersion = firmwareVersion
         self.bootFlagsHex = bootFlagsHex
         self.busIndex = busIndex
         self.rawProperties = rawProperties
+    }
+
+    /// Decoded DisplayPort alt mode lane configuration, if DP is active.
+    public var dpLaneConfig: DisplayPortLaneConfig? {
+        guard let raw = displayPortPinAssignment, raw != 0 else { return nil }
+        return DisplayPortLaneConfig(rawValue: raw)
     }
 
     public func matchingDevices(from devices: [USBDevice]) -> [USBDevice] {

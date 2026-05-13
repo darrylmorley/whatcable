@@ -1,7 +1,6 @@
 import Foundation
 
-/// External power adapter info, platform-agnostic. Populated by the Darwin
-/// backend from IOKit, or by the Linux backend from sysfs (where exposed).
+/// External power adapter info. Populated by the Darwin backend from IOKit.
 public struct AdapterInfo: Hashable {
     public let watts: Int?
     public let isCharging: Bool?
@@ -23,19 +22,37 @@ public struct CableSnapshot: Equatable {
     public let identities: [PDIdentity]
     public let usbDevices: [USBDevice]
     public let adapter: AdapterInfo?
+    /// Top-level array of every Thunderbolt switch the host can see. Empty
+    /// on machines without a Thunderbolt controller, or when IOKit returns
+    /// nothing (the JSON shape adds the key but with an empty array, so
+    /// downstream consumers can rely on the field always being present).
+    public let thunderboltSwitches: [ThunderboltSwitch]
+    /// True on desktop Macs (Mac Studio, Mac Mini, Mac Pro) where the
+    /// AppleSmartBattery node is absent or reports BatteryInstalled=false.
+    /// Per-port PD diagnostics from the battery controller are unavailable.
+    public let isDesktopMac: Bool
+    /// Per-port federated PD identity from AppleSmartBattery's FedDetails.
+    /// Empty on desktops or when nothing is connected.
+    public let federatedIdentities: [FederatedIdentity]
 
     public init(
         ports: [USBCPort],
         powerSources: [PowerSource],
         identities: [PDIdentity],
         usbDevices: [USBDevice],
-        adapter: AdapterInfo?
+        adapter: AdapterInfo?,
+        thunderboltSwitches: [ThunderboltSwitch] = [],
+        isDesktopMac: Bool = false,
+        federatedIdentities: [FederatedIdentity] = []
     ) {
         self.ports = ports
         self.powerSources = powerSources
         self.identities = identities
         self.usbDevices = usbDevices
         self.adapter = adapter
+        self.thunderboltSwitches = thunderboltSwitches
+        self.isDesktopMac = isDesktopMac
+        self.federatedIdentities = federatedIdentities
     }
 }
 
@@ -45,7 +62,7 @@ public struct CableSnapshot: Equatable {
 /// `watch()` semantics:
 /// - Emits an initial snapshot immediately.
 /// - After that, emits only when the snapshot actually changes.
-/// - Cancellation tears down underlying timers / udev / netlink sources
+/// - Cancellation tears down underlying IOKit notifications and timers
 ///   via the stream's `onTermination` handler.
 /// - Errors finish the stream; backends must not retry silently.
 public protocol CableSnapshotProvider: Sendable {

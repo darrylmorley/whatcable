@@ -12,6 +12,9 @@ USB-C hides a lot under one connector. Anything from a USB 2.0 charge-only cable
 
 ![WhatCable popover](docs/screenshot.png)
 
+> [!IMPORTANT]
+> **Upgrading from 0.5.x to 0.6.0?** WhatCable's bundle ID changed from `com.bitmoor.whatcable` to `uk.whatcable.whatcable` in 0.6.0 to match the new `whatcable.uk` domain. The in-app "Check for Updates" path in 0.5.x will refuse to install 0.6.0 because the downloaded bundle ID won't match what it expects. Upgrade through Homebrew (`brew upgrade --cask whatcable`) or by downloading [the latest release zip](https://github.com/darrylmorley/whatcable/releases/latest) and replacing `WhatCable.app` manually. Your preferences and notification permissions will reset on first launch of 0.6.0; re-enable launch-at-login from Settings if you had it on. This only affects the 0.5.x → 0.6.0 transition.
+
 ## What it shows
 
 Per port, in plain English:
@@ -22,6 +25,7 @@ Per port, in plain English:
   - *"Charging at 30W (charger can do up to 96W)"* (Mac is asking for less, e.g. battery near full)
   - *"Charging well at 96W"* (everything matches)
 - **Cable e-marker info:** the cable's actual speed (USB 2.0, 5 / 10 / 20 / 40 / 80 Gbps), current rating (3 A / 5 A up to 60W / 100W / 240W), and the chip's vendor
+- **Cable trust signals:** an orange card appears when the e-marker reports values that look unusual against the USB-PD spec, like a zero vendor ID, a reserved bit pattern in the speed / current / cable-latency fields, or a VID that isn't in USB-IF's published list. Wording is hedged on purpose: a flag means "this looks unusual," not "this cable is fake."
 - **Charger PDO list:** every voltage profile the charger advertises (5V / 9V / 12V / 15V / 20V…) with the currently negotiated profile highlighted in real time
 - **Connected device identity:** vendor name and product type, decoded from the PD Discover Identity response
 - **Attached USB devices:** storage, hubs, and peripherals listed under the physical port they're plugged into, with their negotiated speed
@@ -38,6 +42,8 @@ Click the **gear icon** in the popover header to open Settings, where you can:
 Right-click the menu bar icon for **Refresh**, a **Keep window open** toggle (handy for screenshots and demos), **Check for Updates…**, **About**, **WhatCable on GitHub**, and **Quit**.
 
 ## Install
+
+Visit [whatcable.uk](https://whatcable.uk) for an overview and screenshots, or install directly below.
 
 Download the latest `WhatCable.zip` from the [Releases page](https://github.com/darrylmorley/whatcable/releases/latest), unzip, and drag `WhatCable.app` to `/Applications`.
 
@@ -85,10 +91,10 @@ WhatCable reads four families of IOKit services. No entitlements, no private API
 | --- | --- |
 | `AppleHPMInterfaceType10/11/12` (M3-era), `AppleTCControllerType10/11` (M1 / M2), and `IOPort` (M4 Mac mini front ports) | Per-port state: connection, transports, plug orientation, e-marker presence. `Type11` is what M2 MacBook Air uses for its MagSafe 3 port. |
 | `IOPortFeaturePowerSource` | Full PDO list from the connected source, with the live "winning" PDO |
-| `IOPortTransportComponentCCUSBPDSOP` | PD Discover Identity VDOs for SOP (port partner) and SOP' (cable e-marker) |
+| `IOPortTransportComponentCCUSBPDSOP`, `...SOPp`, `...SOPpp` | PD Discover Identity VDOs from the port partner (SOP), the cable's near-end e-marker (SOP'), and the far-end e-marker (SOP'') if present |
 | XHCI controller subtree | Each connected USB device is paired to its physical port via the XHCI port node's `UsbIOPort` registry path, falling back to a bus-index derived from the controller's `locationID` upper byte and the port's `hpm` SPMI ancestor on machines that don't expose `UsbIOPort`. |
 
-Cable speed and power decoding follow the USB Power Delivery 3.x spec.
+Cable speed and power decoding follow the USB Power Delivery spec (aligned to USB-PD R3.2 V1.2, March 2026). Vendor names come from USB-IF's published vendor-ID list, bundled as a TSV refreshed by `scripts/update-vendor-db.sh`.
 
 ## Build from source
 
@@ -149,9 +155,10 @@ cp .env.example .env
 ## Caveats
 
 - **Cable e-marker info only appears for cables that carry one.** Most USB-C cables under 60 W are unmarked. Any Thunderbolt / USB4 cable, any 5 A / 100 W+ cable, and most quality data cables will be e-marked.
-- **WhatCable trusts the e-marker.** The cable speed, current rating, and vendor are read straight from the chip in the cable's plug. Counterfeit or mis-flashed cables can advertise capabilities they don't actually deliver, and there's no way for software to verify what's inside the jacket. If a cable claims 240W / 40 Gbps but performs poorly, the chip is lying, not WhatCable.
-- **PD spec coverage:** the decoder targets PD 3.0 / 3.1. PD 3.2 EPR variants may need tweaks once we see real data.
-- **Vendor name lookup is bundled but not exhaustive:** common cable, charger, hub, dock, and storage vendors are recognised; others fall back to the hex VID.
+- **Some cables only reveal their e-marker once something is plugged in at the other end.** The chip in the cable's plug runs off VCONN (a small power rail your Mac feeds into the cable) and only answers when the host issues a "Discover Identity" message. With nothing attached, some Macs read the e-marker straight away, others wait until they see a real partner to negotiate with. If a cable shows up as basic when bare, plug a charger, dock, or device into the far end and check again.
+- **WhatCable trusts the e-marker for capabilities.** Cable speed, current rating, and vendor come straight from the chip in the cable's plug, and software cannot verify what's inside the jacket. If a cable claims 240W / 40 Gbps but performs poorly, the chip is lying, not WhatCable. The trust-signals card flags a small set of internal-consistency tells (zero VID, reserved bit patterns in the Cable VDO, a VID not in the USB-IF list) that often appear on counterfeit or mis-flashed cables, but those flags are hedged signals, not proof.
+- **PD spec coverage:** the decoder is aligned to USB-PD R3.2 V1.2 (March 2026). Earlier 3.0 / 3.1 cables work fine.
+- **Vendor name lookup uses USB-IF's published list** (~13,650 entries, March 2026 snapshot). VIDs assigned by USB-IF after that snapshot will show as "Unregistered / unknown" and trip a trust-signal flag until the bundled list is refreshed.
 - **macOS only.** iOS sandboxing makes USB-C e-marker access much harder.
 - **Apple Silicon only.** Intel Macs route USB-C through Intel Thunderbolt 3 controllers (Titan Ridge / JHL9580). Apple's IOKit driver for those chips does not expose the USB-PD negotiation state or the cable e-marker VDOs, so there's no path to surface the same information on Intel hardware.
 - **Not on the App Store.** App Sandbox blocks the IOKit reads we depend on.
@@ -166,7 +173,7 @@ WhatCable reads USB-C port state directly from IOKit on your Mac. All of that ha
 
 ## Contributing
 
-Issues and PRs welcome. The code is small and tries to stay readable. Start at [`Sources/WhatCable/ContentView.swift`](Sources/WhatCable/ContentView.swift) for the UI, [`Sources/WhatCableCore/PortSummary.swift`](Sources/WhatCableCore/PortSummary.swift) for the plain-English logic, or [`Sources/WhatCableCore/PDVDO.swift`](Sources/WhatCableCore/PDVDO.swift) for the bit-twiddling. The diagnostic engine lives in `WhatCableCore`, which is shared by the menu bar app and the `whatcable` CLI in `Sources/WhatCableCLI/`.
+Issues and PRs welcome. The code is small and tries to stay readable. Start at [`Sources/WhatCable/ContentView.swift`](Sources/WhatCable/ContentView.swift) for the UI, [`Sources/WhatCableCore/PortSummary.swift`](Sources/WhatCableCore/PortSummary.swift) for the plain-English logic, or [`Sources/WhatCableCore/PDVDO.swift`](Sources/WhatCableCore/PDVDO.swift) for the bit-twiddling. Cross-platform models and the diagnostic engine live in `WhatCableCore`; the IOKit watchers (port state, PD identity, power sources, USB devices) live in [`Sources/WhatCableDarwinBackend/`](Sources/WhatCableDarwinBackend/). The same `WhatCableCore` powers the menu bar app and the `whatcable` CLI in [`Sources/WhatCableCLI/`](Sources/WhatCableCLI/).
 
 ## Credits
 

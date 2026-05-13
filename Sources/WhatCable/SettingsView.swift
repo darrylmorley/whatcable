@@ -1,4 +1,3 @@
-#if os(macOS)
 import SwiftUI
 
 /// Settings panel shown in place of the main popover content. Pushes a
@@ -26,14 +25,12 @@ struct SettingsView: View {
 
     private func header(dismiss: @escaping () -> Void) -> some View {
         HStack {
-            Text("Settings")
-                .font(.headline)
+            Image(systemName: "gearshape")
+                .scaledFont(.title2)
+            Text(String(localized: "Settings", bundle: .module)).scaledFont(.headline, weight: .bold)
             Spacer()
-            Button("Done") {
-                dismiss()
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.small)
+            Button(String(localized: "Done", bundle: .module), action: dismiss)
+                .keyboardShortcut(.defaultAction)
         }
         .padding(12)
     }
@@ -43,22 +40,39 @@ struct SettingsForm: View {
     @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            section("Display") {
-                Toggle("Show technical details", isOn: $settings.showTechnicalDetails)
-                Toggle("Hide empty ports", isOn: $settings.hideEmptyPorts)
-            }
-            section("Behavior") {
-                Toggle("Launch at login", isOn: $settings.launchAtLogin)
-                Toggle("Show in menu bar", isOn: $settings.useMenuBarMode)
+        VStack(alignment: .leading, spacing: 24) {
+            section(String(localized: "Behavior", bundle: .module)) {
+                Toggle(String(localized: "Launch at login", bundle: .module), isOn: $settings.launchAtLogin)
+                Toggle(String(localized: "Show in menu bar", bundle: .module), isOn: $settings.useMenuBarMode)
                 Text(settings.useMenuBarMode
-                     ? "Lives in the menu bar with no Dock icon."
-                     : "Runs as a regular Dock app with a window.")
-                    .font(.caption)
+                     ? String(localized: "Lives in the menu bar with no Dock icon.", bundle: .module)
+                     : String(localized: "Runs as a regular Dock app with a window.", bundle: .module))
+                    .scaledFont(.caption)
                     .foregroundStyle(.secondary)
             }
-            section("Notifications") {
-                Toggle("Notify on cable changes", isOn: $settings.notifyOnChanges)
+            section(String(localized: "Display", bundle: .module)) {
+                Toggle(String(localized: "Show technical details", bundle: .module), isOn: $settings.showTechnicalDetails)
+                Toggle(String(localized: "Hide empty ports", bundle: .module), isOn: $settings.hideEmptyPorts)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(String(localized: "Font size", bundle: .module))
+                        Spacer()
+                        Text(verbatim: "\(Int((settings.fontSize * 100).rounded()))%")
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                    HStack(spacing: 8) {
+                        Image(systemName: "textformat.size.smaller")
+                            .foregroundStyle(.secondary)
+                        Slider(value: $settings.fontSize, in: AppSettings.fontSizeRange, step: 0.1)
+                        Image(systemName: "textformat.size.larger")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.top, 4)
+            }
+            section(String(localized: "Notifications", bundle: .module)) {
+                Toggle(String(localized: "Notify on cable changes", bundle: .module), isOn: $settings.notifyOnChanges)
             }
         }
     }
@@ -67,15 +81,14 @@ struct SettingsForm: View {
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title.uppercased())
-                .font(.caption2).bold()
+                .scaledFont(.caption, weight: .semibold)
                 .foregroundStyle(.secondary)
             VStack(alignment: .leading, spacing: 8) {
                 content()
             }
+            .scaledFont(.body)
             .toggleStyle(.switch)
             .controlSize(.small)
         }
     }
 }
-
-#endif

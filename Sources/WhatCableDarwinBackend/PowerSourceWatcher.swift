@@ -1,4 +1,3 @@
-#if os(macOS)
 import Foundation
 import IOKit
 import WhatCableCore
@@ -150,4 +149,3 @@ extension PowerSourceWatcher {
     }
 }
 
-#endif

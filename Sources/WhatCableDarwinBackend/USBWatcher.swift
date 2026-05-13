@@ -1,4 +1,3 @@
-#if os(macOS)
 import Foundation
 import IOKit
 import IOKit.usb
@@ -229,4 +228,3 @@ public final class USBWatcher: ObservableObject {
     }
 }
 
-#endif

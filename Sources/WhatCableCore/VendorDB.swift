@@ -1,96 +1,47 @@
 import Foundation
 
-/// Tiny in-memory USB-IF vendor name lookup. We only carry vendors likely to
-/// appear in cables, chargers, hubs, docks, and storage devices — i.e. the
-/// stuff that ends up in the popover. Add more as needed.
+/// USB-IF vendor name lookup, backed by the bundled USB-IF list shipped
+/// in `Sources/WhatCableCore/Resources/usbif-vendors.tsv` (refreshed by
+/// `scripts/update-vendor-db.sh`).
 ///
-/// Source: usb.org public VID assignments. Names trimmed to common form.
+/// A `curatedOverrides` escape hatch is kept available for the rare
+/// cases where USB-IF's published name is genuinely wrong, mojibake'd,
+/// or unintelligible. The default policy is **don't add overrides**.
+/// Trust upstream; if you're tempted to shorten "Anker Innovations
+/// Limited" to "Anker", don't, the longer form is accurate. Past
+/// curated entries drifted out of date (e.g. `0x103C` was labelled
+/// "HP" in the curated map but is registered to AMX Corp. per
+/// USB-IF, and we shipped that wrong label for months).
 public enum VendorDB {
-    private static let names: [Int: String] = [
-        0x05AC: "Apple",
-        0x004C: "Apple (legacy)",
-        0x05E3: "Genesys Logic",
-        0x0BDA: "Realtek",
-        0x174C: "ASMedia",
-        0x2109: "VIA Labs",
-        0x152D: "JMicron",
-        0x067B: "Prolific",
-        0x0451: "Texas Instruments",
-        0x8087: "Intel",
-        0x046D: "Logitech",
-        0x0BB4: "HTC",
-        0x18D1: "Google",
-        0x12D1: "Huawei",
-        0x04E8: "Samsung",
-        0x2717: "Xiaomi",
-        0x22D9: "OPPO",
-        0x2A70: "OnePlus",
-        0x05C6: "Qualcomm",
-        0x0BC2: "Seagate",
-        0x1058: "Western Digital",
-        0x0781: "SanDisk",
-        0x0930: "Toshiba",
-        0x0951: "Kingston",
-        0x125F: "ADATA",
-        0x1B1C: "Corsair",
-        0x154B: "PNY",
-        0x0080: "Crucial",
-        0x174F: "Syntek",
-        0x046E: "Behavior Tech",
-        0x05DC: "Lexar",
-        0x0E8D: "MediaTek",
-        0x148F: "Ralink",
-        0x0B95: "ASIX",
-        0x0CF3: "Qualcomm Atheros",
-        0x06CB: "Synaptics",
-        0x056A: "Wacom",
-        0x040A: "Kodak",
-        0x056D: "EIZO",
-        0x0AF8: "Belkin",
-        0x050D: "Belkin (older)",
-        0x2BCF: "Anker",
-        0x291A: "Anker (older)",
-        0x0BB8: "Plantronics / Poly",
-        0x0763: "M-Audio",
-        0x0FCE: "Sony Mobile",
-        0x054C: "Sony",
-        0x04F2: "Chicony",
-        0x046A: "Cherry",
-        0x04D9: "Holtek",
-        0x1532: "Razer",
-        0x1B7E: "Holosonics",
-        0x07AA: "Corega",
-        0x2188: "SmartAction",
-        0x0E0F: "VMware",
-        0x0FFE: "OWC",
-        0x152E: "Lenovo",
-        0x17EF: "Lenovo (older)",
-        0x0BAF: "U.S. Robotics",
-        0x0DCD: "Diconix",
-        0x0FCA: "Research In Motion",
-        0x05E0: "Symbol",
-        0x05DD: "Delorme",
-        0x0764: "CyberPower",
-        0x051D: "American Power Conversion (APC)",
-        0x2C7C: "Quectel",
-        0x2341: "Arduino",
-        0x1A40: "Terminus (hub chips)",
-        0x32AC: "Apple (Thunderbolt 4)",
-        0x1D6B: "Linux Foundation",
-        0x0CF8: "Targus",
-        0x0B05: "ASUS",
-        0x103C: "HP",
-        0x413C: "Dell",
-        0x0CCD: "TerraTec",
-        0x0E58: "Aopen",
-        0x14AD: "Microvision"
-    ]
+    /// Override map. Empty by default. Add an entry only when the
+    /// upstream USB-IF name is materially wrong or unusable, not
+    /// merely verbose.
+    private static let curatedOverrides: [Int: String] = [:]
 
     public static func name(for vendorID: Int) -> String? {
-        names[vendorID]
+        if let override = curatedOverrides[vendorID] { return override }
+        // 0xFFFF is the USB-PD spec-defined "no vendor ID assigned"
+        // sentinel (PID forced to 0). Surface that neutrally rather
+        // than letting it look unregistered.
+        if vendorID == 0xFFFF {
+            return "No vendor ID assigned (USB-PD spec sentinel)"
+        }
+        return USBIFVendors.name(for: vendorID)
     }
 
-    /// Returns "Realtek (0x0BDA)" if known, else "0x0BDA".
+    /// True if the VID is present in either the override map or the
+    /// bundled USB-IF list. Distinct from `name(for:) != nil` only for
+    /// VID 0 (which the bundled lookup hides for display purposes but
+    /// is still considered "registered" — USB-IF assigns 0 to itself)
+    /// and the spec sentinel `0xFFFF`, which we name but treat as not
+    /// a registered assignment.
+    public static func isRegistered(_ vendorID: Int) -> Bool {
+        if curatedOverrides[vendorID] != nil { return true }
+        if vendorID == 0xFFFF { return false }
+        return USBIFVendors.isRegistered(vendorID)
+    }
+
+    /// Returns "Apple (0x05AC)" if known, else "0x05AC".
     public static func label(for vendorID: Int) -> String {
         if let n = name(for: vendorID) {
             return "\(n) (0x\(String(format: "%04X", vendorID)))"

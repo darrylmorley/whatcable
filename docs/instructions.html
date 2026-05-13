@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WhatCable: Docs</title>
+    <meta
+      name="description"
+      content="How to use WhatCable, the macOS menu bar app that explains USB-C cable speed, charging limits, and connected devices."
+    >
+    <link rel="canonical" href="https://www.whatcable.uk/instructions">
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.whatcable.uk/instructions">
+    <meta property="og:title" content="WhatCable: Docs">
+    <meta property="og:description" content="How to use WhatCable, the macOS menu bar app that explains USB-C cable speed, charging limits, and connected devices.">
+    <meta property="og:image" content="https://www.whatcable.uk/screenshot.webp">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WhatCable: Docs">
+    <meta name="twitter:description" content="How to use WhatCable, the macOS menu bar app that explains USB-C cable speed, charging limits, and connected devices.">
+    <meta name="twitter:image" content="https://www.whatcable.uk/screenshot.webp">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "WhatCable Docs",
+      "description": "How to use WhatCable, the macOS menu bar app that explains USB-C cable speed, charging limits, and connected devices.",
+      "url": "https://www.whatcable.uk/instructions",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "WhatCable",
+        "url": "https://www.whatcable.uk"
+      }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #0e1620;
+        --ink-soft: #364152;
+        --muted: #6a7585;
+        --line: #e3e8ef;
+        --bg: #fafbfc;
+        --panel: #ffffff;
+        --accent: #0c8ca6;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      .wrap {
+        width: min(720px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .nav-inner {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .brand:hover { text-decoration: none; }
+      .mark {
+        width: 28px;
+        height: 28px;
+        display: block;
+        border-radius: 7px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+      }
+      .nav-links {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 14px;
+        color: var(--ink-soft);
+      }
+      .nav-links a { color: inherit; }
+      .nav-links a:hover { color: var(--ink); text-decoration: none; }
+
+      main {
+        padding: 48px 0 80px;
+      }
+      h1 {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        margin: 0 0 8px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 0 0 32px;
+      }
+      h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 36px 0 12px;
+      }
+      h3 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 24px 0 8px;
+      }
+      p {
+        margin: 0 0 14px;
+        color: var(--ink-soft);
+      }
+      ul {
+        margin: 0 0 14px;
+        padding-left: 20px;
+        color: var(--ink-soft);
+      }
+      li { margin-bottom: 6px; }
+      code {
+        padding: 1px 6px;
+        border-radius: 4px;
+        background: #eef2f7;
+        font-size: 14px;
+        font-family: "SFMono-Regular", Consolas, monospace;
+      }
+      .note {
+        padding: 16px 20px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink-soft);
+        font-size: 14.5px;
+        margin-bottom: 14px;
+      }
+      .note strong { color: var(--ink); }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 24px 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      footer a { color: var(--ink-soft); }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="/">
+          <img class="mark" src="icon.png" alt="" aria-hidden="true" width="28" height="28">
+          <span>WhatCable</span>
+        </a>
+        <nav class="nav-links">
+          <a href="/instructions">Docs</a>
+          <a href="/cli">CLI</a>
+          <a href="/cables">Cables</a>
+          <a href="https://github.com/darrylmorley/whatcable">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <h1>Docs</h1>
+        <p class="subtitle">How to use the WhatCable menu bar app. Requires macOS 14+ on Apple Silicon.</p>
+
+        <h2>What it shows</h2>
+        <p>
+          WhatCable sits in your menu bar. Click the icon to see a popover with one card per USB-C port on your Mac.
+          Each card shows, in plain English:
+        </p>
+        <ul>
+          <li><strong>Headline:</strong> Thunderbolt / USB4, USB device, Charging only, Slow USB / charge-only cable, or Nothing connected.</li>
+          <li><strong>Charging diagnostic:</strong> whether the cable, charger, or Mac is the bottleneck, with the negotiated wattage.</li>
+          <li><strong>Cable e-marker info:</strong> the cable's actual speed (USB 2.0 up to 80 Gbps), current rating (3A or 5A), and the e-marker chip vendor.</li>
+          <li><strong>Charger PDO list:</strong> every voltage profile the charger advertises (5V, 9V, 15V, 20V, etc.), with the active one highlighted.</li>
+          <li><strong>Connected device:</strong> vendor name and product type from the PD Discover Identity response.</li>
+          <li><strong>USB devices:</strong> storage, hubs, and peripherals listed under the port they are plugged into, with their negotiated speed.</li>
+          <li><strong>Active transports:</strong> USB 2, USB 3, Thunderbolt, and DisplayPort paths.</li>
+        </ul>
+
+        <h2>Charging diagnostics</h2>
+        <p>
+          When a charger is connected, WhatCable identifies the bottleneck and shows a banner:
+        </p>
+        <ul>
+          <li><strong>"Charging well at 96W"</strong> means the cable, charger, and Mac are all matched.</li>
+          <li><strong>"Cable is limiting charging speed"</strong> means the cable is rated below what the charger can deliver.</li>
+          <li><strong>"Charging at 30W (charger can do up to 96W)"</strong> means the Mac is drawing less than the charger offers, usually because the battery is nearly full.</li>
+        </ul>
+
+        <h2>Cable trust signals</h2>
+        <p>
+          WhatCable checks e-marker data against the USB Power Delivery spec. When something looks unusual, an orange card appears with the details. This is not proof that a cable is fake. It means something in the reported data is worth a closer look.
+        </p>
+        <p>Checks include:</p>
+        <ul>
+          <li>Vendor ID compared against the USB-IF published list.</li>
+          <li>Speed and current fields validated against PD spec ranges.</li>
+          <li>Reserved bit patterns and zero-value metadata flagged.</li>
+        </ul>
+
+        <h2>Engineer mode</h2>
+        <p>
+          Hold <code>Option</code> and click the menu bar icon to show the underlying IOKit properties for each port. You can also enable this permanently from Settings.
+        </p>
+
+        <h2>Right-click menu</h2>
+        <p>
+          Right-click the menu bar icon for quick actions:
+        </p>
+        <ul>
+          <li><strong>Refresh</strong> to re-scan all ports.</li>
+          <li><strong>Keep window open</strong> to pin the popover (handy for screenshots and demos).</li>
+          <li><strong>Check for Updates</strong> to look for a newer version on GitHub.</li>
+          <li><strong>About</strong> and <strong>WhatCable on GitHub</strong> for links.</li>
+          <li><strong>Quit</strong> to close the app.</li>
+        </ul>
+
+        <h2>Settings</h2>
+        <p>
+          Click the gear icon in the popover header to open Settings.
+        </p>
+        <ul>
+          <li><strong>Hide empty ports:</strong> only show ports with something plugged in.</li>
+          <li><strong>Launch at login:</strong> start WhatCable automatically when you log in.</li>
+          <li><strong>Dock mode:</strong> run as a regular window instead of a menu bar icon.</li>
+          <li><strong>Notifications:</strong> get alerts when cables connect or disconnect.</li>
+        </ul>
+
+        <h2>Good to know</h2>
+        <ul>
+          <li>E-marker data only appears for cables that carry one. Most cables under 60W are unmarked. Thunderbolt, USB4, and 100W+ cables will have one.</li>
+          <li>Some cables only reveal their e-marker once a device is plugged in at the other end. If a cable shows up as basic, plug something into the far end and check again.</li>
+          <li>WhatCable trusts the e-marker chip for cable capabilities. If a cable claims 240W / 40 Gbps but performs poorly, the chip is reporting incorrect data.</li>
+          <li>Vendor name lookup uses USB-IF's published list. VIDs assigned after the bundled snapshot will show as "Unregistered / unknown" until the list is updated.</li>
+        </ul>
+
+        <div class="note">
+          <strong>Looking for the CLI?</strong> WhatCable includes a command-line tool with JSON output, watch mode, and cable reports. See the <a href="/cli">CLI docs</a>.
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        &copy; 2026 Darryl Morley. <a href="https://github.com/darrylmorley/whatcable">View source on GitHub</a>
+      </div>
+    </footer>
+  </body>
+</html>

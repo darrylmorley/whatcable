@@ -1,4 +1,3 @@
-#if os(macOS)
 import XCTest
 @testable import WhatCable
 
@@ -31,4 +30,3 @@ final class UpdateCheckerTests: XCTestCase {
     }
 }
 
-#endif

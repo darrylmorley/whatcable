@@ -1,4 +1,3 @@
-#if os(macOS)
 import XCTest
 @testable import WhatCableCore
 @testable import WhatCableDarwinBackend
@@ -83,4 +82,3 @@ final class RegistryParsingTests: XCTestCase {
     }
 }
 
-#endif

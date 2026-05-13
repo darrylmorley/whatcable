@@ -1,11 +1,6 @@
 import Foundation
 import WhatCableCore
-
-#if canImport(WhatCableDarwinBackend)
 import WhatCableDarwinBackend
-#elseif canImport(WhatCableLinuxBackend)
-import WhatCableLinuxBackend
-#endif
 
 @main
 struct WhatCableCLI {
@@ -23,25 +18,39 @@ struct WhatCableCLI {
             return
         }
 
+        if args.contains("--tb-debug") {
+            print(ThunderboltProbe.dump(), terminator: "")
+            return
+        }
+
+#if WHATCABLE_PRO
+        if args.contains("--monitor") {
+            await runPowerMonitor(asJSON: false)
+            return
+        }
+        if args.contains("--monitor-json") {
+            await runPowerMonitor(asJSON: true)
+            return
+        }
+#endif
+
         let showRaw = args.contains("--raw")
         let asJSON = args.contains("--json")
         let watch = args.contains("--watch")
         let report = args.contains("--report")
 
         // Reject unknown flags so typos don't silently produce default output.
-        let knownFlags: Set<String> = ["--raw", "--json", "--watch", "--report", "-h", "--help", "--version"]
+        var knownFlags: Set<String> = ["--raw", "--json", "--watch", "--report", "--tb-debug", "-h", "--help", "--version"]
+#if WHATCABLE_PRO
+        knownFlags.formUnion(["--monitor", "--monitor-json"])
+#endif
         for arg in args where arg.hasPrefix("-") && !knownFlags.contains(arg) {
             FileHandle.standardError.write(Data("whatcable: unknown option \(arg)\n".utf8))
             FileHandle.standardError.write(Data(helpText.utf8))
             exit(2)
         }
 
-        #if canImport(WhatCableDarwinBackend) || canImport(WhatCableLinuxBackend)
         let provider = makeDefaultSnapshotProvider()
-        #else
-        FileHandle.standardError.write(Data("whatcable: no backend available on this platform\n".utf8))
-        exit(1)
-        #endif
 
         if watch {
             await runWatch(provider: provider, asJSON: asJSON, showRaw: showRaw)
@@ -63,8 +72,9 @@ struct WhatCableCLI {
         }
     }
 
+#if WHATCABLE_PRO
     static let helpText = """
-    whatcable \(AppInfo.version) — \(AppInfo.tagline)
+    whatcable \(AppInfo.version) -- \(AppInfo.tagline)
 
     Usage: whatcable [options]
 
@@ -73,10 +83,32 @@ struct WhatCableCLI {
       --json         Output as JSON instead of human-readable text
       --raw          Include raw IOKit properties for each port
       --report       Print a cable report (markdown + GitHub URL) and exit
+      --monitor      Monitor live power telemetry (WhatCable Pro)
+      --monitor-json Output live power telemetry as newline-delimited JSON
+      --tb-debug     Dump the IOThunderboltSwitch tree (for contributors helping
+                     us design the Thunderbolt fabric feature). See issue tracker.
       --version      Print version and exit
       -h, --help     Show this help and exit
 
     """
+#else
+    static let helpText = """
+    whatcable \(AppInfo.version) -- \(AppInfo.tagline)
+
+    Usage: whatcable [options]
+
+    Options:
+      --watch        Continuously monitor for changes (Ctrl+C to exit)
+      --json         Output as JSON instead of human-readable text
+      --raw          Include raw IOKit properties for each port
+      --report       Print a cable report (markdown + GitHub URL) and exit
+      --tb-debug     Dump the IOThunderboltSwitch tree (for contributors helping
+                     us design the Thunderbolt fabric feature). See issue tracker.
+      --version      Print version and exit
+      -h, --help     Show this help and exit
+
+    """
+#endif
 }
 
 private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Bool) throws {
@@ -86,7 +118,10 @@ private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Boo
             sources: snapshot.powerSources,
             identities: snapshot.identities,
             showRaw: showRaw,
-            adapter: snapshot.adapter
+            adapter: snapshot.adapter,
+            thunderboltSwitches: snapshot.thunderboltSwitches,
+            isDesktopMac: snapshot.isDesktopMac,
+            federatedIdentities: snapshot.federatedIdentities
         )
         print(json)
     } else {
@@ -95,7 +130,10 @@ private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Boo
             sources: snapshot.powerSources,
             identities: snapshot.identities,
             showRaw: showRaw,
-            adapter: snapshot.adapter
+            adapter: snapshot.adapter,
+            thunderboltSwitches: snapshot.thunderboltSwitches,
+            isDesktopMac: snapshot.isDesktopMac,
+            federatedIdentities: snapshot.federatedIdentities
         )
         print(output, terminator: "")
     }
@@ -141,7 +179,10 @@ private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Boo
                         sources: snapshot.powerSources,
                         identities: snapshot.identities,
                         showRaw: showRaw,
-                        adapter: snapshot.adapter
+                        adapter: snapshot.adapter,
+                        thunderboltSwitches: snapshot.thunderboltSwitches,
+                        isDesktopMac: snapshot.isDesktopMac,
+                        federatedIdentities: snapshot.federatedIdentities
                     )
                 } catch {
                     FileHandle.standardError.write(Data("whatcable: json encoding failed: \(error)\n".utf8))
@@ -153,7 +194,10 @@ private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Boo
                     sources: snapshot.powerSources,
                     identities: snapshot.identities,
                     showRaw: showRaw,
-                    adapter: snapshot.adapter
+                    adapter: snapshot.adapter,
+                    thunderboltSwitches: snapshot.thunderboltSwitches,
+                    isDesktopMac: snapshot.isDesktopMac,
+                    federatedIdentities: snapshot.federatedIdentities
                 )
             }
 

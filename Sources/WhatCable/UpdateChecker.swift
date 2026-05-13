@@ -1,4 +1,4 @@
-#if os(macOS)
+// Self-hosted update checker.
 import Foundation
 import AppKit
 import UserNotifications
@@ -17,7 +17,7 @@ struct AvailableUpdate: Equatable {
 final class UpdateChecker: ObservableObject {
     static let shared = UpdateChecker()
 
-    private nonisolated static let log = Logger(subsystem: "com.bitmoor.whatcable", category: "updates")
+    private nonisolated static let log = Logger(subsystem: "uk.whatcable.whatcable", category: "updates")
     private static let endpoint = URL(string: "https://api.github.com/repos/darrylmorley/whatcable/releases/latest")!
     private static let pollInterval: TimeInterval = 6 * 60 * 60 // 6h
 
@@ -99,6 +99,13 @@ final class UpdateChecker: ObservableObject {
                         self.notifiedVersion = remote
                         self.postNotification(update)
                     }
+                    if visible {
+                        // Manual "Check for Updates" click: surface a modal
+                        // alert so the user gets the same feedback they get
+                        // when already up-to-date, with a button to open the
+                        // release page directly.
+                        self.showUpdateAlert(update)
+                    }
                 } else {
                     self.available = nil
                     if visible {
@@ -139,6 +146,32 @@ final class UpdateChecker: ObservableObject {
         NSApp.setActivationPolicy(originalPolicy)
     }
 
+    private func showUpdateAlert(_ update: AvailableUpdate) {
+        let originalPolicy = NSApp.activationPolicy()
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+
+        let alert = NSAlert()
+        alert.messageText = "WhatCable \(update.version) is available"
+        alert.informativeText = "You're on \(AppInfo.version). Open the release page to read the notes and download."
+        alert.window.level = .floating
+        let hasDownload = update.downloadURL != nil
+        if hasDownload {
+            alert.addButton(withTitle: "Update")
+        }
+        alert.addButton(withTitle: "View Release")
+        alert.addButton(withTitle: "Later")
+        let response = alert.runModal()
+
+        NSApp.setActivationPolicy(originalPolicy)
+
+        if hasDownload && response == .alertFirstButtonReturn {
+            Installer.shared.install(update)
+        } else if response == (hasDownload ? .alertSecondButtonReturn : .alertFirstButtonReturn) {
+            NSWorkspace.shared.open(update.url)
+        }
+    }
+
     /// Compare dot-separated numeric versions. Non-numeric segments compare lexically.
     nonisolated static func isNewer(remote: String, current: String) -> Bool {
         AppInfo.isNewer(remote: remote, current: current)
@@ -153,4 +186,3 @@ final class UpdateChecker: ObservableObject {
     }
 }
 
-#endif

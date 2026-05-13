@@ -1,4 +1,3 @@
-#if os(macOS)
 import SwiftUI
 import AppKit
 import WhatCableCore
@@ -24,14 +23,14 @@ struct CableReportSheet: View {
                     .font(.title2)
                     .foregroundStyle(.tint)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Report this cable").font(.title3).bold()
-                    Text("Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there.")
+                    Text(String(localized: "Report this cable", bundle: .module)).font(.title3).bold()
+                    Text(String(localized: "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there.", bundle: .module))
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Text("Preview of what will be included:")
+            Text(String(localized: "Preview of what will be included:", bundle: .module))
                 .font(.caption).foregroundStyle(.secondary)
 
             if let payload {
@@ -48,8 +47,8 @@ struct CableReportSheet: View {
 
             Toggle(isOn: $includeSystemInfo) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Include Mac model and macOS version")
-                    Text("Helps the maintainer reproduce charger / cable behavior tied to specific hardware.")
+                    Text(String(localized: "Include Mac model and macOS version", bundle: .module))
+                    Text(String(localized: "Helps the maintainer reproduce charger / cable behavior tied to specific hardware.", bundle: .module))
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
@@ -58,12 +57,12 @@ struct CableReportSheet: View {
             Divider()
 
             HStack {
-                Link("What gets shared?", destination: URL(string: "https://github.com/darrylmorley/whatcable#privacy")!)
+                Link(String(localized: "What gets shared?", bundle: .module), destination: URL(string: "https://github.com/darrylmorley/whatcable#privacy")!)
                     .font(.caption)
                 Spacer()
-                Button("Cancel", action: dismiss)
+                Button(String(localized: "Cancel", bundle: .module), action: dismiss)
                     .keyboardShortcut(.cancelAction)
-                Button("Open in GitHub") {
+                Button(String(localized: "Open in GitHub", bundle: .module)) {
                     if let url = payload?.githubURL {
                         NSWorkspace.shared.open(url)
                     }
@@ -79,4 +78,3 @@ struct CableReportSheet: View {
     }
 }
 
-#endif

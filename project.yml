@@ -1,0 +1,53 @@
+name: WhatCableWidget
+options:
+  bundleIdPrefix: uk.whatcable
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16.3"
+  generateEmptyDirectories: false
+  groupSortPosition: none
+
+# This Xcode project builds ONLY the widget extension. The main app
+# and CLI continue to build via `swift build` (Package.swift).
+#
+# WidgetKit extensions must be .appex bundles, which SPM can't produce.
+# The build scripts compile the widget with `xcodebuild`, then embed
+# the resulting .appex into the app bundle at Contents/PlugIns/.
+#
+# Regenerate after changes: `xcodegen generate`
+
+packages:
+  WhatCable:
+    path: .
+
+settings:
+  base:
+    MARKETING_VERSION: "0.8.6"
+    CURRENT_PROJECT_VERSION: "39"
+
+targets:
+  WhatCableWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Sources/WhatCableWidget
+    dependencies:
+      - package: WhatCable
+        product: WhatCableCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: uk.whatcable.whatcable.widget
+        PRODUCT_NAME: WhatCableWidget
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_FILE: Sources/WhatCableWidget/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: WhatCable Widget
+        CODE_SIGN_ENTITLEMENTS: scripts/WhatCableWidget.entitlements
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        ARCHS: arm64
+        ONLY_ACTIVE_ARCH: false
+        SWIFT_EMIT_LOC_STRINGS: true
+        LD_RUNPATH_SEARCH_PATHS:
+          - "@executable_path/../Frameworks"
+          - "@executable_path/../../../../Frameworks"

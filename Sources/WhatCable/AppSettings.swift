@@ -1,4 +1,3 @@
-#if os(macOS)
 import Foundation
 import ServiceManagement
 import os.log
@@ -9,13 +8,14 @@ import os.log
 final class AppSettings: ObservableObject {
     static let shared = AppSettings()
 
-    private nonisolated static let log = Logger(subsystem: "com.bitmoor.whatcable", category: "settings")
+    private nonisolated static let log = Logger(subsystem: "uk.whatcable.whatcable", category: "settings")
 
     private enum Keys {
         static let notifyOnChanges = "notifyOnChanges"
         static let hideEmptyPorts = "hideEmptyPorts"
         static let useMenuBarMode = "useMenuBarMode"
         static let showTechnicalDetails = "showTechnicalDetails"
+        static let fontSize = "fontSize"
     }
 
     @Published var launchAtLogin: Bool {
@@ -61,6 +61,19 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Font size multiplier for the main content. 1.0 is the default;
+    /// the slider lets users pick 0.8 to 1.4.
+    static let fontSizeRange: ClosedRange<Double> = 0.8...1.4
+
+    @Published var fontSize: Double {
+        didSet {
+            let clamped = min(max(fontSize, Self.fontSizeRange.lowerBound), Self.fontSizeRange.upperBound)
+            if clamped != fontSize { fontSize = clamped; return }
+            guard fontSize != oldValue else { return }
+            UserDefaults.standard.set(fontSize, forKey: Keys.fontSize)
+        }
+    }
+
     private init() {
         // Launch at Login is owned by the system; read its current state.
         self.launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -75,6 +88,9 @@ final class AppSettings: ObservableObject {
             self.useMenuBarMode = UserDefaults.standard.bool(forKey: Keys.useMenuBarMode)
         }
         self.showTechnicalDetails = UserDefaults.standard.bool(forKey: Keys.showTechnicalDetails)
+        let stored = UserDefaults.standard.double(forKey: Keys.fontSize)
+        let raw = stored > 0 ? stored : 1.0
+        self.fontSize = min(max(raw, Self.fontSizeRange.lowerBound), Self.fontSizeRange.upperBound)
     }
 
     private func applyLaunchAtLogin(_ enabled: Bool) {
@@ -98,4 +114,3 @@ final class AppSettings: ObservableObject {
     }
 }
 
-#endif

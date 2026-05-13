@@ -1,4 +1,3 @@
-#if os(macOS)
 import XCTest
 import Combine
 @testable import WhatCable
@@ -53,4 +52,3 @@ final class RefreshSignalTests: XCTestCase {
     }
 }
 
-#endif

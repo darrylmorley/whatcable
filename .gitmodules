@@ -1,0 +1,3 @@
+[submodule "app"]
+	path = app
+	url = git@github.com:darrylmorley/whatcable-app.git

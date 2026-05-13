@@ -49,6 +49,14 @@ public struct PDIdentity: Identifiable, Hashable {
         return PDVDO.decodeIDHeader(v)
     }
 
+    /// The Cert Stat VDO is at index 1. Carries the USB-IF-issued XID,
+    /// or 0 for cables that haven't gone through certification.
+    public var certStatVDO: PDVDO.CertStat? {
+        guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
+              vdos.count > 1 else { return nil }
+        return PDVDO.decodeCertStat(vdos[1])
+    }
+
     /// The Cable VDO is at index 3 (VDO[3] in 1-indexed PD spec terms).
     public var cableVDO: PDVDO.CableVDO? {
         guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
@@ -56,5 +64,28 @@ public struct PDIdentity: Identifiable, Hashable {
         let header = idHeader
         let isActive = header?.ufpProductType == .activeCable
         return PDVDO.decodeCableVDO(vdos[3], isActive: isActive)
+    }
+
+    /// Active Cable VDO 2 lives at index 4 and is only present on active
+    /// cables. Carries info that doesn't fit in VDO[3]: physical medium
+    /// (copper/optical), active element (re-driver/re-timer), thermal
+    /// limits, idle-state power, and per-lane / per-protocol support.
+    public var activeCableVDO2: PDVDO.ActiveCableVDO2? {
+        guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
+              vdos.count > 4,
+              idHeader?.ufpProductType == .activeCable else { return nil }
+        return PDVDO.decodeActiveCableVDO2(vdos[4])
+    }
+
+    /// Human-readable PD spec revision (e.g. "PD 3.1"). The raw value from
+    /// IOKit matches the 2-bit SpecRevision field in USB-PD message headers:
+    /// 0 = unset/unknown, 1 = PD 2.0, 2 = PD 3.0, 3 = PD 3.1
+    public var pdRevisionLabel: String? {
+        switch specRevision {
+        case 1: return "PD 2.0"
+        case 2: return "PD 3.0"
+        case 3: return "PD 3.1"
+        default: return nil
+        }
     }
 }

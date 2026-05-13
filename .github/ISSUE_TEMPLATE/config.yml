@@ -1,0 +1,7 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question / general discussion
+    url: https://github.com/darrylmorley/whatcable/discussions
+    about: |
+      For "how do I…" questions, ideas not ready for a feature request,
+      or to share something interesting you found about a cable.

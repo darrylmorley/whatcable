@@ -30,8 +30,8 @@ public enum AppInfo {
         }
         return "dev"
     }()
-    public static let credit = "Darryl Morley"
-    public static let tagline = "What can this USB-C cable actually do?"
+    public static let credit = "WhatCable"
+    public static let tagline = String(localized: "What can this USB-C cable actually do?", bundle: .module)
     public static let copyright = "© \(Calendar.current.component(.year, from: Date())) \(credit)"
     public static let helpURL = URL(string: "https://github.com/darrylmorley/whatcable")!
 

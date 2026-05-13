@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WhatCable: Know what your USB-C cable can really do</title>
+    <meta
+      name="description"
+      content="WhatCable is a small macOS menu bar app that explains USB-C cable speed, charging limits, e-marker data, and connected devices in plain English."
+    >
+    <link rel="canonical" href="https://www.whatcable.uk/">
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.whatcable.uk/">
+    <meta property="og:title" content="WhatCable: Know what your USB-C cable can really do">
+    <meta property="og:description" content="A macOS menu bar app that explains USB-C cable speed, charging limits, e-marker data, and connected devices in plain English.">
+    <meta property="og:image" content="https://www.whatcable.uk/screenshot.webp">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WhatCable: Know what your USB-C cable can really do">
+    <meta name="twitter:description" content="A macOS menu bar app that explains USB-C cable speed, charging limits, e-marker data, and connected devices in plain English.">
+    <meta name="twitter:image" content="https://www.whatcable.uk/screenshot.webp">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "WhatCable",
+      "operatingSystem": "macOS 14+",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A macOS menu bar app that explains USB-C cable speed, charging limits, e-marker data, and connected devices in plain English.",
+      "url": "https://www.whatcable.uk",
+      "downloadUrl": "https://github.com/darrylmorley/whatcable/releases/latest",
+      "softwareVersion": "0.8.5",
+      "author": {
+        "@type": "Person",
+        "name": "Darryl Morley",
+        "url": "https://github.com/darrylmorley"
+      },
+      "license": "https://opensource.org/licenses/MIT"
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #0e1620;
+        --ink-soft: #364152;
+        --muted: #6a7585;
+        --line: #e3e8ef;
+        --line-soft: #eef2f7;
+        --bg: #fafbfc;
+        --panel: #ffffff;
+        --accent: #0c8ca6;
+        --accent-strong: #0a7188;
+        --accent-soft: #e6f4f7;
+        --good: #0b8a5a;
+        --warn: #b67100;
+        --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+        --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+        --shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.18);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 16px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      img { display: block; max-width: 100%; }
+
+      .wrap {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      h1, h2, h3, p { margin: 0; }
+
+      /* Nav */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(250, 251, 252, 0.85);
+        backdrop-filter: saturate(180%) blur(12px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav-inner {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--ink);
+      }
+
+      .mark {
+        width: 28px;
+        height: 28px;
+        display: block;
+        border-radius: 7px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        font-size: 14px;
+        color: var(--ink-soft);
+      }
+
+      .nav-links a:hover { color: var(--ink); }
+
+      .nav .button { padding: 8px 14px; min-height: 36px; font-size: 14px; }
+
+      /* Buttons */
+      .button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15px;
+        line-height: 1;
+        cursor: pointer;
+        transition: transform 0.06s ease, background 0.15s ease, border-color 0.15s ease;
+      }
+
+      .button:active { transform: translateY(1px); }
+
+      .button.primary {
+        background: var(--ink);
+        color: #fff;
+      }
+      .button.primary:hover { background: #1c2735; }
+
+      .button.secondary {
+        background: var(--panel);
+        color: var(--ink);
+        border-color: var(--line);
+      }
+      .button.secondary:hover { border-color: #c8d0db; }
+
+      .button .arrow { transition: transform 0.15s ease; }
+      .button:hover .arrow { transform: translateX(2px); }
+
+      /* Hero */
+      .hero {
+        padding: 80px 0 60px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 60% 50% at 80% 0%, rgba(12, 140, 166, 0.10), transparent 60%),
+          radial-gradient(ellipse 50% 40% at 20% 100%, rgba(12, 140, 166, 0.06), transparent 60%);
+        pointer-events: none;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        gap: 64px;
+        align-items: center;
+        position: relative;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 22px;
+        padding: 6px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--panel);
+        color: var(--ink-soft);
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .eyebrow .dot-accent {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      h1 {
+        font-size: clamp(38px, 5.2vw, 60px);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 20px;
+      }
+
+      h1 .accent { color: var(--accent); }
+
+      .hero p.lede {
+        font-size: clamp(17px, 1.4vw, 19px);
+        color: var(--ink-soft);
+        max-width: 540px;
+        margin-bottom: 28px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px 22px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .meta-row span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .meta-row svg { color: var(--good); }
+
+      /* Hero screenshot */
+      .hero-shot {
+        position: relative;
+        justify-self: center;
+      }
+
+      .hero-shot::after {
+        content: "";
+        position: absolute;
+        inset: -40px;
+        z-index: -1;
+        background: radial-gradient(ellipse at center, rgba(12, 140, 166, 0.15), transparent 65%);
+        filter: blur(20px);
+      }
+
+      .hero-shot img {
+        width: 100%;
+        max-width: 460px;
+        border-radius: 14px;
+        box-shadow: var(--shadow-lg);
+      }
+
+      /* Sections */
+      section { padding: 88px 0; }
+
+      .section-head {
+        max-width: 680px;
+        margin-bottom: 48px;
+      }
+
+      .section-tag {
+        display: inline-block;
+        margin-bottom: 14px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        font-size: clamp(28px, 3.6vw, 40px);
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+
+      .section-head p {
+        color: var(--ink-soft);
+        font-size: 17px;
+      }
+
+      /* Problem */
+      .problem { border-bottom: 1px solid var(--line); }
+
+      .problem-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 32px;
+      }
+
+      .problem-card {
+        padding: 28px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .problem-card .label {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .problem-card .label.usb2 { background: #fef3cd; color: #856404; }
+      .problem-card .label.usb4 { background: #d4edda; color: #155724; }
+      .problem-card .label.tb { background: #cce5ff; color: #004085; }
+
+      .problem-card .spec {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .problem-card p {
+        color: var(--ink-soft);
+        font-size: 14.5px;
+      }
+
+      /* Features */
+      .features { background: var(--panel); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .feature {
+        padding: 32px 28px;
+        background: var(--panel);
+      }
+
+      .feature .icon {
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 18px;
+        border-radius: 10px;
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .feature h3 {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .feature p {
+        color: var(--ink-soft);
+        font-size: 14.5px;
+        line-height: 1.55;
+      }
+
+      /* CLI section */
+      .cli-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 56px;
+        align-items: center;
+      }
+
+      .check-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 14px;
+      }
+
+      .check-list li {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        color: var(--ink-soft);
+        font-size: 15px;
+      }
+
+      .check-list svg {
+        margin-top: 2px;
+        color: var(--good);
+      }
+
+      .check-list code {
+        padding: 1px 6px;
+        border-radius: 4px;
+        background: var(--line-soft);
+        font-size: 13.5px;
+      }
+
+      /* Terminal */
+      .terminal {
+        border-radius: 12px;
+        background: #0c1219;
+        color: #e8eef5;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid #1c2632;
+      }
+
+      .terminal-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background: #131c26;
+        border-bottom: 1px solid #1c2632;
+      }
+
+      .term-dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: #ff5f56;
+      }
+      .term-dot:nth-child(2) { background: #ffbd2e; }
+      .term-dot:nth-child(3) { background: #27c93f; }
+
+      .term-title {
+        margin-left: 8px;
+        color: #6b7785;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+      }
+
+      .terminal pre {
+        margin: 0;
+        padding: 22px 24px;
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 13.5px;
+        line-height: 1.7;
+        color: #d7e1ec;
+        overflow-x: auto;
+      }
+
+      .prompt { color: #5fc7d1; }
+      .ok { color: #69d99c; }
+      .warn { color: #ffd479; }
+      .dim { color: #6b7785; }
+
+      /* Trust signals */
+      .trust {
+        background: var(--panel);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .trust-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap: 56px;
+        align-items: center;
+      }
+
+      .trust-card {
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid #f5c87a;
+        background: #fffbf2;
+      }
+
+      .trust-card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--warn);
+      }
+
+      .trust-card ul {
+        margin: 0;
+        padding: 0 0 0 20px;
+        color: var(--ink-soft);
+        font-size: 14.5px;
+        line-height: 1.7;
+      }
+
+      /* Settings */
+      .settings-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+      }
+
+      .setting-card {
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .setting-card .icon {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 14px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .setting-card h3 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .setting-card p {
+        color: var(--ink-soft);
+        font-size: 13.5px;
+        line-height: 1.5;
+      }
+
+      /* FAQ */
+      .faq { border-top: 1px solid var(--line); }
+
+      .faq-list {
+        max-width: 720px;
+      }
+
+      .faq-item {
+        padding: 24px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .faq-item:first-child { border-top: 1px solid var(--line); }
+
+      .faq-item h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .faq-item p {
+        color: var(--ink-soft);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      /* Install */
+      .install { background: #0c1219; color: #fff; }
+
+      .install .section-tag { color: #5fc7d1; }
+      .install h2 { color: #fff; }
+      .install .section-head p { color: rgba(255, 255, 255, 0.7); }
+
+      .install-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 48px;
+        align-items: center;
+      }
+
+      .install-card {
+        padding: 28px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .install-card-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 500;
+      }
+
+      .install-card-label svg { color: #5fc7d1; }
+
+      .install-card pre {
+        margin: 0 0 18px;
+        padding: 16px 18px;
+        background: rgba(0, 0, 0, 0.35);
+        border-radius: 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13.5px;
+        color: #d7e7f5;
+        overflow-x: auto;
+        line-height: 1.7;
+      }
+
+      .install-card .button.primary {
+        background: #fff;
+        color: #0c1219;
+        width: 100%;
+      }
+      .install-card .button.primary:hover { background: #e8eef5; }
+
+      .install .meta-row { color: rgba(255, 255, 255, 0.65); margin-top: 24px; }
+      .install .meta-row svg { color: #5fc7d1; }
+
+      /* Footer */
+      footer {
+        padding: 32px 0;
+        background: #0c1219;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 13.5px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      footer .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      footer a { color: rgba(255, 255, 255, 0.85); }
+      footer a:hover { color: #fff; }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .hero { padding: 56px 0 32px; }
+        .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+        .hero-shot { order: -1; }
+        .hero-shot img { max-width: 380px; }
+        section { padding: 64px 0; }
+        .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .problem-grid { grid-template-columns: 1fr; }
+        .cli-grid, .install-grid, .trust-grid { grid-template-columns: 1fr; gap: 32px; }
+        .settings-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      @media (max-width: 560px) {
+        .nav-links a:not(.button) { display: none; }
+        .feature-grid { grid-template-columns: 1fr; }
+        .settings-grid { grid-template-columns: 1fr; }
+        .actions { width: 100%; }
+        .actions .button { flex: 1; }
+        footer .wrap { flex-direction: column; align-items: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav" aria-label="Primary">
+      <div class="wrap nav-inner">
+        <a class="brand" href="/">
+          <img class="mark" src="icon.png" alt="" aria-hidden="true" width="28" height="28">
+          <span>WhatCable</span>
+        </a>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="/instructions">Docs</a>
+          <a href="/cli">CLI</a>
+          <a href="/cables">Cables</a>
+          <a href="#install">Install</a>
+          <a class="button secondary" href="https://github.com/darrylmorley/whatcable">GitHub</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">
+            <span class="dot-accent" aria-hidden="true"></span>
+            macOS menu bar diagnostics for USB-C
+          </span>
+          <h1>Know what your USB-C cable <span class="accent">can really do.</span></h1>
+          <p class="lede">
+            WhatCable explains cable speed, charging limits, e-marker data, and
+            connected devices in plain English. No more guessing why a cable
+            charges slow or refuses to drive your display.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="https://github.com/darrylmorley/whatcable/releases/latest">
+              Download for macOS
+              <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+            <a class="button secondary" href="#install">Install with Homebrew</a>
+          </div>
+          <div class="meta-row">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+              Free and open source
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+              Apple Silicon, macOS 14+
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+              Signed and notarised
+            </span>
+          </div>
+        </div>
+        <div class="hero-shot">
+          <img src="screenshot.webp?v=0.10.1" alt="WhatCable menu bar popover showing USB-C port diagnostics">
+        </div>
+      </div>
+    </header>
+
+    <section class="problem">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-tag">The problem</span>
+          <h2>Every USB-C cable looks the same. They are not.</h2>
+          <p>
+            Your drawer is full of identical-looking cables. Some charge at full speed, some crawl. Some carry video, some can barely handle a mouse. The connector tells you nothing.
+          </p>
+        </div>
+
+        <div class="problem-grid">
+          <div class="problem-card">
+            <span class="label usb2">USB 2.0</span>
+            <div class="spec">480 Mbps, 60W</div>
+            <p>Charges slowly, no video output. Fine for a keyboard, terrible for an external display or fast storage.</p>
+          </div>
+          <div class="problem-card">
+            <span class="label usb4">USB4</span>
+            <div class="spec">40 Gbps, 100W</div>
+            <p>Fast data, good charging. Handles most displays and external SSDs without issues.</p>
+          </div>
+          <div class="problem-card">
+            <span class="label tb">Thunderbolt 4</span>
+            <div class="spec">40 Gbps, 240W</div>
+            <p>Full speed data, maximum charging, dual 4K displays. The cable your dock needs but you cannot tell by looking.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-tag">Features</span>
+          <h2>Plain answers for cables that all look the same.</h2>
+          <p>
+            WhatCable reads the USB-C and USB Power Delivery details macOS
+            already exposes, then turns them into useful labels, charging
+            diagnostics, and port-by-port device context.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <h3>Charging bottlenecks</h3>
+            <p>See whether the cable, charger, or Mac is limiting the current charge rate, with the negotiated power profile highlighted.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7V5M17 7V5M7 17v2M17 17v2"/></svg>
+            </div>
+            <h3>Cable e-marker data</h3>
+            <p>Decode cable speed, current rating, vendor identity, and USB PD capability flags from marked USB-C cables.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+            </div>
+            <h3>Active transports</h3>
+            <p>Identify USB 2, USB 3, USB4, Thunderbolt, and DisplayPort paths under the physical port where they are connected.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+            <h3>Engineer mode</h3>
+            <p>Option-click or enable raw details to reveal the underlying IOKit properties when you need the registry-level facts.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/></svg>
+            </div>
+            <h3>Device identity</h3>
+            <p>Match storage, hubs, docks, and peripherals back to the port they are using, including the negotiated USB speed.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <h3>Built for macOS</h3>
+            <p>A focused menu bar app on Apple Silicon Macs. No helper daemon, no private API, no background uploads.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="cli">
+      <div class="wrap">
+        <div class="cli-grid">
+          <div>
+            <span class="section-tag">CLI</span>
+            <h2>The same diagnostic engine in your terminal.</h2>
+            <p style="color: var(--ink-soft); font-size: 17px; margin-bottom: 28px;">
+              The bundled CLI gives you quick snapshots, structured JSON for
+              scripts, and watch mode when you are swapping cables during testing.
+            </p>
+            <ul class="check-list">
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                <span>Readable summaries for quick cable checks.</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                <span>Pipe JSON into <code>jq</code> for repeatable diagnostics.</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                <span>Live updates as ports connect and disconnect with <code>--watch</code>.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="terminal" aria-label="Command line example">
+            <div class="terminal-bar" aria-hidden="true">
+              <span class="term-dot"></span>
+              <span class="term-dot"></span>
+              <span class="term-dot"></span>
+              <span class="term-title">~ whatcable</span>
+            </div>
+<pre><span class="prompt">$</span> whatcable
+
+<span class="dim">USB-C Port 1</span>
+  <span class="ok">✓ Charging well at 96W</span>
+  Cable: 5A, 100W, USB4 40 Gbps
+  Charger: 5V / 9V / 15V / 20V PDOs
+
+<span class="dim">USB-C Port 2</span>
+  <span class="warn">! Cable is limiting charging speed</span>
+  Cable: 3A, 60W, USB 2.0
+  Device: External SSD, USB 10 Gbps</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust" id="trust">
+      <div class="wrap">
+        <div class="trust-grid">
+          <div>
+            <span class="section-tag">Cable trust signals</span>
+            <h2>Spot cables that don't add up.</h2>
+            <p style="color: var(--ink-soft); font-size: 17px; margin-bottom: 28px;">
+              WhatCable checks the e-marker data against the USB Power Delivery spec. When something looks unusual, an orange card appears with the details. It is not a guarantee the cable is fake, but it tells you where to look.
+            </p>
+            <ul class="check-list">
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                <span>Vendor ID checked against the USB-IF published list.</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                <span>Speed and current fields validated against PD spec ranges.</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                <span>Reserved bit patterns and zero-value metadata flagged.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="trust-card">
+            <div class="trust-card-header">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Cable trust flags
+            </div>
+            <ul>
+              <li>Vendor ID is 0x0000 (not registered with USB-IF)</li>
+              <li>Cable latency field uses a reserved value</li>
+              <li>Claims 5A current but reports USB 2.0 speed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="settings">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-tag">Settings</span>
+          <h2>Make it yours.</h2>
+          <p>
+            WhatCable stays out of the way until you need it. A few settings let you control how it runs and what it shows.
+          </p>
+        </div>
+
+        <div class="settings-grid">
+          <div class="setting-card">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <h3>Notifications</h3>
+            <p>Get alerts when cables connect or disconnect.</p>
+          </div>
+          <div class="setting-card">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <h3>Dock mode</h3>
+            <p>Run as a regular window instead of a menu bar icon.</p>
+          </div>
+          <div class="setting-card">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </div>
+            <h3>Launch at login</h3>
+            <p>Start automatically so it is ready when you plug in.</p>
+          </div>
+          <div class="setting-card">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </div>
+            <h3>Hide empty ports</h3>
+            <p>Only show ports with something plugged in.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-tag">FAQ</span>
+          <h2>Common questions.</h2>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3>Does it work on Intel Macs?</h3>
+            <p>No. Intel Macs use Titan Ridge Thunderbolt controllers that don't expose USB-PD state or cable e-marker data through any public macOS API. WhatCable needs Apple Silicon (M1 or later) to read this information.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Is it really free?</h3>
+            <p>Yes. WhatCable is open source under the MIT licence. No ads, no tracking, no in-app purchases.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Does it phone home or collect data?</h3>
+            <p>No. There are no analytics, no telemetry, and no network requests. The app reads local IOKit data and nothing else. Check the source on GitHub if you want to verify.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Why does my cable show no e-marker data?</h3>
+            <p>Cheap USB 2.0 cables and most cables rated under 3A don't have an e-marker chip. WhatCable can only show what the cable reports. If there is no chip, there is no data to decode.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Can it tell me if a cable is fake?</h3>
+            <p>Not definitively. The trust signals feature flags values that look unusual against the USB-PD spec, like a zero vendor ID or reserved bit patterns. A flag means "worth checking," not "definitely counterfeit."</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="install" id="install">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-tag">Install</span>
+          <h2>Get the menu bar app and CLI in one step.</h2>
+          <p>
+            WhatCable is signed, notarised, and ships as a universal app.
+            Requires macOS 14 or later on Apple Silicon.
+          </p>
+        </div>
+
+        <div class="install-grid">
+          <div class="install-card">
+            <div class="install-card-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              Recommended: Homebrew
+            </div>
+<pre>brew tap darrylmorley/whatcable
+brew install --cask whatcable</pre>
+            <a class="button primary" href="https://github.com/darrylmorley/homebrew-whatcable">
+              View tap on GitHub
+            </a>
+          </div>
+
+          <div class="install-card">
+            <div class="install-card-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Direct download
+            </div>
+            <p style="color: rgba(255,255,255,0.7); font-size: 14.5px; margin-bottom: 18px;">
+              Grab the latest <code style="background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px;">.zip</code> from GitHub Releases. Drag <strong style="color: #fff;">WhatCable.app</strong> into Applications.
+            </p>
+            <a class="button primary" href="https://github.com/darrylmorley/whatcable/releases/latest">
+              Get the latest release
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <span>Built by <a href="https://github.com/darrylmorley">Darryl Morley</a>. MIT licensed.</span>
+        <span>
+          <a href="/instructions">Docs</a>
+          &nbsp;·&nbsp;
+          <a href="/cli">CLI</a>
+          &nbsp;·&nbsp;
+          <a href="/cables">Cables</a>
+          &nbsp;·&nbsp;
+          <a href="/privacy">Privacy</a>
+          &nbsp;·&nbsp;
+          <a href="https://github.com/darrylmorley/whatcable">View source on GitHub</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

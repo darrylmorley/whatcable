@@ -1,4 +1,4 @@
-#if os(macOS)
+// In-process installer for the self-update path.
 import Foundation
 import AppKit
 import os.log
@@ -9,7 +9,8 @@ import os.log
 @MainActor
 final class Installer: ObservableObject {
     static let shared = Installer()
-    private nonisolated static let log = Logger(subsystem: "com.bitmoor.whatcable", category: "installer")
+    private nonisolated static let log = Logger(subsystem: "uk.whatcable.whatcable", category: "installer")
+    private static let expectedBundleID = "uk.whatcable.whatcable"
 
     enum State: Equatable {
         case idle
@@ -108,7 +109,7 @@ final class Installer: ObservableObject {
         }
         // Check bundle ID is exactly what we expect.
         let bundleID = Bundle(url: new)?.bundleIdentifier ?? ""
-        if bundleID != "com.bitmoor.whatcable" {
+        if bundleID != Self.expectedBundleID {
             throw InstallError("Unexpected bundle identifier: \(bundleID)")
         }
         // Verify signature structure is valid.
@@ -136,6 +137,7 @@ final class Installer: ObservableObject {
         PID=\(ProcessInfo.processInfo.processIdentifier)
         NEW=\(shellQuote(newApp.path))
         OLD=\(shellQuote(currentApp.path))
+        BACKUP="${OLD}.backup"
 
         # Wait up to 30s for the running app to exit
         for _ in $(seq 1 60); do
@@ -143,9 +145,21 @@ final class Installer: ObservableObject {
             sleep 0.5
         done
 
-        rm -rf "$OLD"
-        mv "$NEW" "$OLD"
-        open "$OLD"
+        # Move old bundle to backup instead of deleting it.
+        # If the swap fails, the user can rename .backup back.
+        rm -rf "$BACKUP"
+        mv "$OLD" "$BACKUP"
+
+        if mv "$NEW" "$OLD"; then
+            open "$OLD"
+            sleep 2
+            rm -rf "$BACKUP"
+        else
+            # Swap failed; remove any partial destination before restoring.
+            rm -rf "$OLD"
+            mv "$BACKUP" "$OLD"
+            open "$OLD"
+        fi
 
         # Clean up this script and the temp directory.
         rm -rf "$(dirname "$0")"
@@ -203,4 +217,5 @@ private struct InstallError: LocalizedError {
     init(_ message: String) { self.errorDescription = message }
 }
 
-#endif
+
+

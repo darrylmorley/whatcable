@@ -1,4 +1,3 @@
-#if os(macOS)
 import SwiftUI
 import WhatCableCore
 
@@ -38,4 +37,3 @@ extension ChargingDiagnostic {
     }
 }
 
-#endif

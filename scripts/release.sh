@@ -8,10 +8,10 @@
 # Steps, in order:
 #   1.  Sanity checks: clean tree, on main, tag doesn't exist, gh CLI present,
 #       release-notes/v<version>.md exists.
-#   2.  Patch VERSION and BUILD_NUMBER in scripts/build-app.sh.
+#   2.  Patch VERSION and BUILD_NUMBER in scripts/smoke-test.sh.
 #   3.  Commit the version bump.
-#   4.  Run scripts/build-app.sh (build, sign, notarise, smoke-test, bump cask
-#       locally — the local cask bump produces a commit but does not push).
+#   4.  Run scripts/build-app.sh (calls smoke-test.sh for build/sign/notarise/
+#       smoke-test, then bumps the cask locally -- commit only, no push).
 #   5.  Tag v<version>, push main, push tag.
 #   6.  gh release create with the zip + release-notes/v<version>.md.
 #   7.  Re-run bump-cask.sh with CASK_VERIFY_REMOTE=1 CASK_VERIFY_STRICT=1 to
@@ -48,7 +48,7 @@ fi
 
 # If build-number not given, infer it: current BUILD_NUMBER + 1.
 if [[ -z "${BUILD_NUMBER}" ]]; then
-    CURRENT_BUILD=$(grep -E '^BUILD_NUMBER=' scripts/build-app.sh | head -1 | sed -E 's/.*"([0-9]+)".*/\1/')
+    CURRENT_BUILD=$(grep -E '^BUILD_NUMBER=' scripts/smoke-test.sh | head -1 | sed -E 's/.*"([0-9]+)".*/\1/')
     BUILD_NUMBER=$((CURRENT_BUILD + 1))
 fi
 
@@ -137,9 +137,9 @@ fi
 
 echo "    all checks passed"
 
-# ---- 2. Patch build-app.sh -----------------------------------------------
+# ---- 2. Patch smoke-test.sh ----------------------------------------------
 
-echo "==> Updating VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER} in scripts/build-app.sh"
+echo "==> Updating VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER} in scripts/smoke-test.sh"
 
 # BSD sed (-i '') vs GNU sed (-i)
 if sed --version >/dev/null 2>&1; then
@@ -149,18 +149,18 @@ else
 fi
 
 if [[ "${DRY_RUN}" == "0" ]]; then
-    "${SED_INPLACE[@]}" -E "s/^VERSION=\".*\"/VERSION=\"${VERSION}\"/" scripts/build-app.sh
-    "${SED_INPLACE[@]}" -E "s/^BUILD_NUMBER=\".*\"/BUILD_NUMBER=\"${BUILD_NUMBER}\"/" scripts/build-app.sh
+    "${SED_INPLACE[@]}" -E "s/^VERSION=\".*\"/VERSION=\"${VERSION}\"/" scripts/smoke-test.sh
+    "${SED_INPLACE[@]}" -E "s/^BUILD_NUMBER=\".*\"/BUILD_NUMBER=\"${BUILD_NUMBER}\"/" scripts/smoke-test.sh
 fi
 
 # ---- 3. Commit the bump --------------------------------------------------
 
 if [[ "${DRY_RUN}" == "0" ]]; then
-    if ! git diff --quiet scripts/build-app.sh; then
-        git add scripts/build-app.sh
+    if ! git diff --quiet scripts/smoke-test.sh; then
+        git add scripts/smoke-test.sh
         git commit -m "Bump version to ${VERSION} (build ${BUILD_NUMBER})"
     else
-        echo "    (build-app.sh already at this version, no commit needed)"
+        echo "    (smoke-test.sh already at this version, no commit needed)"
     fi
 fi
 

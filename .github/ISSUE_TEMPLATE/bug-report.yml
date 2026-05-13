@@ -1,0 +1,124 @@
+name: Bug report
+description: WhatCable is misreporting cables, ports, charging, or device info on your Mac.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a report. Filling in the
+        sections below means the maintainer can usually reproduce or
+        diagnose without a back-and-forth.
+
+        Want to submit a known-good or counterfeit cable's fingerprint
+        to the public database instead? Use the **Cable report** template
+        from the chooser, or click "Report this cable" inside the app.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What's wrong
+      description: What did you expect, and what did WhatCable show instead?
+      placeholder: |
+        Expected: cable to be reported as e-marked, 100W rated.
+        Actual: shown as a basic cable.
+    validations:
+      required: true
+
+  - type: input
+    id: mac-model
+    attributes:
+      label: Mac model
+      description: e.g. M2 MacBook Air, M4 Mac mini, M5 Pro 16-inch 2025
+      placeholder: M2 MacBook Air
+    validations:
+      required: true
+
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      description: e.g. 14.5, 15.1, 16.0
+      placeholder: "15.1"
+    validations:
+      required: true
+
+  - type: input
+    id: whatcable-version
+    attributes:
+      label: WhatCable version
+      description: From the About panel, or run `whatcable --version`.
+      placeholder: "0.5.14"
+    validations:
+      required: true
+
+  - type: input
+    id: cable
+    attributes:
+      label: Cable
+      description: Brand, model, claimed specs (W, Gbps). "Unknown" is fine if you don't know.
+      placeholder: CalDigit Thunderbolt 4 Pro Cable, claims 240W / 40 Gbps
+    validations:
+      required: false
+
+  - type: input
+    id: other-end
+    attributes:
+      label: What's plugged into the other end?
+      description: |
+        Charger, dock, dongle, monitor, nothing? Some Macs only read a cable's
+        e-marker once a partner is attached, so this matters.
+      placeholder: 96W Apple charger
+    validations:
+      required: false
+
+  - type: textarea
+    id: cli-output
+    attributes:
+      label: "`whatcable --json --raw` output"
+      description: |
+        The CLI is bundled inside the app at
+        `/Applications/WhatCable.app/Contents/Helpers/whatcable`, or available
+        on PATH if you installed via Homebrew. Run it with the cable plugged in
+        and paste the full output here.
+
+        Verbatim is best. The `--raw` flag includes the underlying IOKit
+        property dump that's almost always what's needed to debug.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: system-info-crosscheck
+    attributes:
+      label: System Information cross-check (optional)
+      description: |
+        If the bug is about USB speed or device detection, open System
+        Information → USB, find the relevant port / device, and paste the
+        speed and product info here. Helps confirm whether macOS itself
+        sees what WhatCable is reporting.
+      placeholder: |
+        e.g. System Information shows the device as "USB 3.2 Gen 2x1 (10 Gbps)"
+        but WhatCable says SuperSpeed (5 Gbps).
+    validations:
+      required: false
+
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: How often does this happen?
+      options:
+        - Every time
+        - Sometimes
+        - Once
+        - Haven't retried
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Screenshots, related issues, what you've already tried.
+    validations:
+      required: false

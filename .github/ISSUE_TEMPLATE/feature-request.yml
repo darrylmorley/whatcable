@@ -1,0 +1,45 @@
+name: Feature request
+description: Suggest a new feature or improvement to WhatCable.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem?
+      description: |
+        What are you trying to do that WhatCable doesn't help with today?
+        A description of the use case is more useful than a description
+        of the proposed solution.
+      placeholder: |
+        e.g. I want to know at a glance which cable is bottlenecking my
+        charging when I plug into a dock.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to see?
+      description: One or more ideas for how WhatCable could solve this.
+      placeholder: |
+        e.g. A banner that says "Cable rated for 60W, dock can supply 96W"
+        when the cable is the limiting factor.
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other tools, workarounds, or approaches you've already tried.
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Mockups, links, related issues.
+    validations:
+      required: false

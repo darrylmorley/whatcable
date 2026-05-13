@@ -3,15 +3,25 @@
 DerivedData/
 build/
 dist/
+dist-mas/
 *.xcodeproj
 .DS_Store
 .env
 .claude/
 
+# App Store provisioning profile and any other local-only signing material.
+secrets/
+
 # Local planning / design / scratch docs (kept uncommitted by convention)
 planning/
 CLAUDE.md
+BUILDING.md
 
 # Release notes are staged here, then copied into the homebrew-whatcable tap
 # repo and used as the GitHub release body. The tap repo is the canonical home.
 release-notes/
+
+# USB-IF spec PDFs (copyrighted, not for distribution)
+reference/
+docs/pro.html
+docs/success.html

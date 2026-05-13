@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WhatCable: Cable database</title>
+    <meta
+      name="description"
+      content="A growing public database of USB-C cable e-marker fingerprints reported via WhatCable, the macOS menu bar app for cable diagnostics."
+    >
+    <link rel="canonical" href="https://www.whatcable.uk/cables">
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.whatcable.uk/cables">
+    <meta property="og:title" content="WhatCable: Cable database">
+    <meta property="og:description" content="A growing public database of USB-C cable e-marker fingerprints reported via WhatCable, the macOS menu bar app for cable diagnostics.">
+    <meta property="og:image" content="https://www.whatcable.uk/screenshot.webp">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WhatCable: Cable database">
+    <meta name="twitter:description" content="A growing public database of USB-C cable e-marker fingerprints reported via WhatCable.">
+    <meta name="twitter:image" content="https://www.whatcable.uk/screenshot.webp">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "WhatCable cable fingerprint database",
+      "description": "Crowd-sourced USB-C cable e-marker fingerprints reported via WhatCable.",
+      "url": "https://www.whatcable.uk/cables",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "WhatCable",
+        "url": "https://www.whatcable.uk"
+      }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #0e1620;
+        --ink-soft: #364152;
+        --muted: #6a7585;
+        --line: #e3e8ef;
+        --bg: #fafbfc;
+        --panel: #ffffff;
+        --accent: #0c8ca6;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      .wrap {
+        width: min(720px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+      .wrap.wide {
+        width: min(960px, calc(100% - 40px));
+      }
+
+      .nav {
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .nav-inner {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .brand:hover { text-decoration: none; }
+      .mark {
+        width: 28px;
+        height: 28px;
+        display: block;
+        border-radius: 7px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+      }
+      .nav-links {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 14px;
+        color: var(--ink-soft);
+      }
+      .nav-links a { color: inherit; text-decoration: none; }
+      .nav-links a:hover { color: var(--ink); }
+
+      main { padding: 48px 0 80px; }
+      h1 {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        margin: 0 0 8px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 36px 0 12px;
+      }
+      p { margin: 0 0 14px; color: var(--ink-soft); }
+
+      .table-wrap {
+        margin: 8px 0 28px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel);
+        overflow-x: auto;
+      }
+      table.cables {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13.5px;
+      }
+      table.cables th,
+      table.cables td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+        text-align: left;
+        white-space: nowrap;
+      }
+      table.cables th {
+        background: #f4f6f9;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--ink-soft);
+      }
+      table.cables tr:last-child td { border-bottom: 0; }
+      table.cables td.col-context,
+      table.cables th.col-context {
+        white-space: normal;
+        min-width: 220px;
+        color: var(--ink-soft);
+      }
+      table.cables code {
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        color: var(--ink);
+        background: #f4f6f9;
+        padding: 1px 6px;
+        border-radius: 4px;
+      }
+
+      ol.patterns {
+        margin: 0 0 16px;
+        padding-left: 22px;
+        color: var(--ink-soft);
+      }
+      ol.patterns li { margin-bottom: 10px; }
+      ol.patterns li strong { color: var(--ink); }
+
+      .cta {
+        margin: 32px 0 0;
+        padding: 16px 18px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 14px;
+        color: var(--ink-soft);
+      }
+      .cta strong { color: var(--ink); }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 24px 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="/">
+          <img class="mark" src="icon.png" alt="" aria-hidden="true" width="28" height="28">
+          <span>WhatCable</span>
+        </a>
+        <nav class="nav-links">
+          <a href="/instructions">Docs</a>
+          <a href="/cli">CLI</a>
+          <a href="/cables">Cables</a>
+          <a href="https://github.com/darrylmorley/whatcable">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap wide">
+        <h1>Cable database</h1>
+        <p class="subtitle">USB-C cable e-marker fingerprints reported via WhatCable's "Report this cable" flow. Last updated 2026-05-08.</p>
+
+        <p>
+          A growing list of real-world USB-C cables, indexed by the identity
+          their e-marker reports over USB-PD Discover Identity. Vendor names
+          come from the bundled USB-IF list. Anyone running WhatCable can add
+          a cable here through the in-app "Report this cable" button, which
+          opens a pre-filled GitHub issue.
+        </p>
+
+        <div class="table-wrap">
+          <table class="cables">
+            <thead>
+              <tr>
+                <th class="col-context">Brand / model context</th>
+            <th class="col-vid">VID</th>
+            <th class="col-pid">PID</th>
+            <th class="col-vendor">Vendor (USB-IF)</th>
+            <th class="col-xid">XID</th>
+            <th class="col-speed">Speed</th>
+            <th class="col-power">Power</th>
+            <th class="col-type">Type</th>
+            <th class="col-source">Source</th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr>
+            <td class="col-context">UGOURD TB5/USB4 cable, AliExpress (no USB-IF cert)</td>
+            <td class="col-vid"><code>0x0138</code></td>
+            <td class="col-pid"><code>0x0310</code></td>
+            <td class="col-vendor">Unregistered</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB4 Gen 4 (80 Gbps)</td>
+            <td class="col-power">5 A / 50 V (250 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/71">#71</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">Bundled in UGREEN Revodok Max 213 (U710) dock; housing marked TB4</td>
+            <td class="col-vid"><code>0x0522</code></td>
+            <td class="col-pid"><code>0x0A06</code></td>
+            <td class="col-vendor">ACON, Advanced-Connectek, Inc.</td>
+            <td class="col-xid"><code>0x939</code></td>
+            <td class="col-speed">USB4 Gen 3 (20 / 40 Gbps)</td>
+            <td class="col-power">5 A / 20 V (100 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/84">#84</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">Anker 333 USB-C 3.3 ft nylon</td>
+            <td class="col-vid"><code>0x201C</code></td>
+            <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-vendor">Hongkong Freeport Electronics Co., Limited</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB 2.0 (480 Mbps)</td>
+            <td class="col-power">5 A / 20 V (100 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/60">#60</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">Monoprice Essentials USB-C 10 Gbps 0.5 m</td>
+            <td class="col-vid"><code>0x2095</code></td>
+            <td class="col-pid"><code>0x004F</code></td>
+            <td class="col-vendor">CE LINK LIMITED</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB 3.2 Gen 2 (10 Gbps)</td>
+            <td class="col-power">5 A / 20 V (100 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/48">#48</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">delock TB3-branded cable</td>
+            <td class="col-vid"><code>0x20C2</code></td>
+            <td class="col-pid"><code>0x0005</code></td>
+            <td class="col-vendor">Sumitomo Electric Ind., Ltd., Optical Comm. R&amp;D Lab</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB 3.2 Gen 2 (10 Gbps)</td>
+            <td class="col-power">5 A / 20 V (100 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/44">#44</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">CalDigit TS4 dock bundled cable (likely)</td>
+            <td class="col-vid"><code>0x2B1D</code></td>
+            <td class="col-pid"><code>0x1512</code></td>
+            <td class="col-vendor">Lintes Technology Co., Ltd.</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB4 Gen 3 (20 / 40 Gbps)</td>
+            <td class="col-power">5 A / 20 V (100 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/62">#62</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">Dbilida TB4-branded 240 W cable, Amazon (no USB-IF cert)</td>
+            <td class="col-vid"><code>0x2E99</code></td>
+            <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-vendor">Hynetek Semiconductor Co., Ltd</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB4 Gen 3 (20 / 40 Gbps)</td>
+            <td class="col-power">5 A / 50 V (250 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/49">#49</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">acasis cable bundled with TBU405M1 enclosure</td>
+            <td class="col-vid"><code>0x315C</code></td>
+            <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-vendor">Chengdu Convenientpower Semiconductor Co., LTD</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB4 Gen 3 (20 / 40 Gbps)</td>
+            <td class="col-power">5 A / 20 V (100 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/45">#45</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">CUKTECH No.6 140 W (e-marker present but VID/PID/speed all zeroed)</td>
+            <td class="col-vid"><code>0x0000</code></td>
+            <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-vendor">(zeroed)</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">(none advertised)</td>
+            <td class="col-power">(not advertised)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/61">#61</a></td>
+          </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Patterns worth flagging</h2>
+    <p>
+      A few of the reports show patterns that the planned cable trust signals
+      feature should pick up:
+    </p>
+    <ol class="patterns">
+          <li><strong>Marketing claim outpaces e-marker capability.</strong> #49 (Dbilida) is sold as &quot;Thunderbolt 4 / 40 Gbps / 240 W&quot; but the e-marker reports passive USB4 Gen 3 with no USB-IF cert. The cable may carry the advertised data rate, but there is no cert backing the claim.</li>
+          <li><strong>Genuinely unregistered VID with no XID.</strong> #71 (UGOURD AliExpress) reports 80 Gbps USB4 Gen 4 from an unregistered VID and zero XID. Plausibly real silicon, but unverifiable from the e-marker alone.</li>
+          <li><strong>Zeroed identity fields.</strong> #61 (CUKTECH No.6) has a present e-marker that reports <code>0x0000</code> for VID, PID, and no speed. Already flagged by trust signals today; the report confirms the pattern is real and not a parser bug.</li>
+    </ol>
+
+        <div class="cta">
+          <strong>Got a USB-C cable that should be on this list?</strong>
+          Run WhatCable, open the popover, and click "Report this cable".
+          Reports land at
+          <a href="https://github.com/darrylmorley/whatcable/issues?q=label%3Acable-report">
+          the cable-report tracker</a>.
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <p>WhatCable. Built by <a href="https://github.com/darrylmorley">Darryl Morley</a>.</p>
+      </div>
+    </footer>
+  </body>
+</html>
