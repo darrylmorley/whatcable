@@ -223,18 +223,43 @@
         <p>Homebrew installs the menu bar app and puts the <code>whatcable</code> CLI on your PATH automatically.</p>
 <pre><code><span class="prompt">$</span> brew tap darrylmorley/whatcable
 <span class="prompt">$</span> brew install --cask whatcable</code></pre>
+        <p>After this, <code>whatcable</code> just works from any new terminal window.</p>
 
-        <h3>Manual symlink</h3>
+        <h3>Downloaded the .zip from GitHub?</h3>
         <p>
-          If you installed the <code>.app</code> from a GitHub release, the CLI is bundled inside it.
-          Symlink it to make it available in your shell:
+          The CLI is bundled inside the app, at:
         </p>
-<pre><code><span class="prompt">$</span> ln -s /Applications/WhatCable.app/Contents/Helpers/whatcable /usr/local/bin/whatcable</code></pre>
+<pre><code>/Applications/WhatCable.app/Contents/Helpers/whatcable</code></pre>
+        <p>
+          You can run it from there directly, alias it, or symlink it. Pick whichever fits how you use Terminal.
+        </p>
+
+        <h4 style="margin: 18px 0 6px; font-size: 15px; font-weight: 600;">Option 1: run the full path (no setup)</h4>
+        <p>Fine for one-off invocations:</p>
+<pre><code><span class="prompt">$</span> /Applications/WhatCable.app/Contents/Helpers/whatcable</code></pre>
+
+        <h4 style="margin: 18px 0 6px; font-size: 15px; font-weight: 600;">Option 2: shell alias (no <code>sudo</code> needed)</h4>
+        <p>Add this line to <code>~/.zshrc</code> (or <code>~/.bashrc</code>), then open a new terminal:</p>
+<pre><code>alias whatcable='/Applications/WhatCable.app/Contents/Helpers/whatcable'</code></pre>
+
+        <h4 style="margin: 18px 0 6px; font-size: 15px; font-weight: 600;">Option 3: symlink into your PATH</h4>
+        <p>Pick the directory that's already on your PATH. On Apple Silicon Macs that's usually <code>/opt/homebrew/bin</code>; on Intel Macs or with custom setups it's often <code>/usr/local/bin</code>. Both need <code>sudo</code>:</p>
+<pre><code><span class="comment"># Apple Silicon (Homebrew default)</span>
+<span class="prompt">$</span> sudo ln -s /Applications/WhatCable.app/Contents/Helpers/whatcable /opt/homebrew/bin/whatcable
+
+<span class="comment"># Intel / other</span>
+<span class="prompt">$</span> sudo ln -s /Applications/WhatCable.app/Contents/Helpers/whatcable /usr/local/bin/whatcable</code></pre>
+        <p>
+          If you'd rather not use <code>sudo</code>, create <code>~/bin</code>, add it to your PATH in <code>~/.zshrc</code>, and symlink there instead:
+        </p>
+<pre><code><span class="prompt">$</span> mkdir -p ~/bin
+<span class="prompt">$</span> ln -s /Applications/WhatCable.app/Contents/Helpers/whatcable ~/bin/whatcable
+<span class="prompt">$</span> echo 'export PATH="$HOME/bin:$PATH"' &gt;&gt; ~/.zshrc</code></pre>
 
         <h2>Usage</h2>
 
         <h3>Basic scan</h3>
-        <p>Run <code>whatcable</code> with no flags to get a plain-English summary of every USB-C port.</p>
+        <p>Run <code>whatcable</code> (lowercase) with no flags to get a plain-English summary of every USB-C port.</p>
 <pre><code><span class="prompt">$</span> whatcable
 
 <span class="dim">USB-C Port 1</span>
@@ -273,12 +298,17 @@
           vendor ID, product ID, capability flags, and a pre-filled GitHub issue URL.
         </p>
 <pre><code><span class="prompt">$</span> whatcable --report</code></pre>
-        <p>If no e-marked cable is connected, the command tells you so. Most cables under 60W don't have an e-marker chip.</p>
+        <p>
+          If no e-marker data is available, the command tells you so. Two reasons that can happen:
+          either the cable genuinely doesn't have an e-marker chip (USB-PD doesn't require one below 3A),
+          or macOS hasn't asked for it yet (it only does that when negotiating above 3A,
+          so a 20W charger is unlikely to trigger the read). Try a higher-wattage charger if you're not sure.
+        </p>
 
         <h2>All flags</h2>
 <pre><code><span class="prompt">$</span> whatcable --help
 
-whatcable 0.8.6
+whatcable 0.10.1 -- What can this USB-C cable actually do?
 
 Usage: whatcable [options]
 
