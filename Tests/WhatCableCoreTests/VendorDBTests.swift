@@ -70,7 +70,7 @@ final class VendorDBTests: XCTestCase {
 
     func testLabelFallsBackToHexOnly() {
         XCTAssertEqual(VendorDB.label(for: 0xDEAD), "0xDEAD")
-        XCTAssertEqual(VendorDB.label(for: 0x0001), "0x0001")
+        XCTAssertEqual(VendorDB.label(for: 0xBEEF), "0xBEEF")
     }
 
     // MARK: - isRegistered

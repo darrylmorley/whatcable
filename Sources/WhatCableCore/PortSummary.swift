@@ -199,6 +199,11 @@ extension PortSummary {
         if let cable = cableEmarker, cable.vendorID != 0 {
             let vendor = VendorDB.label(for: cable.vendorID)
             bullets.append(String(localized: "Cable made by \(vendor)", bundle: .module))
+        } else if let cable = cableEmarker {
+            let vdo = cable.vdos.count > 3 ? cable.vdos[3] : 0
+            if let known = CableDB.curatedCable(vid: cable.vendorID, pid: cable.productID, cableVDO: vdo) {
+                bullets.append(String(localized: "Cable identified as \(known.brand)", bundle: .module))
+            }
         }
 
         // ------------------------------------------------------------

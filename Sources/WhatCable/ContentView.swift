@@ -1,9 +1,7 @@
 import SwiftUI
 import WhatCableCore
 import WhatCableDarwinBackend
-#if WHATCABLE_PRO
-import WhatCableProFeatures
-#endif
+import WhatCableAppKit
 
 // MARK: - Font scaling environment
 
@@ -422,9 +420,6 @@ struct PortCard: View {
     let showAdvanced: Bool
 
     @State private var reportingCable: PDIdentity?
-#if WHATCABLE_PRO
-    @State private var showProRequiredMessage = false
-#endif
 
     var summary: PortSummary {
         PortSummary(
@@ -469,24 +464,17 @@ struct PortCard: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-#if WHATCABLE_PRO
-                VStack(alignment: .trailing, spacing: 3) {
-                    Button {
-                        openDiagnostics()
-                    } label: {
-                        Label(String(localized: "Diagnostics", bundle: .module), systemImage: "waveform.path.ecg")
-                            .scaledFont(.caption)
-                    }
-                    .buttonStyle(.borderless)
-                    .help(String(localized: "Open Pro diagnostics for this port", bundle: .module))
-
-                    if showProRequiredMessage {
-                        Text(String(localized: "Pro required", bundle: .module))
-                            .scaledFont(.caption2)
-                            .foregroundStyle(.orange)
+                let ctx = PortCardContext(
+                    portKey: port.portKey,
+                    portNumber: port.portNumber,
+                    serviceName: port.serviceName,
+                    portTypeDescription: port.portTypeDescription
+                )
+                ForEach(Array(PluginRegistry.shared.portCardTrailingBuilders.enumerated()), id: \.offset) { _, builder in
+                    if let view = builder(ctx) {
+                        view
                     }
                 }
-#endif
             }
 
             if !summary.bullets.isEmpty {
@@ -564,31 +552,6 @@ struct PortCard: View {
         }
     }
 
-#if WHATCABLE_PRO
-    private func openDiagnostics() {
-        guard LicenceManager.shared.isUnlocked else {
-            showProRequiredMessage = true
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(2))
-                showProRequiredMessage = false
-            }
-            return
-        }
-
-        let key = port.portKey ?? "0/0"
-        let num = port.portNumber ?? 0
-        let name = diagnosticDisplayName
-        ProDiagnosticWindowManager.shared.openCableDiagnostic(portKey: key, portNumber: num, displayName: name)
-    }
-
-    private var diagnosticDisplayName: String {
-        if let desc = port.portTypeDescription {
-            let num = port.portNumber ?? 0
-            return "\(desc) Port \(num)"
-        }
-        return port.serviceName
-    }
-#endif
 }
 
 struct DiagnosticBanner: View {

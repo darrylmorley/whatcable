@@ -50,12 +50,10 @@ struct SmallWidgetView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
             Spacer(minLength: 0)
-#if WHATCABLE_PRO
             if port.recentPower.count >= 2 {
                 PowerSparkline(samples: port.recentPower, color: port.status.color)
                     .frame(height: 18)
             }
-#endif
             Text(port.portName)
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
@@ -147,12 +145,10 @@ struct LargePortRow: View {
                         .lineLimit(1)
                 }
             }
-#if WHATCABLE_PRO
             if port.recentPower.count >= 2 {
                 PowerSparkline(samples: port.recentPower, color: port.status.color)
                     .frame(width: 60, height: 24)
             }
-#endif
             Spacer(minLength: 0)
             if port.deviceCount > 0 {
                 DeviceCountBadge(count: port.deviceCount)
@@ -181,12 +177,8 @@ struct DeviceCountBadge: View {
     }
 }
 
-#if WHATCABLE_PRO
 // MARK: - Power sparkline
 
-/// Lightweight sparkline drawn with a Path. Avoids the SwiftUI Charts
-/// framework because Charts is finicky inside a WidgetKit extension and
-/// pulls in extra layout cost we don't need for a tiny inline graph.
 struct PowerSparkline: View {
     let samples: [Double]
     var color: Color = .yellow
@@ -223,7 +215,6 @@ struct PowerSparkline: View {
         return path
     }
 }
-#endif
 
 // MARK: - Empty state
 

@@ -21,17 +21,21 @@ hand-maintained markdown table; format may change once the consumer exists.
 
 ## Table
 
-| Brand / model context | VID | PID | Vendor (USB-IF) | XID | Speed | Power | Type | Source |
-|---|---|---|---|---|---|---|---|---|
-| UGOURD TB5/USB4 cable, AliExpress (no USB-IF cert) | `0x0138` | `0x0310` | Unregistered | none | USB4 Gen 4 (80 Gbps) | 5 A / 50 V (250 W) | passive | [#71](https://github.com/darrylmorley/whatcable/issues/71) |
-| Bundled in UGREEN Revodok Max 213 (U710) dock; housing marked TB4 | `0x0522` | `0x0A06` | ACON, Advanced-Connectek, Inc. | `0x939` | USB4 Gen 3 (20 / 40 Gbps) | 5 A / 20 V (100 W) | passive | [#84](https://github.com/darrylmorley/whatcable/issues/84) |
-| Anker 333 USB-C 3.3 ft nylon | `0x201C` | `0x0000` | Hongkong Freeport Electronics Co., Limited | none | USB 2.0 (480 Mbps) | 5 A / 20 V (100 W) | passive | [#60](https://github.com/darrylmorley/whatcable/issues/60) |
-| Monoprice Essentials USB-C 10 Gbps 0.5 m | `0x2095` | `0x004F` | CE LINK LIMITED | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#48](https://github.com/darrylmorley/whatcable/issues/48) |
-| delock TB3-branded cable | `0x20C2` | `0x0005` | Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#44](https://github.com/darrylmorley/whatcable/issues/44) |
-| CalDigit TS4 dock bundled cable (likely) | `0x2B1D` | `0x1512` | Lintes Technology Co., Ltd. | none | USB4 Gen 3 (20 / 40 Gbps) | 5 A / 20 V (100 W) | passive | [#62](https://github.com/darrylmorley/whatcable/issues/62) |
-| Dbilida TB4-branded 240 W cable, Amazon (no USB-IF cert) | `0x2E99` | `0x0000` | Hynetek Semiconductor Co., Ltd | none | USB4 Gen 3 (20 / 40 Gbps) | 5 A / 50 V (250 W) | passive | [#49](https://github.com/darrylmorley/whatcable/issues/49) |
-| acasis cable bundled with TBU405M1 enclosure | `0x315C` | `0x0000` | Chengdu Convenientpower Semiconductor Co., LTD | none | USB4 Gen 3 (20 / 40 Gbps) | 5 A / 20 V (100 W) | passive | [#45](https://github.com/darrylmorley/whatcable/issues/45) |
-| CUKTECH No.6 140 W (e-marker present but VID/PID/speed all zeroed) | `0x0000` | `0x0000` | (zeroed) | none | (none advertised) | (not advertised) | passive | [#61](https://github.com/darrylmorley/whatcable/issues/61) |
+| Brand / model context | VID | PID | Cable VDO | Vendor (USB-IF) | XID | Speed | Power | Type | Source |
+|---|---|---|---|---|---|---|---|---|---|
+| UGOURD TB5/USB4 cable, AliExpress (no USB-IF cert) | `0x0138` | `0x0310` | `0x000A2644` | Unregistered | none | USB4 Gen 4 (80 Gbps) | 5 A / 50 V (250 W) | passive | [#71](https://github.com/darrylmorley/whatcable/issues/71) |
+| CalDigit TS5 Plus bundled TB5 cable | `0x01B6` | `0x4003` | `0x110A2644` | Unregistered | `0x303C` | USB4 Gen 4 (80 Gbps) | 5 A / 50 V (250 W) | passive | [#89](https://github.com/darrylmorley/whatcable/issues/89) |
+| CalDigit TB5 cable, Amazon | `0x01B6` | `0x4003` | `0x110A2644` | Unregistered | `0x303C` | USB4 Gen 4 (80 Gbps) | 5 A / 50 V (250 W) | passive | [#90](https://github.com/darrylmorley/whatcable/issues/90) |
+| Bundled in UGREEN Revodok Max 213 (U710) dock; housing marked TB4 | `0x0522` | `0x0A06` | `0x11082043` | ACON, Advanced-Connectek, Inc. | `0x939` | USB4 Gen 3 (20 / 40 Gbps) | 5 A / 20 V (100 W) | passive | [#84](https://github.com/darrylmorley/whatcable/issues/84) |
+| Anker 333 USB-C 3.3 ft nylon | `0x201C` | `0x0000` | `0x00082040` | Hongkong Freeport Electronics Co., Limited | none | USB 2.0 (480 Mbps) | 5 A / 20 V (100 W) | passive | [#60](https://github.com/darrylmorley/whatcable/issues/60) |
+| Monoprice Essentials USB-C 10 Gbps 0.5 m | `0x2095` | `0x004F` |  | CE LINK LIMITED | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#48](https://github.com/darrylmorley/whatcable/issues/48) |
+| delock TB3-branded cable | `0x20C2` | `0x0005` |  | Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#44](https://github.com/darrylmorley/whatcable/issues/44) |
+| CalDigit TS4 dock bundled cable (likely) | `0x2B1D` | `0x1512` | `0x11082043` | Lintes Technology Co., Ltd. | none | USB4 Gen 3 (20 / 40 Gbps) | 5 A / 20 V (100 W) | passive | [#62](https://github.com/darrylmorley/whatcable/issues/62) |
+| Dbilida TB4-branded 240 W cable, Amazon (no USB-IF cert) | `0x2E99` | `0x0000` |  | Hynetek Semiconductor Co., Ltd | none | USB4 Gen 3 (20 / 40 Gbps) | 5 A / 50 V (250 W) | passive | [#49](https://github.com/darrylmorley/whatcable/issues/49) |
+| acasis cable bundled with TBU405M1 enclosure | `0x315C` | `0x0000` |  | Chengdu Convenientpower Semiconductor Co., LTD | none | USB4 Gen 3 (20 / 40 Gbps) | 5 A / 20 V (100 W) | passive | [#45](https://github.com/darrylmorley/whatcable/issues/45) |
+| CUKTECH No.6 140 W (e-marker present but VID/PID/speed all zeroed) | `0x0000` | `0x0000` |  | (zeroed) | none | (none advertised) | (not advertised) | passive | [#61](https://github.com/darrylmorley/whatcable/issues/61) |
+| vorodcip generic USB-C cable, Amazon Japan (VID/PID zeroed) | `0x0000` | `0x0000` | `0x000A6642` | (zeroed) | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 50 V (250 W) | passive | [#91](https://github.com/darrylmorley/whatcable/issues/91) |
+| Dockcase 100 W 10 Gbps 0.5 m (VID/PID zeroed) | `0x0000` | `0x0000` | `0x00082042` | (zeroed) | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#92](https://github.com/darrylmorley/whatcable/issues/92) |
 
 Sorted by VID. The zeroed-fingerprint entry is parked at the bottom because it
 is identity-less.

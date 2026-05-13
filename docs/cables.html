@@ -8,20 +8,19 @@
       name="description"
       content="A growing public database of USB-C cable e-marker fingerprints reported via WhatCable, the macOS menu bar app for cable diagnostics."
     >
-    <link rel="canonical" href="https://www.whatcable.uk/cables">
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" href="icon.png">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.whatcable.uk/cables">
+    <meta property="og:url" content="https://whatcable.uk/cables">
     <meta property="og:title" content="WhatCable: Cable database">
     <meta property="og:description" content="A growing public database of USB-C cable e-marker fingerprints reported via WhatCable, the macOS menu bar app for cable diagnostics.">
-    <meta property="og:image" content="https://www.whatcable.uk/screenshot.webp">
+    <meta property="og:image" content="https://whatcable.uk/screenshot.png">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="WhatCable: Cable database">
     <meta name="twitter:description" content="A growing public database of USB-C cable e-marker fingerprints reported via WhatCable.">
-    <meta name="twitter:image" content="https://www.whatcable.uk/screenshot.webp">
+    <meta name="twitter:image" content="https://whatcable.uk/screenshot.png">
 
     <script type="application/ld+json">
     {
@@ -29,11 +28,11 @@
       "@type": "Dataset",
       "name": "WhatCable cable fingerprint database",
       "description": "Crowd-sourced USB-C cable e-marker fingerprints reported via WhatCable.",
-      "url": "https://www.whatcable.uk/cables",
+      "url": "https://whatcable.uk/cables",
       "isPartOf": {
         "@type": "WebSite",
         "name": "WhatCable",
-        "url": "https://www.whatcable.uk"
+        "url": "https://whatcable.uk"
       }
     }
     </script>
@@ -222,7 +221,7 @@
     <main>
       <div class="wrap wide">
         <h1>Cable database</h1>
-        <p class="subtitle">USB-C cable e-marker fingerprints reported via WhatCable's "Report this cable" flow. Last updated 2026-05-08.</p>
+        <p class="subtitle">USB-C cable e-marker fingerprints reported via WhatCable's "Report this cable" flow. Last updated 2026-05-13.</p>
 
         <p>
           A growing list of real-world USB-C cables, indexed by the identity
@@ -239,6 +238,7 @@
                 <th class="col-context">Brand / model context</th>
             <th class="col-vid">VID</th>
             <th class="col-pid">PID</th>
+            <th class="col-cable-vdo">Cable VDO</th>
             <th class="col-vendor">Vendor (USB-IF)</th>
             <th class="col-xid">XID</th>
             <th class="col-speed">Speed</th>
@@ -252,6 +252,7 @@
             <td class="col-context">UGOURD TB5/USB4 cable, AliExpress (no USB-IF cert)</td>
             <td class="col-vid"><code>0x0138</code></td>
             <td class="col-pid"><code>0x0310</code></td>
+            <td class="col-cable-vdo"><code>0x000A2644</code></td>
             <td class="col-vendor">Unregistered</td>
             <td class="col-xid">none</td>
             <td class="col-speed">USB4 Gen 4 (80 Gbps)</td>
@@ -260,9 +261,34 @@
             <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/71">#71</a></td>
           </tr>
           <tr>
+            <td class="col-context">CalDigit TS5 Plus bundled TB5 cable</td>
+            <td class="col-vid"><code>0x01B6</code></td>
+            <td class="col-pid"><code>0x4003</code></td>
+            <td class="col-cable-vdo"><code>0x110A2644</code></td>
+            <td class="col-vendor">Unregistered</td>
+            <td class="col-xid"><code>0x303C</code></td>
+            <td class="col-speed">USB4 Gen 4 (80 Gbps)</td>
+            <td class="col-power">5 A / 50 V (250 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/89">#89</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">CalDigit TB5 cable, Amazon</td>
+            <td class="col-vid"><code>0x01B6</code></td>
+            <td class="col-pid"><code>0x4003</code></td>
+            <td class="col-cable-vdo"><code>0x110A2644</code></td>
+            <td class="col-vendor">Unregistered</td>
+            <td class="col-xid"><code>0x303C</code></td>
+            <td class="col-speed">USB4 Gen 4 (80 Gbps)</td>
+            <td class="col-power">5 A / 50 V (250 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/90">#90</a></td>
+          </tr>
+          <tr>
             <td class="col-context">Bundled in UGREEN Revodok Max 213 (U710) dock; housing marked TB4</td>
             <td class="col-vid"><code>0x0522</code></td>
             <td class="col-pid"><code>0x0A06</code></td>
+            <td class="col-cable-vdo"><code>0x11082043</code></td>
             <td class="col-vendor">ACON, Advanced-Connectek, Inc.</td>
             <td class="col-xid"><code>0x939</code></td>
             <td class="col-speed">USB4 Gen 3 (20 / 40 Gbps)</td>
@@ -274,6 +300,7 @@
             <td class="col-context">Anker 333 USB-C 3.3 ft nylon</td>
             <td class="col-vid"><code>0x201C</code></td>
             <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-cable-vdo"><code>0x00082040</code></td>
             <td class="col-vendor">Hongkong Freeport Electronics Co., Limited</td>
             <td class="col-xid">none</td>
             <td class="col-speed">USB 2.0 (480 Mbps)</td>
@@ -285,6 +312,7 @@
             <td class="col-context">Monoprice Essentials USB-C 10 Gbps 0.5 m</td>
             <td class="col-vid"><code>0x2095</code></td>
             <td class="col-pid"><code>0x004F</code></td>
+            <td class="col-cable-vdo"></td>
             <td class="col-vendor">CE LINK LIMITED</td>
             <td class="col-xid">none</td>
             <td class="col-speed">USB 3.2 Gen 2 (10 Gbps)</td>
@@ -296,6 +324,7 @@
             <td class="col-context">delock TB3-branded cable</td>
             <td class="col-vid"><code>0x20C2</code></td>
             <td class="col-pid"><code>0x0005</code></td>
+            <td class="col-cable-vdo"></td>
             <td class="col-vendor">Sumitomo Electric Ind., Ltd., Optical Comm. R&amp;D Lab</td>
             <td class="col-xid">none</td>
             <td class="col-speed">USB 3.2 Gen 2 (10 Gbps)</td>
@@ -307,6 +336,7 @@
             <td class="col-context">CalDigit TS4 dock bundled cable (likely)</td>
             <td class="col-vid"><code>0x2B1D</code></td>
             <td class="col-pid"><code>0x1512</code></td>
+            <td class="col-cable-vdo"><code>0x11082043</code></td>
             <td class="col-vendor">Lintes Technology Co., Ltd.</td>
             <td class="col-xid">none</td>
             <td class="col-speed">USB4 Gen 3 (20 / 40 Gbps)</td>
@@ -318,6 +348,7 @@
             <td class="col-context">Dbilida TB4-branded 240 W cable, Amazon (no USB-IF cert)</td>
             <td class="col-vid"><code>0x2E99</code></td>
             <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-cable-vdo"></td>
             <td class="col-vendor">Hynetek Semiconductor Co., Ltd</td>
             <td class="col-xid">none</td>
             <td class="col-speed">USB4 Gen 3 (20 / 40 Gbps)</td>
@@ -329,6 +360,7 @@
             <td class="col-context">acasis cable bundled with TBU405M1 enclosure</td>
             <td class="col-vid"><code>0x315C</code></td>
             <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-cable-vdo"></td>
             <td class="col-vendor">Chengdu Convenientpower Semiconductor Co., LTD</td>
             <td class="col-xid">none</td>
             <td class="col-speed">USB4 Gen 3 (20 / 40 Gbps)</td>
@@ -340,12 +372,37 @@
             <td class="col-context">CUKTECH No.6 140 W (e-marker present but VID/PID/speed all zeroed)</td>
             <td class="col-vid"><code>0x0000</code></td>
             <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-cable-vdo"></td>
             <td class="col-vendor">(zeroed)</td>
             <td class="col-xid">none</td>
             <td class="col-speed">(none advertised)</td>
             <td class="col-power">(not advertised)</td>
             <td class="col-type">passive</td>
             <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/61">#61</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">vorodcip generic USB-C cable, Amazon Japan (VID/PID zeroed)</td>
+            <td class="col-vid"><code>0x0000</code></td>
+            <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-cable-vdo"><code>0x000A6642</code></td>
+            <td class="col-vendor">(zeroed)</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB 3.2 Gen 2 (10 Gbps)</td>
+            <td class="col-power">5 A / 50 V (250 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/91">#91</a></td>
+          </tr>
+          <tr>
+            <td class="col-context">Dockcase 100 W 10 Gbps 0.5 m (VID/PID zeroed)</td>
+            <td class="col-vid"><code>0x0000</code></td>
+            <td class="col-pid"><code>0x0000</code></td>
+            <td class="col-cable-vdo"><code>0x00082042</code></td>
+            <td class="col-vendor">(zeroed)</td>
+            <td class="col-xid">none</td>
+            <td class="col-speed">USB 3.2 Gen 2 (10 Gbps)</td>
+            <td class="col-power">5 A / 20 V (100 W)</td>
+            <td class="col-type">passive</td>
+            <td class="col-source"><a href="https://github.com/darrylmorley/whatcable/issues/92">#92</a></td>
           </tr>
             </tbody>
           </table>

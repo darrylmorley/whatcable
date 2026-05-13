@@ -164,6 +164,7 @@ private struct CableDTO: Codable {
     let endpoint: String
     let vendorID: Int
     let vendorName: String?
+    let curatedBrand: String?
     let speed: String?
     let currentRating: String?
     let maxVolts: Int?
@@ -176,6 +177,10 @@ private struct CableDTO: Codable {
         self.endpoint = identity.endpoint.rawValue
         self.vendorID = identity.vendorID
         self.vendorName = VendorDB.name(for: identity.vendorID)
+        let vdo = identity.vdos.count > 3 ? identity.vdos[3] : 0
+        self.curatedBrand = CableDB.curatedCable(
+            vid: identity.vendorID, pid: identity.productID, cableVDO: vdo
+        )?.brand
         if let cv = identity.cableVDO {
             self.speed = cv.speed.label
             self.currentRating = cv.current.label

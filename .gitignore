@@ -14,6 +14,7 @@ secrets/
 
 # Local planning / design / scratch docs (kept uncommitted by convention)
 planning/
+technical-docs/
 CLAUDE.md
 BUILDING.md
 

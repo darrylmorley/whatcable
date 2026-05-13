@@ -47,7 +47,9 @@ public enum CableReport {
             self.productID = identity.productID
             self.vendorIDHex = String(format: "0x%04X", identity.vendorID)
             self.productIDHex = String(format: "0x%04X", identity.productID)
-            self.vendorName = VendorDB.name(for: identity.vendorID) ?? "Unregistered / unknown"
+            let vdo = identity.vdos.count > 3 ? identity.vdos[3] : 0
+            let curated = CableDB.curatedCable(vid: identity.vendorID, pid: identity.productID, cableVDO: vdo)
+            self.vendorName = VendorDB.name(for: identity.vendorID) ?? curated?.brand ?? "Unregistered / unknown"
             self.vdos = identity.vdos
             if let cs = identity.certStatVDO, cs.isPresent {
                 self.usbifCertID = cs.xid

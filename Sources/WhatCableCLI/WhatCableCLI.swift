@@ -1,12 +1,14 @@
 import Foundation
 import WhatCableCore
 import WhatCableDarwinBackend
+import WhatCableAppKit
+import WhatCablePlugins
 
 @main
 struct WhatCableCLI {
     static func main() async {
-        // Hand-rolled flag parsing. We only have a handful of flags; pulling
-        // in swift-argument-parser would be heavier than the rest of the CLI.
+        bootstrapPlugins(registry: .shared)
+
         let args = Array(CommandLine.arguments.dropFirst())
 
         if args.contains("-h") || args.contains("--help") {
@@ -23,27 +25,22 @@ struct WhatCableCLI {
             return
         }
 
-#if WHATCABLE_PRO
-        if args.contains("--monitor") {
-            await runPowerMonitor(asJSON: false)
-            return
+        for cmd in PluginRegistry.shared.cliCommands {
+            if cmd.matches(args) {
+                await cmd.run(args)
+                return
+            }
         }
-        if args.contains("--monitor-json") {
-            await runPowerMonitor(asJSON: true)
-            return
-        }
-#endif
 
         let showRaw = args.contains("--raw")
         let asJSON = args.contains("--json")
         let watch = args.contains("--watch")
         let report = args.contains("--report")
 
-        // Reject unknown flags so typos don't silently produce default output.
         var knownFlags: Set<String> = ["--raw", "--json", "--watch", "--report", "--tb-debug", "-h", "--help", "--version"]
-#if WHATCABLE_PRO
-        knownFlags.formUnion(["--monitor", "--monitor-json"])
-#endif
+        for cmd in PluginRegistry.shared.cliCommands {
+            knownFlags.formUnion(cmd.flagNames)
+        }
         for arg in args where arg.hasPrefix("-") && !knownFlags.contains(arg) {
             FileHandle.standardError.write(Data("whatcable: unknown option \(arg)\n".utf8))
             FileHandle.standardError.write(Data(helpText.utf8))
@@ -72,43 +69,28 @@ struct WhatCableCLI {
         }
     }
 
-#if WHATCABLE_PRO
-    static let helpText = """
-    whatcable \(AppInfo.version) -- \(AppInfo.tagline)
+    @MainActor static var helpText: String {
+        var text = """
+        whatcable \(AppInfo.version) -- \(AppInfo.tagline)
 
-    Usage: whatcable [options]
+        Usage: whatcable [options]
 
-    Options:
-      --watch        Continuously monitor for changes (Ctrl+C to exit)
-      --json         Output as JSON instead of human-readable text
-      --raw          Include raw IOKit properties for each port
-      --report       Print a cable report (markdown + GitHub URL) and exit
-      --monitor      Monitor live power telemetry (WhatCable Pro)
-      --monitor-json Output live power telemetry as newline-delimited JSON
-      --tb-debug     Dump the IOThunderboltSwitch tree (for contributors helping
-                     us design the Thunderbolt fabric feature). See issue tracker.
-      --version      Print version and exit
-      -h, --help     Show this help and exit
+        Options:
+          --watch        Continuously monitor for changes (Ctrl+C to exit)
+          --json         Output as JSON instead of human-readable text
+          --raw          Include raw IOKit properties for each port
+          --report       Print a cable report (markdown + GitHub URL) and exit
+          --tb-debug     Dump the IOThunderboltSwitch tree (for contributors helping
+                         us design the Thunderbolt fabric feature). See issue tracker.
+          --version      Print version and exit
+          -h, --help     Show this help and exit
 
-    """
-#else
-    static let helpText = """
-    whatcable \(AppInfo.version) -- \(AppInfo.tagline)
-
-    Usage: whatcable [options]
-
-    Options:
-      --watch        Continuously monitor for changes (Ctrl+C to exit)
-      --json         Output as JSON instead of human-readable text
-      --raw          Include raw IOKit properties for each port
-      --report       Print a cable report (markdown + GitHub URL) and exit
-      --tb-debug     Dump the IOThunderboltSwitch tree (for contributors helping
-                     us design the Thunderbolt fabric feature). See issue tracker.
-      --version      Print version and exit
-      -h, --help     Show this help and exit
-
-    """
-#endif
+        """
+        for cmd in PluginRegistry.shared.cliCommands {
+            text += cmd.helpLines + "\n"
+        }
+        return text
+    }
 }
 
 private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Bool) throws {

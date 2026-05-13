@@ -2,19 +2,22 @@ import SwiftUI
 import AppKit
 import Combine
 import WhatCableCore
-#if WHATCABLE_PRO
-import WhatCableProFeatures
-#endif
+import WhatCableAppKit
+import WhatCablePlugins
 
 @main
 struct WhatCableApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
-#if WHATCABLE_PRO
     init() {
-        Task { await LicenceManager.shared.validateOnLaunch() }
+        bootstrapPlugins(registry: .shared)
+        let hooks = PluginRegistry.shared.launchHooks
+        if !hooks.isEmpty {
+            Task {
+                for hook in hooks { await hook() }
+            }
+        }
     }
-#endif
 
     var body: some Scene {
         // Headless - UI is owned by AppDelegate (status item + popover, or
@@ -31,17 +34,12 @@ struct WhatCableApp: App {
                         UpdateChecker.shared.check(silent: false)
                     }
                 }
-#if WHATCABLE_PRO
                 CommandGroup(after: .windowSize) {
-                    Button(String(localized: "Power Monitor", bundle: .module)) {
-                        if LicenceManager.shared.isUnlocked {
-                            ProWindowManager.shared.openPowerMonitor()
-                        } else {
-                            delegate.showProRequiredAlert()
-                        }
+                    let items = PluginRegistry.shared.menuItems[.afterWindowSize] ?? []
+                    ForEach(items) { item in
+                        Button(item.title) { item.action() }
                     }
                 }
-#endif
                 CommandGroup(replacing: .help) {
                     Button(String(localized: "WhatCable on GitHub", bundle: .module)) {
                         NSWorkspace.shared.open(AppInfo.helpURL)
@@ -52,11 +50,10 @@ struct WhatCableApp: App {
                         delegate.showSettingsPanel(nil)
                     }
                     .keyboardShortcut(",", modifiers: .command)
-#if WHATCABLE_PRO
-                    Button("Licence...") {
-                        delegate.showLicencePanel(nil)
+                    let settingsItems = PluginRegistry.shared.menuItems[.appSettingsArea] ?? []
+                    ForEach(settingsItems) { item in
+                        Button(item.title) { item.action() }
                     }
-#endif
                 }
                 CommandGroup(after: .toolbar) {
                     Button("Refresh") {
@@ -71,13 +68,10 @@ struct WhatCableApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowDelegate {
     static let refreshSignal = RefreshSignal()
-<<<<<<< HEAD
     private(set) static var shared: AppDelegate!
-=======
 #if WHATCABLE_PRO
     private static let licenceIdentifier = NSUserInterfaceItemIdentifier("uk.whatcable.licence")
 #endif
->>>>>>> main
 
     // Menu bar mode
     private var statusItem: NSStatusItem?
@@ -231,16 +225,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         menu.addItem(pinItem)
         menu.addItem(.separator())
         menu.addItem(.init(title: String(localized: "Settings…", bundle: .module), action: #selector(menuSettings), keyEquivalent: ","))
-#if WHATCABLE_PRO
-        menu.addItem(.init(title: "Licence...", action: #selector(menuLicence), keyEquivalent: ""))
-#endif
+        for builder in PluginRegistry.shared.nsMenuItemBuilders[.statusItemMenu] ?? [] {
+            menu.addItem(builder())
+        }
         menu.addItem(.init(title: String(localized: "Check for Updates…", bundle: .module), action: #selector(menuCheckUpdates), keyEquivalent: ""))
         menu.addItem(.separator())
         menu.addItem(.init(title: String(localized: "About \(AppInfo.name)", bundle: .module), action: #selector(showAboutPanel), keyEquivalent: ""))
         menu.addItem(.init(title: String(localized: "WhatCable on GitHub", bundle: .module), action: #selector(menuHelp), keyEquivalent: ""))
         menu.addItem(.separator())
         menu.addItem(.init(title: String(localized: "Quit \(AppInfo.name)", bundle: .module), action: #selector(menuQuit), keyEquivalent: "q"))
-        for item in menu.items where item.action != nil { item.target = self }
+        for item in menu.items where item.action != nil && item.target == nil { item.target = self }
 
         statusItem.menu = menu
         statusItem.button?.performClick(nil)
@@ -264,31 +258,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         showSettings()
     }
 
-#if WHATCABLE_PRO
-    @objc private func menuLicence() {
-        showLicencePanel(nil)
-    }
-
-    @objc func showLicencePanel(_ sender: Any?) {
-        if let window = NSApp.windows.first(where: { $0.identifier == Self.licenceIdentifier }) {
-            NSApp.activate(ignoringOtherApps: true)
-            window.makeKeyAndOrderFront(nil)
-            return
-        }
-
-        let host = NSHostingController(rootView: LicenceSettingsView())
-        let window = NSWindow(contentViewController: host)
-        window.identifier = Self.licenceIdentifier
-        window.title = "WhatCable Pro"
-        window.styleMask = [.titled, .closable, .miniaturizable]
-        window.setContentSize(NSSize(width: 420, height: 260))
-        window.center()
-        window.isReleasedWhenClosed = false
-
-        NSApp.activate(ignoringOtherApps: true)
-        window.makeKeyAndOrderFront(nil)
-    }
-#endif
 
     private func showSettings() {
         NSApp.activate(ignoringOtherApps: true)
@@ -341,7 +310,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     }
 #endif
 
-    @objc func menuCheckUpdates() {
         UpdateChecker.shared.check(silent: false)
     }
 

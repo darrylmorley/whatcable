@@ -1,8 +1,8 @@
 import Foundation
 
-/// USB-IF vendor name lookup, backed by the bundled USB-IF list shipped
-/// in `Sources/WhatCableCore/Resources/usbif-vendors.tsv` (refreshed by
-/// `scripts/update-vendor-db.sh`).
+/// USB vendor name lookup, backed by the bundled SQLite database
+/// (`whatcable.db`). The database merges the USB-IF published list,
+/// the community usb.ids list, and manual overrides.
 ///
 /// A `curatedOverrides` escape hatch is kept available for the rare
 /// cases where USB-IF's published name is genuinely wrong, mojibake'd,
@@ -26,19 +26,18 @@ public enum VendorDB {
         if vendorID == 0xFFFF {
             return "No vendor ID assigned (USB-PD spec sentinel)"
         }
-        return USBIFVendors.name(for: vendorID)
+        return CableDB.vendorName(vid: vendorID)
     }
 
-    /// True if the VID is present in either the override map or the
-    /// bundled USB-IF list. Distinct from `name(for:) != nil` only for
-    /// VID 0 (which the bundled lookup hides for display purposes but
-    /// is still considered "registered" — USB-IF assigns 0 to itself)
-    /// and the spec sentinel `0xFFFF`, which we name but treat as not
-    /// a registered assignment.
+    /// True if the VID is present in USB-IF's official published list
+    /// (or the curated override map). Distinct from `name(for:) != nil`
+    /// because usb.ids community entries and VID 0 return a name for
+    /// display but are not USB-IF registrations. Used by
+    /// `CableTrustReport` to gate the `vidNotInUSBIFList` flag.
     public static func isRegistered(_ vendorID: Int) -> Bool {
         if curatedOverrides[vendorID] != nil { return true }
         if vendorID == 0xFFFF { return false }
-        return USBIFVendors.isRegistered(vendorID)
+        return CableDB.isUSBIFRegistered(vendorID)
     }
 
     /// Returns "Apple (0x05AC)" if known, else "0x05AC".

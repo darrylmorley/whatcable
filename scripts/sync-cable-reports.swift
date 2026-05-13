@@ -87,6 +87,7 @@ struct Report {
     let issueNumber: Int
     let vid: Int           // 0 for zeroed
     let pid: Int           // 0 for zeroed
+    let cableVDO: UInt32   // VDO[3] from Raw VDOs table, 0 if absent
     let xidCol: String     // "none" or formatted hex
     let speed: String      // empty for missing
     let power: String      // empty for missing
@@ -117,6 +118,27 @@ func extractHex(_ s: String) -> Int? {
     return Int(String(s[r]), radix: 16)
 }
 
+/// Extract VDO[3] (Cable VDO) from the "Raw VDOs" table in the issue body.
+/// Returns 0 if the table is missing or index 3 isn't present (older reports).
+func extractCableVDO(from body: String) -> UInt32 {
+    let lines = body.components(separatedBy: "\n")
+    var inVDOTable = false
+    for raw in lines {
+        let line = raw.trimmingCharacters(in: .whitespaces)
+        if line.contains("Raw VDOs") { inVDOTable = true; continue }
+        if inVDOTable, line.hasPrefix("|"), !line.contains("---"), !line.contains("Index") {
+            let parts = line.dropFirst().dropLast().components(separatedBy: "|")
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+            guard parts.count >= 3 else { continue }
+            if let idx = Int(parts[0].trimmingCharacters(in: .whitespaces)), idx == 3 {
+                if let val = extractHex(parts[2]) { return UInt32(val) }
+            }
+        }
+        if inVDOTable, line.hasPrefix("###"), !line.contains("Raw VDOs") { break }
+    }
+    return 0
+}
+
 func parse(body: String, issueNumber: Int) -> Report? {
     guard let vidCell = extractField("Vendor ID", from: body),
           let vid = extractHex(vidCell) else {
@@ -124,6 +146,7 @@ func parse(body: String, issueNumber: Int) -> Report? {
         return nil
     }
     let pid = extractField("Product ID", from: body).flatMap { extractHex($0) } ?? 0
+    let cableVDO = extractCableVDO(from: body)
 
     // XID: "USB-IF certification ID" cell. May be missing entirely on
     // older reports. May contain "none (XID = 0)" or a hex value.
@@ -154,6 +177,7 @@ func parse(body: String, issueNumber: Int) -> Report? {
         issueNumber: issueNumber,
         vid: vid,
         pid: pid,
+        cableVDO: cableVDO,
         xidCol: xidCol,
         speed: speed,
         power: power,
@@ -200,9 +224,10 @@ func loadExistingContexts() -> [Int: String] {
         // Data rows have a code span like `0xABCD` in column 1 (the VID).
         // Header row has plain text "VID" there. We use that as the
         // discriminator so we skip the header without a name match.
-        guard parts.count == 9, parts[1].hasPrefix("`0x") else { continue }
+        // Column count is 10 (with Cable VDO) or 9 (legacy without it).
+        guard parts.count >= 9, parts[1].hasPrefix("`0x") else { continue }
         let context = parts[0]
-        let source = parts[8]
+        let source = parts[parts.count - 1]
         // Source cell is "[#NN](url)"; pull out NN.
         let re = try! NSRegularExpression(pattern: "#(\\d+)")
         let range = NSRange(source.startIndex..., in: source)
@@ -221,6 +246,7 @@ func loadExistingContexts() -> [Int: String] {
 func renderRow(_ report: Report, context: String, vendors: [Int: String]) -> String {
     let vidCol = String(format: "`0x%04X`", report.vid)
     let pidCol = String(format: "`0x%04X`", report.pid)
+    let vdoCol = report.cableVDO != 0 ? String(format: "`0x%08X`", report.cableVDO) : ""
     let vendor: String
     if report.vid == 0 {
         vendor = "(zeroed)"
@@ -233,7 +259,7 @@ func renderRow(_ report: Report, context: String, vendors: [Int: String]) -> Str
     let power = report.power.isEmpty ? "(not advertised)" : report.power
     let type = report.type.isEmpty ? "passive" : report.type
     let source = "[#\(report.issueNumber)](https://github.com/darrylmorley/whatcable/issues/\(report.issueNumber))"
-    return "| \(context) | \(vidCol) | \(pidCol) | \(vendor) | \(report.xidCol) | \(speed) | \(power) | \(type) | \(source) |"
+    return "| \(context) | \(vidCol) | \(pidCol) | \(vdoCol) | \(vendor) | \(report.xidCol) | \(speed) | \(power) | \(type) | \(source) |"
 }
 
 // MARK: - Update markdown

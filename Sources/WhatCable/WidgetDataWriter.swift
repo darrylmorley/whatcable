@@ -4,9 +4,7 @@ import WidgetKit
 import os.log
 import WhatCableCore
 import WhatCableDarwinBackend
-#if WHATCABLE_PRO
-import WhatCableProFeatures
-#endif
+import WhatCableAppKit
 
 /// Writes a pre-computed WidgetSnapshot to the macOS team-prefixed App Group
 /// shared container whenever cable state changes, then tells WidgetKit to
@@ -43,14 +41,7 @@ final class WidgetDataWriter {
     private var lastSnapshot: WidgetSnapshot?
     private var isStarted = false
 
-#if WHATCABLE_PRO
-    private let powerTelemetry = PowerTelemetryWatcher()
-    /// Rolling per-port wattage samples keyed by portKey (e.g. "2/1",
-    /// "17/1"). Each buffer holds the last 12 samples (~24s at the
-    /// watcher's 2s poll rate).
-    private var recentPowerByPort: [String: [Double]] = [:]
-    private let maxRecentSamples = 12
-#endif
+    private var contributorCancellables = Set<AnyCancellable>()
 
     /// How often to re-write the snapshot even when ports haven't changed.
     /// Keeps the timestamp fresh so the widget's staleness check doesn't
@@ -101,15 +92,12 @@ final class WidgetDataWriter {
             .sink { [weak self] _ in self?.scheduleWrite() }
             .store(in: &cancellables)
 
-#if WHATCABLE_PRO
-        powerTelemetry.start()
-        powerTelemetry.$latestSnapshot
-            .compactMap { $0 }
-            .sink { [weak self] snapshot in
-                self?.appendPower(from: snapshot)
-            }
-            .store(in: &cancellables)
-#endif
+        for contributor in PluginRegistry.shared.widgetDataContributors {
+            contributor.start()
+            contributor.changes
+                .sink { [weak self] in self?.scheduleWrite() }
+                .store(in: &contributorCancellables)
+        }
 
         // Periodic heartbeat: re-write the snapshot with a fresh timestamp
         // even when ports haven't changed. This prevents the widget's
@@ -168,30 +156,6 @@ final class WidgetDataWriter {
         Self.log.debug("Widget heartbeat: refreshed timestamp and reloaded timelines (\(snapshot.ports.count) ports)")
     }
 
-#if WHATCABLE_PRO
-    /// Push a fresh PowerTelemetryWatcher snapshot into the rolling buffers.
-    private func appendPower(from snapshot: PowerMonitorSnapshot) {
-        var changed = false
-        for sample in snapshot.portSamples {
-            let key = sample.portKey.isEmpty ? "2/\(sample.portIndex)" : sample.portKey
-            let watts = Double(sample.watts) / 1000
-            guard sample.watts > 0 || sample.current > 0 else {
-                if recentPowerByPort.removeValue(forKey: key) != nil {
-                    changed = true
-                }
-                continue
-            }
-            var samples = recentPowerByPort[key, default: []]
-            samples.append((watts * 10).rounded() / 10)
-            if samples.count > maxRecentSamples {
-                samples.removeFirst(samples.count - maxRecentSamples)
-            }
-            recentPowerByPort[key] = samples
-            changed = true
-        }
-        if changed { scheduleWrite() }
-    }
-#endif
 
     private func buildSnapshot() -> WidgetSnapshot {
         let entries: [WidgetSnapshot.PortEntry] = portWatcher.ports.map { port in
@@ -218,11 +182,14 @@ final class WidgetDataWriter {
             let status = WidgetSnapshot.Status(from: summary.status)
 
             var recentPower: [Double] = []
-#if WHATCABLE_PRO
             if let key = port.portKey {
-                recentPower = recentPowerByPort[key] ?? []
+                for contributor in PluginRegistry.shared.widgetDataContributors {
+                    if let samples = contributor.recentPower(forPortKey: key), !samples.isEmpty {
+                        recentPower = samples
+                        break
+                    }
+                }
             }
-#endif
 
             return WidgetSnapshot.PortEntry(
                 id: port.id,

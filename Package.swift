@@ -2,27 +2,11 @@
 import PackageDescription
 import Foundation
 
-// Pro features live in a private submodule at app/. The submodule is always
-// present in release builds; open-source contributors can build the CLI and
-// free app without it.
-//
-// Set WHATCABLE_PRO=1 in your environment (loaded from .env by build scripts)
-// to include the pro module. Pro features are then gated at RUNTIME by a
-// licence key, not at compile time. The define just controls whether the pro
-// code is linked into the binary.
-let includePro = ProcessInfo.processInfo.environment["WHATCABLE_PRO"] == "1"
-
-var appSwiftSettings: [SwiftSetting] = []
-var appDependencies: [Target.Dependency] = ["WhatCableCore", "WhatCableDarwinBackend"]
-var cliSwiftSettings: [SwiftSetting] = []
-var cliDependencies: [Target.Dependency] = ["WhatCableCore", "WhatCableDarwinBackend"]
-
-if includePro {
-    appDependencies.append("WhatCableProFeatures")
-    appSwiftSettings.append(.define("WHATCABLE_PRO"))
-    cliDependencies.append("WhatCableProFeatures")
-    cliSwiftSettings.append(.define("WHATCABLE_PRO"))
-}
+// Plugin target path: if the submodule provides Sources/WhatCablePlugins,
+// compile from there. Otherwise compile the no-op stub in the public repo.
+let pluginPath = FileManager.default.fileExists(
+    atPath: "app/Sources/WhatCablePlugins"
+) ? "app/Sources/WhatCablePlugins" : "Sources/WhatCablePlugins"
 
 var targets: [Target] = [
     .target(
@@ -35,11 +19,26 @@ var targets: [Target] = [
         dependencies: ["WhatCableCore"],
         path: "Sources/WhatCableDarwinBackend"
     ),
+    .target(
+        name: "WhatCableAppKit",
+        dependencies: ["WhatCableCore"],
+        path: "Sources/WhatCableAppKit"
+    ),
+    .target(
+        name: "WhatCablePlugins",
+        dependencies: ["WhatCableCore", "WhatCableDarwinBackend", "WhatCableAppKit"],
+        path: pluginPath
+    ),
+    .executableTarget(
+        name: "WhatCable",
+        dependencies: ["WhatCableCore", "WhatCableDarwinBackend", "WhatCableAppKit", "WhatCablePlugins"],
+        path: "Sources/WhatCable",
+        resources: [.process("Resources")]
+    ),
     .executableTarget(
         name: "WhatCableCLI",
-        dependencies: cliDependencies,
-        path: "Sources/WhatCableCLI",
-        swiftSettings: cliSwiftSettings.isEmpty ? nil : cliSwiftSettings
+        dependencies: ["WhatCableCore", "WhatCableDarwinBackend", "WhatCableAppKit", "WhatCablePlugins"],
+        path: "Sources/WhatCableCLI"
     ),
     .testTarget(
         name: "WhatCableCoreTests",
@@ -53,32 +52,15 @@ var targets: [Target] = [
     )
 ]
 
-if includePro {
-    targets.append(
-        .target(
-            name: "WhatCableProFeatures",
-            dependencies: ["WhatCableCore", "WhatCableDarwinBackend"],
-            path: "app/Sources/WhatCableProFeatures"
-        )
-    )
+if FileManager.default.fileExists(atPath: "app/Tests/WhatCablePluginsTests") {
     targets.append(
         .testTarget(
-            name: "WhatCableProFeaturesTests",
-            dependencies: ["WhatCableProFeatures"],
-            path: "app/Tests/WhatCableProFeaturesTests"
+            name: "WhatCablePluginsTests",
+            dependencies: ["WhatCablePlugins"],
+            path: "app/Tests/WhatCablePluginsTests"
         )
     )
 }
-
-targets.append(
-    .executableTarget(
-        name: "WhatCable",
-        dependencies: appDependencies,
-        path: "Sources/WhatCable",
-        resources: [.process("Resources")],
-        swiftSettings: appSwiftSettings.isEmpty ? nil : appSwiftSettings
-    )
-)
 
 let package = Package(
     name: "WhatCable",
@@ -87,7 +69,8 @@ let package = Package(
     products: [
         .executable(name: "WhatCable", targets: ["WhatCable"]),
         .executable(name: "whatcable-cli", targets: ["WhatCableCLI"]),
-        .library(name: "WhatCableCore", targets: ["WhatCableCore"])
+        .library(name: "WhatCableCore", targets: ["WhatCableCore"]),
+        .library(name: "WhatCableAppKit", targets: ["WhatCableAppKit"])
     ],
     targets: targets
 )

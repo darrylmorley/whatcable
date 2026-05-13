@@ -171,7 +171,7 @@ dateFormatter.formatOptions = [.withFullDate]
 let today = dateFormatter.string(from: Date())
 
 let cellClasses: [String] = [
-    "context", "vid", "pid", "vendor", "xid", "speed", "power", "type", "source",
+    "context", "vid", "pid", "cable-vdo", "vendor", "xid", "speed", "power", "type", "source",
 ]
 
 func renderHeaderCell(_ s: String, cls: String) -> String {
