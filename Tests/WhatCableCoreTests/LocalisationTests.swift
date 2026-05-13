@@ -4,14 +4,15 @@ import Foundation
 
 final class LocalisationTests: XCTestCase {
 
-    func testCoreStringCatalogIsValidJSON() throws {
+    func testStringFilesHaveManyKeys() throws {
         let bundle = Bundle.module
-        let url = try XCTUnwrap(bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
-        let data = try Data(contentsOf: url)
-        let catalog = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        let strings = try XCTUnwrap(catalog?["strings"] as? [String: Any])
-        XCTAssertGreaterThan(strings.count, 50, "Core catalog should have many string keys")
-        XCTAssertEqual(catalog?["sourceLanguage"] as? String, "en")
+        let url = try XCTUnwrap(
+            bundle.url(forResource: "Localizable", withExtension: "strings", subdirectory: "en.lproj"),
+            "en.lproj/Localizable.strings not found in bundle"
+        )
+        let content = try String(contentsOf: url, encoding: .utf8)
+        let keyLines = content.components(separatedBy: "\n").filter { $0.contains(" = ") && !$0.hasPrefix("//") }
+        XCTAssertGreaterThan(keyLines.count, 50, "en.lproj/Localizable.strings should have more than 50 entries")
     }
 
     func testEnglishSourceStringsResolveToThemselves() {

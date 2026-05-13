@@ -76,16 +76,16 @@ final class NotificationManager {
         guard AppSettings.shared.notifyOnChanges else { return }
 
         for device in added {
-            let name = device.productName ?? String(localized: "USB device", bundle: .module)
+            let name = device.productName ?? String(localized: "USB device", bundle: _appLocalizedBundle)
             postNotification(
-                title: String(localized: "Connected: \(name)", bundle: .module),
+                title: String(localized: "Connected: \(name)", bundle: _appLocalizedBundle),
                 body: "\(device.speedLabel)\(device.vendorName.map { " · \($0)" } ?? "")"
             )
         }
         if removedCount > 0 {
             postNotification(
-                title: String(localized: "USB device disconnected", bundle: .module),
-                body: String(localized: "\(removedCount) devices removed", bundle: .module)
+                title: String(localized: "USB device disconnected", bundle: _appLocalizedBundle),
+                body: String(localized: "\(removedCount) devices removed", bundle: _appLocalizedBundle)
             )
         }
     }
@@ -100,11 +100,11 @@ final class NotificationManager {
         guard AppSettings.shared.notifyOnChanges else { return }
 
         for source in added {
-            let watts = source.winning.map { String(localized: "\($0.wattsLabel) negotiated", bundle: .module) } ?? String(localized: "PD source", bundle: .module)
-            postNotification(title: String(localized: "Charger connected", bundle: .module), body: "\(source.name) · \(watts)")
+            let watts = source.winning.map { String(localized: "\($0.wattsLabel) negotiated", bundle: _appLocalizedBundle) } ?? String(localized: "PD source", bundle: _appLocalizedBundle)
+            postNotification(title: String(localized: "Charger connected", bundle: _appLocalizedBundle), body: "\(source.name) · \(watts)")
         }
         if removedCount > 0 {
-            postNotification(title: String(localized: "Charger disconnected", bundle: .module), body: "")
+            postNotification(title: String(localized: "Charger disconnected", bundle: _appLocalizedBundle), body: "")
         }
     }
 

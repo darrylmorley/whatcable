@@ -1,6 +1,7 @@
 import Foundation
 import ServiceManagement
 import os.log
+import WhatCableCore
 
 /// User-facing preferences, persisted in UserDefaults and (where relevant)
 /// reflected into system services like SMAppService.
@@ -16,7 +17,9 @@ final class AppSettings: ObservableObject {
         static let useMenuBarMode = "useMenuBarMode"
         static let showTechnicalDetails = "showTechnicalDetails"
         static let fontSize = "fontSize"
+        static let preferredLanguage = "preferredLanguage"
     }
+
 
     @Published var launchAtLogin: Bool {
         didSet {
@@ -61,6 +64,18 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// BCP 47 language code to override the system language, or empty string
+    /// for system default. Written to `AppleLanguages` so Foundation's bundle
+    /// lookup picks it up on the next launch.
+    @Published var preferredLanguage: String {
+        didSet {
+            guard preferredLanguage != oldValue else { return }
+            UserDefaults.standard.set(preferredLanguage, forKey: Keys.preferredLanguage)
+            setCoreLocale(preferredLanguage)
+            setAppLocale(preferredLanguage)
+        }
+    }
+
     /// Font size multiplier for the main content. 1.0 is the default;
     /// the slider lets users pick 0.8 to 1.4.
     static let fontSizeRange: ClosedRange<Double> = 0.8...1.4
@@ -88,6 +103,10 @@ final class AppSettings: ObservableObject {
             self.useMenuBarMode = UserDefaults.standard.bool(forKey: Keys.useMenuBarMode)
         }
         self.showTechnicalDetails = UserDefaults.standard.bool(forKey: Keys.showTechnicalDetails)
+        let savedLanguage = UserDefaults.standard.string(forKey: Keys.preferredLanguage) ?? ""
+        self.preferredLanguage = savedLanguage
+        setCoreLocale(savedLanguage)
+        setAppLocale(savedLanguage)
         let stored = UserDefaults.standard.double(forKey: Keys.fontSize)
         let raw = stored > 0 ? stored : 1.0
         self.fontSize = min(max(raw, Self.fontSizeRange.lowerBound), Self.fontSizeRange.upperBound)

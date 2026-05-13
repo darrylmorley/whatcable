@@ -22,18 +22,18 @@ struct WhatCableApp: App {
         Settings { EmptyView() }
             .commands {
                 CommandGroup(replacing: .appInfo) {
-                    Button(String(localized: "About \(AppInfo.name)", bundle: .module)) {
+                    Button(String(localized: "About \(AppInfo.name)", bundle: _appLocalizedBundle)) {
                         delegate.showAboutPanel()
                     }
                 }
                 CommandGroup(after: .appInfo) {
-                    Button(String(localized: "Check for Updates…", bundle: .module)) {
+                    Button(String(localized: "Check for Updates…", bundle: _appLocalizedBundle)) {
                         UpdateChecker.shared.check(silent: false)
                     }
                 }
 #if WHATCABLE_PRO
                 CommandGroup(after: .windowSize) {
-                    Button(String(localized: "Power Monitor", bundle: .module)) {
+                    Button(String(localized: "Power Monitor", bundle: _appLocalizedBundle)) {
                         if LicenceManager.shared.isUnlocked {
                             ProWindowManager.shared.openPowerMonitor()
                         } else {
@@ -43,12 +43,12 @@ struct WhatCableApp: App {
                 }
 #endif
                 CommandGroup(replacing: .help) {
-                    Button(String(localized: "WhatCable on GitHub", bundle: .module)) {
+                    Button(String(localized: "WhatCable on GitHub", bundle: _appLocalizedBundle)) {
                         NSWorkspace.shared.open(AppInfo.helpURL)
                     }
                 }
                 CommandGroup(replacing: .appSettings) {
-                    Button(String(localized: "Settings…", bundle: .module)) {
+                    Button(String(localized: "Settings…", bundle: _appLocalizedBundle)) {
                         delegate.showSettingsPanel(nil)
                     }
                     .keyboardShortcut(",", modifiers: .command)
@@ -211,21 +211,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private func showMenu(from button: NSStatusBarButton) {
         guard let statusItem else { return }
         let menu = NSMenu()
-        menu.addItem(.init(title: String(localized: "Refresh", bundle: .module), action: #selector(menuRefresh), keyEquivalent: "r"))
-        let pinItem = NSMenuItem(title: String(localized: "Keep window open", bundle: .module), action: #selector(menuTogglePin), keyEquivalent: "p")
+        menu.addItem(.init(title: String(localized: "Refresh", bundle: _appLocalizedBundle), action: #selector(menuRefresh), keyEquivalent: "r"))
+        let pinItem = NSMenuItem(title: String(localized: "Keep window open", bundle: _appLocalizedBundle), action: #selector(menuTogglePin), keyEquivalent: "p")
         pinItem.state = isPinned ? .on : .off
         menu.addItem(pinItem)
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "Settings…", bundle: .module), action: #selector(menuSettings), keyEquivalent: ","))
+        menu.addItem(.init(title: String(localized: "Settings…", bundle: _appLocalizedBundle), action: #selector(menuSettings), keyEquivalent: ","))
 #if WHATCABLE_PRO
         menu.addItem(.init(title: "Licence...", action: #selector(menuLicence), keyEquivalent: ""))
 #endif
-        menu.addItem(.init(title: String(localized: "Check for Updates…", bundle: .module), action: #selector(menuCheckUpdates), keyEquivalent: ""))
+        menu.addItem(.init(title: String(localized: "Check for Updates…", bundle: _appLocalizedBundle), action: #selector(menuCheckUpdates), keyEquivalent: ""))
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "About \(AppInfo.name)", bundle: .module), action: #selector(showAboutPanel), keyEquivalent: ""))
-        menu.addItem(.init(title: String(localized: "WhatCable on GitHub", bundle: .module), action: #selector(menuHelp), keyEquivalent: ""))
+        menu.addItem(.init(title: String(localized: "About \(AppInfo.name)", bundle: _appLocalizedBundle), action: #selector(showAboutPanel), keyEquivalent: ""))
+        menu.addItem(.init(title: String(localized: "WhatCable on GitHub", bundle: _appLocalizedBundle), action: #selector(menuHelp), keyEquivalent: ""))
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "Quit \(AppInfo.name)", bundle: .module), action: #selector(menuQuit), keyEquivalent: "q"))
+        menu.addItem(.init(title: String(localized: "Quit \(AppInfo.name)", bundle: _appLocalizedBundle), action: #selector(menuQuit), keyEquivalent: "q"))
         for item in menu.items where item.action != nil { item.target = self }
 
         statusItem.menu = menu

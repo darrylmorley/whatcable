@@ -46,11 +46,11 @@ public struct DisplayPortLaneConfig: Hashable {
     public var label: String {
         switch assignment {
         case .fourLane:
-            return String(localized: "4 DP lanes (no USB3 alongside video)", bundle: .module)
+            return String(localized: "4 DP lanes (no USB3 alongside video)", bundle: _coreLocalizedBundle)
         case .twoLane:
-            return String(localized: "2 DP lanes + USB3 data", bundle: .module)
+            return String(localized: "2 DP lanes + USB3 data", bundle: _coreLocalizedBundle)
         case .unknown:
-            return String(localized: "DisplayPort alt mode", bundle: .module)
+            return String(localized: "DisplayPort alt mode", bundle: _coreLocalizedBundle)
         }
     }
 }

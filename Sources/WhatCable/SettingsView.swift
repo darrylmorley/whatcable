@@ -27,9 +27,9 @@ struct SettingsView: View {
         HStack {
             Image(systemName: "gearshape")
                 .scaledFont(.title2)
-            Text(String(localized: "Settings", bundle: .module)).scaledFont(.headline, weight: .bold)
+            Text(String(localized: "Settings", bundle: _appLocalizedBundle)).scaledFont(.headline, weight: .bold)
             Spacer()
-            Button(String(localized: "Done", bundle: .module), action: dismiss)
+            Button(String(localized: "Done", bundle: _appLocalizedBundle), action: dismiss)
                 .keyboardShortcut(.defaultAction)
         }
         .padding(12)
@@ -41,21 +41,21 @@ struct SettingsForm: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            section(String(localized: "Behavior", bundle: .module)) {
-                Toggle(String(localized: "Launch at login", bundle: .module), isOn: $settings.launchAtLogin)
-                Toggle(String(localized: "Show in menu bar", bundle: .module), isOn: $settings.useMenuBarMode)
+            section(String(localized: "Behavior", bundle: _appLocalizedBundle)) {
+                Toggle(String(localized: "Launch at login", bundle: _appLocalizedBundle), isOn: $settings.launchAtLogin)
+                Toggle(String(localized: "Show in menu bar", bundle: _appLocalizedBundle), isOn: $settings.useMenuBarMode)
                 Text(settings.useMenuBarMode
-                     ? String(localized: "Lives in the menu bar with no Dock icon.", bundle: .module)
-                     : String(localized: "Runs as a regular Dock app with a window.", bundle: .module))
+                     ? String(localized: "Lives in the menu bar with no Dock icon.", bundle: _appLocalizedBundle)
+                     : String(localized: "Runs as a regular Dock app with a window.", bundle: _appLocalizedBundle))
                     .scaledFont(.caption)
                     .foregroundStyle(.secondary)
             }
-            section(String(localized: "Display", bundle: .module)) {
-                Toggle(String(localized: "Show technical details", bundle: .module), isOn: $settings.showTechnicalDetails)
-                Toggle(String(localized: "Hide empty ports", bundle: .module), isOn: $settings.hideEmptyPorts)
+            section(String(localized: "Display", bundle: _appLocalizedBundle)) {
+                Toggle(String(localized: "Show technical details", bundle: _appLocalizedBundle), isOn: $settings.showTechnicalDetails)
+                Toggle(String(localized: "Hide empty ports", bundle: _appLocalizedBundle), isOn: $settings.hideEmptyPorts)
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(String(localized: "Font size", bundle: .module))
+                        Text(String(localized: "Font size", bundle: _appLocalizedBundle))
                         Spacer()
                         Text(verbatim: "\(Int((settings.fontSize * 100).rounded()))%")
                             .foregroundStyle(.secondary)
@@ -70,9 +70,18 @@ struct SettingsForm: View {
                     }
                 }
                 .padding(.top, 4)
+                Picker(String(localized: "Language", bundle: _appLocalizedBundle), selection: $settings.preferredLanguage) {
+                    Text(String(localized: "System Default", bundle: _appLocalizedBundle)).tag("")
+                    Divider()
+                    Text(verbatim: "English").tag("en")
+                    Text(verbatim: "中文 (简体)").tag("zh-Hans")
+                    Text(verbatim: "Polski").tag("pl")
+                }
+                .pickerStyle(.menu)
+                .padding(.top, 4)
             }
-            section(String(localized: "Notifications", bundle: .module)) {
-                Toggle(String(localized: "Notify on cable changes", bundle: .module), isOn: $settings.notifyOnChanges)
+            section(String(localized: "Notifications", bundle: _appLocalizedBundle)) {
+                Toggle(String(localized: "Notify on cable changes", bundle: _appLocalizedBundle), isOn: $settings.notifyOnChanges)
             }
         }
     }

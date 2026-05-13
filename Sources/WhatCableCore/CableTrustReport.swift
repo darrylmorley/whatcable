@@ -121,21 +121,21 @@ public enum TrustFlag: Hashable {
     public var title: String {
         switch self {
         case .zeroVendorID:
-            return String(localized: "E-marker reports no vendor identity", bundle: .module)
+            return String(localized: "E-marker reports no vendor identity", bundle: _coreLocalizedBundle)
         case .reservedSpeedEncoding:
-            return String(localized: "E-marker uses a reserved data-speed value", bundle: .module)
+            return String(localized: "E-marker uses a reserved data-speed value", bundle: _coreLocalizedBundle)
         case .reservedCurrentEncoding:
-            return String(localized: "E-marker uses a reserved current-rating value", bundle: .module)
+            return String(localized: "E-marker uses a reserved current-rating value", bundle: _coreLocalizedBundle)
         case .reservedCableLatencyEncoding:
-            return String(localized: "E-marker uses a reserved cable-latency value", bundle: .module)
+            return String(localized: "E-marker uses a reserved cable-latency value", bundle: _coreLocalizedBundle)
         case .vidNotInUSBIFList:
-            return String(localized: "Vendor ID isn't in USB-IF's published list", bundle: .module)
+            return String(localized: "Vendor ID isn't in USB-IF's published list", bundle: _coreLocalizedBundle)
         case .invalidVDOVersion:
-            return String(localized: "E-marker uses an invalid VDO version", bundle: .module)
+            return String(localized: "E-marker uses an invalid VDO version", bundle: _coreLocalizedBundle)
         case .invalidCableTermination:
-            return String(localized: "E-marker uses an invalid cable-termination value", bundle: .module)
+            return String(localized: "E-marker uses an invalid cable-termination value", bundle: _coreLocalizedBundle)
         case .eprClaimedWithLowMaxVoltage:
-            return String(localized: "E-marker claims EPR support but reports only 20V max VBUS", bundle: .module)
+            return String(localized: "E-marker claims EPR support but reports only 20V max VBUS", bundle: _coreLocalizedBundle)
         }
     }
 
@@ -143,22 +143,22 @@ public enum TrustFlag: Hashable {
     public var detail: String {
         switch self {
         case .zeroVendorID:
-            return String(localized: "Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature.", bundle: .module)
+            return String(localized: "Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature.", bundle: _coreLocalizedBundle)
         case .reservedSpeedEncoding(let bits):
-            return String(localized: "The cable's e-marker reports speed value \(bits), which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values.", bundle: .module)
+            return String(localized: "The cable's e-marker reports speed value \(bits), which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values.", bundle: _coreLocalizedBundle)
         case .reservedCurrentEncoding(let bits):
-            return String(localized: "The cable's e-marker reports current value \(bits), which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values.", bundle: .module)
+            return String(localized: "The cable's e-marker reports current value \(bits), which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values.", bundle: _coreLocalizedBundle)
         case .reservedCableLatencyEncoding(let bits):
-            return String(localized: "The cable's e-marker reports cable-latency value \(bits), which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values.", bundle: .module)
+            return String(localized: "The cable's e-marker reports cable-latency value \(bits), which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values.", bundle: _coreLocalizedBundle)
         case .vidNotInUSBIFList(let vid):
             let hex = String(format: "0x%04X", vid)
-            return String(localized: "The cable's e-marker reports vendor \(hex), which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies.", bundle: .module)
+            return String(localized: "The cable's e-marker reports vendor \(hex), which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies.", bundle: _coreLocalizedBundle)
         case .invalidVDOVersion(let bits):
-            return String(localized: "The cable's e-marker reports VDO version \(bits), which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values.", bundle: .module)
+            return String(localized: "The cable's e-marker reports VDO version \(bits), which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values.", bundle: _coreLocalizedBundle)
         case .invalidCableTermination(let bits):
-            return String(localized: "The cable's e-marker reports cable termination \(bits), which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here.", bundle: .module)
+            return String(localized: "The cable's e-marker reports cable termination \(bits), which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here.", bundle: _coreLocalizedBundle)
         case .eprClaimedWithLowMaxVoltage:
-            return String(localized: "The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other.", bundle: .module)
+            return String(localized: "The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other.", bundle: _coreLocalizedBundle)
         }
     }
 }

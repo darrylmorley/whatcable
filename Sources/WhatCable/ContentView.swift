@@ -232,14 +232,14 @@ struct ContentView: View {
                 Image(systemName: "arrow.clockwise")
             }
             .buttonStyle(.borderless)
-            .help(String(localized: "Refresh", bundle: .module))
+            .help(String(localized: "Refresh", bundle: _appLocalizedBundle))
             Button {
                 refresh.showSettings = true
             } label: {
                 Image(systemName: "gearshape")
             }
             .buttonStyle(.borderless)
-            .help(String(localized: "Settings", bundle: .module))
+            .help(String(localized: "Settings", bundle: _appLocalizedBundle))
         }
         .padding(12)
         .background(
@@ -254,12 +254,12 @@ struct ContentView: View {
 
     private var footer: some View {
         HStack {
-            Toggle(String(localized: "Show technical details", bundle: .module), isOn: $settings.showTechnicalDetails)
+            Toggle(String(localized: "Show technical details", bundle: _appLocalizedBundle), isOn: $settings.showTechnicalDetails)
                 .toggleStyle(.switch)
                 .controlSize(.mini)
                 .scaledFont(.caption)
             Spacer()
-            Text(String(localized: "\(deviceWatcher.devices.count) USB devices", bundle: .module))
+            Text(String(localized: "\(deviceWatcher.devices.count) USB devices", bundle: _appLocalizedBundle))
                 .scaledFont(.caption)
                 .foregroundStyle(.secondary)
             Text(verbatim: "·").scaledFont(.caption).foregroundStyle(.secondary)
@@ -267,7 +267,7 @@ struct ContentView: View {
                 .scaledFont(.caption)
                 .foregroundStyle(.tertiary)
             Text(verbatim: "·").scaledFont(.caption).foregroundStyle(.secondary)
-            Button(String(localized: "Quit", bundle: .module)) { NSApplication.shared.terminate(nil) }
+            Button(String(localized: "Quit", bundle: _appLocalizedBundle)) { NSApplication.shared.terminate(nil) }
                 .buttonStyle(.borderless)
                 .scaledFont(.caption)
                 .foregroundStyle(.secondary)
@@ -281,9 +281,9 @@ struct ContentView: View {
             Image(systemName: "powerplug")
                 .scaledFont(.largeTitle)
                 .foregroundStyle(.secondary)
-            Text(String(localized: "No USB-C ports detected", bundle: .module))
+            Text(String(localized: "No USB-C ports detected", bundle: _appLocalizedBundle))
                 .scaledFont(.headline, weight: .bold)
-            Text(String(localized: "This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB.", bundle: .module))
+            Text(String(localized: "This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB.", bundle: _appLocalizedBundle))
                 .scaledFont(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
@@ -298,9 +298,9 @@ struct ContentView: View {
             Image(systemName: "cable.connector.slash")
                 .scaledFont(.largeTitle)
                 .foregroundStyle(.secondary)
-            Text(String(localized: "Nothing connected", bundle: .module))
+            Text(String(localized: "Nothing connected", bundle: _appLocalizedBundle))
                 .scaledFont(.headline, weight: .bold)
-            Text(String(localized: "\(portWatcher.ports.count) USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.", bundle: .module))
+            Text(String(localized: "\(portWatcher.ports.count) USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.", bundle: _appLocalizedBundle))
                 .scaledFont(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
@@ -352,7 +352,7 @@ struct UpdateBanner: View {
             Image(systemName: "arrow.down.circle.fill")
                 .foregroundStyle(.tint)
             VStack(alignment: .leading, spacing: 2) {
-                Text(String(localized: "WhatCable \(update.version) is available", bundle: .module))
+                Text(String(localized: "WhatCable \(update.version) is available", bundle: _appLocalizedBundle))
                     .scaledFont(.callout, weight: .bold)
                 statusLine
                     .scaledFont(.caption).foregroundStyle(.secondary)
@@ -369,15 +369,15 @@ struct UpdateBanner: View {
     private var statusLine: some View {
         switch installer.state {
         case .idle:
-            Text(String(localized: "You're on \(AppInfo.version)", bundle: .module))
+            Text(String(localized: "You're on \(AppInfo.version)", bundle: _appLocalizedBundle))
         case .downloading:
-            Text(String(localized: "Downloading…", bundle: .module))
+            Text(String(localized: "Downloading…", bundle: _appLocalizedBundle))
         case .verifying:
-            Text(String(localized: "Verifying signature…", bundle: .module))
+            Text(String(localized: "Verifying signature…", bundle: _appLocalizedBundle))
         case .installing:
-            Text(String(localized: "Installing, WhatCable will relaunch", bundle: .module))
+            Text(String(localized: "Installing, WhatCable will relaunch", bundle: _appLocalizedBundle))
         case .failed(let message):
-            Text(String(localized: "Install failed: \(message)", bundle: .module)).foregroundStyle(.red)
+            Text(String(localized: "Install failed: \(message)", bundle: _appLocalizedBundle)).foregroundStyle(.red)
         }
     }
 
@@ -386,14 +386,14 @@ struct UpdateBanner: View {
         switch installer.state {
         case .idle, .failed:
             HStack(spacing: 6) {
-                Button(String(localized: "View release", bundle: .module)) {
+                Button(String(localized: "View release", bundle: _appLocalizedBundle)) {
                     NSWorkspace.shared.open(update.url)
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
 
                 if update.downloadURL != nil {
-                    Button(String(localized: "Install update", bundle: .module)) {
+                    Button(String(localized: "Install update", bundle: _appLocalizedBundle)) {
                         Installer.shared.install(update)
                     }
                     .buttonStyle(.borderedProminent)
@@ -474,14 +474,14 @@ struct PortCard: View {
                     Button {
                         openDiagnostics()
                     } label: {
-                        Label(String(localized: "Diagnostics", bundle: .module), systemImage: "waveform.path.ecg")
+                        Label(String(localized: "Diagnostics", bundle: _appLocalizedBundle), systemImage: "waveform.path.ecg")
                             .scaledFont(.caption)
                     }
                     .buttonStyle(.borderless)
-                    .help(String(localized: "Open Pro diagnostics for this port", bundle: .module))
+                    .help(String(localized: "Open Pro diagnostics for this port", bundle: _appLocalizedBundle))
 
                     if showProRequiredMessage {
-                        Text(String(localized: "Pro required", bundle: .module))
+                        Text(String(localized: "Pro required", bundle: _appLocalizedBundle))
                             .scaledFont(.caption2)
                             .foregroundStyle(.orange)
                     }
@@ -504,10 +504,10 @@ struct PortCard: View {
 
             if !devices.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(String(localized: "Connected devices", bundle: .module))
+                    Text(String(localized: "Connected devices", bundle: _appLocalizedBundle))
                         .scaledFont(.caption).foregroundStyle(.secondary)
                     ForEach(devices) { d in
-                        let name = d.productName ?? String(localized: "Unknown", bundle: .module)
+                        let name = d.productName ?? String(localized: "Unknown", bundle: _appLocalizedBundle)
                         Text(verbatim: "• \(name) - \(d.speedLabel)")
                             .scaledFont(.callout)
                     }
@@ -537,11 +537,11 @@ struct PortCard: View {
                     Button {
                         reportingCable = cable
                     } label: {
-                        Label(String(localized: "Report this cable", bundle: .module), systemImage: "exclamationmark.bubble")
+                        Label(String(localized: "Report this cable", bundle: _appLocalizedBundle), systemImage: "exclamationmark.bubble")
                             .scaledFont(.caption)
                     }
                     .buttonStyle(.borderless)
-                    .help(String(localized: "File a GitHub issue with this cable's e-marker fingerprint", bundle: .module))
+                    .help(String(localized: "File a GitHub issue with this cable's e-marker fingerprint", bundle: _appLocalizedBundle))
                 }
                 .padding(.leading, 48)
             }
@@ -623,7 +623,7 @@ struct PowerSourceList: View {
                 if !src.options.isEmpty {
                     VStack(alignment: .leading, spacing: 2) {
                         let srcName = src.name
-                        Text(String(localized: "\(srcName) profiles", bundle: .module))
+                        Text(String(localized: "\(srcName) profiles", bundle: _appLocalizedBundle))
                             .scaledFont(.caption).foregroundStyle(.secondary)
                         ForEach(src.options.sorted(by: { $0.voltageMV < $1.voltageMV }), id: \.self) { opt in
                             let isWinning = opt == src.winning
@@ -634,7 +634,7 @@ struct PowerSourceList: View {
                                 Text(verbatim: "\(opt.voltsLabel) @ \(opt.ampsLabel) - \(opt.wattsLabel)")
                                     .scaledFont(.callout, monospacedDigit: true)
                                 if isWinning {
-                                    Text(String(localized: "active", bundle: .module)).scaledFont(.caption2).foregroundStyle(.green)
+                                    Text(String(localized: "active", bundle: _appLocalizedBundle)).scaledFont(.caption2).foregroundStyle(.green)
                                 }
                                 Spacer()
                             }
@@ -653,18 +653,18 @@ struct AdvancedPortDetails: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            group(String(localized: "Connection", bundle: .module)) {
-                row(String(localized: "Active", bundle: .module), bool(port.connectionActive))
-                row(String(localized: "Active cable electronics", bundle: .module), bool(port.activeCable))
-                row(String(localized: "Optical", bundle: .module), bool(port.opticalCable))
-                row(String(localized: "USB active", bundle: .module), bool(port.usbActive))
-                row(String(localized: "SuperSpeed", bundle: .module), bool(port.superSpeedActive))
-                row(String(localized: "Plug events", bundle: .module), port.plugEventCount.map(String.init) ?? "—")
+            group(String(localized: "Connection", bundle: _appLocalizedBundle)) {
+                row(String(localized: "Active", bundle: _appLocalizedBundle), bool(port.connectionActive))
+                row(String(localized: "Active cable electronics", bundle: _appLocalizedBundle), bool(port.activeCable))
+                row(String(localized: "Optical", bundle: _appLocalizedBundle), bool(port.opticalCable))
+                row(String(localized: "USB active", bundle: _appLocalizedBundle), bool(port.usbActive))
+                row(String(localized: "SuperSpeed", bundle: _appLocalizedBundle), bool(port.superSpeedActive))
+                row(String(localized: "Plug events", bundle: _appLocalizedBundle), port.plugEventCount.map(String.init) ?? "—")
             }
-            group(String(localized: "Transports", bundle: .module)) {
-                row(String(localized: "Supported", bundle: .module), port.transportsSupported.joined(separator: ", "))
-                row(String(localized: "Provisioned", bundle: .module), port.transportsProvisioned.joined(separator: ", "))
-                row(String(localized: "Active", bundle: .module), port.transportsActive.isEmpty ? "—" : port.transportsActive.joined(separator: ", "))
+            group(String(localized: "Transports", bundle: _appLocalizedBundle)) {
+                row(String(localized: "Supported", bundle: _appLocalizedBundle), port.transportsSupported.joined(separator: ", "))
+                row(String(localized: "Provisioned", bundle: _appLocalizedBundle), port.transportsProvisioned.joined(separator: ", "))
+                row(String(localized: "Active", bundle: _appLocalizedBundle), port.transportsActive.isEmpty ? "—" : port.transportsActive.joined(separator: ", "))
             }
             if let v2 = cableEmarker?.activeCableVDO2 {
                 ActiveCableVDO2Section(vdo2: v2)
@@ -673,7 +673,7 @@ struct AdvancedPortDetails: View {
                 ThunderboltFabricSection(chain: thunderboltChain)
             }
             let rawCount = port.rawProperties.count
-            DisclosureGroup(String(localized: "All raw IOKit properties (\(rawCount))", bundle: .module)) {
+            DisclosureGroup(String(localized: "All raw IOKit properties (\(rawCount))", bundle: _appLocalizedBundle)) {
                 VStack(alignment: .leading, spacing: 2) {
                     ForEach(port.rawProperties.sorted(by: { $0.key < $1.key }), id: \.key) { kv in
                         HStack(alignment: .top) {
@@ -709,7 +709,7 @@ struct AdvancedPortDetails: View {
 
     private func bool(_ v: Bool?) -> String {
         guard let v else { return "—" }
-        return v ? String(localized: "Yes", bundle: .module) : String(localized: "No", bundle: .module)
+        return v ? String(localized: "Yes", bundle: _appLocalizedBundle) : String(localized: "No", bundle: _appLocalizedBundle)
     }
 }
 
@@ -770,7 +770,7 @@ struct ThunderboltFabricSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(String(localized: "Thunderbolt fabric", bundle: .module))
+            Text(String(localized: "Thunderbolt fabric", bundle: _appLocalizedBundle))
                 .scaledFont(.caption, weight: .bold).foregroundStyle(.secondary)
             ForEach(Array(chain.enumerated()), id: \.element.id) { index, sw in
                 hopRow(sw, index: index)
@@ -782,9 +782,9 @@ struct ThunderboltFabricSection: View {
     private func hopRow(_ sw: ThunderboltSwitch, index: Int) -> some View {
         let indent = String(repeating: "  ", count: index)
         let arrow = index == 0 ? "" : "↳ "
-        let name = sw.isHostRoot ? String(localized: "Host (\(sw.className))", bundle: .module) : ThunderboltLabels.deviceName(for: sw)
+        let name = sw.isHostRoot ? String(localized: "Host (\(sw.className))", bundle: _appLocalizedBundle) : ThunderboltLabels.deviceName(for: sw)
         let port = ThunderboltTopology.activeDownstreamLanePort(sw)
-        let linkLabel = port.flatMap { ThunderboltLabels.linkLabel(for: $0) } ?? String(localized: "no active link", bundle: .module)
+        let linkLabel = port.flatMap { ThunderboltLabels.linkLabel(for: $0) } ?? String(localized: "no active link", bundle: _appLocalizedBundle)
 
         HStack(alignment: .top) {
             Text(verbatim: "\(indent)\(arrow)\(name)")
@@ -805,7 +805,7 @@ private struct TrustFlagsCard: View {
             HStack(spacing: 6) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
-                Text(String(localized: "Cable trust signals", bundle: .module))
+                Text(String(localized: "Cable trust signals", bundle: _appLocalizedBundle))
                     .scaledFont(.caption, weight: .bold)
                     .foregroundStyle(.secondary)
             }
