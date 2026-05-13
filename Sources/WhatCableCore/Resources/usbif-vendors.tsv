@@ -1,8 +1,13 @@
 # USB-IF Vendor ID lookup
 # Source: https://www.usb.org/sites/default/files/vendor_ids03102026_0.pdf
-# Fetched: 2026-05-06T16:22:18Z
+# Obsolete source: https://www.usb.org/sites/default/files/obsoletevids_10232019.pdf
+# Fetched: 2026-05-13T08:45:39Z
 # Format: <decimal_vid>\t<vendor_name>
 0	USB Implementers Forum
+0001	Fry's Electronics ‐ OBSOLETE
+0002	Ingram ‐ OBSOLETE
+0003	Club Mac/Club PC ‐ OBSOLETE
+0004	Nebraska Furniture Mart ‐ OBSOLETE
 34	Api error test company
 35	Test Primary Contact API Push
 121	Shenzhen Longshengwei Technology, Co., Ltd.
@@ -15,15 +20,18 @@
 1004	Iwatsu America Inc.
 1005	Mitel Corporation
 1006	Mitsumi
+1007	Elonex Technologies Inc. ‐ OBSOLETE
 1008	HP Inc.
 1009	Genoa Technology
 1010	Oak Technology, Inc
 1011	Adaptec, Inc.
 1012	Diebold, Inc.
 1013	Siemens Electromechanical
+1014	Olivetti ‐ OBSOLETE
 1015	Tulip Computers International
 1016	Epson Imaging Technology Center
 1017	KeyTronic Corp.
+1018	Brooktree Corp. ‐ OBSOLETE
 1019	OPTi Inc.
 1020	Elitegroup Computer Systems
 1021	Xilinx Inc.
@@ -50,12 +58,14 @@
 1042	Award Software International
 1043	Leadtek Research Inc.
 1044	Giga-Byte Technology Co., Ltd.
+1045	First International Computer ‐ OBSOLETE
 1046	Nuvoton Technology Corp.
 1047	Symbios, Inc.
 1048	AST Research
 1049	Samsung Info. Systems America Inc.
 1050	Phoenix Technologies Ltd.
 1051	d'TV
+1052	Altera Corp. ‐ OBSOLETE
 1053	S3 Incorporated
 1054	Creative Labs
 1055	LCS Telegraphics
@@ -84,6 +94,8 @@
 1079	Framatome Connectors USA
 1080	Advanced Micro Devices
 1081	Voice Technologies Group
+1082	OKI Electric Industry ‐ OBSOLETE
+1083	Hyundai Electronics America ‐ OBSOLETE
 1084	Lucid Designs
 1085	Lexmark International Inc.
 1086	LG Electronics USA Inc.
@@ -92,9 +104,11 @@
 1089	Winbond Systems Lab.
 1090	Cygnion Corp.
 1091	Gateway 2000
+1092	Chuntex Electronic ‐ OBSOLETE
 1093	Agere Systems
 1094	NMB Technologies Corporation
 1095	Momentum Microsystems
+1096	L.G. Semicon Co., Ltd. ‐ OBSOLETE
 1097	Eldim
 1098	Shamrock Technology Co., Ltd.
 1099	WSI
@@ -114,21 +128,26 @@
 1113	Adobe Systems, Inc.
 1114	SONICblue Incorporated
 1115	Renesas Electronics Corp.
+1116	Motorola Computer Grp. ‐ OBSOLETE
 1117	Nortel Networks
 1118	Microsoft Corporation
 1120	Ace Cad Enterprise Co., Ltd.
 1121	Primax Electronics
+1122	Questec ‐ OBSOLETE
 1123	EATON
 1124	AMP/Tycoelectronics
 1125	Pacific Micro Computing
+1126	Hewlett Packard ‐ OBSOLETE
 1127	AT&T Paradyne
 1128	Wieson Technologies Co., Ltd.
+1129	Arys Corp. ‐ OBSOLETE
 1130	CHERRY
 1131	American Megatrends
 1132	Toshiba Corporation, Digital Media Network Company
 1133	Logitech Inc.
 1134	Behavior Tech Computer Corporation
 1135	Crystal Semiconductor
+1136	Hyundai Electronics ‐ OBSOLETE
 1137	Philips Consumer Lifestyle BV
 1138	Oracle America, Inc.
 1139	Sanyo Information Business Co., Ltd.
@@ -154,13 +173,16 @@
 1160	Cirque Corporation
 1161	Foxconn / Hon Hai
 1162	S-MOS Systems, Inc.
+1163	Ravicad ‐ OBSOLETE
 1164	Alps Electric Ireland Ltd.
 1165	ITE Tech. Inc.
+1166	Hosiden America Corp. ‐ OBSOLETE
 1167	Eicon Tech.
 1168	United Microelectronic Corporation (UMC)
 1169	Capetronic Kaohsiung Corp.
 1170	Samsung Semiconductor, Inc.
 1171	MAG Technology Co., Ltd.
+1172	Yamaha Corp. ‐ OBSOLETE
 1173	ESS Technology, Inc.
 1174	Micron Electronics
 1175	Smile International, Inc.
@@ -170,6 +192,7 @@
 1179	Curtis Computer Products
 1180	Acer Advanced Labs, Inc.
 1181	VLSI Technology, Inc.
+1182	SMOS Systems ‐ OBSOLETE
 1183	Compaq Computer Corporation
 1184	Digital Equipment Corp.
 1185	SystemSoft Corporation
@@ -189,6 +212,7 @@
 1199	Winnov L.P.
 1200	Nikon Corporation
 1201	Pan International
+1202	Pan International ‐ OBSOLETE
 1203	IBM Corporation
 1204	Cypress Semiconductor
 1205	ROHM Co., Ltd.
@@ -209,6 +233,7 @@
 1222	Toshiba America Electronic Components
 1223	Micro Macro Technologies
 1224	Konica Corporation
+1225	AT&T Microelectronics ‐ OBSOLETE
 1226	Lite-On Technology Corp.
 1227	FUJIFILM Corporation
 1228	ST-Ericsson
@@ -231,6 +256,7 @@
 1245	Sharp Corporation
 1246	MindShare, Inc.
 1247	ePadLink
+1248	Sony Electronics ‐ OBSOLETE
 1249	Iiyama Corporation
 1250	Exar Corporation
 1251	Zilog
@@ -288,6 +314,7 @@
 1304	EzKEY Corp.
 1305	Star Micronics Co., LTD
 1306	WYSE Technology
+1307	Silicon Graphics ‐ OBSOLETE
 1308	Shuttle Inc.
 1309	American Power Conversion
 1310	Scientific Atlanta, Inc.
@@ -447,6 +474,7 @@
 1465	Philips Research Laboratories
 1466	DigitalPersona, Inc.
 1467	Grey Cell Systems
+1468	Forward Electronics ‐ OBSOLETE
 1469	RAFI GmbH & Co. KG
 1470	Tyco Electronics Corp., a TE Connectivity Ltd. company
 1471	S & S Research
@@ -454,6 +482,7 @@
 1473	MegaChips Corporation
 1474	Media Phonics (Suisse) S.A.
 1475	VME Microsystems
+1476	Davicom Semiconductor ‐ OBSOLETE
 1477	Digi International Inc.
 1478	Qualcomm, Inc
 1479	Qtronix Corp
@@ -469,6 +498,7 @@
 1489	Brainboxes Limited
 1490	Wave Systems Corp.
 1491	Tohoku Ricoh Co., Ltd.
+1492	TYI Systems TD ‐ OBSOLETE
 1493	Super Gate Technology Co., LTD
 1494	Philips Semiconductors, CICT
 1495	Thomas & Betts
@@ -493,6 +523,7 @@
 1514	Evergreen Systems International
 1515	FFC Limited
 1516	COM21, Inc.
+1517	National Instrument ‐ OBSOLETE
 1518	Cytechinfo Inc.
 1519	Anko Electronic Co., Ltd.
 1520	Canopus Co., Ltd.
@@ -505,6 +536,7 @@
 1528	Phase Metrics
 1529	Datalogic srl
 1530	Siemens Telecommunications Systems Limited
+1531	Elan Microelectronics ‐ OBSOLETE
 1532	Harman Multimedia
 1533	STD Manufacturing Ltd.
 1534	CHIC TECHNOLOGY CORP
@@ -540,6 +572,7 @@
 1564	Act Labs, Ltd.
 1565	Quatech, Inc.
 1566	Nissei Electric Co.
+1567	Kensington ‐ OBSOLETE
 1568	Alaris, Inc.
 1569	ODU-Steckverbindungssysteme GmbH & Co. KG
 1570	Iotech, Inc.
@@ -578,7 +611,9 @@
 1603	NOVATUS, Inc.
 1604	TEAC Corporation
 1605	Ethentica Inc.
+1606	Umax Data Systems, Inc. ‐ OBSOLETE
 1607	Acton Research Corporation
+1608	Inside Out Networks ‐ OBSOLETE
 1609	Weli Science Co., Ltd
 1610	Technical Corp.
 1611	Analog Devices, Inc. Development Tools
@@ -635,6 +670,7 @@
 1663	Virata Ltd.
 1664	Realtek Semiconductor Corp., CPP Div.
 1665	Siemens Information and Communication Products
+1666	Victor Company of Japan Ltd. ‐ OBSOLETE
 1667	Dataq Instruments, Inc.
 1668	Cytec Corporation
 1669	ISDN*tek
@@ -724,6 +760,7 @@
 1756	Foxlink Image Technology Co., Ltd.
 1757	Impact Technologies
 1758	Heisei Technology Co., Ltd.
+1759	Chia Shin Technology Corp. ‐ OBSOLETE
 1760	Multi-Tech Systems, Inc.
 1761	ADS Technologies, Inc.
 1762	Trio Motion Technology Limited
@@ -962,6 +999,7 @@
 1998	Nidec-Shimpo Corp.
 1999	Casio Computer Co., Ltd.
 2000	Dazzle Multimedia
+2001	D‐Link Corp. ‐ OBSOLETE
 2002	Aptio Products Inc.
 2003	Cyberdata Corp.
 2004	Aloka Co., Ltd.
@@ -1142,6 +1180,7 @@
 2179	Recording Industry Association of America (RIAA)
 2180	USB Systems
 2181	Boca Research, Inc.
+2182	XAC Automation Corp. ‐ OBSOLETE
 2183	Hannstar Electronics Corp.
 2185	Current Works, Inc.
 2186	TechTools
@@ -1262,6 +1301,7 @@
 2301	Digianswer A/S
 2302	GDSYSTEMS
 2303	AuthenTec, Inc.
+2304	Pinnacle Systems, Inc. (2) ‐ OBSOLETE
 2305	VST Technologies
 2306	iDream Technologies Pte Ltd
 2307	Infolibria
@@ -1365,6 +1405,7 @@
 2405	PAR Technologies, Inc.
 2406	HanGo Electronics Co., Ltd.
 2407	Acer NeWeb Corporation
+2408	Catalyst Enterprises, Inc. ‐ OBSOLETE
 2409	Magellan Corp.
 2410	Koizumi Computer, Inc.
 2411	ML Electronics Ltd.
@@ -1603,6 +1644,7 @@
 2647	Joachim Koopmann Software
 2648	DIGIDENT LTD.
 2649	Convergence Instruments
+2650	Electronics For Imaging, Inc.‐ OBSOLETE
 2651	EASICS NV
 2652	Broadcom Limited
 2653	Diatrend Corporation
@@ -1826,6 +1868,7 @@
 2874	IPaxess
 2875	Bromax Communications, Inc.
 2876	Olivetti S.p.A
+2877	Olivetti Techcenter ‐ OBSOLETE
 2878	Kikusui Electronics Corporation
 2879	Mitec Systems, Inc.
 2880	RF Solutions Ltd.
@@ -2209,6 +2252,7 @@
 3262	Keryx Technologies, Inc.
 3263	Union Genius Computer Co., Ltd
 3264	Kuon Yi Industrial Corp.
+3265	Given Imaging LTD‐OBSOLETE
 3266	Timex Corporation
 3267	Rimage Corporation
 3268	emsys Embedded Systems GmbH
@@ -2489,6 +2533,7 @@
 3549	Datelink Technology Co., Ltd.
 3550	UBICOM, INC
 3551	DriveCam Video Systems
+3552	BD Consumer Healthcare ‐ OBSOLETE
 3553	Vidicode Datacommunicatie BV
 3554	Acom Data
 3555	RFTECH CO., LTD.
@@ -2786,6 +2831,7 @@
 3847	Pakon
 3848	CSL Wire & Plug (Shen Zhen) Company
 3849	Sandel Arionics Inc.
+3850	Aimgene Technology Co., Ltd. ‐ OBSOLETE
 3851	Great Computer Corporation
 3852	CAS Corporation
 3853	HORI CO., LTD.
@@ -2819,6 +2865,7 @@
 3881	TIPTEL AG
 3882	Marconi Data Systems
 3883	XEMICS SA
+3884	Nicolet Biomedical Inc.,a Viasys Healthcare Co.OBSOLETE
 3885	ViPower, Inc.
 3886	Good Man Corporation
 3887	Priva Design Services
@@ -3550,6 +3597,7 @@
 4614	Synnix Technology Co.
 4615	Cardinal Health UK 232 Ltd.
 4616	Seiko Epson Corp.- System Device
+4617	Interbiometrics Zugangssysteme GmbH ‐ OBSOLETE
 4618	Wintest Corp.
 4619	Dension Audio Systems Ltd.
 4620	ALF, Inc.
@@ -4072,6 +4120,7 @@
 5137	SKIDATA AG
 5138	IMADA CO., LTD.
 5139	Telsey S.p.A.
+5140	Fundamental Software, Inc. ‐ OBSOLETE
 5141	Sony Computer Entertainment Europe
 5142	Axeon Limited
 5143	Butterfly Media
@@ -4769,6 +4818,7 @@
 5837	Brian Moore Guitars, Inc.
 5838	IPFlex Inc.
 5839	YAZAKI PARTS CO., LTD.
+5840	MCS Electronics ‐ OBSOLETE
 5841	Xperix Inc.
 5842	TOMEY
 5843	Frontline Test Equipment, Inc.
@@ -4913,6 +4963,7 @@
 5983	I-BIT Corporation
 5984	RAYLASE AG
 5985	RC GROUP (Holdings) Limited
+5986	Bison Electronics ‐‐ OBSOLETE
 5987	USAF
 5988	KANOMAX JAPAN INC.
 5989	VK Corporation
@@ -4957,6 +5008,7 @@
 6028	URTEK TECHNOLOGIES INC.
 6029	CEIVA Logic, Inc.
 6030	Movimento Group AB
+6031	Eagle Technology ‐ OBSOLETE
 6032	Ueda Japan Radio Co., Ltd.
 6033	SYNTHETIC PLANNING INDUSTRY CO., LTD.
 6034	LINK GmbH
@@ -6428,6 +6480,7 @@
 7501	Pegatron Corporation
 7502	INPHI CORPORATION
 7503	ADVANCED CHIP EXPRESS INC.
+7504	OPENMOKO, Inc. ‐ OBSOLETE
 7505	Sengital Limited
 7506	ELECTROBYTE di GARAVAGLIA MATTIA
 7507	Innofidei Inc.
@@ -9018,6 +9071,7 @@
 10093	YSTEK Technology Company
 10094	RGB Lasersysteme GmbH
 10095	Lightware Visual Engineering
+10096	Service and Quality Technology Co., Ltd. ‐ OBSOLETE
 10097	TTE Corporation
 10098	Audio Tuning Vertriebs GmbH
 10099	HILTI AG
@@ -9565,6 +9619,7 @@
 10641	Orbitsound Ltd
 10642	Lantos Technologies, Inc.
 10643	ADPlaus Technology Limited
+10644	Choy's Import ‐ OBSOLETE
 10645	Resodyn Corporation
 10646	Aptiv Consumer Connectivity
 10647	Inogeni Inc.
@@ -9757,6 +9812,7 @@
 10834	L CARD Ltd.
 10835	x-odos GmbH
 10836	Black Diamond Advanced Technology, LLC
+10837	Diodes Inc. ‐ OBSOLETE
 10838	eemagine Medical Imaging Solutions GmbH
 10839	Bellingham + Stanley Limited
 10840	ALIGN Corporation Limited
@@ -10566,6 +10622,7 @@
 11648	Pendo Technology China Corporation
 11649	Evollve Inc.
 11650	boud
+11651	Evermax ‐ Obsolete
 11652	Zhuhai J-Speed Technology Co., Ltd.
 11653	Asahi Electronics Laboratory
 11654	Dongguan Team Force Electronic Co., Ltd
@@ -13624,6 +13681,7 @@
 20568	ProXense, LLC
 21061	RESPIRONICS, INC.
 21320	Sharp Display Technology Corporation
+21325	Hefei Macrosilicon Technology Co., Ltd. ‐ OBSOLETE
 21581	Transmeta Corporation
 21827	UC-Logic Technology Corp.
 21845	Number Five, Software
@@ -13654,3 +13712,5 @@
 52290	Cardio Control NV
 59905	Eagle Technology
 60186	Empia Technology, Inc.
+61525	USB‐IF ‐ OBSOLETE
+65535	Taiwan OEM ‐ OBSOLETE

@@ -16,6 +16,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 URL="${USBIF_VID_URL:-https://www.usb.org/sites/default/files/vendor_ids03102026_0.pdf}"
+OBSOLETE_URL="${USBIF_OBSOLETE_VID_URL:-https://www.usb.org/sites/default/files/obsoletevids_10232019.pdf}"
 RESOURCE_DIR="Sources/WhatCableCore/Resources"
 OUTPUT="${RESOURCE_DIR}/usbif-vendors.tsv"
 
@@ -28,15 +29,37 @@ fi
 mkdir -p "$RESOURCE_DIR"
 TMP_PDF=$(mktemp -t usbif-vids-XXXXXX).pdf
 TMP_TXT=$(mktemp -t usbif-vids-XXXXXX).txt
-trap 'rm -f "$TMP_PDF" "$TMP_TXT"' EXIT
+TMP_OBS_PDF=$(mktemp -t usbif-obs-vids-XXXXXX).pdf
+TMP_OBS_TXT=$(mktemp -t usbif-obs-vids-XXXXXX).txt
+trap 'rm -f "$TMP_PDF" "$TMP_TXT" "$TMP_OBS_PDF" "$TMP_OBS_TXT"' EXIT
 
 echo "==> Downloading $URL"
 curl -fsSL "$URL" -o "$TMP_PDF"
 SIZE=$(stat -f%z "$TMP_PDF" 2>/dev/null || stat -c%s "$TMP_PDF")
 echo "    $SIZE bytes"
 
+echo "==> Downloading $OBSOLETE_URL"
+curl -fsSL "$OBSOLETE_URL" -o "$TMP_OBS_PDF"
+OBS_SIZE=$(stat -f%z "$TMP_OBS_PDF" 2>/dev/null || stat -c%s "$TMP_OBS_PDF")
+echo "    $OBS_SIZE bytes"
+
 echo "==> Extracting text"
 pdftotext -layout "$TMP_PDF" "$TMP_TXT"
+pdftotext -layout "$TMP_OBS_PDF" "$TMP_OBS_TXT"
+
+PARSE_VENDOR='
+    # pdftotext emits a form-feed (\x0C) at the start of each page,
+    # which can land glued onto a vendor name. Strip any control
+    # characters from the line before parsing.
+    s/[\x00-\x08\x0B-\x1F\x7F]+//g;
+    next if /^\s*$/;
+    next if /^\s*(Company|Vendor ID|\(Decimal Format\))/;
+    if (/^(.*?\S)\s{2,}(\d+)\s*$/) {
+        my ($name, $vid) = ($1, $2);
+        $name =~ s/^\s+|\s+$//g;
+        print "$vid\t$name\n";
+    }
+'
 
 echo "==> Parsing vendor entries"
 # Each vendor row in the layout-preserved text looks like:
@@ -45,21 +68,13 @@ echo "==> Parsing vendor entries"
 {
     echo "# USB-IF Vendor ID lookup"
     echo "# Source: $URL"
+    echo "# Obsolete source: $OBSOLETE_URL"
     echo "# Fetched: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     echo "# Format: <decimal_vid>\t<vendor_name>"
-    perl -ne '
-        # pdftotext emits a form-feed (\x0C) at the start of each page,
-        # which can land glued onto a vendor name. Strip any control
-        # characters from the line before parsing.
-        s/[\x00-\x08\x0B-\x1F\x7F]+//g;
-        next if /^\s*$/;
-        next if /^\s*(Company|Vendor ID|\(Decimal Format\))/;
-        if (/^(.*?\S)\s{2,}(\d+)\s*$/) {
-            my ($name, $vid) = ($1, $2);
-            $name =~ s/^\s+|\s+$//g;
-            print "$vid\t$name\n";
-        }
-    ' "$TMP_TXT" | sort -n -u
+    {
+        perl -ne "$PARSE_VENDOR" "$TMP_TXT"
+        perl -ne "$PARSE_VENDOR" "$TMP_OBS_TXT"
+    } | sort -n -u
 } > "$OUTPUT"
 
 # Count vendor entries (non-comment lines)

@@ -13,6 +13,10 @@ final class VendorDBTests: XCTestCase {
         XCTAssertEqual(VendorDB.name(for: 0x046D), "Logitech Inc.")
         XCTAssertEqual(VendorDB.name(for: 0x291A), "Anker Innovations Limited")
         XCTAssertEqual(VendorDB.name(for: 0x18D1), "Google Inc.")
+        // Obsolete vendors — bundled TSV must include them with OBSOLETE suffix
+        XCTAssertEqual(VendorDB.name(for: 0x041C), "Altera Corp. ‐ OBSOLETE")
+        XCTAssertEqual(VendorDB.name(for: 0x07D1), "D-Link Corp. ‐ OBSOLETE")
+
     }
 
     func testCableEmarkerChipVendorsResolve() {
