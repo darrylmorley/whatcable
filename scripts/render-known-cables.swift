@@ -228,12 +228,12 @@ let html = """
     <meta property="og:url" content="https://whatcable.uk/cables">
     <meta property="og:title" content="WhatCable: Cable database">
     <meta property="og:description" content="A growing public database of USB-C cable e-marker fingerprints reported via WhatCable, the macOS menu bar app for cable diagnostics.">
-    <meta property="og:image" content="https://whatcable.uk/screenshot.png">
+    <meta property="og:image" content="https://whatcable.uk/screenshot.webp">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="WhatCable: Cable database">
     <meta name="twitter:description" content="A growing public database of USB-C cable e-marker fingerprints reported via WhatCable.">
-    <meta name="twitter:image" content="https://whatcable.uk/screenshot.png">
+    <meta name="twitter:image" content="https://whatcable.uk/screenshot.webp">
 
     <script type="application/ld+json">
     {
