@@ -177,7 +177,7 @@ final class PortSummaryTests: XCTestCase {
         let port = makePort(active: ["USB2"], supported: ["CC", "USB2"], emarker: false)
         let summary = PortSummary(port: port)
         XCTAssertTrue(
-            summary.bullets.contains(where: { $0.contains("No e-marker reported") }),
+            summary.bullets.contains(where: { $0.contains("No e-marker detected") }),
             "expected a no-e-marker bullet, got: \(summary.bullets)"
         )
     }
@@ -189,7 +189,7 @@ final class PortSummaryTests: XCTestCase {
         let port = makePort(active: ["USB3"], supported: ["USB2", "USB3"], superSpeed: true)
         let summary = PortSummary(port: port)
         XCTAssertFalse(
-            summary.bullets.contains(where: { $0.contains("No e-marker reported") }),
+            summary.bullets.contains(where: { $0.contains("No e-marker detected") }),
             "no-PD port should not claim a missing e-marker, got: \(summary.bullets)"
         )
         XCTAssertTrue(
@@ -235,7 +235,7 @@ final class PortSummaryTests: XCTestCase {
             "MagSafe must not show the 'can't read cable details' bullet, got: \(summary.bullets)"
         )
         XCTAssertFalse(
-            summary.bullets.contains(where: { $0.contains("No e-marker reported") }),
+            summary.bullets.contains(where: { $0.contains("No e-marker detected") }),
             "MagSafe must not show the missing-e-marker bullet, got: \(summary.bullets)"
         )
     }
@@ -477,5 +477,50 @@ final class PortSummaryTests: XCTestCase {
         let deviceBullet = summary.bullets.first { $0.contains("Connected device") }
         XCTAssertNotNil(deviceBullet)
         XCTAssertFalse(deviceBullet!.contains("PD"), "Should not show PD revision when unknown")
+    }
+
+    // MARK: - Unknown state enrichment
+
+    func testUnknownWithSOPPartnerShowsEmarkerBullet() {
+        // Connected, PD-capable, no transports active, no charger,
+        // but a partner SOP identity exists. The e-marker explanation
+        // bullet should appear because we know something is on the
+        // other end.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let partner = PDIdentity(
+            id: 50, endpoint: .sop,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0x1234, bcdDevice: 0,
+            vdos: [0x6C00_05AC], specRevision: 3
+        )
+        let summary = PortSummary(port: port, identities: [partner])
+        XCTAssertEqual(summary.status, .unknown)
+        XCTAssertTrue(
+            summary.bullets.contains(where: { $0.contains("No e-marker detected") }),
+            "Expected e-marker explanation bullet in .unknown with SOP partner, got: \(summary.bullets)"
+        )
+    }
+
+    func testUnknownWithChargerHitsChargingNotUnknown() {
+        // A charger on the port should hit .charging, not .unknown,
+        // even when no transports are active. Pin this so a future
+        // refactor doesn't accidentally drop charger-only connections
+        // into .unknown.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let source = usbPD(maxW: 20, winningW: 20)
+        let summary = PortSummary(port: port, sources: [source])
+        XCTAssertEqual(summary.status, .charging,
+            "Charger present with no active transports should be .charging, not .unknown")
+    }
+
+    func testPureUnknownHasNoBullets() {
+        // Connected but truly zero data: no transports, no charger,
+        // no identities, no USB2 in supported. Should be .unknown
+        // with empty bullets (no false "basic cable" claim).
+        let port = makePort(connected: true, active: [], supported: [])
+        let summary = PortSummary(port: port)
+        XCTAssertEqual(summary.status, .unknown)
+        XCTAssertTrue(summary.bullets.isEmpty,
+            "Pure .unknown with no data should have empty bullets, got: \(summary.bullets)")
     }
 }

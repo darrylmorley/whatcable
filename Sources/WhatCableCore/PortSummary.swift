@@ -143,6 +143,10 @@ extension PortSummary {
         // B. The cable
         // ------------------------------------------------------------
 
+        // Hoist the charging source lookup so the e-marker guard can
+        // use it to decide whether something is on the other end.
+        let chargingSource = PowerSource.preferredChargingSource(in: sources)
+
         // E-marker presence. The whole cable-details bullet only makes
         // sense on USB-C, where the user can swap cables and might wonder
         // why details are missing. On MagSafe the cable is part of the
@@ -150,11 +154,21 @@ extension PortSummary {
         // just over its own pins, not the CC line we test for
         // `pdCapable`), so don't emit any "no e-marker" wording there.
         let isMagSafe = port.portTypeDescription?.hasPrefix("MagSafe") == true
+
+        // Show the "no e-marker" explanation when there's evidence
+        // something is connected (active transport, charger, SOP partner,
+        // or USB device), not just when transports are active. Without
+        // this, the .unknown state (empty active) never shows the bullet.
+        let hasPartner = chargingSource != nil
+            || identities.contains(where: { $0.endpoint == .sop })
+            || !devices.isEmpty
+        let hasPayload = !active.isEmpty || hasPartner
+
         if hasEmarker {
             bullets.append(String(localized: "Cable has an e-marker chip (advertises its capabilities)", bundle: .module))
-        } else if !active.isEmpty && !isMagSafe {
+        } else if hasPayload && !isMagSafe {
             if pdCapable {
-                bullets.append(String(localized: "No e-marker reported. macOS only asks above 3A.", bundle: .module))
+                bullets.append(String(localized: "No e-marker detected. The cable may have one, but macOS only checks above 3A.", bundle: .module))
             } else {
                 bullets.append(String(localized: "This port can't read cable details (USB-only port, no Power Delivery)", bundle: .module))
             }
@@ -211,7 +225,6 @@ extension PortSummary {
         // ------------------------------------------------------------
 
         // Power summary from PD or MagSafe power sources.
-        let chargingSource = PowerSource.preferredChargingSource(in: sources)
         if let chargingSource {
             let maxW = Int((Double(chargingSource.maxPowerMW) / 1000).rounded())
             let hasOptions = !chargingSource.options.isEmpty
