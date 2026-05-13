@@ -154,7 +154,7 @@ extension PortSummary {
             bullets.append(String(localized: "Cable has an e-marker chip (advertises its capabilities)", bundle: .module))
         } else if !active.isEmpty && !isMagSafe {
             if pdCapable {
-                bullets.append(String(localized: "Cable does not advertise an e-marker (basic cable)", bundle: .module))
+                bullets.append(String(localized: "No e-marker reported. macOS only asks above 3A.", bundle: .module))
             } else {
                 bullets.append(String(localized: "This port can't read cable details (USB-only port, no Power Delivery)", bundle: .module))
             }
@@ -304,7 +304,7 @@ extension PortSummary {
         } else {
             self.status = .unknown
             self.headline = String(localized: "Connected", bundle: .module)
-            self.subtitle = String(localized: "Couldn't determine cable type from this port.", bundle: .module)
+            self.subtitle = String(localized: "Try a higher-wattage charger to identify the cable.", bundle: .module)
         }
 
         self.bullets = bullets

@@ -169,13 +169,16 @@ final class PortSummaryTests: XCTestCase {
         )
     }
 
-    func testNoEmarkerCableProducesBasicCableBullet() {
-        // PD-capable port (CC present) with no e-marker: existing wording.
+    func testNoEmarkerCableProducesNoEmarkerBullet() {
+        // PD-capable port (CC present) with no SOP'/SOP'' identity. The
+        // wording deliberately doesn't claim "basic cable" — macOS may
+        // simply not have run Discover Identity SOP' yet (typically only
+        // happens when the link needs to negotiate above 3A).
         let port = makePort(active: ["USB2"], supported: ["CC", "USB2"], emarker: false)
         let summary = PortSummary(port: port)
         XCTAssertTrue(
-            summary.bullets.contains(where: { $0.contains("does not advertise") }),
-            "expected a basic-cable bullet, got: \(summary.bullets)"
+            summary.bullets.contains(where: { $0.contains("No e-marker reported") }),
+            "expected a no-e-marker bullet, got: \(summary.bullets)"
         )
     }
 
@@ -186,8 +189,8 @@ final class PortSummaryTests: XCTestCase {
         let port = makePort(active: ["USB3"], supported: ["USB2", "USB3"], superSpeed: true)
         let summary = PortSummary(port: port)
         XCTAssertFalse(
-            summary.bullets.contains(where: { $0.contains("does not advertise") }),
-            "no-PD port should not claim 'basic cable', got: \(summary.bullets)"
+            summary.bullets.contains(where: { $0.contains("No e-marker reported") }),
+            "no-PD port should not claim a missing e-marker, got: \(summary.bullets)"
         )
         XCTAssertTrue(
             summary.bullets.contains(where: { $0.contains("can't read cable details") }),
@@ -232,8 +235,8 @@ final class PortSummaryTests: XCTestCase {
             "MagSafe must not show the 'can't read cable details' bullet, got: \(summary.bullets)"
         )
         XCTAssertFalse(
-            summary.bullets.contains(where: { $0.contains("does not advertise") }),
-            "MagSafe must not show the 'basic cable' bullet, got: \(summary.bullets)"
+            summary.bullets.contains(where: { $0.contains("No e-marker reported") }),
+            "MagSafe must not show the missing-e-marker bullet, got: \(summary.bullets)"
         )
     }
 

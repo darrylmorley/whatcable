@@ -366,10 +366,10 @@ final class JSONFormatterTests: XCTestCase {
         let obj = parse(json)
         let portJSON = (obj["ports"] as? [[String: Any]])?.first ?? [:]
         XCTAssertEqual(portJSON["pdCapable"] as? Bool, false)
-        // And the port-level bullet should not claim "basic cable".
+        // And the port-level bullet should not claim a missing e-marker.
         let bullets = portJSON["bullets"] as? [String] ?? []
-        XCTAssertFalse(bullets.contains(where: { $0.contains("does not advertise") }),
-                       "no-PD port should not claim 'basic cable', got: \(bullets)")
+        XCTAssertFalse(bullets.contains(where: { $0.contains("No e-marker reported") }),
+                       "no-PD port should not claim a missing e-marker, got: \(bullets)")
         XCTAssertTrue(bullets.contains(where: { $0.contains("can't read cable details") }),
                       "expected 'port can't read cable details' bullet, got: \(bullets)")
     }
