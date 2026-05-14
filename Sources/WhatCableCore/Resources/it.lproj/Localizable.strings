@@ -39,8 +39,8 @@
 "Copper" = "Rame";
 "Couldn't determine cable type from this port." = "Impossibile determinare il tipo di cavo in questa porta.";
 "Currently negotiated: %@ @ %@ (%@)" = "Attualmente negoziati: %1$@ @ %2$@ (%3$@)";
-"Display connected" = "Display connesso";
-"Display connected · %lldW charger" = "Display connesso · caricabatterie %lldW";
+"Display connected" = "Schermo connesso";
+"Display connected · %lldW charger" = "Schermo connesso · caricabatterie %lldW";
 "DisplayPort video over USB-C alt mode." = "Video DisplayPort su modalità alternativa USB-C.";
 "E-marker claims EPR support but reports only 20V max VBUS" = "L'e-marker dichiara il supporto EPR ma riporta solo VBUS max 20 V";
 "E-marker reports no vendor identity" = "L'e-marker non riporta l'identità del produttore";
@@ -54,7 +54,7 @@
 "Linked at %@" = "Collegato a %@";
 "Negotiation hasn't completed yet." = "La negoziazione non è ancora stata completata.";
 "No USB-C / MagSafe ports were found on this Mac." = "Nessuna porta USB-C/MagSafe trovata in questo Mac.";
-"Nothing connected" = "Nessun cavo collegato";
+"Nothing connected" = "Nessun dispositivo collegato";
 "Only USB 2.0 is active. If you expected high speed, the cable may not support it." = "È attivo solo USB 2.0. Se ti aspettavi un'alta velocità, il cavo potrebbe non supportarla.";
 "Optical" = "Ottico";
 "Optical cable" = "Cavo ottico";
