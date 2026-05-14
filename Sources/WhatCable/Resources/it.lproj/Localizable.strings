@@ -16,7 +16,7 @@
 "Connected devices" = "Dispositivi connessi";
 "Connected: %@" = "Connesso: %@";
 "Connection" = "Connessione";
-"Display" = "Display";
+"Display" = "Visualizzazione";
 "Done" = "OK";
 "Downloading…" = "Download…";
 "File a GitHub issue with this cable's e-marker fingerprint" = "Segnala un problema su GitHub con la firma digitale e-marker di questo cavo";
@@ -34,7 +34,7 @@
 "Lives in the menu bar with no Dock icon." = "Si trova nella barra dei menu senza l'icona del Dock.";
 "No" = "No";
 "No USB-C ports detected" = "Nessuna porta USB-C rilevata";
-"Nothing connected" = "Nessun cavo collegato";
+"Nothing connected" = "Nessun dispositivo collegato";
 "Notifications" = "Notifiche";
 "Notify on cable changes" = "Notifica cambio cavo";
 "Open in GitHub" = "Apri in GitHub";
