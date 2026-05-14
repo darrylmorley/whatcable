@@ -1,4 +1,3 @@
-" · %lldW cable" = " · cavo %lldW";
 "0.2-0.5 mW" = "0.2-0.5 mW";
 "0.5-1 mW" = "0.5-1 mW";
 "1-5 mW" = "1-5 mW";
@@ -107,6 +106,7 @@
 "VCONN-powered device" = "Dispositivo alimentato da VCONN";
 "Vendor ID isn't in USB-IF's published list" = "L'ID produttore non è nell'elenco pubblicato di USB-IF";
 "What can this USB-C cable actually do?" = "Quali caratteristiche effettive ha questo cavo USB-C?";
+" · %lldW cable" = " · cavo %lldW";
 "high-speed data" = "dati ad alta velocità";
 "smart cable" = "Cavo con e-marker";
 "video" = "video";
