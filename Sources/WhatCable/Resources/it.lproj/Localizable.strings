@@ -1,6 +1,7 @@
+"" = "";
 "%@ negotiated" = "%@ negoziato";
 "%@ profiles" = "%@ profili";
-"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld porte USB-C rilevate, ma al momento non è collegato nulla. Per visualizzarle disattiva 'Nascondi porte vuote' in Impostazioni.";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld porte USB-C rilevate, ma al momento non è collegato nulla. Per visualizzarle disattiva in Impostazioni l'opzione 'Nascondi porte vuote'.";
 "About %@" = "Info su %@";
 "Active" = "Attivo";
 "Active cable electronics" = "Elettronica attiva via cavo";
@@ -28,6 +29,7 @@
 "Install update" = "Installa aggiornamento";
 "Installing, WhatCable will relaunch" = "Installazione, WhatCable verrà riavviato";
 "Keep window open" = "Mantieni finestra aperta";
+"Language" = "Lingua";
 "Launch at login" = "Esegui all'accesso";
 "Lives in the menu bar with no Dock icon." = "Si trova nella barra dei menu senza l'icona del Dock.";
 "No" = "No";
@@ -47,6 +49,7 @@
 "Refresh" = "Aggiorna";
 "Report this cable" = "Segnala questo cavo";
 "Runs as a regular Dock app with a window." = "Funziona come una normale app Dock con una finestra.";
+"System Default" = "Predefinito sistema";
 "Settings" = "Impostazioni";
 "Settings…" = "Impostazioni…";
 "Show in menu bar" = "Visualizza nella barra menu";
