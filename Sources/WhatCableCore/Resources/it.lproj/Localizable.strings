@@ -54,7 +54,7 @@
 "Linked at %@" = "Collegato a %@";
 "Negotiation hasn't completed yet." = "La negoziazione non è ancora stata completata.";
 "No USB-C / MagSafe ports were found on this Mac." = "Nessuna porta USB-C/MagSafe trovata in questo Mac.";
-"Nothing connected" = "Niente di collegato";
+"Nothing connected" = "Nessun cavo collegato";
 "Only USB 2.0 is active. If you expected high speed, the cable may not support it." = "È attivo solo USB 2.0. Se ti aspettavi un'alta velocità, il cavo potrebbe non supportarla.";
 "Optical" = "Ottico";
 "Optical cable" = "Cavo ottico";
@@ -62,7 +62,7 @@
 "Optical fibres are electrically isolated end-to-end" = "Le fibre ottiche sono isolate elettricamente end-to-end";
 "Other" = "Altro";
 "Passive cable" = "Cavo passivo";
-"Plug a cable into %@ to see what it can do." = "Collega un cavo a %@ per vedere cosa può fare.";
+"Plug a cable into %@ to see what it can do." = "Per vedere le caratteristiche del cavo collegalo a %@ .";
 "Power is flowing but no data link is established." = "Connessione alimentazione attiva ma non è stato stabilito alcun collegamento dati.";
 "Power is flowing. No data connection." = "Connessione alimentazione attiva. Nessuna connessione dati.";
 "Raw IOKit properties:" = "Proprietà IOKit RAW:";
