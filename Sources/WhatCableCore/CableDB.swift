@@ -39,12 +39,21 @@ public enum CableDB {
 
     /// Look up a known cable by its e-marker fingerprint. Returns
     /// nil when the cable isn't in our curated database.
+    ///
+    /// A zeroed VID and PID means the cable advertises no vendor and
+    /// no product identity. The Cable VDO is a capability descriptor
+    /// shared by every cable using the same e-marker chip, not an
+    /// identity, so it cannot tell those cables apart. Matching here
+    /// would confidently mislabel unrelated budget cables as one
+    /// arbitrary product. Refuse any match when VID and PID are both
+    /// zero. See issue #161.
     public static func curatedCable(
         vid: Int,
         pid: Int,
         cableVDO: UInt32
     ) -> CuratedCable? {
-        store.cables[CableKey(vid: vid, pid: pid, cableVDO: cableVDO)]
+        if vid == 0 && pid == 0 { return nil }
+        return store.cables[CableKey(vid: vid, pid: pid, cableVDO: cableVDO)]
     }
 
     /// Number of vendor entries loaded. Exposed for tests.

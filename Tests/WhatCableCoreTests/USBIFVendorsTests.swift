@@ -114,21 +114,14 @@ struct CableDBTests {
         #expect(CableDB.cableCount >= 10)
     }
 
-    @Test("VID 0 disambiguation")
-    func vid0Disambiguation() {
-        // Three cables with VID=0/PID=0 but different Cable VDO values
-        // should resolve to different brands.
-        let cuktech = CableDB.curatedCable(vid: 0, pid: 0, cableVDO: 0)
-        let dockcase = CableDB.curatedCable(vid: 0, pid: 0, cableVDO: 0x00082042)
-        let vorodcip = CableDB.curatedCable(vid: 0, pid: 0, cableVDO: 0x000A6642)
-
-        #expect(cuktech != nil)
-        #expect(dockcase != nil)
-        #expect(vorodcip != nil)
-
-        // All three resolve to different brands.
-        #expect(cuktech?.brand != dockcase?.brand)
-        #expect(cuktech?.brand != vorodcip?.brand)
-        #expect(dockcase?.brand != vorodcip?.brand)
+    @Test("zeroed VID and PID never match a curated cable")
+    func curatedCableRejectsZeroedVidPid() {
+        // VID 0 + PID 0 means no vendor and no product identity. The
+        // Cable VDO is a capability descriptor shared by every cable
+        // using the same e-marker chip, not an identity, so it cannot
+        // disambiguate them. Refuse any curated match. See #161.
+        #expect(CableDB.curatedCable(vid: 0, pid: 0, cableVDO: 0) == nil)
+        #expect(CableDB.curatedCable(vid: 0, pid: 0, cableVDO: 0x00082042) == nil)
+        #expect(CableDB.curatedCable(vid: 0, pid: 0, cableVDO: 0x000A6642) == nil)
     }
 }
