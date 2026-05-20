@@ -83,6 +83,7 @@ struct SettingsForm: View {
                     Text(verbatim: "हिन्दी").tag("hi")
                     Text(verbatim: "日本語").tag("ja")
                     Text(verbatim: "中文 (简体)").tag("zh-Hans")
+                    Text(verbatim: "中文 (繁體)").tag("zh-Hant")
                     Text(verbatim: "Հայերեն").tag("hy")
                 }
                 .pickerStyle(.menu)
