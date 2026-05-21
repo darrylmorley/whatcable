@@ -151,7 +151,7 @@
 "Alert" = "Avviso";
 "Attach count" = "Conteggio collegamenti";
 "Buy a licence at whatcable.uk" = "Acquista una licenza su whatcable.uk";
-"CC Advertisement" = "Advertisement CC";
+"CC Advertisement" = "Annuncio CC";
 "CC line voltage" = "Tensione linea CC";
 "Cable Identity" = "Identità cavo";
 "Cancel" = "Annulla";
@@ -356,7 +356,7 @@
 "About WhatCable Pro" = "Info su WhatCable Pro";
 "Cable Diagnostics" = "Diagnostica cavo";
 "Deep per-port pin maps, plug orientation, and protocol detail." = "Mappe dettagliate dei pin per porta, orientamento connettore e dettagli del protocollo.";
-"Licence Key" = "Chaive licenza";
+"Licence Key" = "Chiave licenza";
 "Live MagSafe pin layout for charging and diagnostics." = "Layout pin live per carica e diagnostica.";
 "Live multi-port power graphs and event history." = "Grafici potenza multi porta in tempo reale e cronologia eventi.";
 "MagSafe pin diagrams" = "Diagramma pin MagSafe";
