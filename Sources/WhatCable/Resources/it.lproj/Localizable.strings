@@ -22,7 +22,7 @@
 "Downloading…" = "Download…";
 "File a GitHub issue with this cable's e-marker fingerprint" = "Segnala un problema su GitHub con la firma digitale e-marker di questo cavo";
 "Font size" = "Dimensione font";
-"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Aiuta l'autore del programma a riprodurre il comportamento del caricabatterie/cavo legato all'hardware specifico.";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Aiuta l'autore del programma a riprodurre il comportamento del caricatore/cavo legato all'hardware specifico.";
 "Hide empty ports" = "Nascondi porte con cavi non collegati";
 "Host (%@)" = "Host (%@)";
 "Include Mac model and macOS version" = "Includi modello Mac e versione macOS";
@@ -83,17 +83,17 @@
 "Privacy" = "Privacy";
 "Pro" = "Pro";
 "Proceed" = "Procedi";
-"Raw IOKit registry properties for each USB-C port, your macOS version, and chip type. This is the same data visible in System Information." = "Proprietà grezze del registro IOKit per ogni porta USB-C, la tua versione di macOS e il tipo di chip. Sono gli stessi dati visibili in System Information.";
+"Raw IOKit registry properties for each USB-C port, your macOS version, and chip type. This is the same data visible in System Information." = "Proprietà grezze del registro IOKit per ogni porta USB-C, la versione di macOS e il tipo di chip. Sono gli stessi dati visibili in System Information.";
 "What happens" = "Cosa succede";
-"What is collected" = "Cosa viene raccolto";
+"What is collected" = "Quali dati vengono raccolti";
 "WhatCable runs 13 IOKit probes that read raw USB-C and Thunderbolt data from your Mac's port controller registers. The results are sent to a secure server to help improve cable and port detection." = "WhatCable esegue 13 sonde IOKit che leggono i dati grezzi USB-C e Thunderbolt dai registri del controller di porta del tuo Mac. I risultati vengono inviati a un server sicuro per aiutare a migliorare il rilevamento di cavi e porte.";
 "Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, serial numbers, or personal data are collected or stored." = "L'UUID hardware della tua macchina viene sottoposto ad hashing con SHA-256 prima dell'invio. Non vengono raccolti o memorizzati nomi, account, numeri di serie o dati personali.";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
-"Back" = "Back";
-"Unpin (popover closes when you click away)" = "Unpin (popover closes when you click away)";
-"Open in a separate window" = "Open in a separate window";
-"Power Monitor" = "Power Monitor";
-"Negotiation Diagnostics" = "Negotiation Diagnostics";
-"Cable Diagnostics" = "Cable Diagnostics";
-"%@ Port %lld Diagnostics" = "%@ Port %lld Diagnostics";
+"Back" = "Indietro";
+"Unpin (popover closes when you click away)" = "Sblocca (il popup si chiude quando fai clic altrove)";
+"Open in a separate window" = "Apri in una finestra separata";
+"Power Monitor" = "Monitor alimentazione";
+"Negotiation Diagnostics" = "Diagnostica negoziazione";
+"Cable Diagnostics" = "Diagnostica cavo";
+"%@ Port %lld Diagnostics" = "%@ porta %lld diagnostiche";
