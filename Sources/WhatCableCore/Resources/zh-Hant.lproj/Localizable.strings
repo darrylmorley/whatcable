@@ -355,12 +355,12 @@
 
 
 /* Pro overview screen + footer pill (Pro funnel). Parity placeholders in English; refine in the community translation flow. */
-"Cable Diagnostics" = "Cable Diagnostics";
-"Deep per-port pin maps, plug orientation, and protocol detail." = "Deep per-port pin maps, plug orientation, and protocol detail.";
-"Licence Key" = "Licence Key";
-"Live MagSafe pin layout for charging and diagnostics." = "Live MagSafe pin layout for charging and diagnostics.";
-"Live multi-port power graphs and event history." = "Live multi-port power graphs and event history.";
-"MagSafe pin diagrams" = "MagSafe pin diagrams";
-"Manage Licence…" = "Manage Licence…";
-"See exactly what each link can do, and where the bottleneck is." = "See exactly what each link can do, and where the bottleneck is.";
-"Unlock deep diagnostics, live power graphs, and per-port history. One-off licence, no subscription." = "Unlock deep diagnostics, live power graphs, and per-port history. One-off licence, no subscription.";
+"Cable Diagnostics" = "線材診斷";
+"Deep per-port pin maps, plug orientation, and protocol detail." = "深入查看各連接埠的針腳配置、插頭方向與協定詳細資訊。";
+"Licence Key" = "授權金鑰";
+"Live MagSafe pin layout for charging and diagnostics." = "即時顯示用於充電與診斷的 MagSafe 針腳配置。";
+"Live multi-port power graphs and event history." = "即時多連接埠功率圖表與事件記錄。";
+"MagSafe pin diagrams" = "MagSafe 針腳圖";
+"Manage Licence…" = "管理授權…";
+"See exactly what each link can do, and where the bottleneck is." = "精確查看每個連線能做什麼，以及瓶頸在哪裡。";
+"Unlock deep diagnostics, live power graphs, and per-port history. One-off licence, no subscription." = "解鎖進階診斷、即時功率圖表與各連接埠歷史記錄。一次授權，無需訂閱。";
