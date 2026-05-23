@@ -73,8 +73,8 @@
 "Re-driver" = "Re-driver";
 "Re-timer" = "Re-timer";
 "Reserved" = "保留";
-"Slow USB device or charge-only cable" = "慢速 USB 裝置或僅充電線材";
-"Slow USB device or charge-only cable · %lldW charger" = "慢速 USB 裝置或僅充電線材 · %lldW 充電器";
+"Slow USB device or charge-only cable" = "慢速 USB 裝置或純充電線材";
+"Slow USB device or charge-only cable · %lldW charger" = "慢速 USB 裝置或純充電線材 · %lldW 充電器";
 "SuperSpeed USB (5 Gbps or faster)" = "SuperSpeed USB（5 Gbps 或更快）";
 "SuperSpeed data link is active." = "SuperSpeed 資料連線作用中。";
 "Supports %@." = "支援 %@。";
