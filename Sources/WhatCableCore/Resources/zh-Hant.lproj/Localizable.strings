@@ -115,15 +115,6 @@
 "smart cable" = "帶有 e-marker 的線材";
 "video" = "影像";
 
-/* DisplayPort lane labels, connected-device variants, pin-diagram Data label */
-"2 DP lanes + USB3 data" = "2 條 DP 通道 + USB3 資料";
-"4 DP lanes (no USB3 alongside video)" = "4 條 DP 通道（影像旁沒有 USB3）";
-"Carrying DisplayPort video (%@)" = "正在傳輸 DisplayPort 影像（%@）";
-"Connected device: %@" = "已連接裝置：%@";
-"Connected device: %@, %@ (%@)" = "已連接裝置：%1$@，%2$@（%3$@）";
-"Data" = "資料";
-"DisplayPort alt mode" = "DisplayPort 替代模式";
-
 /* Cable speed / charger status strings (previously missing keys) */
 "20 Gbps capable" = "支援 20 Gbps";
 "40 Gbps capable" = "支援 40 Gbps";
@@ -136,6 +127,15 @@
 "Try a higher-wattage charger to identify the cable." = "嘗試使用更高瓦數的充電器來辨識線材。";
 "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)" = "USB4 Gen 3（40 Gbps，Thunderbolt 4 等級）";
 "USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)" = "USB4 Gen 4（80 Gbps，Thunderbolt 5 等級）";
+
+/* DisplayPort lane labels, connected-device variants, pin-diagram Data label */
+"2 DP lanes + USB3 data" = "2 條 DP 通道 + USB3 資料";
+"4 DP lanes (no USB3 alongside video)" = "4 條 DP 通道（影像旁沒有 USB3）";
+"Carrying DisplayPort video (%@)" = "正在傳輸 DisplayPort 影像（%@）";
+"Connected device: %@" = "已連接裝置：%@";
+"Connected device: %@, %@ (%@)" = "已連接裝置：%1$@，%2$@（%3$@）";
+"Data" = "資料";
+"DisplayPort alt mode" = "DisplayPort 替代模式";
 
 /* Pro plugin UI strings */
 "%@ (spec, not measured)" = "%@（規格值，非實測）";
