@@ -137,7 +137,6 @@
 "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)" = "USB4 Gen 3（40 Gbps，Thunderbolt 4 等級）";
 "USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)" = "USB4 Gen 4（80 Gbps，Thunderbolt 5 等級）";
 
-
 /* Pro plugin UI strings */
 "%@ (spec, not measured)" = "%@（規格值，非實測）";
 "%@ Diagnostics" = "%@ 診斷";
@@ -319,7 +318,7 @@
 "See what your USB-C cables can do at a glance." = "一眼查看 USB-C 線材能做什麼。";
 
 /* Negotiation diagnostics + Pro UX (PR #55). */
-"The cable's own e-marker under-reports its speed; the Thunderbolt controller confirms it is faster." = "線材本身的 e-marker 低報了速度；Thunderbolt 控制器確認它其實更快。";
+"The cable's e-marker and the Thunderbolt controller disagree on its speed; the controller's reading is treated as authoritative." = "線材的 e-marker 與 Thunderbolt 控制器對速度的判定不一致；會以控制器的讀數為準。";
 "Running at %@" = "正在以 %@ 運作";
 "There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "沒有線材 e-marker 或控制器資料，也沒有可用來比較的連接埠或裝置規格，因此無法判斷線材是否為限制因素。";
 "This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "這條線材沒有 e-marker，也沒有控制器資料，因此無法判斷它是否為限制因素。";
@@ -351,9 +350,7 @@
 "Cable signals disagree" = "線材訊號不一致";
 "an unknown speed" = "未知速度";
 "a higher speed" = "更高速度";
-"The cable's own e-marker reports %@, but the Thunderbolt controller negotiated %@. This is common on active Thunderbolt cables that declare themselves passive. The controller's reading is the one used above." = "線材本身的 e-marker 回報 %@，但 Thunderbolt 控制器協商為 %@。這常見於自稱被動式的主動式 Thunderbolt 線材。上方使用的是控制器讀數。";
-
-
+"The cable's own e-marker reports %@, but the Thunderbolt controller sees %@. This can happen with active Thunderbolt cables that under-report (declaring themselves passive at a low speed) or with suspect cables whose e-markers over-state their capability. The controller's reading is the one used above." = "線材本身的 e-marker 回報 %@，但 Thunderbolt 控制器偵測為 %@。這可能發生在低報速度的主動式 Thunderbolt 線材（以較低速度將自己宣告為被動式），或是 e-marker 高報規格的可疑線材上。上方會以控制器的讀數為準。";
 /* Pro overview screen + footer pill (Pro funnel). */
 "Cable Diagnostics" = "線材診斷";
 "Deep per-port pin maps, plug orientation, and protocol detail." = "深入查看各連接埠的針腳配置、插頭方向與協定詳細資訊。";
