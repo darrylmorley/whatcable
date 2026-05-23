@@ -47,11 +47,11 @@
 "DisplayPort video over USB-C alt mode." = "透過 USB-C alt mode 傳輸 DisplayPort 影像。";
 "E-marker claims EPR support but reports only 20V max VBUS" = "E-marker 聲稱支援 EPR，但回報的最大 VBUS 只有 20V";
 "E-marker reports no vendor identity" = "E-marker 未回報廠商識別資訊";
-"E-marker uses a reserved cable-latency value" = "E-marker 使用保留的線材延遲值";
-"E-marker uses a reserved current-rating value" = "E-marker 使用保留的額定電流值";
-"E-marker uses a reserved data-speed value" = "E-marker 使用保留的資料速度值";
-"E-marker uses an invalid VDO version" = "E-marker 使用無效的 VDO 版本";
-"E-marker uses an invalid cable-termination value" = "E-marker 使用無效的線材端接值";
+"E-marker uses a reserved cable-latency value" = "E-marker 使用了保留的線材延遲值";
+"E-marker uses a reserved current-rating value" = "E-marker 使用了保留的額定電流值";
+"E-marker uses a reserved data-speed value" = "E-marker 使用了保留的資料速度值";
+"E-marker uses an invalid VDO version" = "E-marker 使用了無效的 VDO 版本";
+"E-marker uses an invalid cable-termination value" = "E-marker 使用了無效的線材端接值";
 "Last leg drops from %@ to %@" = "最後一段從 %1$@ 降到 %2$@";
 "Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature." = "合法的 USB-IF 成員通常會在線材中使用非零 vendor ID。全零 VID 是常見的仿冒特徵。";
 "Linked at %@" = "連線速度 %@";
@@ -79,7 +79,7 @@
 "SuperSpeed data link is active." = "SuperSpeed 資料連線作用中。";
 "Supports %@." = "支援 %@。";
 "The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other." = "線材的 e-marker 宣告支援 EPR，但 Max VBUS Voltage 回報為 20V。EPR 運作需要 48V 或 50V VBUS，因此這兩個欄位互相矛盾。";
-"The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "線材的 e-marker 回報 VDO 版本 %lld；對於此線材類型，USB-PD 規範將該值保留或標示為無效。真正的 e-marker 晶片不應輸出無效的版本值。";
+"The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "線材的 e-marker 回報 VDO 版本 %lld；對於此線材類型，該值由 USB-PD 規範保留或標示為無效。真正的 e-marker 晶片不應輸出無效的版本值。";
 "The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "線材的 e-marker 回報線材端接 %lld；USB-PD 規範將其標示為此線材類型的無效值。刷寫錯誤的 e-marker 常會在這裡與線材實際物理接線不一致。";
 "The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報線材延遲值 %lld；對於此線材類型，該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報電流值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
