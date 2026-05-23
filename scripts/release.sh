@@ -214,7 +214,9 @@ fi
 
 if [[ "${DRY_RUN}" == "0" ]]; then
     echo "==> gh release create v${VERSION} on darrylmorley/whatcable"
-    gh release create "v${VERSION}" dist/WhatCable.zip \
+    gh release create "v${VERSION}" \
+        dist/WhatCable.zip \
+        "dist/whatcable-cli-${VERSION}.zip" \
         --repo darrylmorley/whatcable \
         --title "${RELEASE_TITLE}" \
         --notes-file "${NOTES_FILE}"
@@ -225,9 +227,11 @@ fi
 # ---- 7. Verify uploaded asset matches local zip --------------------------
 
 if [[ "${DRY_RUN}" == "0" && -n "${TAP_DIR:-}" ]]; then
-    echo "==> Verifying remote asset sha matches local"
+    echo "==> Verifying remote asset shas match local"
     CASK_VERIFY_REMOTE=1 CASK_VERIFY_STRICT=1 \
         ./scripts/bump-cask.sh "${VERSION}" "dist/WhatCable.zip"
+    CASK_VERIFY_REMOTE=1 CASK_VERIFY_STRICT=1 \
+        ./scripts/bump-formula.sh "${VERSION}" "dist/whatcable-cli-${VERSION}.zip"
 fi
 
 # ---- 8. Sync release notes into tap and push -----------------------------
@@ -235,9 +239,11 @@ fi
 if [[ "${DRY_RUN}" == "0" && -n "${TAP_DIR:-}" ]]; then
     echo "==> Syncing release notes into tap and pushing"
     cp "${NOTES_FILE}" "${TAP_DIR}/release-notes/v${VERSION}.md"
+    # NOTE: this amends HEAD, which is whichever bump script ran last in
+    # build-app.sh (currently bump-formula.sh, after bump-cask.sh). If the
+    # order of those bumps changes, the release notes will land on the
+    # other commit. That's cosmetic, but worth being aware of.
     if ! git -C "${TAP_DIR}" diff --quiet -- "release-notes/v${VERSION}.md"; then
-        # Amend the cask commit with the release notes so the tap has one
-        # commit per release rather than two.
         git -C "${TAP_DIR}" add "release-notes/v${VERSION}.md"
         git -C "${TAP_DIR}" commit --amend --no-edit
     elif git -C "${TAP_DIR}" status --porcelain | grep -q "release-notes/v${VERSION}.md"; then

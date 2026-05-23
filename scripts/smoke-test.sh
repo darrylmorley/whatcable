@@ -24,8 +24,8 @@ fi
 
 APP_NAME="WhatCable"
 BUNDLE_ID="uk.whatcable.whatcable"
-VERSION="0.12.4"
-BUILD_NUMBER="64"
+VERSION="0.12.6"
+BUILD_NUMBER="66"
 MIN_OS="14.0"
 CLI_PRODUCT="whatcable-cli"
 CLI_BIN_NAME="whatcable"
@@ -217,6 +217,18 @@ PLIST
 
 printf "APPL????" > "${CONTENTS_DIR}/PkgInfo"
 
+# Strip macOS metadata sidecars before signing. AppleDouble files (._*)
+# and .DS_Store can be created at any time by the OS when something
+# touches a bundle directory (Finder browse, certain launch paths, even
+# `open` during the smoke test step). If they exist at sign time they
+# get sealed into the manifest; if they appear AFTER sign and before
+# the final zip they are caught by `codesign --verify --strict` as
+# "a sealed resource is missing or invalid". Stripping every time keeps
+# the bundle clean regardless of what touched it.
+echo "==> Stripping macOS metadata sidecars (._* and .DS_Store)"
+find "${APP_DIR}" -name "._*" -delete 2>/dev/null || true
+find "${APP_DIR}" -name ".DS_Store" -delete 2>/dev/null || true
+
 if [[ -n "${DEVELOPER_ID}" ]]; then
     echo "==> Signing CLI binary (inner) with Developer ID + hardened runtime"
     codesign --force --options runtime --timestamp \
@@ -260,6 +272,47 @@ else
     codesign --force --entitlements "${ENTITLEMENTS}" \
         --sign - "${APP_DIR}"
 fi
+
+# --- CLI-only artifact for the whatcable-cli Homebrew formula ----------
+# Stage a standalone zip containing the signed CLI binary plus the SPM
+# resource bundle (USB-IF vendor list, cable DB). Bundle.module looks for
+# the bundle next to the binary, so they have to ship together for the
+# CLI to work when installed outside the .app.
+echo "==> Staging CLI-only zip"
+CLI_STAGING_DIR="${DIST_DIR}/whatcable-cli"
+rm -rf "${CLI_STAGING_DIR}"
+mkdir -p "${CLI_STAGING_DIR}"
+cp "${HELPERS_DIR}/${CLI_BIN_NAME}" "${CLI_STAGING_DIR}/${CLI_BIN_NAME}"
+if [[ -d "${RESOURCES_DIR}/${SPM_BUNDLE_NAME}" ]]; then
+    cp -R "${RESOURCES_DIR}/${SPM_BUNDLE_NAME}" "${CLI_STAGING_DIR}/${SPM_BUNDLE_NAME}"
+fi
+
+# AppInfo.version walks up from the binary looking for Info.plist. Inside
+# the .app it finds Contents/Info.plist. For the standalone CLI we drop a
+# minimal Info.plist alongside the binary so the walk-up finds it on the
+# first iteration, instead of falling back to "dev".
+cat > "${CLI_STAGING_DIR}/Info.plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleShortVersionString</key>
+    <string>${VERSION}</string>
+    <key>CFBundleVersion</key>
+    <string>${BUILD_NUMBER}</string>
+    <key>CFBundleIdentifier</key>
+    <string>${BUNDLE_ID}.cli</string>
+</dict>
+</plist>
+PLIST
+
+find "${CLI_STAGING_DIR}" -name "._*" -delete 2>/dev/null || true
+find "${CLI_STAGING_DIR}" -name ".DS_Store" -delete 2>/dev/null || true
+
+CLI_ZIP="${DIST_DIR}/whatcable-cli-${VERSION}.zip"
+rm -f "${CLI_ZIP}"
+( cd "${DIST_DIR}" && ditto -c -k --keepParent "whatcable-cli" "whatcable-cli-${VERSION}.zip" )
+echo "    Created ${CLI_ZIP}"
 
 echo "==> Verifying signature"
 codesign --verify --deep --strict --verbose=2 "${APP_DIR}" 2>&1 | sed 's/^/    /'
@@ -312,20 +365,80 @@ if [[ -n "${DEVELOPER_ID}" && -n "${NOTARY_PROFILE}" ]]; then
     echo "==> Stapling notarisation ticket"
     xcrun stapler staple "${APP_DIR}"
 
+    # Strip again just before the final zip. macOS may have created
+    # AppleDouble or .DS_Store files while the bundle sat on disk
+    # during notarisation / stapling. Any file added between sign and
+    # zip would fail `codesign --verify --deep --strict` downstream
+    # (which is what the in-app updater runs before installing).
+    echo "==> Stripping macOS metadata sidecars (post-staple)"
+    find "${APP_DIR}" -name "._*" -delete 2>/dev/null || true
+    find "${APP_DIR}" -name ".DS_Store" -delete 2>/dev/null || true
+
     echo "==> Re-creating zip with stapled ticket"
     rm -f "${DIST_DIR}/${APP_NAME}.zip"
     ( cd "${DIST_DIR}" && ditto -c -k --keepParent "${APP_NAME}.app" "${APP_NAME}.zip" )
 
+    # Belt-and-braces: extract the final zip into a scratch directory
+    # and run `codesign --verify --deep --strict`. This catches the
+    # exact failure mode the in-app updater hits (sealed-resource
+    # mismatch from cruft that was zipped but not signed). Failing
+    # here aborts the script before publishing a broken release.
+    echo "==> Verifying signed bundle in final zip"
+    _VERIFY_DIR=$(mktemp -d)
+    ditto -x -k "${DIST_DIR}/${APP_NAME}.zip" "${_VERIFY_DIR}"
+    if codesign --verify --deep --strict --verbose=2 "${_VERIFY_DIR}/${APP_NAME}.app" 2>&1 | sed 's/^/    /'; then
+        echo "    Signed bundle in zip verifies clean."
+    else
+        echo "ERROR: codesign --verify --deep --strict failed on the final zip." >&2
+        echo "       This is the failure mode the in-app updater would hit." >&2
+        rm -rf "${_VERIFY_DIR}"
+        exit 1
+    fi
+    rm -rf "${_VERIFY_DIR}"
+
     echo "==> Verifying Gatekeeper acceptance"
     spctl --assess --type execute --verbose "${APP_DIR}" 2>&1 | sed 's/^/    /'
+
+    echo "==> Submitting CLI-only zip to Apple notarisation"
+    # Bare CLI binaries can't be stapled (stapling is for .app / .pkg / .dmg),
+    # so notarisation lives on Apple's servers and Gatekeeper checks online
+    # at first launch. Acceptable for a Homebrew install path where users
+    # will have network connectivity.
+    xcrun notarytool submit "${CLI_ZIP}" \
+        --keychain-profile "${NOTARY_PROFILE}" \
+        --wait
 elif [[ -n "${DEVELOPER_ID}" ]]; then
     echo "==> NOTARY_PROFILE not set — skipping notarisation"
     echo "    Set it in .env once you've run:"
     echo "      xcrun notarytool store-credentials \"WhatCable-notary\" --apple-id ... --team-id ... --password ..."
 fi
 
+echo "==> Smoke-testing standalone CLI zip"
+# Extract the CLI zip to a scratch directory and exercise both --version
+# and --json. The --json path is the important one: it hits VendorDB and
+# the cable DB, so a broken resource-bundle lookup outside the .app
+# would fail here rather than in the wild on a user's machine.
+_CLI_VERIFY=$(mktemp -d)
+ditto -x -k "${CLI_ZIP}" "${_CLI_VERIFY}"
+STANDALONE_CLI="${_CLI_VERIFY}/whatcable-cli/${CLI_BIN_NAME}"
+STANDALONE_VERSION=$("${STANDALONE_CLI}" --version 2>&1 | tr -d '[:space:]')
+if [[ "${STANDALONE_VERSION}" != "${VERSION}" ]]; then
+    echo "    ERROR: standalone CLI --version reported '${STANDALONE_VERSION}', expected '${VERSION}'." >&2
+    rm -rf "${_CLI_VERIFY}"
+    exit 1
+fi
+if ! "${STANDALONE_CLI}" --json >/dev/null 2>&1; then
+    echo "    ERROR: standalone CLI --json exited non-zero. The SPM resource bundle" >&2
+    echo "    may not be found alongside the binary when installed outside the .app." >&2
+    rm -rf "${_CLI_VERIFY}"
+    exit 1
+fi
+echo "    Standalone CLI runs cleanly"
+rm -rf "${_CLI_VERIFY}"
+
 echo
 echo "Done."
-echo "  App:  ${APP_DIR}"
-echo "  CLI:  ${HELPERS_DIR}/${CLI_BIN_NAME} (inside the bundle)"
-echo "  Zip:  ${DIST_DIR}/${APP_NAME}.zip"
+echo "  App:     ${APP_DIR}"
+echo "  CLI:     ${HELPERS_DIR}/${CLI_BIN_NAME} (inside the bundle)"
+echo "  App zip: ${DIST_DIR}/${APP_NAME}.zip"
+echo "  CLI zip: ${CLI_ZIP}"

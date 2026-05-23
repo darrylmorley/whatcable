@@ -63,6 +63,18 @@ struct WhatCableCLI {
             }
 
             try printSnapshot(snapshot, asJSON: asJSON, showRaw: showRaw)
+
+            // Plain text one-shot output gets a footer hint from any plugin
+            // that wants one (e.g. the unlicensed-Pro hint). Suppressed for
+            // --json (machine-readable) and not reached for --watch / --report.
+            if !asJSON {
+                for contributor in PluginRegistry.shared.cliOutputFooterContributors {
+                    if let line = contributor() {
+                        print("")
+                        print(line)
+                    }
+                }
+            }
         } catch {
             FileHandle.standardError.write(Data("whatcable: \(error)\n".utf8))
             exit(1)

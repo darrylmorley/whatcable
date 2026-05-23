@@ -301,7 +301,21 @@ public struct IOThunderboltSwitch: Identifiable, Hashable {
     ) -> IOThunderboltSwitch? {
         guard let vendorIDNum = read("Vendor ID") as? NSNumber else { return nil }
 
-        let speedMaskRaw = (read("Supported Link Speed") as? NSNumber)?.uint8Value ?? 0
+        // `Supported Link Speed` is per-port on the IOKit side (Apple
+        // Silicon, M3-M5+ confirmed). The switch object itself does not
+        // carry the property. Try the switch first for compatibility with
+        // any platform that did expose it there; if zero, OR together every
+        // lane port's mask. Lane ports on a given switch all advertise the
+        // same capability, but ORing is harmless and forward-safe.
+        let switchLevelMask = (read("Supported Link Speed") as? NSNumber)?.uint8Value ?? 0
+        let speedMaskRaw: UInt8 = {
+            if switchLevelMask != 0 { return switchLevelMask }
+            var agg: UInt8 = 0
+            for p in ports where p.adapterType.isLane {
+                agg |= p.supportedSpeed?.rawValue ?? 0
+            }
+            return agg
+        }()
 
         let powerState: Int?
         if let pmDict = read("IOPowerManagement") as? [String: Any] {

@@ -40,3 +40,9 @@ if [[ -x "scripts/bump-cask.sh" ]]; then
     ./scripts/bump-cask.sh "${VERSION}" "dist/WhatCable.zip" || \
         echo "    cask bump failed (non-fatal)"
 fi
+
+if [[ -x "scripts/bump-formula.sh" ]]; then
+    echo "==> Bumping whatcable-cli formula (no-op unless TAP_DIR is set)"
+    ./scripts/bump-formula.sh "${VERSION}" "dist/whatcable-cli-${VERSION}.zip" || \
+        echo "    whatcable-cli formula bump failed (non-fatal)"
+fi

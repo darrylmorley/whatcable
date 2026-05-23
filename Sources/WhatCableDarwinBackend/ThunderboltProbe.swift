@@ -15,28 +15,38 @@ public enum ThunderboltProbe {
         output += "# Generated \(ISO8601DateFormatter().string(from: Date()))\n"
         output += "\n"
 
-        // IOIOThunderboltSwitch is the abstract parent class. Matching against it
-        // catches all subclass variants (IOIOThunderboltSwitchType7, USB4, etc.).
-        let matching = IOServiceMatching("IOIOThunderboltSwitch")
-        var iter: io_iterator_t = 0
-        let kr = IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iter)
-        guard kr == KERN_SUCCESS else {
-            output += "ERROR: IOServiceGetMatchingServices returned \(kr)\n"
-            return output
-        }
-        defer { IOObjectRelease(iter) }
-
+        // Apple uses two naming families for the abstract parent class:
+        // `IOIOThunderboltSwitch*` on older Macs / older macOS, and
+        // `IOThunderboltSwitch*` on M5 / macOS 26 onward. Match each and
+        // dedup by entry ID so the same service isn't dumped twice.
+        let matchClasses = ["IOIOThunderboltSwitch", "IOThunderboltSwitch"]
+        var seen: Set<UInt64> = []
         var switchCount = 0
-        while case let service = IOIteratorNext(iter), service != 0 {
-            defer { IOObjectRelease(service) }
-            switchCount += 1
-            output += dumpSwitch(service, index: switchCount)
-            output += "\n"
+
+        for matchClassName in matchClasses {
+            let matching = IOServiceMatching(matchClassName)
+            var iter: io_iterator_t = 0
+            let kr = IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iter)
+            guard kr == KERN_SUCCESS else {
+                output += "ERROR: IOServiceGetMatchingServices(\"\(matchClassName)\") returned \(kr)\n"
+                continue
+            }
+            defer { IOObjectRelease(iter) }
+
+            while case let service = IOIteratorNext(iter), service != 0 {
+                defer { IOObjectRelease(service) }
+                var entryID: UInt64 = 0
+                IORegistryEntryGetRegistryEntryID(service, &entryID)
+                if !seen.insert(entryID).inserted { continue }
+                switchCount += 1
+                output += dumpSwitch(service, index: switchCount)
+                output += "\n"
+            }
         }
 
         if switchCount == 0 {
-            output += "No IOIOThunderboltSwitch services found.\n"
-            output += "(This is unexpected on Apple Silicon — please flag in the issue.)\n"
+            output += "No Thunderbolt switch services found.\n"
+            output += "(This is unexpected on Apple Silicon. Please flag in the issue.)\n"
         } else {
             output += "# \(switchCount) switch(es) total\n"
         }

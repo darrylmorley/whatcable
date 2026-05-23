@@ -18,8 +18,15 @@ import WhatCableCore
 public final class IOIOThunderboltSwitchWatcher: ObservableObject {
     @Published public private(set) var switches: [IOThunderboltSwitch] = []
 
+    /// Class names to match. Apple uses `IOIOThunderboltSwitch*` on some
+    /// macOS / Mac generations and `IOThunderboltSwitch*` on others (M5 /
+    /// macOS 26 was observed to ship `IOThunderboltSwitchType7` without
+    /// the double-IO prefix, while older Macs ship `IOIOThunderboltSwitchType5`).
+    /// Registering against both ensures the watcher works across the fleet.
+    private static let matchClasses = ["IOIOThunderboltSwitch", "IOThunderboltSwitch"]
+
     private var notifyPort: IONotificationPortRef?
-    private var matchIterator: io_iterator_t = 0
+    private var matchIterators: [io_iterator_t] = []
     private var interestNotifications: [UInt64: io_object_t] = [:]
 
     public init() {}
@@ -48,31 +55,37 @@ public final class IOIOThunderboltSwitchWatcher: ObservableObject {
             }
         }
 
-        let matching = IOServiceMatching("IOIOThunderboltSwitch")
-        var iter: io_iterator_t = 0
-        if IOServiceAddMatchingNotification(
-            port,
-            kIOMatchedNotification,
-            matching,
-            cb,
-            selfPtr,
-            &iter
-        ) == KERN_SUCCESS {
-            matchIterator = iter
-            // Drain the initial set the kernel hands back so the notification
-            // re-arms. The actual model build happens in refresh().
-            while case let s = IOIteratorNext(iter), s != 0 {
-                IOObjectRelease(s)
+        // Register one matching notification per known class name. Each
+        // registration owns its own iterator; we hold all of them so stop()
+        // can release them. Apple's class naming differs across hardware
+        // (see `matchClasses`).
+        for className in Self.matchClasses {
+            let matching = IOServiceMatching(className)
+            var iter: io_iterator_t = 0
+            if IOServiceAddMatchingNotification(
+                port,
+                kIOMatchedNotification,
+                matching,
+                cb,
+                selfPtr,
+                &iter
+            ) == KERN_SUCCESS {
+                matchIterators.append(iter)
+                // Drain the initial set the kernel hands back so the
+                // notification re-arms. The model build happens in refresh().
+                while case let s = IOIteratorNext(iter), s != 0 {
+                    IOObjectRelease(s)
+                }
             }
-            refresh()
         }
+        refresh()
     }
 
     public func stop() {
-        if matchIterator != 0 {
-            IOObjectRelease(matchIterator)
-            matchIterator = 0
+        for iter in matchIterators {
+            IOObjectRelease(iter)
         }
+        matchIterators.removeAll()
         for (_, n) in interestNotifications { IOObjectRelease(n) }
         interestNotifications.removeAll()
         if let port = notifyPort {
@@ -82,19 +95,11 @@ public final class IOIOThunderboltSwitchWatcher: ObservableObject {
         switches.removeAll()
     }
 
-    /// Re-walk every `IOIOThunderboltSwitch` service. Cheap to call on every
+    /// Re-walk every Thunderbolt switch service. Cheap to call on every
     /// snapshot read, mirroring `AppleHPMInterfaceWatcher.refresh()`. Property
     /// changes (link-state moves) tend to arrive via interest notifications
     /// but we don't rely on them for correctness.
     public func refresh() {
-        let matching = IOServiceMatching("IOIOThunderboltSwitch")
-        var iter: io_iterator_t = 0
-        guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iter) == KERN_SUCCESS else {
-            if !switches.isEmpty { switches = [] }
-            return
-        }
-        defer { IOObjectRelease(iter) }
-
         // First pass: build a list of (service, props, parent entry ID) so
         // we can resolve parent UIDs in a second pass once every switch has
         // been parsed.
@@ -113,56 +118,77 @@ public final class IOIOThunderboltSwitchWatcher: ObservableObject {
             // read happens in the second pass via per-key reads.
             let uid: Int64?
             let entryID: UInt64
-            let parentEntryID: UInt64  // 0 if no IOIOThunderboltSwitch parent
+            let parentEntryID: UInt64  // 0 if no Thunderbolt-switch parent
         }
 
         var raw: [RawEntry] = []
+        var seenEntryIDs: Set<UInt64> = []
         defer {
             for entry in raw {
                 IOObjectRelease(entry.service)
             }
         }
 
-        while case let service = IOIteratorNext(iter), service != 0 {
-            // Read everything we need before deciding to keep or release.
-            var className = "<unknown>"
-            var nameBuf = [CChar](repeating: 0, count: 128)
-            if IOObjectGetClass(service, &nameBuf) == KERN_SUCCESS {
-                className = String(cString: nameBuf)
+        // Iterate matching services for each known class name. Apple uses
+        // `IOIOThunderboltSwitch*` on some hardware (older Macs / macOS)
+        // and `IOThunderboltSwitch*` on others (M5 / macOS 26 onward).
+        // Querying both keeps the watcher generation-agnostic. If the same
+        // service somehow matches both (it shouldn't, but defensive),
+        // entry-ID dedup keeps it once.
+        for matchClassName in Self.matchClasses {
+            let matching = IOServiceMatching(matchClassName)
+            var iter: io_iterator_t = 0
+            guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iter) == KERN_SUCCESS else {
+                continue
             }
+            defer { IOObjectRelease(iter) }
 
-            // Read keys individually rather than fetching the full property
-            // dictionary. The bulk fetch (IORegistryEntryCreateCFProperties)
-            // can abort the process from inside IOCFUnserializeBinary when
-            // the kernel returns a malformed serialised properties blob,
-            // typically when the service is being torn down mid-read. The
-            // per-key call has no such failure path. See issue #181.
-            func readProp(_ key: String) -> Any? {
-                IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue()
+            while case let service = IOIteratorNext(iter), service != 0 {
+                // Read class name and entry ID up front.
+                var className = "<unknown>"
+                var nameBuf = [CChar](repeating: 0, count: 128)
+                if IOObjectGetClass(service, &nameBuf) == KERN_SUCCESS {
+                    className = String(cString: nameBuf)
+                }
+
+                var entryID: UInt64 = 0
+                IORegistryEntryGetRegistryEntryID(service, &entryID)
+
+                // Dedup: a service that matched a previous class iteration
+                // shouldn't be added twice. Release the duplicate handle.
+                if !seenEntryIDs.insert(entryID).inserted {
+                    IOObjectRelease(service)
+                    continue
+                }
+
+                // Read keys individually rather than fetching the full
+                // property dictionary. The bulk fetch can abort the process
+                // from inside IOCFUnserializeBinary when the kernel returns
+                // a malformed serialised properties blob (issue #181).
+                func readProp(_ key: String) -> Any? {
+                    IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue()
+                }
+                let uid = (readProp("UID") as? NSNumber)?.int64Value
+
+                // Walk up to the nearest Thunderbolt switch ancestor (skipping
+                // adapter / port intermediaries). On Apple Silicon, downstream
+                // switches sit below their parent switch in the IOService
+                // plane, so this gives us the parent linkage for free.
+                let parentEntryID = parentSwitchEntryID(of: service)
+
+                raw.append(RawEntry(
+                    service: service,
+                    className: className,
+                    uid: uid,
+                    entryID: entryID,
+                    parentEntryID: parentEntryID
+                ))
             }
-            // Extract UID now so we can build the UID lookup table in the
-            // first pass. The full IOThunderboltSwitch.from(read:) call
-            // happens in the second pass while the service is still alive.
-            let uid = (readProp("UID") as? NSNumber)?.int64Value
+        }
 
-            var entryID: UInt64 = 0
-            IORegistryEntryGetRegistryEntryID(service, &entryID)
-
-            // Walk up to the nearest IOIOThunderboltSwitch ancestor (skipping
-            // adapter / port intermediaries). On Apple Silicon, downstream
-            // switches sit below their parent switch in the IOService plane,
-            // so this gives us the parent linkage for free. We resolve the
-            // parent's registry entry ID immediately and release the
-            // ancestor handle so we don't have to track its lifetime.
-            let parentEntryID = parentSwitchEntryID(of: service)
-
-            raw.append(RawEntry(
-                service: service,
-                className: className,
-                uid: uid,
-                entryID: entryID,
-                parentEntryID: parentEntryID
-            ))
+        if raw.isEmpty {
+            if !switches.isEmpty { switches = [] }
+            return
         }
 
         // Build a UID lookup keyed by registry entry ID. Stable across
@@ -277,9 +303,11 @@ public final class IOIOThunderboltSwitchWatcher: ObservableObject {
             var classBuf = [CChar](repeating: 0, count: 128)
             if IOObjectGetClass(current, &classBuf) == KERN_SUCCESS {
                 let name = String(cString: classBuf)
-                // Match the abstract prefix; covers Type3 / Type5 / Type7 /
-                // IntelJHL8440 / IntelJHL9580 / future variants.
-                if name.hasPrefix("IOIOThunderboltSwitch") {
+                // Match either prefix: `IOIOThunderboltSwitch*` (older macOS
+                // / older Macs) or `IOThunderboltSwitch*` (M5 / macOS 26).
+                // Covers Type3 / Type5 / Type7 / IntelJHL8440 / IntelJHL9580
+                // / future variants in both naming families.
+                if name.hasPrefix("IOIOThunderboltSwitch") || name.hasPrefix("IOThunderboltSwitch") {
                     var entryID: UInt64 = 0
                     if IORegistryEntryGetRegistryEntryID(current, &entryID) == KERN_SUCCESS {
                         return entryID

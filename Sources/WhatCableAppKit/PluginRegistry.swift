@@ -47,6 +47,16 @@ public final class PluginRegistry {
         cliCommands.append(cliCommand)
     }
 
+    /// Contributors that append a footer line to one-shot CLI text output.
+    /// Each returns nil when it has nothing to say (e.g. when the user has
+    /// already unlocked Pro). The CLI calls these only for plain text mode,
+    /// not for --json / --watch / --report, where extra lines would break
+    /// scripts or re-render every tick.
+    public private(set) var cliOutputFooterContributors: [() -> String?] = []
+    public func register(cliOutputFooter: @escaping () -> String?) {
+        cliOutputFooterContributors.append(cliOutputFooter)
+    }
+
     public private(set) var settingsProSectionBuilders: [() -> AnyView] = []
     public func register(settingsProSection: @escaping () -> AnyView) {
         settingsProSectionBuilders.append(settingsProSection)

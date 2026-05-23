@@ -147,23 +147,34 @@ extension DataLinkDiagnostic {
         guard let active = activeGbps else { return nil }
 
         // Cable's claimed speed from its e-marker (SOP' / SOP'').
-        let emarkerGbps = identities
-            .first(where: { $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime })?
-            .cableVDO?.speed.maxGbps
+        let cableIdentity = identities
+            .first(where: { $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime })
+        let emarkerGbps = cableIdentity?.cableVDO?.speed.maxGbps
 
         // Cable's speed as the Thunderbolt controller sees it. Only the
         // confirmed codes are mapped; unknown codes stay nil rather than
         // guess (mirrors CIOCableCapability.speedLabel's conservatism).
         let cioGbps = Self.cioCableGbps(cio?.cableSpeed)
 
-        // When both signals exist and disagree, the controller wins
-        // (issue #111) and we flag the conflict so the UI can explain it.
+        // When both signals exist and disagree across tiers, the controller
+        // is authoritative either way. The original case (issue #111) was an
+        // active TB4 cable e-marker that under-reported as "passive low
+        // speed" while the controller correctly showed 40. Issue #190 was
+        // the inverse: a suspect cable (zero VID) over-reported as 80 while
+        // the controller showed 40. In both cases the controller's reading
+        // is the trustworthy one, so resolve the disagreement to CIO rather
+        // than taking the higher figure.
         let conflict: Bool
         let cableMaxGbps: Double?
         switch (emarkerGbps, cioGbps) {
         case let (e?, c?):
-            conflict = !Self.sameTier(e, c)
-            cableMaxGbps = max(e, c)
+            if Self.sameTier(e, c) {
+                conflict = false
+                cableMaxGbps = max(e, c)
+            } else {
+                conflict = true
+                cableMaxGbps = c
+            }
         case let (e?, nil):
             conflict = false
             cableMaxGbps = e
@@ -174,14 +185,47 @@ extension DataLinkDiagnostic {
             conflict = false
             cableMaxGbps = nil
         }
+        // Sanity floor: the cable must be able to carry whatever speed the
+        // link is *actually* running at; otherwise the link could not have
+        // negotiated. If our resolved cable cap is meaningfully below the
+        // active rate (e.g. a controller cableSpeed=3 reading on a TB5
+        // cable due to a firmware quirk, with the e-marker correctly
+        // saying 80 and the link running at 80), the resolved value is
+        // suspect, not the active link. Promote to the active rate so the
+        // verdict layer never claims "cable carries N" while the link is
+        // empirically running faster.
+        let cableFloored: Double?
+        if let c = cableMaxGbps, c < active, !Self.sameTier(c, active) {
+            cableFloored = active
+        } else {
+            cableFloored = cableMaxGbps
+        }
         self.cableSignalConflict = conflict
 
-        // The device the link is actually serving is the fastest one
-        // attached: a slow hub-mate shouldn't mask a fast SSD.
+        // The device cap. For a Thunderbolt partner (issue #190) the real
+        // capability lives on the partner's own TB switch, not on whatever
+        // USB devices happen to be enumerated behind it: a TB dock has an
+        // internal USB hub IC at 5/10 Gbps that does NOT represent the
+        // dock's actual speed, and a TB-only / SATA-only drive (e.g. LaCie
+        // d2) enumerates no USB device at all. When a TB partner is
+        // present, USB enumerations behind it are sub-components, so we
+        // ignore them and use the partner's `supportedSpeed.maxTotalGbps`
+        // mask. If that mask is missing or unrecognised, the active TB
+        // link rate is a safe lower bound (the partner must support at
+        // least the speed it actually negotiated). The USB device list is
+        // consulted only when no TB partner switch is reachable.
+        let partner = Self.partnerSwitch(port: port, switches: thunderboltSwitches)
         let fastestDevice = devices
             .filter { $0.speedRaw != nil }
             .max { (Self.deviceGbps($0.speedRaw) ?? 0) < (Self.deviceGbps($1.speedRaw) ?? 0) }
-        let deviceMaxGbps = Self.deviceGbps(fastestDevice?.speedRaw)
+        let usbDeviceGbps = Self.deviceGbps(fastestDevice?.speedRaw)
+        let deviceMaxGbps: Double?
+        if let partner {
+            deviceMaxGbps = partner.supportedSpeed.maxTotalGbps
+                ?? Self.activeTBGbps(port: port, switches: thunderboltSwitches)
+        } else {
+            deviceMaxGbps = usbDeviceGbps
+        }
 
         // Capture the resolved figures for the Pro breakdown. Every
         // constructed instance flows through here (the only earlier return
@@ -190,19 +234,19 @@ extension DataLinkDiagnostic {
             hostGbps: resolvedHostMaxGbps,
             cableEmarkerGbps: emarkerGbps,
             cableControllerGbps: cioGbps,
-            cableGbps: cableMaxGbps,
+            cableGbps: cableFloored,
             deviceGbps: deviceMaxGbps,
             activeGbps: active
         )
 
         let conflictNote = conflict
-            ? " " + String(localized: "The cable's own e-marker under-reports its speed; the Thunderbolt controller confirms it is faster.", bundle: _coreLocalizedBundle)
+            ? " " + String(localized: "The cable's e-marker and the Thunderbolt controller disagree on its speed; the controller's reading is treated as authoritative.", bundle: _coreLocalizedBundle)
             : ""
 
         // Every capability we actually know about, tagged by party. The
         // link can never run faster than the slowest of these.
         var caps: [(party: String, value: Double)] = []
-        if let c = cableMaxGbps         { caps.append((party: "cable",  value: c)) }
+        if let c = cableFloored         { caps.append((party: "cable",  value: c)) }
         if let h = resolvedHostMaxGbps  { caps.append((party: "host",   value: h)) }
         if let d = deviceMaxGbps        { caps.append((party: "device", value: d)) }
 
@@ -221,7 +265,7 @@ extension DataLinkDiagnostic {
             // unidentified degraded it. If the cable is the unknown, it's
             // the honest suspect; otherwise it's an unattributed degrade.
             // Either way, never claim "full speed" here (the old draft bug).
-            if cableMaxGbps == nil {
+            if cableFloored == nil {
                 self.bottleneck = .unknownCable(activeGbps: active)
                 self.summary = String(localized: "Running at \(Self.label(active))", bundle: _coreLocalizedBundle)
                 self.detail = String(localized: "This cable has no e-marker and no controller data, so we can't tell whether it is the limit.", bundle: _coreLocalizedBundle)
@@ -247,10 +291,16 @@ extension DataLinkDiagnostic {
             return
         }
 
-        // Name the binding part. Cable first because it's the actionable
-        // one (the user can buy a better cable), then host, then device.
+        // Name the binding part. When only one party is at the floor it is
+        // the culprit. When multiple parties tie at the floor (e.g. a TB3
+        // device on a TB3-rated cable, both 40 Gbps, with a TB5 host), the
+        // priority decides which one we call out. Prefer the non-actionable
+        // parts (device, then host) over the cable: if device or host is
+        // also at the floor, replacing the cable would not unlock more
+        // speed, so "Cable is limiting data speed" would be misleading.
+        // The cable wins the call-out only when it is the unique floor.
         let capable = fasterOthers.map(\.value).min() ?? expected
-        let priority = ["cable", "host", "device"]
+        let priority = ["device", "host", "cable"]
         let culprit = priority.first { p in limiters.contains { $0.party == p } } ?? "device"
 
         switch culprit {
@@ -294,6 +344,14 @@ extension DataLinkDiagnostic {
     /// switch's `supportedSpeed` mask. This is what the chip can negotiate,
     /// not what is currently active. Returns `nil` for non-TB USB-C ports
     /// (no matching host root) or when the switch graph isn't loaded yet.
+    ///
+    /// Uses the specific lane port matching the user's socket ID when one
+    /// is present, not the switch-level aggregate. On a hypothetical
+    /// controller with per-port asymmetric capabilities (e.g. one port
+    /// configured for TB5 and another for TB4), the switch aggregate would
+    /// overstate the capability of any port that doesn't have every bit.
+    /// The per-port mask avoids that. Falls back to the switch aggregate
+    /// only when the matched port has no `supportedSpeed` of its own.
     static func hostMaxGbpsFromSwitches(
         port: AppleHPMInterface,
         switches: [IOThunderboltSwitch]
@@ -303,7 +361,45 @@ extension DataLinkDiagnostic {
               let root = ThunderboltTopology.hostRoot(forSocketID: socketID, in: switches) else {
             return nil
         }
+        if let portMask = root.ports
+            .first(where: { $0.adapterType.isLane && $0.socketID == socketID })?
+            .supportedSpeed {
+            return portMask.maxTotalGbps
+        }
         return root.supportedSpeed.maxTotalGbps
+    }
+
+    /// The directly-connected Thunderbolt partner switch for this user-
+    /// visible USB-C port, or `nil` when none is reachable.
+    ///
+    /// Per-port matching is what makes this safe on controllers that host
+    /// more than one user-visible USB-C port on a single root switch
+    /// (asymmetric M-class controllers, multi-port hubs, etc). The
+    /// `parentSwitchUID` guard pins the partner to *this* root. The
+    /// `routeString`-low-byte guard pins it to *this* lane port: each hop
+    /// in a TB route is one byte; for a depth-1 partner the only hop is
+    /// the parent's downstream port number. Matching against
+    /// `upstreamPortNumber` would be wrong (that field is the *partner's
+    /// own* port number for its upstream link, not the parent's port
+    /// number; the Samsung C34J79x fixture in `ThunderboltLinkFromTests`
+    /// is the canonical proof of that: parent port 1, partner upstream
+    /// port 3).
+    static func partnerSwitch(
+        port: AppleHPMInterface,
+        switches: [IOThunderboltSwitch]
+    ) -> IOThunderboltSwitch? {
+        guard !switches.isEmpty,
+              let socketID = ThunderboltTopology.socketID(fromServiceName: port.serviceName),
+              let root = ThunderboltTopology.hostRoot(forSocketID: socketID, in: switches),
+              let hostLanePort = root.ports.first(where: {
+                  $0.adapterType.isLane && $0.socketID == socketID
+              }) else {
+            return nil
+        }
+        return switches.first { sw in
+            sw.parentSwitchUID == root.id
+                && Int(sw.routeString & 0xFF) == hostLanePort.portNumber
+        }
     }
 
     /// USB 3 signaling generation to Gbps. 1 = Gen 1 (5), 2 = Gen 2 (10).
