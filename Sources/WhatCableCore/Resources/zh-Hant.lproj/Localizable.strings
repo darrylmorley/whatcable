@@ -11,7 +11,7 @@
 "Active cable" = "主動式線材";
 "Active cable (contains signal-conditioning electronics)" = "主動式線材（包含訊號調節電子元件）";
 "Active cable (VDO 2):" = "主動式線材（VDO 2）：";
-"Alternate Mode Adapter" = "替代模式轉接器";
+"Alternate Mode Adapter" = "Alternate Mode 轉接器";
 "Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle." = "充電器和線材都能提供更高功率，但 Mac 目前要求的功率較低。電池接近充滿或系統閒置時，這是正常現象。";
 "Cable does not advertise an e-marker (basic cable)" = "線材未宣告 e-marker（基本線材）";
 "Cable has an e-marker chip (advertises its capabilities)" = "線材有 e-marker 晶片（會宣告自身規格）";
@@ -44,7 +44,7 @@
 "Currently negotiated: %@ @ %@ (%@)" = "目前協商：%1$@ @ %2$@（%3$@）";
 "Display connected" = "已連接顯示器";
 "Display connected · %lldW charger" = "已連接顯示器 · %lldW 充電器";
-"DisplayPort video over USB-C alt mode." = "透過 USB-C alt mode 傳輸 DisplayPort 影像。";
+"DisplayPort video over USB-C alt mode." = "透過 USB-C Alt Mode 傳輸 DisplayPort 影像。";
 "E-marker claims EPR support but reports only 20V max VBUS" = "E-marker 聲稱支援 EPR，但回報的最大 VBUS 只有 20V";
 "E-marker reports no vendor identity" = "E-marker 未回報廠商識別資訊";
 "E-marker uses a reserved cable-latency value" = "E-marker 使用了保留的線材延遲值";
@@ -135,7 +135,7 @@
 "Connected device: %@" = "已連接裝置：%@";
 "Connected device: %@, %@ (%@)" = "已連接裝置：%1$@，%2$@（%3$@）";
 "Data" = "資料";
-"DisplayPort alt mode" = "DisplayPort 替代模式";
+"DisplayPort alt mode" = "DisplayPort Alt Mode";
 
 /* Pro plugin UI strings */
 "%@ (spec, not measured)" = "%@（規格值，非實測）";
@@ -283,10 +283,10 @@
 "Unrecognised event code from the port controller." = "來自連接埠控制器的無法辨識事件代碼。";
 "Unregistered cable (no e-marker)" = "未註冊線材（無 e-marker）";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "非結構化 VDM 列舉已開始（正在探索廠商特定規格）。";
-"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "非結構化 VDM 狀態已變更（廠商特定訊息，例如 alt mode 設定）。";
+"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "非結構化 VDM 狀態已變更（廠商特定訊息，例如 Alt Mode 設定）。";
 "VDO fail count" = "VDO 失敗次數";
 "Vendor ID" = "Vendor ID";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "廠商特定的非結構化 VDM 狀態已變更。Apple 會用於自訂 alt mode 設定和 Thunderbolt 協商。";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "廠商特定的非結構化 VDM 狀態已變更。Apple 會用於自訂 Alt Mode 設定和 Thunderbolt 協商。";
 "Voltage" = "電壓";
 "Voltage (V)" = "電壓 (V)";
 "WhatCable Pro" = "WhatCable Pro";
