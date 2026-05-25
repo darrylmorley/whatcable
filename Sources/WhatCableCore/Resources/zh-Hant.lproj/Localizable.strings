@@ -361,5 +361,5 @@
 "Manage Licence…" = "管理授權…";
 "See exactly what each link can do, and where the bottleneck is." = "精確查看每個連線能做什麼，以及瓶頸在哪裡。";
 "Unlock deep diagnostics, live power graphs, and per-port history. One-off licence, no subscription." = "解鎖進階診斷、即時功率圖表與各連接埠歷史記錄。一次授權，無需訂閱。";
-"Cable says %@, link reads %@" = "Cable says %@, link reads %@";
-"The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit.";
+"Cable says %@, link reads %@" = "線材顯示為 %@，連線偵測為 %@";
+"The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "線材的 e-marker 回報 %@，但目前作用中的連線偵測為 %@。其中一方的讀數有誤，而在沒有 Thunderbolt 控制器交叉比對的情況下，無法判斷是哪一方錯誤。嘗試使用已知正常的線材即可找出問題來源。";
