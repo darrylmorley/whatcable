@@ -158,7 +158,7 @@
 "Capability mismatch" = "Conflitto di capacità";
 "Connect a USB-C power source to view live telemetry." = "Collega una sorgente di alimentazione USB-C per vedere la telemetria dal vivo.";
 "Connector" = "Connettore";
-"Controller alert: could indicate overcurrent, overtemperature, or a protocol error. Check Port Health for details." = "Avviso del controller: potrebbe indicare sovracorrente, sovratemperatura o un errore di protocollo. Controlla Integrità porta per i dettagli.";
+"Controller alert: could indicate overcurrent, overtemperature, or a protocol error. Check Port Health for details." = "Avviso del controller: potrebbe indicare sovracorrente, sovra temperatura o un errore di protocollo. Controlla Integrità porta per i dettagli.";
 "Controller app loaded" = "App controller caricata";
 "Controller firmware finished boot. Appears once per power cycle or hard reset." = "Il firmware del controller ha completato l'avvio. Appare una volta per ciclo di alimentazione o hard reset.";
 "Current" = "Corrente";
@@ -267,7 +267,7 @@
 "The charger or power source advertised what voltages and currents it can provide." = "Il caricatore o la sorgente di alimentazione ha dichiarato quali tensioni e correnti può fornire.";
 "The data role flipped: the port switched between host and device mode." = "Il ruolo dati si è invertito: la porta è passata tra modalità host e dispositivo.";
 "The port controller firmware finished initialising and is ready." = "Il firmware del controller della porta ha completato l'inizializzazione ed è pronto.";
-"The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "Il controller della porta ha generato un avviso (sovracorrente, sovratemperatura o guasto simile).";
+"The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "Il controller della porta ha generato un avviso (sovracorrente, sovra temperatura o guasto simile).";
 "The power direction flipped: the port switched between providing and receiving power." = "La direzione dell'alimentazione si è invertita: la porta è passata tra fornitura e ricezione di alimentazione.";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "Questo codice evento non è nella tabella degli interrupt TPS6598x nota. Potrebbe essere specifico del firmware.";
 "Tunneled" = "Tunnelato";
@@ -306,7 +306,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Inserisci chiave di licenza…";
-"Negotiated PD contract maximum. Live draw is shown in the System Power Input chart below." = "Massimo del contratto PD negoziato. Il consumo in tempo reale è mostrato nel grafico Ingresso di alimentazione di sistema qui sotto.";
+"Negotiated PD contract maximum. Live draw is shown in the System Power Input chart below." = "Massimo contratto PD negoziato. Il consumo in tempo reale è visualizzato nel grafico 'Ingresso alimentazione sistema' qui sotto.";
 "No power data for this port right now." = "Nessun dato di alimentazione per questa porta al momento.";
 "Upgrade to WhatCable Pro" = "Passa a WhatCable Pro";
 "not reported in this state" = "non riportato in questo stato";
@@ -318,7 +318,7 @@
 "See what your USB-C cables can do at a glance." = "Scopri a colpo d'occhio cosa possono fare i tuoi cavi USB-C.";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
-"The cable's e-marker and the Thunderbolt controller disagree on its speed; the controller's reading is treated as authoritative." = "The cable's e-marker and the Thunderbolt controller disagree on its speed; the controller's reading is treated as authoritative.";
+"The cable's e-marker and the Thunderbolt controller disagree on its speed; the controller's reading is treated as authoritative." = "L'e-marker del cavo e il controller Thunderbolt non sono d'accordo sulla velocità; la lettura del dato del controller è ritenuta autorevole.";
 "Running at %@" = "Funzionante a %@";
 "There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "Non ci sono e-marker del cavo o dati del controller e nessuna porta o capacità del dispositivo con cui confrontarsi, quindi non è possibile confermare se il cavo sia il limite.";
 "This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "Questo cavo non ha e-marker né dati del controller, quindi non è possibile confermare se sia il limite.";
@@ -350,7 +350,7 @@
 "Cable signals disagree" = "I segnali del cavo non corrispondono";
 "an unknown speed" = "una velocità sconosciuta";
 "a higher speed" = "una velocità più elevata";
-"The cable's own e-marker reports %@, but the Thunderbolt controller sees %@. This can happen with active Thunderbolt cables that under-report (declaring themselves passive at a low speed) or with suspect cables whose e-markers over-state their capability. The controller's reading is the one used above." = "The cable's own e-marker reports %@, but the Thunderbolt controller sees %@. This can happen with active Thunderbolt cables that under-report (declaring themselves passive at a low speed) or with suspect cables whose e-markers over-state their capability. The controller's reading is the one used above.";
+"The cable's own e-marker reports %@, but the Thunderbolt controller sees %@. This can happen with active Thunderbolt cables that under-report (declaring themselves passive at a low speed) or with suspect cables whose e-markers over-state their capability. The controller's reading is the one used above." = "L'e-marker del cavo riporta %@, ma il controller Thunderbolt riporta %@. Ciò può accadere con cavi Thunderbolt attivi che sottostimano (dichiarandosi passivi a bassa velocità) o con cavi sospetti i cui e-marker sopravvalutano la loro capacità. La lettura del controller è quella usata sopra.";
 /* Pro overview screen + footer pill (Pro funnel). English; non-English are parity placeholders to be refined by the community translation flow. */
 "Cable Diagnostics" = "Diagnostica cavo";
 "Deep per-port pin maps, plug orientation, and protocol detail." = "Mappe dettagliate dei pin per porta, orientamento connettore e dettagli del protocollo.";
@@ -361,5 +361,5 @@
 "Manage Licence…" = "Gestisci licenza…";
 "See exactly what each link can do, and where the bottleneck is." = "Scopri esattamente cosa può fare ciascun collegamento e dove si trova il collo di bottiglia.";
 "Unlock deep diagnostics, live power graphs, and per-port history. One-off licence, no subscription." = "Sblocca diagnostica approfondita, grafici potenza in tempo reale e cronologia per porta. Licenza una tantum, nessun abbonamento.";
-"Cable says %@, link reads %@" = "Cable says %@, link reads %@";
-"The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit.";
+"Cable says %@, link reads %@" = "Il cavo riporta %@, il collegamento legge %@";
+"The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "L'e-marker del cavo riporta %@, ma il collegamento attivo riporta %@. Una di queste letture è sbagliata e senza un controllo incrociato del controller Thunderbolt non è possibile confermala. La prova di un cavo sicuramente funzionante identificherà chi fornisce il dato non corretto.";
