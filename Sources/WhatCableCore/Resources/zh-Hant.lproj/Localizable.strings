@@ -58,7 +58,7 @@
 "Linked at %@" = "連線速度 %@";
 "Negotiation hasn't completed yet." = "協商尚未完成。";
 "No USB-C / MagSafe ports were found on this Mac." = "這台 Mac 上找不到 USB-C / MagSafe 連接埠。";
-"No e-marker detected. The cable may have one, but macOS only checks above 3A." = "未偵測到 e-marker。線材可能有 e-marker，但 macOS 只會在 3A 以上時檢查。";
+"No e-marker detected. The cable may have one, but macOS only checks above 3A." = "未偵測到 e-marker。線材可能有 e-marker，但 macOS 只會在電流超出 3A 時檢查。";
 "Nothing connected" = "未連接任何裝置";
 "Only USB 2.0 is active. If you expected high speed, the cable may not support it." = "目前只有 USB 2.0 作用中。如果預期應有高速連線，線材可能不支援。";
 "Optical" = "光纖";
