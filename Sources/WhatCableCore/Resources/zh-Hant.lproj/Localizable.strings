@@ -368,3 +368,37 @@
 "Unlock deep diagnostics, live power graphs, and per-port history. One-off licence, no subscription." = "解鎖進階診斷、即時功率圖表與各連接埠歷史記錄。一次授權，無需訂閱。";
 "Cable says %@, link reads %@" = "線材顯示為 %@，連線偵測為 %@";
 "The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "線材的 e-marker 回報 %@，但目前作用中的連線偵測為 %@。其中一方的讀數有誤，而在沒有 Thunderbolt 控制器交叉比對的情況下，無法判斷是哪一方錯誤。嘗試使用已知正常的線材即可找出問題來源。";
+
+/* Display dimension. */
+"A display is connected but its capabilities aren't readable, so there's nothing to compare the link against." = "已連接顯示器，但無法讀取其規格，因此沒有可供比較的連線資訊。";
+"The link is carrying about %@ (%lld of %lld lanes)." = "目前連線承載約 %@（使用 %2$lld/%3$lld 條通道）。";
+"display" = "顯示器";
+"Your %@ is connected, but the link rate isn't readable, so there's nothing to compare its capability against." = "已連接 %@，但無法讀取連線速率，因此沒有可供比較的規格資訊。";
+"Display running at full quality" = "顯示器以最佳畫質運作";
+"Your %@ is connected and the link has the bandwidth for its top mode. Nothing is holding the picture back." = "已連接 %@，且目前連線頻寬足以支援其最高模式。顯示畫面沒有受到任何限制。";
+"%lld of %lld lanes at %@" = "%1$lld/%2$lld 條通道，%@";
+"%lld of %lld lanes" = "%1$lld/%2$lld 條通道";
+"up to %lldHz" = "最高 %lldHz";
+"a higher mode than the link is carrying" = "比目前連線承載更高的模式";
+"This estimate assumes standard colour; a display using compression (DSC) may reach more." = "此估算以標準色彩模式為前提；使用顯示串流壓縮（DSC）的顯示器可能達到更高規格。";
+"Video is going through a %@ adapter" = "影像訊號正透過 %@ 轉接器傳輸";
+"Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "目前透過 USB-C 轉 %@ 轉接器連接 %@，而連線尚未達到顯示器的最高模式（%@，約需 %@）；目前約承載 %@（%@）。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
+"Monitor can do more than the link is carrying" = "顯示器規格高於目前連線承載能力";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。若已選擇較高模式卻無法達成，限制因素可能是線材或轉接器；若尚未嘗試，選擇較高模式可能會讓連線重新協商至更高速率。";
+"Display Diagnostics" = "顯示器診斷";
+"What your monitor can do, and what the link is carrying." = "查看顯示器的規格，以及目前連線實際承載的內容。";
+"No Displays" = "沒有顯示器";
+"Connect a monitor over USB-C or Thunderbolt to see what the link is delivering." = "透過 USB-C 或 Thunderbolt 連接顯示器，即可查看目前連線提供的能力。";
+"%@ port %lld" = "%1$@ 連接埠 %2$lld";
+"Display" = "顯示器";
+"%lld × %lld" = "%lld × %lld";
+"native %lldHz" = "原生 %lldHz";
+"Monitor needs" = "顯示器需求";
+"Link carries" = "目前承載";
+"Rate" = "速率";
+"See whether the link is carrying your monitor's full resolution and refresh." = "查看連線是否達到顯示器的完整解析度與更新率。";
+"Display links have their own screen: Display Diagnostics." = "顯示器連線有專屬頁面：「顯示器診斷」。";
+
+/* Display dimension: cable attribution. */
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。由於影像是透過 Thunderbolt 或 USB4 隧道傳輸，線材可提供的頻寬遠高於顯示器需求，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項，或是這台 Mac 對此顯示器的限制。";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。線材已使用這台 Mac 提供的所有 DisplayPort 通道，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項。";
