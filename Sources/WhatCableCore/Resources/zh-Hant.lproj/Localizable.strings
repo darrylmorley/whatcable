@@ -373,9 +373,9 @@
 "A display is connected but its capabilities aren't readable, so there's nothing to compare the link against." = "已連接顯示器，但無法讀取其規格，因此沒有可供比較的連線資訊。";
 "The link is carrying about %@ (%lld of %lld lanes)." = "目前連線承載約 %@（使用 %2$lld/%3$lld 條通道）。";
 "display" = "顯示器";
-"Your %@ is connected, but the link rate isn't readable, so there's nothing to compare its capability against." = "已連接 %@，但無法讀取連線速率，因此沒有可供比較的規格資訊。";
+"Your %@ is connected, but the link rate isn't readable, so there's nothing to compare its capability against." = "您的 %@ 已連接，但無法讀取連線速率，因此沒有可供比較的規格資訊。";
 "Display running at full quality" = "顯示器以最佳畫質運作";
-"Your %@ is connected and the link has the bandwidth for its top mode. Nothing is holding the picture back." = "已連接 %@，且目前連線頻寬足以支援其最高模式。顯示畫面沒有受到任何限制。";
+"Your %@ is connected and the link has the bandwidth for its top mode. Nothing is holding the picture back." = "您的 %@ 已連接，且目前連線頻寬足以支援其最高模式。顯示畫面沒有受到任何限制。";
 "%lld of %lld lanes at %@" = "%1$lld/%2$lld 條通道，%@";
 "%lld of %lld lanes" = "%1$lld/%2$lld 條通道";
 "up to %lldHz" = "最高 %lldHz";
