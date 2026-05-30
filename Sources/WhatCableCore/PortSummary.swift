@@ -172,10 +172,11 @@ extension PortSummary {
         }
 
         if hasDP {
-            if let dpConfig = port.dpLaneConfig, dpConfig.isActive {
+            // `hasDP` and `dpLaneConfig` are gated on the same signal
+            // (DisplayPort in transportsActive), so the config is always
+            // present here; no plain-video fallback is reachable.
+            if let dpConfig = port.dpLaneConfig {
                 bullets.append(String(localized: "Carrying DisplayPort video (\(dpConfig.label))", bundle: _coreLocalizedBundle))
-            } else {
-                bullets.append(String(localized: "Carrying DisplayPort video", bundle: _coreLocalizedBundle))
             }
         }
 

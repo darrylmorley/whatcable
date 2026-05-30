@@ -14,7 +14,8 @@ public enum JSONFormatter {
         usb3Transports: [USB3Transport] = [],
         trmTransports: [TRMTransport] = [],
         cioCapabilities: [CIOCableCapability] = [],
-        usbDevices: [USBDevice] = []
+        usbDevices: [USBDevice] = [],
+        displayPorts: [IOPortTransportStateDisplayPort] = []
     ) throws -> String {
         let activePortCount = ports.filter { $0.connectionActive == true }.count
         let output = Output(
@@ -41,7 +42,8 @@ public enum JSONFormatter {
                     cioCapability: cioCapabilities.first { $0.portKey == port.portKey },
                     chargerWattageSource: wattageSource,
                     batteryFullyCharged: batteryFullyCharged,
-                    usbDevices: port.matchingDevices(from: usbDevices)
+                    usbDevices: port.matchingDevices(from: usbDevices),
+                    displayPort: displayPorts.first { $0.portKey == port.portKey }
                 )
             },
             thunderboltSwitches: thunderboltSwitches.map { IOThunderboltSwitchDTO(sw: $0) }
@@ -86,6 +88,10 @@ private struct PortDTO: Codable {
     /// device limits the negotiated data rate. Nil when there's no data
     /// link to judge on this port.
     let dataLink: DataLinkDTO?
+    /// Display "weakest link" verdict: whether the current DisplayPort link
+    /// carries the monitor's top mode. Nil when there's no active display
+    /// link on this port.
+    let display: DisplayDTO?
     /// UID of the host root Thunderbolt switch this port maps to, if any.
     /// Resolved via the `Socket ID` <-> `@N` join key. Encoded as Int64
     /// (signed, matching IOKit's representation; some vendors use the
@@ -114,7 +120,8 @@ private struct PortDTO: Codable {
         cioCapability: CIOCableCapability? = nil,
         chargerWattageSource: ChargerWattageSource = .unknown,
         batteryFullyCharged: Bool? = nil,
-        usbDevices: [USBDevice] = []
+        usbDevices: [USBDevice] = [],
+        displayPort: IOPortTransportStateDisplayPort? = nil
     ) {
         self.name = port.portDescription ?? port.serviceName
         self.type = port.portTypeDescription
@@ -196,6 +203,10 @@ private struct PortDTO: Codable {
             cio: cioCapability,
             thunderboltSwitches: thunderboltSwitches
         ).map { DataLinkDTO(diagnostic: $0) }
+
+        self.display = displayPort
+            .flatMap { DisplayDiagnostic(dp: $0, cable: cableEmarker) }
+            .map { DisplayDTO(diagnostic: $0) }
 
         self.trm = trmTransports.isEmpty ? nil : trmTransports.map { TRMTransportDTO(transport: $0) }
         self.cio = cioCapability.map { CIOCableCapabilityDTO(capability: $0) }
@@ -546,6 +557,48 @@ private struct DataLinkDTO: Codable {
         case .unknownCable: self.bottleneck = "unknownCable"
         case .cableContradictsActive: self.bottleneck = "cableContradictsActive"
         }
+    }
+}
+
+private struct DisplayDTO: Codable {
+    let summary: String
+    let detail: String
+    let bottleneck: String
+    let isWarning: Bool
+    let monitorName: String?
+    let neededGbps: Double?
+    let deliveredGbps: Double?
+    let lanes: Int
+    let maxLanes: Int
+    let rate: String?
+    /// "HDMI" / "DVI" / "VGA" when an adapter is in the chain, else nil.
+    let sinkType: String?
+    /// Cable attribution: "unlikelyTheCable" or "inconclusive". Never blames
+    /// the cable (only ever exonerates it on demonstrated evidence).
+    let cableAssessment: String
+
+    init(diagnostic: DisplayDiagnostic) {
+        self.summary = diagnostic.summary
+        self.detail = diagnostic.detail
+        self.isWarning = diagnostic.isWarning
+        switch diagnostic.bottleneck {
+        case .fine: self.bottleneck = "fine"
+        case .belowMonitorMax: self.bottleneck = "belowMonitorMax"
+        case .adapterLimit: self.bottleneck = "adapterLimit"
+        case .unknownMode: self.bottleneck = "unknownMode"
+        }
+        switch diagnostic.cableAssessment {
+        case .unlikelyTheCable: self.cableAssessment = "unlikelyTheCable"
+        case .inconclusive: self.cableAssessment = "inconclusive"
+        }
+        let facts = diagnostic.facts
+        self.monitorName = facts.monitorName
+        self.neededGbps = facts.neededGbps
+        self.deliveredGbps = facts.deliveredGbps
+        self.lanes = facts.lanes
+        self.maxLanes = facts.maxLanes
+        self.rate = facts.rateDescription
+        self.sinkType = facts.sinkType
     }
 }
 

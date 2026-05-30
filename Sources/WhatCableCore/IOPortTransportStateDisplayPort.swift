@@ -162,5 +162,15 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
     }
 }
 
+extension IOPortTransportStateDisplayPort {
+    /// Join key to the owning USB-C / MagSafe port. The DisplayPort node
+    /// reports its parent as `ParentPortType` (2 = USB-C, 0x11 = MagSafe) and
+    /// `ParentPortNumber`, the same scheme `PowerSource.portKey` and
+    /// `AppleHPMInterface.portKey` use, so `"\(type)/\(number)"` matches a
+    /// port directly. Confirmed against probe 17 (ParentPortType 2 /
+    /// ParentPortNumber 4 for the active "Port-USB-C" display).
+    public var portKey: String { "\(parentPortType)/\(parentPortNumber)" }
+}
+
 @available(*, deprecated, renamed: "IOPortTransportStateDisplayPort")
 public typealias DisplayPortStatus = IOPortTransportStateDisplayPort

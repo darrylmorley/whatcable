@@ -13,7 +13,8 @@ public enum TextFormatter {
         federatedIdentities: [FederatedIdentity] = [],
         usb3Transports: [USB3Transport] = [],
         cioCapabilities: [CIOCableCapability] = [],
-        usbDevices: [USBDevice] = []
+        usbDevices: [USBDevice] = [],
+        displayPorts: [IOPortTransportStateDisplayPort] = []
     ) -> String {
         if ports.isEmpty {
             return String(localized: "No USB-C / MagSafe ports were found on this Mac.", bundle: _coreLocalizedBundle) + "\n"
@@ -44,7 +45,8 @@ public enum TextFormatter {
                 cioCapability: cioCapabilities.first { $0.portKey == port.portKey },
                 chargerWattageSource: wattageSource,
                 batteryFullyCharged: batteryFullyCharged,
-                usbDevices: port.matchingDevices(from: usbDevices)
+                usbDevices: port.matchingDevices(from: usbDevices),
+                displayPort: displayPorts.first { $0.portKey == port.portKey }
             )
         }
         return out
@@ -62,7 +64,8 @@ public enum TextFormatter {
         cioCapability: CIOCableCapability? = nil,
         chargerWattageSource: ChargerWattageSource = .unknown,
         batteryFullyCharged: Bool? = nil,
-        usbDevices: [USBDevice] = []
+        usbDevices: [USBDevice] = [],
+        displayPort: IOPortTransportStateDisplayPort? = nil
     ) -> String {
         let summary = PortSummary(
             port: port,
@@ -113,6 +116,15 @@ public enum TextFormatter {
             let dataColor = dataDiag.isWarning ? ANSI.yellow : ANSI.green
             out += "\n" + ANSI.wrap(ANSI.bold, "Data: ") + ANSI.wrap(dataColor, dataDiag.summary) + "\n"
             out += "  " + ANSI.wrap(ANSI.dim, dataDiag.detail) + "\n"
+        }
+
+        // Display verdict. The cable e-marker is passed only so the verdict
+        // can exonerate (not convict) the cable on an active-cable check.
+        let displayCable = identities.first { $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime }
+        if let displayPort, let displayDiag = DisplayDiagnostic(dp: displayPort, cable: displayCable) {
+            let displayColor = displayDiag.isWarning ? ANSI.yellow : ANSI.green
+            out += "\n" + ANSI.wrap(ANSI.bold, "Display: ") + ANSI.wrap(displayColor, displayDiag.summary) + "\n"
+            out += "  " + ANSI.wrap(ANSI.dim, displayDiag.detail) + "\n"
         }
 
         if !usbDevices.isEmpty {

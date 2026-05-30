@@ -475,8 +475,9 @@ struct PortSummaryTests {
 
     // MARK: - DisplayPort lane config
 
-    @Test("DP bullet includes lane count when pin assignment present")
-    func dpBulletIncludesLaneCountWhenPinAssignmentPresent() {
+    @Test("DP bullet shows 4 lanes when USB3 is not active alongside")
+    func dpBulletShowsFourLaneWhenNoUSB3() {
+        // DisplayPort active, no USB3 on the link: all four lanes carry DP.
         let port = USBCPort(
             id: 1, serviceName: "Port-USB-C@1", className: "AppleHPMInterfaceType10",
             portDescription: "Port-USB-C@1", portTypeDescription: "USB-C",
@@ -497,19 +498,24 @@ struct PortSummaryTests {
         #expect(dpBullet!.contains("4 DP lanes"), "Expected 4-lane info, got: \(dpBullet!)")
     }
 
-    @Test("DP bullet shows two lane for assignment D")
-    func dpBulletShowsTwoLaneForAssignmentD() {
+    // Regression for issue #228 (UGreen Revodok): the same
+    // DisplayPortPinAssignment value (1) appears for both a 4-lane link (no
+    // USB3) and a 2-lane link (USB3 active). Lane count must come from whether
+    // USB3 is active, not from the pin assignment integer. This port uses
+    // pin assignment 1 *and* has USB3 active, so it must read as 2 lanes.
+    @Test("DP bullet shows 2 lanes when USB3 is active alongside (ignores pin assignment)")
+    func dpBulletShowsTwoLaneWhenUSB3Active() {
         let port = USBCPort(
             id: 1, serviceName: "Port-USB-C@1", className: "AppleHPMInterfaceType10",
             portDescription: "Port-USB-C@1", portTypeDescription: "USB-C",
             portNumber: 1, connectionActive: true, activeCable: nil, opticalCable: nil,
             usbActive: nil, superSpeedActive: true, usbModeType: nil, usbConnectString: nil,
             transportsSupported: ["CC", "USB2", "USB3", "DisplayPort"],
-            transportsActive: ["USB3", "DisplayPort"],
+            transportsActive: ["CC", "USB3", "USB2", "DisplayPort"],
             transportsProvisioned: [],
             plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
             overcurrentCount: nil, pinConfiguration: [:],
-            displayPortPinAssignment: 2,
+            displayPortPinAssignment: 1,
             powerCurrentLimits: [],
             firmwareVersion: nil, bootFlagsHex: nil, rawProperties: [:]
         )
@@ -517,14 +523,18 @@ struct PortSummaryTests {
         let dpBullet = summary.bullets.first { $0.contains("DisplayPort") }
         #expect(dpBullet != nil)
         #expect(dpBullet!.contains("2 DP lanes"), "Expected 2-lane info, got: \(dpBullet!)")
+        #expect(!dpBullet!.contains("no USB3"), "2-lane link must not claim 'no USB3': \(dpBullet!)")
     }
 
-    @Test("DP bullet falls back when no pin assignment")
-    func dpBulletFallsBackWhenNoPinAssignment() {
+    @Test("DP lane count is determined without relying on a pin assignment")
+    func dpBulletClassifiesWithoutPinAssignment() {
+        // DisplayPort active, no USB3, no pin assignment reported: still
+        // classifiable as 4-lane from the absence of USB3.
         let port = makePort(active: ["DisplayPort"])
         let summary = PortSummary(port: port)
         let dpBullet = summary.bullets.first { $0.contains("DisplayPort") }
-        #expect(dpBullet == "Carrying DisplayPort video")
+        #expect(dpBullet != nil)
+        #expect(dpBullet!.contains("4 DP lanes"), "Expected 4-lane info, got: \(dpBullet!)")
     }
 
     // MARK: - Partner PD revision

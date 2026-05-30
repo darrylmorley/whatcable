@@ -53,12 +53,20 @@ public final class USB3TransportWatcher: ObservableObject {
     }
 
     public func refresh() {
-        transports.removeAll()
+        // Build locally and assign once so subscribers never see a transient
+        // empty list mid-refresh. See issue #227.
+        var rebuilt: [USB3Transport] = []
         var iter: io_iterator_t = 0
         if IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("IOPortTransportStateUSB3"), &iter) == KERN_SUCCESS {
-            handleAdded(iter)
+            while case let service = IOIteratorNext(iter), service != 0 {
+                if let t = makeTransport(from: service), !rebuilt.contains(where: { $0.id == t.id }) {
+                    rebuilt.append(t)
+                }
+                IOObjectRelease(service)
+            }
             IOObjectRelease(iter)
         }
+        if rebuilt != transports { transports = rebuilt }
     }
 
     private func handleAdded(_ iter: io_iterator_t) {

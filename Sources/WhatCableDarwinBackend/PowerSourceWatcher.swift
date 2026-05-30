@@ -52,12 +52,23 @@ public final class PowerSourceWatcher: ObservableObject {
     }
 
     public func refresh() {
-        sources.removeAll()
+        // Build the new list locally and assign once. Mutating the published
+        // `sources` in place (removeAll then re-append) emits a transient empty
+        // value that downstream subscribers see as "everything disconnected,"
+        // which made NotificationManager fire a charger-connect/disconnect pair
+        // on every poll tick. See issue #227.
+        var rebuilt: [PowerSource] = []
         var iter: io_iterator_t = 0
         if IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("IOPortFeaturePowerSource"), &iter) == KERN_SUCCESS {
-            handleAdded(iter)
+            while case let service = IOIteratorNext(iter), service != 0 {
+                if let s = makeSource(from: service), !rebuilt.contains(where: { $0.id == s.id }) {
+                    rebuilt.append(s)
+                }
+                IOObjectRelease(service)
+            }
             IOObjectRelease(iter)
         }
+        if rebuilt != sources { sources = rebuilt }
     }
 
     private func handleAdded(_ iter: io_iterator_t) {

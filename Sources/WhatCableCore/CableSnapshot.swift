@@ -141,6 +141,11 @@ public struct CableSnapshot: Equatable {
     /// per-lane transport mode (CIO/DisplayPort/idle), USB2 state, and DP
     /// pixel clock. One entry per physical USB-C port.
     public let typeCPhys: [AppleTypeCPhy]
+    /// Per-port DisplayPort transport state (link rate, lane count, and the
+    /// monitor's EDID). Present only while a display is connected; the IOKit
+    /// services appear and disappear with plug/unplug. Correlated to a port
+    /// via `IOPortTransportStateDisplayPort.portKey`.
+    public let displayPorts: [IOPortTransportStateDisplayPort]
     /// AppleSmartBattery's FullyCharged flag. `nil` on desktop Macs / when
     /// no battery is present, so consumers never claim "battery full" on a
     /// machine that has no battery.
@@ -159,6 +164,7 @@ public struct CableSnapshot: Equatable {
         trmTransports: [TRMTransport] = [],
         cioCapabilities: [CIOCableCapability] = [],
         typeCPhys: [AppleTypeCPhy] = [],
+        displayPorts: [IOPortTransportStateDisplayPort] = [],
         batteryFullyCharged: Bool? = nil
     ) {
         self.ports = ports
@@ -173,6 +179,7 @@ public struct CableSnapshot: Equatable {
         self.trmTransports = trmTransports
         self.cioCapabilities = cioCapabilities
         self.typeCPhys = typeCPhys
+        self.displayPorts = displayPorts
         self.batteryFullyCharged = batteryFullyCharged
     }
 }

@@ -13,6 +13,7 @@ final class WatcherHub {
     let tbWatcher      = IOIOThunderboltSwitchWatcher()
     let usb3Watcher    = USB3TransportWatcher()
     let trmWatcher     = TRMTransportWatcher()
+    let displayWatcher = DisplayPortTransportWatcher()
 
     private var isStarted = false
     private var pollTask: Task<Void, Never>?
@@ -33,6 +34,7 @@ final class WatcherHub {
         tbWatcher.start()
         usb3Watcher.start()
         trmWatcher.start()
+        displayWatcher.start()
 
         startPoll()
         setupBurstTriggers()
@@ -47,6 +49,7 @@ final class WatcherHub {
         tbWatcher.refresh()
         usb3Watcher.refresh()
         trmWatcher.refresh()
+        displayWatcher.refresh()
     }
 
     private func startPoll() {

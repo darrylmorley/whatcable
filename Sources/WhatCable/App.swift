@@ -6,6 +6,10 @@ import WhatCableCore
 import WhatCableAppKit
 import WhatCablePlugins
 
+// Launch diagnostics use `.notice`, not `.info`, on purpose. `log stream`
+// and `log show` hide info/debug unless you pass `--level info`, so the
+// simple command we hand non-technical users (issue #221) would show
+// nothing. `.notice` is the lowest level a plain `log` command displays.
 private let log = Logger(subsystem: "uk.whatcable.whatcable", category: "lifecycle")
 
 @main
@@ -86,7 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private var cancellables: Set<AnyCancellable> = []
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        log.info("launch: version=\(AppInfo.version, privacy: .public) macOS=\(ProcessInfo.processInfo.operatingSystemVersionString, privacy: .public)")
+        log.notice("launch: version=\(AppInfo.version, privacy: .public) macOS=\(ProcessInfo.processInfo.operatingSystemVersionString, privacy: .public)")
         registerWidgetExtension()
         NSWindow.allowsAutomaticWindowTabbing = false
 
@@ -96,13 +100,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         NotificationManager.shared.start()
         WidgetDataWriter.shared.start()
         UpdateChecker.shared.start()
-        log.info("launch: subsystems started")
+        log.notice("launch: subsystems started")
 
         if AppSettings.shared.needsOnboarding {
             showWelcomeWindow()
         } else {
             applyDisplayMode(menuBar: AppSettings.shared.useMenuBarMode)
-            log.info("launch: display mode applied, menuBar=\(AppSettings.shared.useMenuBarMode)")
+            log.notice("launch: display mode applied, menuBar=\(AppSettings.shared.useMenuBarMode)")
         }
 
         // Live-switch when the user flips the toggle in Settings.
@@ -183,7 +187,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         welcomeWindow = w
         w.makeKeyAndOrderFront(nil)
         NSApp.activate()
-        log.info("launch: showing onboarding window")
+        log.notice("launch: showing onboarding window")
     }
 
     private func completeOnboarding(useMenuBar: Bool) {
@@ -192,7 +196,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         AppSettings.shared.hasCompletedOnboarding = true
         AppSettings.shared.useMenuBarMode = useMenuBar
         applyDisplayMode(menuBar: useMenuBar)
-        log.info("launch: onboarding complete, menuBar=\(useMenuBar)")
+        log.notice("launch: onboarding complete, menuBar=\(useMenuBar)")
         DispatchQueue.main.async { w.close() }
     }
 
@@ -231,7 +235,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
             p.contentViewController = host
             p.delegate = self
             popover = p
-            log.info("menuBar: popover created")
+            log.notice("menuBar: popover created")
         }
         if statusItem == nil {
             let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -244,14 +248,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
                 button.target = self
                 button.action = #selector(handleClick(_:))
                 button.sendAction(on: [.leftMouseUp, .rightMouseUp])
-                log.info("menuBar: statusItem button configured, hasImage=\(button.image != nil), frame=\(button.frame.debugDescription, privacy: .public)")
+                log.notice("menuBar: statusItem button configured, hasImage=\(button.image != nil), frame=\(button.frame.debugDescription, privacy: .public)")
             } else {
                 log.error("menuBar: statusItem.button is nil, removing broken item")
                 NSStatusBar.system.removeStatusItem(item)
                 return
             }
             statusItem = item
-            log.info("menuBar: statusItem created, isVisible=\(item.isVisible)")
+            log.notice("menuBar: statusItem created, isVisible=\(item.isVisible)")
         }
     }
 
@@ -442,7 +446,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
             try task.run()
             task.waitUntilExit()
             if task.terminationStatus == 0 {
-                log.info("launch: registered widget extension via pluginkit")
+                log.notice("launch: registered widget extension via pluginkit")
             } else {
                 log.warning("launch: pluginkit -a exited with status \(task.terminationStatus)")
             }

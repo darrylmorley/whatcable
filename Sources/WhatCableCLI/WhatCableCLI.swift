@@ -144,7 +144,8 @@ private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Boo
             usb3Transports: snapshot.usb3Transports,
             trmTransports: snapshot.trmTransports,
             cioCapabilities: snapshot.cioCapabilities,
-            usbDevices: snapshot.usbDevices
+            usbDevices: snapshot.usbDevices,
+            displayPorts: snapshot.displayPorts
         )
         print(json)
     } else {
@@ -160,7 +161,8 @@ private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Boo
             federatedIdentities: snapshot.federatedIdentities,
             usb3Transports: snapshot.usb3Transports,
             cioCapabilities: snapshot.cioCapabilities,
-            usbDevices: snapshot.usbDevices
+            usbDevices: snapshot.usbDevices,
+            displayPorts: snapshot.displayPorts
         )
         print(output, terminator: "")
     }
@@ -214,7 +216,8 @@ private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Boo
                         usb3Transports: snapshot.usb3Transports,
                         trmTransports: snapshot.trmTransports,
                         cioCapabilities: snapshot.cioCapabilities,
-                        usbDevices: snapshot.usbDevices
+                        usbDevices: snapshot.usbDevices,
+                        displayPorts: snapshot.displayPorts
                     )
                 } catch {
                     FileHandle.standardError.write(Data("whatcable: json encoding failed: \(error)\n".utf8))
@@ -233,7 +236,8 @@ private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Boo
                     federatedIdentities: snapshot.federatedIdentities,
                     usb3Transports: snapshot.usb3Transports,
                     cioCapabilities: snapshot.cioCapabilities,
-                    usbDevices: snapshot.usbDevices
+                    usbDevices: snapshot.usbDevices,
+                    displayPorts: snapshot.displayPorts
                 )
             }
 

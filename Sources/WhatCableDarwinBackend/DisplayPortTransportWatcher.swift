@@ -77,12 +77,25 @@ public final class DisplayPortTransportWatcher: ObservableObject {
     }
 
     public func refresh() {
-        statuses.removeAll()
+        // Build locally and assign once so subscribers never see a transient
+        // empty list mid-refresh. The per-update continuation yield is kept so
+        // the `updates` stream contract is unchanged. See issue #227.
+        var rebuilt: [DisplayPortUpdate] = []
         var iter: io_iterator_t = 0
         if IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("IOPortTransportStateDisplayPort"), &iter) == KERN_SUCCESS {
-            handleAdded(iter)
+            while case let service = IOIteratorNext(iter), service != 0 {
+                if let update = makeUpdate(from: service) {
+                    rebuilt.removeAll {
+                        $0.portIndex == update.portIndex && $0.portType == update.portType
+                    }
+                    rebuilt.append(update)
+                    continuation?.yield(update)
+                }
+                IOObjectRelease(service)
+            }
             IOObjectRelease(iter)
         }
+        if rebuilt != statuses { statuses = rebuilt }
     }
 
     private func handleAdded(_ iterator: io_iterator_t) {

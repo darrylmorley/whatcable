@@ -969,4 +969,34 @@ struct JSONFormatterTests {
         #expect(dataLink["isWarning"] as? Bool == true,
             "cableContradictsActive should warn; got isWarning: \(String(describing: dataLink["isWarning"]))")
     }
+
+    @Test("Display verdict appears as a port `display` object")
+    func displayDTOAppears() throws {
+        // makePort is portKey "2/1"; the DP node's parent must match so the
+        // formatter correlates them. A 2-lane HBR2 link with the G34w-10 EDID
+        // falls short of its 100Hz ceiling -> belowMonitorMax.
+        let dp = IOPortTransportStateDisplayPort(
+            link: DisplayPortLink(
+                active: true, laneCount: 2, maxLaneCount: 4, linkRate: 3,
+                linkRateDescription: "5.4 Gbps (HBR2)", tunneled: false, hpdState: 1
+            ),
+            monitor: MonitorInfo(
+                manufacturerName: nil, productName: nil, productId: nil,
+                yearOfManufacture: nil, edid: Data(EDIDInfoTests.g34wBaseBlock)
+            ),
+            parentPortType: 2,
+            parentPortNumber: 1
+        )
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [],
+            showRaw: false, displayPorts: [dp]
+        )
+        let port = (parse(json)["ports"] as? [[String: Any]])?.first ?? [:]
+        let display = port["display"] as? [String: Any] ?? [:]
+        #expect(display["bottleneck"] as? String == "belowMonitorMax",
+            "got: \(String(describing: display["bottleneck"]))")
+        #expect(display["monitorName"] as? String == "LEN G34w-10")
+        #expect(display["lanes"] as? Int == 2)
+        #expect(display["maxLanes"] as? Int == 4)
+    }
 }

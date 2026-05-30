@@ -199,8 +199,14 @@ public struct AppleHPMInterface: Identifiable, Hashable {
 
     /// Decoded DisplayPort alt mode lane configuration, if DP is active.
     public var dpLaneConfig: DisplayPortLaneConfig? {
-        guard let raw = displayPortPinAssignment, raw != 0 else { return nil }
-        return DisplayPortLaneConfig(rawValue: raw)
+        // DisplayPort must actually be carried on this link to report a lane
+        // split. Decide 2-lane vs 4-lane from whether USB3 is active alongside
+        // it, not from DisplayPortPinAssignment (unreliable, see issue #228).
+        guard transportsActive.contains("DisplayPort") else { return nil }
+        return DisplayPortLaneConfig(
+            usb3Active: transportsActive.contains("USB3"),
+            rawPinAssignment: displayPortPinAssignment ?? 0
+        )
     }
 
     /// True when this port can host a data link (USB or Thunderbolt).

@@ -76,6 +76,7 @@ struct ContentView: View {
     @ObservedObject private var tbWatcher = WatcherHub.shared.tbWatcher
     @ObservedObject private var usb3Watcher = WatcherHub.shared.usb3Watcher
     @ObservedObject private var trmWatcher = WatcherHub.shared.trmWatcher
+    @ObservedObject private var displayWatcher = WatcherHub.shared.displayWatcher
     @EnvironmentObject private var refresh: RefreshSignal
     @ObservedObject private var settings = AppSettings.shared
     @ObservedObject private var updates = UpdateChecker.shared
@@ -182,6 +183,7 @@ struct ContentView: View {
                                 isLive: isPortLive(port),
                                 showAdvanced: showAdvanced,
                                 cioCapability: trmWatcher.cioCapabilities.first { $0.portKey == port.portKey },
+                                displayPort: displayWatcher.statuses.first { $0.status.portKey == port.portKey }?.status,
                                 chargerWattageSource: wattageSource,
                                 batteryFullyCharged: batteryFull,
                                 adapter: adapter
@@ -415,6 +417,9 @@ struct PortCard: View {
     let isLive: Bool
     let showAdvanced: Bool
     let cioCapability: CIOCableCapability?
+    /// DisplayPort transport for this port (link rate, lanes, monitor EDID),
+    /// matched by `portKey`. Nil when no display is connected here.
+    let displayPort: IOPortTransportStateDisplayPort?
     let chargerWattageSource: ChargerWattageSource
     let batteryFullyCharged: Bool?
     /// System-wide adapter info from `SystemPower.currentAdapter()`.
@@ -503,6 +508,11 @@ struct PortCard: View {
                 thunderboltSwitches: thunderboltSwitches
             ) {
                 DataLinkBanner(diagnostic: dataDiag)
+                    .padding(.leading, 48)
+            }
+
+            if let displayPort, let displayDiag = DisplayDiagnostic(dp: displayPort, cable: cableEmarker) {
+                DisplayBanner(diagnostic: displayDiag)
                     .padding(.leading, 48)
             }
 
@@ -627,6 +637,42 @@ struct DataLinkBanner: View {
                 .opacity(0.1),
             in: RoundedRectangle(cornerRadius: 8)
         )
+    }
+}
+
+struct DisplayBanner: View {
+    let diagnostic: DisplayDiagnostic
+
+    private var accent: Color {
+        switch diagnostic.bottleneck {
+        case .fine: return .green
+        case .belowMonitorMax, .adapterLimit: return .orange
+        case .unknownMode: return .secondary
+        }
+    }
+
+    private var icon: String {
+        switch diagnostic.bottleneck {
+        case .fine: return "checkmark.seal.fill"
+        case .belowMonitorMax: return "exclamationmark.triangle.fill"
+        case .adapterLimit: return "arrow.triangle.swap"
+        case .unknownMode: return "questionmark.circle"
+        }
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: icon)
+                .foregroundStyle(accent)
+                .scaledFont(.callout)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(diagnostic.summary).scaledFont(.callout, weight: .bold)
+                Text(diagnostic.detail).scaledFont(.caption).foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .padding(10)
+        .background(accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 

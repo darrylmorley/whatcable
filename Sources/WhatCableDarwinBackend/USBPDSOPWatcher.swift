@@ -67,15 +67,24 @@ public final class USBPDSOPWatcher: ObservableObject {
     }
 
     public func refresh() {
-        identities.removeAll()
+        // Build locally and assign once so subscribers never see a transient
+        // empty list mid-refresh. See issue #227.
+        var rebuilt: [USBPDSOP] = []
         for className in Self.matchedClasses {
             var iter: io_iterator_t = 0
             if IOServiceGetMatchingServices(kIOMainPortDefault,
                 IOServiceMatching(className), &iter) == KERN_SUCCESS {
-                handleAdded(iter)
+                while case let service = IOIteratorNext(iter), service != 0 {
+                    if let identity = makeIdentity(from: service),
+                       !rebuilt.contains(where: { $0.id == identity.id }) {
+                        rebuilt.append(identity)
+                    }
+                    IOObjectRelease(service)
+                }
                 IOObjectRelease(iter)
             }
         }
+        if rebuilt != identities { identities = rebuilt }
     }
 
     private func handleAdded(_ iter: io_iterator_t) {

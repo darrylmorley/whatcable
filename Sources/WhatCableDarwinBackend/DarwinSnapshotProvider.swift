@@ -25,6 +25,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
         let usb3Watcher = USB3TransportWatcher()
         let trmWatcher = TRMTransportWatcher()
         let phyWatcher = AppleTypeCPhyWatcher()
+        let displayWatcher = DisplayPortTransportWatcher()
         var started = false
 
         func ensureStarted() {
@@ -37,6 +38,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
             usb3Watcher.start()
             trmWatcher.start()
             phyWatcher.start()
+            displayWatcher.start()
             started = true
         }
 
@@ -51,6 +53,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
             usb3Watcher.refresh()
             trmWatcher.refresh()
             phyWatcher.refresh()
+            displayWatcher.refresh()
             let battery = AppleSmartBatteryReader.read()
             let snap = CableSnapshot(
                 ports: portWatcher.ports,
@@ -65,6 +68,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
                 trmTransports: trmWatcher.transports,
                 cioCapabilities: trmWatcher.cioCapabilities,
                 typeCPhys: phyWatcher.phys,
+                displayPorts: displayWatcher.statuses.map(\.status),
                 batteryFullyCharged: battery.battery?.fullyCharged
             )
             DarwinSnapshotProvider.logChargingSignals(snap)

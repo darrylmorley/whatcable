@@ -85,15 +85,46 @@ public final class TRMTransportWatcher: ObservableObject {
     }
 
     public func refresh() {
-        transports.removeAll()
-        cioCapabilities.removeAll()
+        // Build both lists locally and assign once. Mutating the published
+        // properties in place (removeAll then re-append) emits a transient
+        // empty value that downstream subscribers see as "everything gone."
+        // See issue #227.
+        var rebuiltTransports: [TRMTransport] = []
+        var rebuiltCIO: [CIOCableCapability] = []
         for cls in Self.watchedClasses {
             var iter: io_iterator_t = 0
             if IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching(cls), &iter) == KERN_SUCCESS {
-                handleAdded(iter)
+                while case let service = IOIteratorNext(iter), service != 0 {
+                    defer { IOObjectRelease(service) }
+
+                    var entryID: UInt64 = 0
+                    IORegistryEntryGetRegistryEntryID(service, &entryID)
+
+                    func read(_ key: String) -> Any? {
+                        IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue()
+                    }
+
+                    var classBuf = [CChar](repeating: 0, count: 128)
+                    IOObjectGetClass(service, &classBuf)
+                    let className = String(cString: classBuf)
+                    let transportType = Self.transportType(from: className)
+
+                    if let t = makeTRMTransport(entryID: entryID, read: read, transportType: transportType),
+                       !rebuiltTransports.contains(where: { $0.id == t.id }) {
+                        rebuiltTransports.append(t)
+                    }
+
+                    if transportType == "CIO",
+                       let c = makeCIOCapability(entryID: entryID, read: read),
+                       !rebuiltCIO.contains(where: { $0.id == c.id }) {
+                        rebuiltCIO.append(c)
+                    }
+                }
                 IOObjectRelease(iter)
             }
         }
+        if rebuiltTransports != transports { transports = rebuiltTransports }
+        if rebuiltCIO != cioCapabilities { cioCapabilities = rebuiltCIO }
     }
 
     private func handleAdded(_ iter: io_iterator_t) {
