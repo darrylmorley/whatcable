@@ -80,6 +80,8 @@
 "COMMUNITY" = "समुदाय";
 "Contribute Diagnostic Data" = "डायग्नोस्टिक डेटा योगदान करें";
 "Contribute Diagnostic Data…" = "डायग्नोस्टिक डेटा योगदान करें…";
+"Automatically Send Diagnostic Data" = "डायग्नोस्टिक डेटा स्वचालित रूप से भेजें";
+"Automatically contributes diagnostic data every 48 hours." = "हर 48 घंटे में स्वचालित रूप से डायग्नोस्टिक डेटा का योगदान करता है।";
 "Privacy" = "गोपनीयता";
 "Pro" = "Pro";
 "Proceed" = "आगे बढ़ें";

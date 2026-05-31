@@ -80,6 +80,8 @@
 "COMMUNITY" = "COMMUNITY";
 "Contribute Diagnostic Data" = "Contribute Diagnostic Data";
 "Contribute Diagnostic Data…" = "Contribute Diagnostic Data…";
+"Automatically Send Diagnostic Data" = "Automatically Send Diagnostic Data";
+"Automatically contributes diagnostic data every 48 hours." = "Automatically contributes diagnostic data every 48 hours.";
 "Privacy" = "Privacy";
 "Pro" = "Pro";
 "Proceed" = "Proceed";

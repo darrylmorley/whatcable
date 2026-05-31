@@ -81,6 +81,8 @@
 "COMMUNITY" = "コミュニティ";
 "Contribute Diagnostic Data" = "診断データを提供";
 "Contribute Diagnostic Data…" = "診断データを提供…";
+"Automatically Send Diagnostic Data" = "診断データを自動的に送信";
+"Automatically contributes diagnostic data every 48 hours." = "48時間ごとに診断データを自動的に提供します。";
 "Privacy" = "プライバシー";
 "Pro" = "Pro";
 "Proceed" = "続行";

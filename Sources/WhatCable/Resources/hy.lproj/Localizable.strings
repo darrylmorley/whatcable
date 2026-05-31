@@ -80,6 +80,8 @@
 "COMMUNITY" = "ՀԱՄԱՅՆՔ";
 "Contribute Diagnostic Data" = "Տրամադրել ախտորոշիչ տվյալներ";
 "Contribute Diagnostic Data…" = "Տրամադրել ախտորոշիչ տվյալներ…";
+"Automatically Send Diagnostic Data" = "Ինքնաշխատ ուղարկել ախտորոշիչ տվյալները";
+"Automatically contributes diagnostic data every 48 hours." = "Ինքնաշխատ տրամադրում է ախտորոշիչ տվյալներ յուրաքանչյուր 48 ժամը մեկ։";
 "Privacy" = "Գաղտնիություն";
 "Pro" = "Pro";
 "Proceed" = "Շարունակել";

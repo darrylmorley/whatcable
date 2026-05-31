@@ -100,6 +100,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         NotificationManager.shared.start()
         WidgetDataWriter.shared.start()
         UpdateChecker.shared.start()
+        TestKitRunner.shared.refreshAutoSendSchedule(delayInitialRun: true)
         log.notice("launch: subsystems started")
 
         if AppSettings.shared.needsOnboarding {

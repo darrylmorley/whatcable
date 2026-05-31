@@ -51,6 +51,45 @@ final class TestKitRunner: ObservableObject {
         }
     }
 
+    static let autoSendInterval: TimeInterval = 48 * 60 * 60 // 48hrs
+
+    private var autoSendTimer: Timer?
+    private var autoSendCatchUpTimer: Timer?
+
+
+    func refreshAutoSendSchedule(delayInitialRun: Bool = false) {
+        autoSendTimer?.invalidate()
+        autoSendTimer = nil
+        autoSendCatchUpTimer?.invalidate()
+        autoSendCatchUpTimer = nil
+
+        guard AppSettings.shared.autoContributeDiagnosticData else { return }
+
+        autoSendTimer = Timer.scheduledTimer(withTimeInterval: Self.autoSendInterval, repeats: true) { [weak self] _ in
+            Task { @MainActor in self?.runAutomatic() }
+        }
+
+        let last = AppSettings.shared.testKitLastAutoRunDate
+        let isDue = last.map { Date().timeIntervalSince($0) >= Self.autoSendInterval } ?? true
+        guard isDue else { return }
+
+        if delayInitialRun {
+            autoSendCatchUpTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false) { [weak self] _ in
+                Task { @MainActor in self?.runAutomatic() }
+            }
+        } else {
+            runAutomatic()
+        }
+    }
+
+
+    private func runAutomatic() {
+        guard AppSettings.shared.autoContributeDiagnosticData else { return }
+        guard !isRunning else { return }
+        AppSettings.shared.testKitLastAutoRunDate = Date()
+        run()
+    }
+
     private func runAllProbes() async {
         let machineID = await Task.detached { Self.machineID() }.value
         let ver = ProcessInfo.processInfo.operatingSystemVersion

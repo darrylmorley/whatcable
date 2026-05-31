@@ -19,6 +19,9 @@ final class AppSettings: ObservableObject {
         static let fontSize = "fontSize"
         static let preferredLanguage = "preferredLanguage"
         static let testKitLastRunVersion = "testKitLastRunVersion"
+        static let autoContributeDiagnosticData = "autoContributeDiagnosticData"
+        static let testKitLastAutoRunDate = "testKitLastAutoRunDate"
+        static let testKitAutoConsentGiven = "testKitAutoConsentGiven"
         static let hasCompletedOnboarding = "hasCompletedOnboarding"
     }
 
@@ -91,9 +94,35 @@ final class AppSettings: ObservableObject {
         }
     }
 
+
+    @Published var autoContributeDiagnosticData: Bool {
+        didSet {
+            guard autoContributeDiagnosticData != oldValue else { return }
+            UserDefaults.standard.set(autoContributeDiagnosticData, forKey: Keys.autoContributeDiagnosticData)
+            TestKitRunner.shared.refreshAutoSendSchedule()
+        }
+    }
+
     var testKitLastRunVersion: String? {
         get { UserDefaults.standard.string(forKey: Keys.testKitLastRunVersion) }
         set { UserDefaults.standard.set(newValue, forKey: Keys.testKitLastRunVersion) }
+    }
+
+    /// Timestamp of the last automatic diagnostic contribution.
+    /// Used to catch up on a missed run after the app was closed and to space
+    /// recurring runs apart.
+    var testKitLastAutoRunDate: Date? {
+        get { UserDefaults.standard.object(forKey: Keys.testKitLastAutoRunDate) as? Date }
+        set { UserDefaults.standard.set(newValue, forKey: Keys.testKitLastAutoRunDate) }
+    }
+
+    /// True once the user has accepted the consent sheet for automatic
+    /// contribution at least once. The sheet is a one-time gate: after the
+    /// first Proceed, toggling "Automatically Send Diagnostic Data" off and
+    /// back on enables it directly without re-showing the consent.
+    var testKitAutoConsentGiven: Bool {
+        get { UserDefaults.standard.bool(forKey: Keys.testKitAutoConsentGiven) }
+        set { UserDefaults.standard.set(newValue, forKey: Keys.testKitAutoConsentGiven) }
     }
 
     var hasCompletedOnboarding: Bool {
@@ -116,6 +145,8 @@ final class AppSettings: ObservableObject {
         // Notifications default off — opt in to avoid noise.
         self.notifyOnChanges = UserDefaults.standard.bool(forKey: Keys.notifyOnChanges)
         self.hideEmptyPorts = UserDefaults.standard.bool(forKey: Keys.hideEmptyPorts)
+        // Recurring contribution is opt-in.
+        self.autoContributeDiagnosticData = UserDefaults.standard.bool(forKey: Keys.autoContributeDiagnosticData)
         // Menu bar mode is the default; UserDefaults returns false for unset
         // bool keys, so explicitly check presence.
         if UserDefaults.standard.object(forKey: Keys.useMenuBarMode) == nil {

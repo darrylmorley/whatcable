@@ -81,6 +81,8 @@
 "COMMUNITY" = "COMMUNAUTÉ";
 "Contribute Diagnostic Data" = "Contribuer aux données de diagnostic";
 "Contribute Diagnostic Data…" = "Contribuer aux données de diagnostic…";
+"Automatically Send Diagnostic Data" = "Envoyer automatiquement les données de diagnostic";
+"Automatically contributes diagnostic data every 48 hours." = "Contribue automatiquement aux données de diagnostic toutes les 48 heures.";
 "Privacy" = "Confidentialité";
 "Pro" = "Pro";
 "Proceed" = "Continuer";

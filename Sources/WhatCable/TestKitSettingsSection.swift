@@ -6,6 +6,7 @@ struct TestKitSettingsSection: View {
     @ObservedObject private var settings = AppSettings.shared
     @ObservedObject private var runner = TestKitRunner.shared
     @State private var showingConsent = false
+    @State private var pendingAutoEnable = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -14,7 +15,7 @@ struct TestKitSettingsSection: View {
                 .foregroundStyle(.secondary)
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
-                    Button(action: { showingConsent = true }) {
+                    Button(action: { pendingAutoEnable = false; showingConsent = true }) {
                         Label(String(localized: "Contribute Diagnostic Data", bundle: _appLocalizedBundle), systemImage: "waveform.path.ecg")
                     }
                     .disabled(runner.isRunning)
@@ -23,6 +24,13 @@ struct TestKitSettingsSection: View {
 
                     statusLabel
                 }
+
+                Toggle(isOn: autoSendBinding) {
+                    Text(String(localized: "Automatically Send Diagnostic Data", bundle: _appLocalizedBundle))
+                }
+                .toggleStyle(.switch)
+                .controlSize(.small)
+                .help(autoSendHelp)
             }
             .scaledFont(.body)
             .controlSize(.small)
@@ -30,17 +38,49 @@ struct TestKitSettingsSection: View {
         .sheet(isPresented: $showingConsent) {
             TestKitConsentView {
                 showingConsent = false
-                runner.run()
+                if pendingAutoEnable {
+                    pendingAutoEnable = false
+                    // Remember the consent so re-toggling never re-prompts.
+                    settings.testKitAutoConsentGiven = true
+                    settings.autoContributeDiagnosticData = true
+                } else {
+                    runner.run()
+                }
             } onCancel: {
                 showingConsent = false
+                pendingAutoEnable = false
             }
         }
         .onReceive(refreshSignal.$showTestKitConsent) { show in
             if show {
+                pendingAutoEnable = false
                 showingConsent = true
                 refreshSignal.showTestKitConsent = false
             }
         }
+    }
+
+    private var autoSendHelp: String {
+        String(localized: "Automatically contributes diagnostic data every 48 hours.", bundle: _appLocalizedBundle)
+    }
+
+    // Saving user preferences
+    private var autoSendBinding: Binding<Bool> {
+        Binding(
+            get: { settings.autoContributeDiagnosticData },
+            set: { isOn in
+                if isOn {
+                    if settings.testKitAutoConsentGiven {
+                        settings.autoContributeDiagnosticData = true
+                    } else {
+                        pendingAutoEnable = true
+                        showingConsent = true
+                    }
+                } else {
+                    settings.autoContributeDiagnosticData = false
+                }
+            }
+        )
     }
 
     @ViewBuilder

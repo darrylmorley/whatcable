@@ -81,6 +81,8 @@
 "COMMUNITY" = "FELLESSKAP";
 "Contribute Diagnostic Data" = "Bidra med diagnostikkdata";
 "Contribute Diagnostic Data…" = "Bidra med diagnostikkdata…";
+"Automatically Send Diagnostic Data" = "Send diagnostikkdata automatisk";
+"Automatically contributes diagnostic data every 48 hours." = "Bidrar automatisk med diagnostikkdata hver 48. time.";
 "Privacy" = "Personvern";
 "Pro" = "Pro";
 "Proceed" = "Fortsett";

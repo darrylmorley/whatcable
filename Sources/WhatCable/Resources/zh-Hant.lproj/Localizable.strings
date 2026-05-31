@@ -80,6 +80,8 @@
 "COMMUNITY" = "社群";
 "Contribute Diagnostic Data" = "提供診斷資料";
 "Contribute Diagnostic Data…" = "提供診斷資料…";
+"Automatically Send Diagnostic Data" = "自動傳送診斷資料";
+"Automatically contributes diagnostic data every 48 hours." = "每 48 小時自動提供診斷資料。";
 "Privacy" = "隱私權";
 "Pro" = "Pro";
 "Proceed" = "繼續";

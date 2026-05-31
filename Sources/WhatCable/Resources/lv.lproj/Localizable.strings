@@ -80,6 +80,8 @@
 "COMMUNITY" = "KOPIENA";
 "Contribute Diagnostic Data" = "Sniegt diagnostikas datus";
 "Contribute Diagnostic Data…" = "Sniegt diagnostikas datus…";
+"Automatically Send Diagnostic Data" = "Automātiski sūtīt diagnostikas datus";
+"Automatically contributes diagnostic data every 48 hours." = "Automātiski sniedz diagnostikas datus ik pēc 48 stundām.";
 "Privacy" = "Privātums";
 "Pro" = "Pro";
 "Proceed" = "Turpināt";

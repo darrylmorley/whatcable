@@ -80,6 +80,8 @@
 "COMMUNITY" = "社区";
 "Contribute Diagnostic Data" = "贡献诊断数据";
 "Contribute Diagnostic Data…" = "贡献诊断数据…";
+"Automatically Send Diagnostic Data" = "自动发送诊断数据";
+"Automatically contributes diagnostic data every 48 hours." = "每 48 小时自动贡献诊断数据。";
 "Privacy" = "隐私";
 "Pro" = "Pro";
 "Proceed" = "继续";
