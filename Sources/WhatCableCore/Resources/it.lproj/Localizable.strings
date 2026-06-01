@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Inserisci chiave di licenza…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Questo è il massimo concordato tra il caricatore e il Mac, non una lettura in tempo reale. Il Mac riporta la cifra in tempo reale solo come totale del sistema, visualizzato nel grafico 'Ingresso alimentazione sistema' qui sotto.";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Questo è il massimo concordato tra il caricatore e il Mac, non una lettura in tempo reale. Il Mac riporta il valore in tempo reale solo come totale del sistema, visualizzato nel grafico 'Ingresso alimentazione sistema' qui sotto.";
 "No power data for this port right now." = "Nessun dato di alimentazione per questa porta al momento.";
 "Waiting for power telemetry from macOS..." = "In attesa dei dati di alimentazione da macOS...";
 "Upgrade to WhatCable Pro" = "Passa a WhatCable Pro";
