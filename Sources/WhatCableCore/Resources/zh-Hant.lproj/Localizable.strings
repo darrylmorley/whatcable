@@ -261,8 +261,8 @@
 "Short detect count" = "短路偵測次數";
 "Signal Routing" = "訊號路由";
 "Sleep/wake" = "睡眠/喚醒";
-"Source PDOs" = "Source PDO";
-"Source capabilities received" = "已收到 source 規格";
+"Source PDOs" = "Source PDOs";
+"Source capabilities received" = "已收到 Source 規格";
 "Source_Capabilities message received from the power source. Contains the PDO list (voltages and currents on offer)." = "已從電源收到 Source_Capabilities 訊息。包含 PDO 清單（可提供的電壓和電流）。";
 "State" = "狀態";
 "Status update" = "狀態更新";
@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "輸入授權金鑰…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "這是充電器與您的 Mac 協商的最大值，並非即時讀數。您的 Mac 僅將即時數值作為系統總量回報，顯示在下方的「系統電源輸入」圖表中。";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "這是充電器與您的 Mac 協商的最大值，並非即時讀數。您的 Mac 僅會回報整體系統的即時總功率，顯示在下方的「系統電源輸入」圖表中。";
 "No power data for this port right now." = "此連接埠目前沒有電源資料。";
 "Waiting for power telemetry from macOS..." = "正在等待 macOS 電源資料...";
 "Upgrade to WhatCable Pro" = "升級到 WhatCable Pro";
@@ -412,8 +412,8 @@
 "A Billboard device is present on this port. That usually appears when an Alt Mode like DisplayPort was set up but didn't fully come up. Your display is below its best mode, so a re-plug, a different cable, or a different adapter may bring it up. Some docks show a Billboard device normally, so this isn't always a fault." = "此連接埠偵測到 Billboard 裝置。這通常表示 DisplayPort 等 Alt Mode 雖已開始設定，但未能完全啟用。您的顯示器目前未達最佳模式，重新插拔、改用其它線材，或更換轉接器可能有助於恢復正常。有些 Dock 本來就會顯示 Billboard 裝置，因此這不一定代表故障。";
 
 /* Display dimension: compression at the link ceiling (issue #246). */
-"Display may be using compression to reach its top mode" = "顯示器可能正在使用壓縮來達到其最高模式";
-"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可以執行 %@，未壓縮時大約需要 %@。此連線已經以高速率使用每一條通道，傳輸約 %@（%@）。許多高解析度顯示器使用壓縮（DSC）讓最高模式通過這樣的連線，因此僅憑連線速率無法判斷您是否已處於最佳模式。如果畫面看起來正常，那很可能就是最佳模式。";
+"Display may be using compression to reach its top mode" = "顯示器可能透過壓縮來達到最高模式";
+"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可支援 %@，若不使用壓縮約需 %@。目前連線已讓所有 lanes 以高速運作，承載約 %@（%@）。許多高解析度顯示器會使用影像串流壓縮（DSC），讓最高模式能透過這類連線傳輸，因此僅憑連線速率無法判斷是否已達到最佳模式。若畫面顯示正常，那麼很可能已經達到最佳模式。";
 
 /* Power Monitor system power source indicator. */
 "Battery" = "電池";
