@@ -266,7 +266,7 @@
 "Source_Capabilities message received from the power source. Contains the PDO list (voltages and currents on offer)." = "Messaggio Source_Capabilities ricevuto dalla sorgente di alimentazione. Contiene l'elenco PDO (tensioni e correnti offerte).";
 "State" = "Stato";
 "Status update" = "Aggiornamento di stato";
-"System Power Input" = "Ingresso alimentazione di sistema";
+"System Power Input" = "Ingresso alimentazione sistema";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "Transizione di sospensione/riattivazione del sistema. Lo stato del controller della porta viene salvato e ripristinato attraverso i confini di sospensione.";
 "The Mac entered or exited sleep, causing port controller state changes." = "Il Mac è entrato o uscito dalla sospensione, causando cambiamenti di stato del controller della porta.";
 "The charger or power source advertised what voltages and currents it can provide." = "Il caricatore o la sorgente di alimentazione ha dichiarato quali tensioni e correnti può fornire.";
@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Inserisci chiave di licenza…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Questo è il massimo concordato tra il caricatore e il tuo Mac, non una lettura in tempo reale. Il tuo Mac riporta il valore in tempo reale solo come totale di sistema, mostrato nel grafico «Ingresso alimentazione di sistema» qui sotto.";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Questo è il massimo concordato tra il caricatore e il Mac, non una lettura in tempo reale. Il Mac riporta la cifra in tempo reale solo come totale del sistema, visualizzato nel grafico 'Ingresso alimentazione sistema' qui sotto.";
 "No power data for this port right now." = "Nessun dato di alimentazione per questa porta al momento.";
 "Waiting for power telemetry from macOS..." = "In attesa dei dati di alimentazione da macOS...";
 "Upgrade to WhatCable Pro" = "Passa a WhatCable Pro";
@@ -420,4 +420,4 @@
 "Source" = "Sorgente";
 "Battery Power" = "Potenza batteria";
 "Negotiating…" = "Negoziazione…";
-"Waiting for live reading…" = "In attesa della lettura dal vivo…";
+"Waiting for live reading…" = "In attesa lettura in tempo reale…";
