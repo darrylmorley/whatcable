@@ -381,7 +381,7 @@
 "%lld of %lld lanes" = "%lld/%lld lanes";
 "up to %lldHz" = "最高 %lldHz";
 "a higher mode than the link is carrying" = "比目前連線承載更高的模式";
-"This estimate assumes standard colour; a display using compression (DSC) may reach more." = "此估算以標準色彩模式為前提；使用顯示串流壓縮（DSC）的顯示器可能達到更高規格。";
+"This estimate assumes standard colour; a display using compression (DSC) may reach more." = "此估算以標準色彩模式為前提；使用影像串流壓縮（DSC）的顯示器可能達到更高規格。";
 "Video is going through a %@ adapter" = "影像訊號正透過 %@ 轉接器傳輸";
 "Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，而連線尚未達到顯示器的最高模式（%@，約需 %@）；目前約承載 %@（%@）。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
 "Monitor can do more than the link is carrying" = "顯示器規格高於目前連線承載能力";
