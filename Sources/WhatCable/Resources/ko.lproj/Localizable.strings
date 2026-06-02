@@ -112,3 +112,6 @@
 
 /* Billboard device (display dimension). English; community-refined. */
 "Billboard device present" = "Billboard 기기 존재";
+
+/* Softened blank e-marker note (DAR-140) */
+"Cable note" = "케이블 참고";

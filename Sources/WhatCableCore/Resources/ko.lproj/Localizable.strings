@@ -421,3 +421,8 @@
 "Battery Power" = "배터리 전력";
 "Negotiating…" = "협상 중…";
 "Waiting for live reading…" = "실시간 측정값 대기 중…";
+
+/* Softened blank e-marker note (DAR-140) */
+"E-marker vendor ID is blank, but the cable is identified at the connector" = "e-marker의 vendor ID는 비어 있지만 케이블이 커넥터에서 식별됩니다";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "케이블의 e-marker 칩은 vendor ID를 비어 있는 것으로 보고하지만, 커넥터는 이 케이블을 USB-IF에 등록된 vendor인 %1$@(%2$@)(으)로 식별합니다. e-marker VID가 비어 있는 것 자체는 정품 패시브 케이블에서 흔하므로 문제의 징후가 아닙니다.";
+"Cable note:" = "케이블 참고:";

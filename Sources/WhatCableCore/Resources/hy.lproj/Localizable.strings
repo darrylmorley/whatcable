@@ -422,3 +422,8 @@
 "Battery Power" = "Մարտկոցի հզորություն";
 "Negotiating…" = "Համաձայնեցում…";
 "Waiting for live reading…" = "Սպասում է կենդանի ցուցմունքի…";
+
+/* Softened blank e-marker note (DAR-140) */
+"E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker-ի արտադրողի ID-ն դատարկ է, սակայն մալուխը նույնականացվում է միակցիչի մոտ";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Մալուխի E-marker չիպը հայտնում է դատարկ արտադրողի ID, սակայն միակցիչը մալուխը նույնականացնում է որպես %1$@ (%2$@)՝ USB-IF-ում գրանցված արտադրող: Դատարկ E-marker VID-ն ինքնին սովորական է իսկական պասիվ մալուխների համար, ուստի դա խնդրի նշան չէ:";
+"Cable note:" = "Մալուխի նշում.";

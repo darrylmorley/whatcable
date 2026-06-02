@@ -40,6 +40,21 @@ public enum PDVDO {
         /// DFP product type (set on hosts / hubs)
         public let dfpProductType: ProductType
         public let vendorID: Int
+
+        /// The product type to label this responder with: the UFP field
+        /// unless it's unspecified, then the DFP field. Mirrors how
+        /// `PortSummary` chooses which field to show, so callers agree on
+        /// what the responder is claiming to be.
+        public var effectiveProductType: ProductType {
+            ufpProductType != .undefined ? ufpProductType : dfpProductType
+        }
+
+        /// True when this responder declares itself a cable (passive or
+        /// active). Used to tell a cable that answered at the SOP/partner
+        /// address apart from a connected device.
+        public var isCable: Bool {
+            effectiveProductType == .passiveCable || effectiveProductType == .activeCable
+        }
     }
 
     public static func decodeIDHeader(_ vdo: UInt32) -> IDHeader {

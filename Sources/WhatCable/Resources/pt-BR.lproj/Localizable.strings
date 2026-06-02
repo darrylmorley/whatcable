@@ -111,3 +111,6 @@
 
 /* Billboard device (display dimension). English; community-refined. */
 "Billboard device present" = "Billboard device present";
+
+/* Softened blank e-marker note (DAR-140) */
+"Cable note" = "Nota do cabo";

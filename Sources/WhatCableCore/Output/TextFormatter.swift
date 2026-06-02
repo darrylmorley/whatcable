@@ -149,11 +149,24 @@ public enum TextFormatter {
         // fires, and use the same titles + details so wording stays
         // consistent across surfaces.
         if let cable = identities.first(where: { $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime }) {
-            let trust = CableTrustReport(identity: cable)
+            let partner = identities.first(where: { $0.endpoint == .sop })
+            let trust = CableTrustReport(identity: cable, partner: partner)
             if !trust.isEmpty {
-                out += "\n" + ANSI.wrap(ANSI.bold + ANSI.yellow, String(localized: "Cable trust signals:", bundle: _coreLocalizedBundle)) + "\n"
+                // A block with any real warning reads as a warning (yellow
+                // header). A notes-only block reads calm (gray header), so a
+                // softened false-positive doesn't look like an alarm.
+                let hasWarning = trust.flags.contains { $0.severity == .warning }
+                let header = hasWarning
+                    ? ANSI.wrap(ANSI.bold + ANSI.yellow, String(localized: "Cable trust signals:", bundle: _coreLocalizedBundle))
+                    : ANSI.wrap(ANSI.bold + ANSI.gray, String(localized: "Cable note:", bundle: _coreLocalizedBundle))
+                out += "\n" + header + "\n"
                 for flag in trust.flags {
-                    out += "  " + ANSI.wrap(ANSI.yellow, "⚠") + " " + ANSI.wrap(ANSI.bold, flag.title) + "\n"
+                    // Neutral notes read calmly (gray dot); warnings keep the
+                    // yellow alarm marker.
+                    let marker = flag.severity == .warning
+                        ? ANSI.wrap(ANSI.yellow, "⚠")
+                        : ANSI.wrap(ANSI.gray, "•")
+                    out += "  " + marker + " " + ANSI.wrap(ANSI.bold, flag.title) + "\n"
                     out += "    " + ANSI.wrap(ANSI.dim, flag.detail) + "\n"
                 }
             }

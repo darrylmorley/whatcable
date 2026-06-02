@@ -195,9 +195,9 @@ private struct PortDTO: Codable {
         let cableEmarker = identities.first {
             $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime
         }
-        self.cable = cableEmarker.map { CableDTO(identity: $0) }
-
         let partner = identities.first { $0.endpoint == .sop }
+        self.cable = cableEmarker.map { CableDTO(identity: $0, partner: partner) }
+
         self.device = partner.map { DeviceDTO(identity: $0) }
 
         self.charging = ChargingDiagnostic(port: port, sources: sources, identities: identities, adapter: adapter, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged)
@@ -223,7 +223,7 @@ private struct PortDTO: Codable {
             .max()
         self.trust = cableEmarker.map { id in
             TrustDTO(trust: CableTrust(
-                report: CableTrustReport(identity: id),
+                report: CableTrustReport(identity: id, partner: partner),
                 vendorRegistered: VendorDB.isRegistered(id.vendorID),
                 dataLink: dataLinkDiag,
                 negotiatedWatts: negotiatedWatts,
@@ -296,7 +296,7 @@ private struct CableDTO: Codable {
     let active: ActiveCableDTO?
     let trustFlags: [TrustFlagDTO]?
 
-    init(identity: USBPDSOP) {
+    init(identity: USBPDSOP, partner: USBPDSOP? = nil) {
         self.endpoint = identity.endpoint.rawValue
         self.vendorID = identity.vendorID
         self.vendorName = VendorDB.name(for: identity.vendorID)
@@ -323,7 +323,7 @@ private struct CableDTO: Codable {
 
         self.active = identity.activeCableVDO2.map(ActiveCableDTO.init)
 
-        let report = CableTrustReport(identity: identity)
+        let report = CableTrustReport(identity: identity, partner: partner)
         self.trustFlags = report.isEmpty ? nil : report.flags.map(TrustFlagDTO.init)
     }
 }
@@ -360,11 +360,14 @@ private struct TrustFlagDTO: Codable {
     let code: String
     let title: String
     let detail: String
+    /// "warning" for real trust signals, "note" for neutral context.
+    let severity: String
 
     init(_ flag: TrustFlag) {
         self.code = flag.code
         self.title = flag.title
         self.detail = flag.detail
+        self.severity = flag.severity == .warning ? "warning" : "note"
     }
 }
 

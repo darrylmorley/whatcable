@@ -421,3 +421,8 @@
 "Battery Power" = "Мощность аккумулятора";
 "Negotiating…" = "Согласование…";
 "Waiting for live reading…" = "Ожидание текущих показаний…";
+
+/* Softened blank e-marker note (DAR-140) */
+"E-marker vendor ID is blank, but the cable is identified at the connector" = "Идентификатор производителя e-marker пуст, но кабель определяется по разъёму";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Чип e-marker кабеля сообщает пустой идентификатор производителя, но разъём определяет кабель как %1$@ (%2$@) — производителя, зарегистрированного в USB-IF. Пустой VID e-marker сам по себе обычен для подлинных пассивных кабелей и не является признаком проблемы.";
+"Cable note:" = "Примечание о кабеле:";

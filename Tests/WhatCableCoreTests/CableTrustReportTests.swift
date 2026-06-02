@@ -241,4 +241,84 @@ struct CableTrustReportTests {
         let detail = TrustFlag.vidNotInUSBIFList(0xABCD).detail
         #expect(detail.contains("0xABCD"))
     }
+
+    // MARK: - DAR-140: blank e-marker softened by a registered cable plug
+
+    /// Build a synthetic SOP partner identity. `productType` is the ID
+    /// Header's UFP product type (3 = passive cable, 2 = peripheral). When
+    /// `inDFP` is true the cable type is placed in the DFP field instead,
+    /// mirroring the corpus shape where `ufp=undefined, dfp=passiveCable`.
+    private func partnerIdentity(
+        vendorID: Int,
+        productType: Int,
+        inDFP: Bool = false
+    ) -> USBPDSOP {
+        let header: UInt32 = inDFP
+            ? (UInt32(productType) << 23) | UInt32(vendorID)   // DFP field
+            : (UInt32(productType) << 27) | UInt32(vendorID)   // UFP field
+        return USBPDSOP(
+            id: 2,
+            endpoint: .sop,
+            parentPortType: 0,
+            parentPortNumber: 0,
+            vendorID: vendorID,
+            productID: 0,
+            bcdDevice: 0,
+            vdos: [header],
+            specRevision: 3
+        )
+    }
+
+    @Test("Blank e-marker is softened when the plug is a registered cable")
+    func blankEmarkerSoftenedByRegisteredCablePlug() {
+        // #250: e-marker VID 0, but the plug identifies the cable as a
+        // registered vendor. Should be a neutral note, not a counterfeit flag.
+        let partner = partnerIdentity(vendorID: 0x05AC, productType: 3) // passive cable
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
+        #expect(report.flags == [.eMarkerVIDBlankRegisteredPartner(0x05AC)])
+        #expect(report.flags.first?.severity == .note)
+    }
+
+    @Test("DFP-only cable plug still softens the blank e-marker")
+    func blankEmarkerSoftenedWhenPlugCableTypeInDFP() {
+        // Corpus reality: the plug's cable type often lives in the DFP field
+        // (ufp=undefined). The fix must mirror PortSummary's UFP-or-DFP logic.
+        let partner = partnerIdentity(vendorID: 0x05AC, productType: 3, inDFP: true)
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
+        #expect(report.flags == [.eMarkerVIDBlankRegisteredPartner(0x05AC)])
+    }
+
+    @Test("A registered device plug does NOT soften the blank e-marker")
+    func blankEmarkerNotSoftenedByDevicePlug() {
+        // The 20 corpus cases: the plug is a peripheral/dock with a registered
+        // VID that belongs to the device, not the cable. The counterfeit flag
+        // must still fire.
+        let partner = partnerIdentity(vendorID: 0x05AC, productType: 2) // peripheral
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
+        #expect(report.flags == [.zeroVendorID])
+    }
+
+    @Test("An unregistered cable plug does NOT soften the blank e-marker")
+    func blankEmarkerNotSoftenedByUnregisteredCablePlug() {
+        // Registered-only rule: a non-zero but unregistered plug VID is weaker
+        // proof, so we keep the counterfeit flag rather than going silent.
+        let partner = partnerIdentity(vendorID: 0xDEAD, productType: 3) // passive cable
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
+        #expect(report.flags == [.zeroVendorID])
+    }
+
+    @Test("With no plug, a blank e-marker still fires the counterfeit flag")
+    func blankEmarkerStillFiresWithoutPartner() {
+        // Default behaviour is preserved when there's no SOP partner.
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0))
+        #expect(report.flags == [.zeroVendorID])
+    }
+
+    @Test("Softened note names the plug's vendor")
+    func softenedNoteNamesVendor() {
+        let detail = TrustFlag.eMarkerVIDBlankRegisteredPartner(0x05AC).detail
+        #expect(detail.contains("0x05AC"))
+        #expect(TrustFlag.eMarkerVIDBlankRegisteredPartner(0x05AC).code == "eMarkerVIDBlankRegisteredPartner")
+        #expect(TrustFlag.eMarkerVIDBlankRegisteredPartner(0x05AC).severity == .note)
+    }
 }

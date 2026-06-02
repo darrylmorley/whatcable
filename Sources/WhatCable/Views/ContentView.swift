@@ -459,6 +459,10 @@ struct PortCard: View {
         identities.first { $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime }
     }
 
+    private var cablePartner: USBPDSOP? {
+        identities.first { $0.endpoint == .sop }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top, spacing: 12) {
@@ -568,7 +572,7 @@ struct PortCard: View {
             }
 
             if let cable = cableEmarker {
-                let trust = CableTrustReport(identity: cable)
+                let trust = CableTrustReport(identity: cable, partner: cablePartner)
                 if !trust.isEmpty {
                     TrustFlagsCard(flags: trust.flags)
                         .padding(.leading, 48)
@@ -926,12 +930,31 @@ struct ThunderboltFabricSection: View {
 private struct TrustFlagsCard: View {
     let flags: [TrustFlag]
 
+    /// A card with any real warning reads as a warning (orange triangle).
+    /// A card with only neutral notes reads calm (blue info), so a softened
+    /// false-positive doesn't look like an alarm.
+    private var hasWarning: Bool {
+        flags.contains { $0.severity == .warning }
+    }
+
+    private var accent: Color { hasWarning ? .orange : .blue }
+
+    private var headerIcon: String {
+        hasWarning ? "exclamationmark.triangle.fill" : "info.circle.fill"
+    }
+
+    private var headerText: String {
+        hasWarning
+            ? String(localized: "Cable trust signals", bundle: _appLocalizedBundle)
+            : String(localized: "Cable note", bundle: _appLocalizedBundle)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
-                Text(String(localized: "Cable trust signals", bundle: _appLocalizedBundle))
+                Image(systemName: headerIcon)
+                    .foregroundStyle(accent)
+                Text(headerText)
                     .scaledFont(.caption, weight: .bold)
                     .foregroundStyle(.secondary)
             }
@@ -947,6 +970,6 @@ private struct TrustFlagsCard: View {
         }
         .padding(8)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+        .background(accent.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
     }
 }

@@ -421,3 +421,8 @@
 "Battery Power" = "Akumulatora jauda";
 "Negotiating…" = "Notiek vienošanās…";
 "Waiting for live reading…" = "Gaida tiešo rādījumu…";
+
+/* Softened blank e-marker note (DAR-140) */
+"E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marķiera ražotāja ID ir tukšs, taču kabelis tiek identificēts pie savienotāja";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Kabeļa e-marķiera mikroshēma ziņo tukšu ražotāja ID, taču savienotājs identificē kabeli kā %1$@ (%2$@) — USB-IF reģistrētu ražotāju. Tukšs e-marķiera VID pats par sevi ir izplatīts īstiem pasīvajiem kabeļiem, tāpēc tas nav problēmas pazīme.";
+"Cable note:" = "Piezīme par kabeli:";

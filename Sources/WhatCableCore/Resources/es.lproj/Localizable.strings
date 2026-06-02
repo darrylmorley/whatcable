@@ -422,3 +422,8 @@
 "Battery Power" = "Potencia de la batería";
 "Negotiating…" = "Negociando…";
 "Waiting for live reading…" = "Esperando lectura en vivo…";
+
+/* Softened blank e-marker note (DAR-140) */
+"E-marker vendor ID is blank, but the cable is identified at the connector" = "El ID de fabricante del e-marker está vacío, pero el cable se identifica en el conector";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "El chip e-marker del cable informa un ID de fabricante vacío, pero el conector identifica el cable como %1$@ (%2$@), un fabricante registrado en USB-IF. Un VID de e-marker vacío por sí solo es común en cables pasivos genuinos, así que no es señal de un problema.";
+"Cable note:" = "Nota del cable:";

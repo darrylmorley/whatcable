@@ -49,6 +49,14 @@ public struct USBPDSOP: Identifiable, Hashable {
         return PDVDO.decodeIDHeader(v)
     }
 
+    /// True when this endpoint's Discover Identity response declares itself a
+    /// cable (passive or active). A cable normally answers at SOP' / SOP'',
+    /// but a cable plugged in on its own can answer at the SOP/partner
+    /// address instead, declaring its cable identity there.
+    public var identifiesAsCable: Bool {
+        idHeader?.isCable ?? false
+    }
+
     /// The Cert Stat VDO is at index 1. Carries the USB-IF-issued XID,
     /// or 0 for cables that haven't gone through certification.
     public var certStatVDO: PDVDO.CertStat? {
