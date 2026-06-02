@@ -112,3 +112,6 @@
 
 /* Billboard device (display dimension). */
 "Billboard device present" = "偵測到 Billboard 裝置";
+
+/* Softened blank e-marker note (DAR-140) */
+"Cable note" = "線材備註";
