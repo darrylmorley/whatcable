@@ -59,8 +59,8 @@
 "This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "L'e-marker di questo cavo non riporta un ID produttore, cosa comune nei cavi autentici. Vale la pena approfondire solo se anche gli altri dati sulle capacità del cavo sono incoerenti.";
 "Linked at %@" = "Collegato a %@";
 "Negotiation hasn't completed yet." = "La negoziazione non è ancora stata completata.";
-"Charger on standby" = "Caricabatterie in standby";
-"Another charger is powering the Mac right now. macOS draws from one charger at a time, so this charger stays on standby until the other is unplugged." = "Un altro caricabatterie sta alimentando il Mac in questo momento. macOS usa un caricabatterie alla volta, quindi questo resta in standby finché non scolleghi l'altro.";
+"Charger on standby" = "Caricatore in standby";
+"Another charger is powering the Mac right now. macOS draws from one charger at a time, so this charger stays on standby until the other is unplugged." = "In questo momento un altro caricatore sta alimentando il Mac. macOS usa un caricatore alla volta, quindi questo resta in standby finché non scolleghi l'altro.";
 "No USB-C / MagSafe ports were found on this Mac." = "Nessuna porta USB-C/MagSafe trovata in questo Mac.";
 "No e-marker detected. This cable doesn't advertise its capabilities." = "Nessun e-marker rilevato. Questo cavo non dichiara le proprie capacità.";
 "No e-marker detected. The cable may have one, but macOS only reads it above 3A or with Thunderbolt." = "Nessun e-marker rilevato. Il cavo potrebbe averne uno, ma macOS lo legge solo sopra i 3 A o con Thunderbolt.";
@@ -429,4 +429,4 @@
 "Cable note:" = "Nota sul cavo:";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "Produttore riconosciuto ma non nell'elenco USB-IF incluso in WhatCable";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "L'ID produttore %1$@ (%2$@) corrisponde a un produttore riconosciuto nell'elenco USB della community, ma non nell'elenco USB-IF incluso in WhatCable.";
-"Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt)" = "Il cavo ha un chip e-marker, non letto su questa connessione (richiede più di 3 A o Thunderbolt)";
+"Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt)" = "Il cavo ha un chip e-marker, non letto in questa connessione (richiede più di 3A o Thunderbolt)";
