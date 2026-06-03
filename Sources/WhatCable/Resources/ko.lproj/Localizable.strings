@@ -1,14 +1,14 @@
 "" = "";
-"%@ negotiated" = "%@ 협상됨";
+"%@ negotiated" = "협상됨: %@";
 "%@ profiles" = "%@ 프로파일";
-"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "USB-C 포트 %lld개가 감지되었지만 현재 아무것도 연결되어 있지 않아요. 설정에서 \"빈 포트 숨기기\"를 끄면 볼 수 있습니다.";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "USB-C 포트 %lld개가 감지되었지만 현재 아무것도 연결되어 있지 않아요. 설정에서 \"빈 포트 숨기기\"를 끄면 볼 수 있어요.";
 "About %@" = "%@에 관하여";
-"Active" = "액티브";
-"Active cable electronics" = "액티브 케이블 전자 회로";
-"All raw IOKit properties (%lld)" = "모든 IOKit 원시 속성 (%lld)";
+"Active" = "활성화됨";
+"Active cable electronics" = "케이블 내장 액티브 회로";
+"All raw IOKit properties (%lld)" = "전체 원시 IOKit 속성 (%lld)";
 "Behavior" = "동작";
-"Built by %@." = "개발: %@.";
-"Cable trust signals" = "케이블 신뢰성 지표";
+"Built by %@." = "%@(이)가 만듦";
+"Cable trust signals" = "케이블 신뢰 지표";
 "Cancel" = "취소";
 "Charger connected" = "충전기 연결됨";
 "Charger disconnected" = "충전기 분리됨";
@@ -20,31 +20,31 @@
 "Desktop Mac: charger identity (FedDetails) is not available." = "데스크탑 Mac: 충전기 정보(FedDetails)를 사용할 수 없어요.";
 "Done" = "완료";
 "Downloading…" = "다운로드 중…";
-"File a GitHub issue with this cable's e-marker fingerprint" = "이 케이블의 e-marker 핑거프린트로 GitHub 이슈 등록";
+"File a GitHub issue with this cable's e-marker fingerprint" = "이 케이블의 E-marker 핑거프린트로 GitHub 이슈 등록";
 "Font size" = "글자 크기";
-"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "개발자가 특정 하드웨어와 관련된 충전기/케이블 동작을 재현하는 데 도움이 됩니다.";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "개발자가 특정 하드웨어에서 생기는 충전기/케이블 문제를 재현하는 데 도움이 됩니다.";
 "Hide empty ports" = "빈 포트 숨기기";
 "Host (%@)" = "호스트 (%@)";
 "Include Mac model and macOS version" = "Mac 모델과 macOS 버전 포함";
 "Install failed: %@" = "설치 실패: %@";
 "Install update" = "업데이트 설치";
-"Installing, WhatCable will relaunch" = "설치 중이며, WhatCable이 다시 시작됩니다";
+"Installing, WhatCable will relaunch" = "설치 중입니다. WhatCable이 다시 시작됩니다";
 "Keep window open" = "창 계속 열어 두기";
 "Language" = "언어";
 "Launch at login" = "로그인 시 실행";
 "Lives in the menu bar with no Dock icon." = "Dock 아이콘 없이 메뉴 막대에 계속 표시됩니다.";
 "No" = "아니요";
 "No USB-C ports detected" = "감지된 USB-C 포트 없음";
-"Nothing connected" = "연결된 것 없음";
+"Nothing connected" = "연결되지 않음";
 "Notifications" = "알림";
 "Notify on cable changes" = "케이블 변경 시 알림";
 "Open in GitHub" = "GitHub에서 열기";
-"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "내용이 채워진 GitHub 이슈를 브라우저에서 엽니다. 그곳에서 제출하기 전까지는 아무것도 전송되지 않아요.";
-"Optical" = "광";
-"PD source" = "PD 소스";
-"Plug events" = "연결 이벤트";
+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "미리 작성된 GitHub 이슈를 브라우저에서 열어요. GitHub에서 제출하기 전까지는 아무것도 전송되지 않아요.";
+"Optical" = "광 케이블";
+"PD source" = "PD 전원";
+"Plug events" = "연결/분리 이벤트";
 "Preview of what will be included:" = "포함될 내용 미리보기:";
-"Provisioned" = "프로비저닝됨";
+"Provisioned" = "구성됨";
 "Quit" = "종료";
 "Quit %@" = "%@ 종료";
 "Refresh" = "새로 고침";
@@ -54,26 +54,26 @@
 "Settings" = "설정";
 "Settings…" = "설정…";
 "Show in menu bar" = "메뉴 막대에 표시";
-"Show technical details" = "기술 세부 정보 표시";
+"Show technical details" = "기술 세부정보 표시";
 "SuperSpeed" = "SuperSpeed";
 "Supported" = "지원됨";
 "This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "이 Mac은 포트 컨트롤러 서비스를 노출하지 않는 것 같아요. 새로 고침을 누르거나 시스템 정보 > USB를 확인해 보세요.";
 "Thunderbolt fabric" = "Thunderbolt 패브릭";
 "Transports" = "전송 방식";
-"USB active" = "USB 활성";
+"USB active" = "USB 연결 활성";
 "USB device" = "USB 기기";
 "USB device disconnected" = "USB 기기 분리됨";
 "Unknown" = "알 수 없음";
 "Verifying signature…" = "서명 확인 중…";
 "View release" = "릴리스 보기";
 "What gets shared?" = "무엇이 공유되나요?";
-"WhatCable %@ is available" = "WhatCable %@을(를) 사용할 수 있어요";
+"WhatCable %@ is available" = "WhatCable %@ 업데이트가 있어요";
 "WhatCable on GitHub" = "GitHub에서 WhatCable 보기";
 "Yes" = "예";
 "You're on %@" = "현재 버전: %@";
 "%lld USB devices" = "USB 기기 %lld개";
 "active" = "활성";
-"no active link" = "활성 링크 없음";
+"no active link" = "활성화된 링크 없음";
 
 /* Test Kit / Contribute Diagnostic Data consent + notifications (previously missing keys) */
 "%lld devices removed" = "%lld개의 기기 제거됨";
@@ -111,7 +111,7 @@
 "You can change this any time in Settings." = "이 설정은 언제든 설정에서 바꿀 수 있어요.";
 
 /* Billboard device (display dimension). English; community-refined. */
-"Billboard device present" = "Billboard 기기 존재";
+"Billboard device present" = "Billboard 기기 감지됨";
 
 /* Softened blank e-marker note (DAR-140) */
 "Cable note" = "케이블 참고";

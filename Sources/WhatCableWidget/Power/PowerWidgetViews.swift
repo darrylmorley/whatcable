@@ -134,11 +134,6 @@ struct PowerSmallView: View {
                 .foregroundStyle(.secondary)
 
             Spacer(minLength: 0)
-
-            if power.recentSystemPower.count >= 2 {
-                PowerSparkline(samples: power.recentSystemPower, color: .orange)
-                    .frame(height: 18)
-            }
         }
     }
 }
@@ -194,10 +189,6 @@ struct PowerMediumView: View {
                             .font(.caption2)
                             .monospacedDigit()
                             .foregroundStyle(.tertiary)
-                    }
-                    if power.recentSystemPower.count >= 2 {
-                        PowerSparkline(samples: power.recentSystemPower, color: .orange)
-                            .frame(height: 18)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -256,18 +247,14 @@ struct PowerLargeView: View {
                 }
             }
 
-            if power.recentSystemPower.count >= 2 {
+            if let sysW = power.systemPowerInWatts {
                 Divider().padding(.vertical, WidgetMetrics.xs)
-                powerRow(accent: .orange, icon: "chart.xyaxis.line", iconColor: .orange) {
+                powerRow(accent: .orange, icon: "bolt.horizontal.fill", iconColor: .orange) {
                     Text(String(localized: "System draw", bundle: _coreLocalizedBundle))
                         .font(.callout)
                         .fontWeight(.semibold)
-                    PowerSparkline(samples: power.recentSystemPower, color: .orange)
-                        .frame(height: 18)
                 } trailing: {
-                    if let sysW = power.systemPowerInWatts {
-                        Pill(text: wattText(sysW), color: .orange)
-                    }
+                    Pill(text: wattText(sysW), color: .orange)
                 }
             }
 

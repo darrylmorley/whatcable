@@ -9,27 +9,27 @@
 "> 10 mW" = "> 10 mW";
 "Active %@ cable, %@" = "액티브 %1$@ 케이블, %2$@";
 "Active cable" = "액티브 케이블";
-"Active cable (contains signal-conditioning electronics)" = "액티브 케이블 (신호 조정 전자 회로 내장)";
+"Active cable (contains signal-conditioning electronics)" = "액티브 케이블 (신호 조정 회로 내장)";
 "Active cable (VDO 2):" = "액티브 케이블 (VDO 2):";
-"Alternate Mode Adapter" = "Alt 모드 어댑터";
+"Alternate Mode Adapter" = "Alt(Alternate) 모드 어댑터";
 "Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle." = "충전기와 케이블은 더 높은 성능을 낼 수 있지만, Mac이 현재 그보다 적은 전력만 요청하고 있어요. 배터리가 거의 다 찼거나 시스템이 유휴 상태일 때는 정상적인 현상입니다.";
-"Cable does not advertise an e-marker (basic cable)" = "케이블에 e-marker 칩이 없습니다 (기본 케이블)";
-"Cable has an e-marker chip (advertises its capabilities)" = "케이블에 e-marker 칩이 있습니다 (성능 정보를 알려 줌)";
+"Cable does not advertise an e-marker (basic cable)" = "케이블에 E-marker 칩이 없어요 (기본 케이블)";
+"Cable has an e-marker chip (advertises its capabilities)" = "케이블에 E-marker 칩이 있어요 (성능 정보를 알려 줌)";
 "Cable is limiting charging speed" = "케이블이 충전 속도를 제한하고 있어요";
-"Cable identified as %@" = "케이블이 %@(으)로 식별되었습니다";
+"Cable identified as %@" = "케이블이 %@(으)로 식별되었어요";
 "Cable made by %@" = "제조사: %@";
 "Cable rated for %@ at up to %lldV (~%lldW)" = "케이블 정격: %1$@, 최대 %2$lldV (약 %3$lldW)";
 "Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "케이블 정격 %1$lldV / %2$@, 최대 %3$lldW 전달 (USB-PD는 48V로 제한)";
 "Cable speed: %@" = "케이블 속도: %@";
-"Cable trust signals:" = "케이블 신뢰성 지표:";
+"Cable trust signals:" = "케이블 신뢰 지표:";
 "Carrying DisplayPort video" = "DisplayPort 영상 전송 중";
 "Carrying both data and DisplayPort video." = "데이터와 DisplayPort 영상을 함께 전송하고 있어요.";
 "Charger advertises up to %lldW" = "충전기가 최대 %lldW를 지원한다고 알림";
 "Charger: %@" = "충전기: %@";
 "Charger: %@ %@" = "충전기: %1$@ %2$@";
-"Charger identified as %@" = "충전기가 %@(으)로 식별되었습니다";
-"Charger and cable are well-matched." = "충전기와 케이블이 잘 맞습니다.";
-"Charger can deliver up to %lldW, but this cable is only rated to carry %lldW. Replace the cable to charge faster." = "충전기는 최대 %1$lldW를 공급할 수 있지만, 이 케이블로는 %2$lldW까지만 공급 받을 수 있어요. 더 빠르게 충전하려면 케이블을 교체하세요.";
+"Charger identified as %@" = "충전기가 %@(으)로 식별되었어요.";
+"Charger and cable are well-matched." = "충전기와 케이블이 잘 맞아요.";
+"Charger can deliver up to %lldW, but this cable is only rated to carry %lldW. Replace the cable to charge faster." = "충전기는 최대 %1$lldW를 공급할 수 있지만, 이 케이블은 %2$lldW까지만 전달할 수 있어요. 더 빠르게 충전하려면 케이블을 교체하세요.";
 "Charging" = "충전 중";
 "Charging at %lldW (charger can do up to %lldW)" = "%1$lldW로 충전 중 (충전기 최대 %2$lldW)";
 "Charging only" = "충전 전용";
@@ -44,27 +44,27 @@
 "Connected." = "연결됨.";
 "Copper" = "구리";
 "Couldn't determine cable type from this port." = "이 포트에서는 케이블 종류를 확인할 수 없었어요.";
-"Currently negotiated: %@ @ %@ (%@)" = "현재 협상(negotiation)값: %1$@ @ %2$@ (%3$@)";
+"Currently negotiated: %@ @ %@ (%@)" = "현재 협상 결과: %1$@ @ %2$@ (%3$@)";
 "Display connected" = "디스플레이 연결됨";
 "Display connected · %lldW charger" = "디스플레이 연결됨 · %lldW 충전기";
-"DisplayPort video over USB-C Alt Mode." = "USB-C Alt Mode를 통한 DisplayPort 영상입니다.";
-"E-marker claims EPR support but reports only 20V max VBUS" = "e-marker가 EPR을 지원한다고 하지만 최대 VBUS는 20V로만 보고함";
-"E-marker reports no vendor identity" = "e-marker가 vendor 정보를 보고하지 않음";
-"E-marker uses a reserved cable-latency value" = "e-marker가 예약된 케이블 지연 값을 사용함";
-"E-marker uses a reserved current-rating value" = "e-marker가 예약된 전류 정격 값을 사용함";
-"E-marker uses a reserved data-speed value" = "e-marker가 예약된 데이터 속도 값을 사용함";
-"E-marker uses an invalid VDO version" = "e-marker가 유효하지 않은 VDO 버전을 사용함";
-"E-marker uses an invalid cable-termination value" = "e-marker가 유효하지 않은 케이블 종단 값을 사용함";
-"Last leg drops from %@ to %@" = "마지막 구간이 %1$@에서 %2$@(으)로 떨어짐";
-"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "이 케이블의 e-marker가 제조사 ID를 보고하지 않지만, 이는 정품 케이블에서도 흔한 일입니다. 케이블의 다른 성능 데이터도 일관되지 않을 때에만 자세히 살펴볼 가치가 있습니다.";
-"Linked at %@" = "%@로 연결됨";
+"DisplayPort video over USB-C Alt Mode." = "USB-C Alt Mode로 DisplayPort 영상을 전송하고 있어요.";
+"E-marker claims EPR support but reports only 20V max VBUS" = "E-marker가 EPR을 지원한다고 하지만 최대 VBUS는 20V로만 보고함";
+"E-marker reports no vendor identity" = "E-marker가 벤더 정보를 보고하지 않음";
+"E-marker uses a reserved cable-latency value" = "E-marker가 예약된 케이블 지연 값을 사용함";
+"E-marker uses a reserved current-rating value" = "E-marker가 예약된 전류 정격 값을 사용함";
+"E-marker uses a reserved data-speed value" = "E-marker가 예약된 데이터 속도 값을 사용함";
+"E-marker uses an invalid VDO version" = "E-marker가 유효하지 않은 VDO 버전을 사용함";
+"E-marker uses an invalid cable-termination value" = "E-marker가 유효하지 않은 케이블 종단 값을 사용함";
+"Last leg drops from %@ to %@" = "마지막 구간이 %1$@에서 %2$@(으)로 낮아짐";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "이 케이블의 E-marker가 벤더 ID를 보고하지 않지만, 이는 정품 케이블에서도 흔한 일입니다. 케이블의 다른 성능 데이터도 일관되지 않을 때에만 자세히 살펴볼 가치가 있습니다.";
+"Linked at %@" = "%@(으)로 연결됨";
 "Negotiation hasn't completed yet." = "협상이 아직 완료되지 않았어요.";
 "Charger on standby" = "충전기 대기 중";
 "Another charger is powering the Mac right now. macOS draws from one charger at a time, so this charger stays on standby until the other is unplugged." = "지금은 다른 충전기가 Mac에 전원을 공급하고 있어요. macOS는 한 번에 하나의 충전기에서만 전원을 가져오므로, 다른 충전기를 뽑기 전까지 이 충전기는 대기 상태로 있어요.";
 "No USB-C / MagSafe ports were found on this Mac." = "이 Mac에서 USB-C / MagSafe 포트를 찾을 수 없었어요.";
-"No e-marker detected. This cable doesn't advertise its capabilities." = "e-marker가 감지되지 않았어요. 이 케이블은 자신의 성능 정보를 알리지 않습니다.";
-"No e-marker detected. The cable may have one, but macOS only reads it above 3A or with Thunderbolt." = "e-marker가 감지되지 않았어요. 케이블에 있을 수도 있지만, macOS는 3A를 넘거나 Thunderbolt 연결일 때만 읽어 들입니다.";
-"Nothing connected" = "연결된 것 없음";
+"No e-marker detected. This cable doesn't advertise its capabilities." = "E-marker가 감지되지 않았어요. 이 케이블은 자신의 성능 정보를 알리지 않습니다.";
+"No e-marker detected. The cable may have one, but macOS only reads it above 3A or with Thunderbolt." = "E-marker가 감지되지 않았어요. 케이블에 있을 수도 있지만, macOS는 3A를 넘거나 Thunderbolt 연결일 때만 읽어 들입니다.";
+"Nothing connected" = "연결되지 않음";
 "Only USB 2.0 is active. If you expected high speed, the cable may not support it." = "USB 2.0만 활성화되어 있어요. 고속 전송을 기대했다면 케이블이 지원하지 않는 것일 수 있습니다.";
 "Optical" = "광";
 "Optical cable" = "광 케이블";
@@ -82,15 +82,15 @@
 "Slow USB device or charge-only cable" = "느린 USB 기기 또는 충전 전용 케이블";
 "Slow USB device or charge-only cable · %lldW charger" = "느린 USB 기기 또는 충전 전용 케이블 · %lldW 충전기";
 "SuperSpeed USB (5 Gbps or faster)" = "SuperSpeed USB (5 Gbps 이상)";
-"SuperSpeed data link is active." = "SuperSpeed 데이터 링크가 활성 상태입니다.";
+"SuperSpeed data link is active." = "SuperSpeed 데이터 링크가 활성화되어 있어요.";
 "Supports %@." = "%@을(를) 지원합니다.";
-"The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other." = "케이블의 e-marker가 EPR 지원이라고 알리면서도 최대 VBUS 전압은 20V로 보고하고 있어요. EPR 동작에는 48V 또는 50V VBUS가 필요하므로 두 값이 서로 모순됩니다.";
-"The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "케이블의 e-marker가 VDO 버전 %lld을(를) 보고하는데, 이는 해당 케이블 유형에 대해 USB-PD 규격에서 예약되었거나 유효하지 않음으로 표시된 값입니다. 정품 e-marker 칩이라면 유효하지 않은 버전 값을 내보내지 않습니다.";
-"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "케이블의 e-marker가 케이블 종단 값 %lld을(를) 보고하는데, USB-PD 규격에서는 이 케이블 유형에 대해 유효하지 않음으로 표시된 값입니다. 잘못 기록된 e-marker는 흔히 이 부분에서 케이블의 실제 물리적 배선과 일치하지 않습니다.";
-"The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "케이블의 e-marker가 케이블 지연 값 %lld을(를) 보고하는데, 이는 해당 케이블 유형에 대해 USB-PD 규격에서 예약된 값입니다. 정품 e-marker 칩이라면 예약된 값을 내보내지 않습니다.";
-"The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "케이블의 e-marker가 전류 값 %lld을(를) 보고하는데, 이는 USB-PD 규격에서 예약된 값입니다. 정품 e-marker 칩이라면 예약된 값을 내보내지 않습니다.";
-"The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "케이블의 e-marker가 속도 값 %lld을(를) 보고하는데, 이는 USB-PD 규격에서 예약된 값입니다. 정품 e-marker 칩이라면 예약된 값을 내보내지 않습니다.";
-"The cable's e-marker reports vendor %@, which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies." = "케이블의 e-marker가 벤더 %@을(를) 보고하는데, 이 번호는 앱에 포함된 USB-IF 목록에 없습니다. 이 번호는 미할당이거나, 복제되었거나, 목록이 생성된 이후에 할당된 것일 수 있어요. 이것만으로 문제의 증거가 되지는 않지만, 복제 케이블에서는 다른 불일치와 함께 나타나는 경우가 많습니다.";
+"The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other." = "케이블의 E-marker가 EPR 지원이라고 알리면서도 최대 VBUS 전압은 20V로 보고하고 있어요. EPR 동작에는 48V 또는 50V VBUS가 필요하므로 두 값이 서로 모순됩니다.";
+"The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "케이블의 E-marker가 VDO 버전 %lld을(를) 보고하는데, 이는 해당 케이블 유형에 대해 USB-PD 규격에서 예약되었거나 유효하지 않음으로 표시된 값입니다. 정품 E-marker 칩이라면 유효하지 않은 버전 값을 내보내지 않습니다.";
+"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "케이블의 E-marker가 케이블 종단 값 %lld을(를) 보고하는데, USB-PD 규격에서는 이 케이블 유형에 대해 유효하지 않음으로 표시된 값입니다. 잘못 기록된 E-marker는 흔히 이 부분에서 케이블의 실제 물리적 배선과 일치하지 않습니다.";
+"The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "케이블의 E-marker가 케이블 지연 값 %lld을(를) 보고하는데, 이는 해당 케이블 유형에 대해 USB-PD 규격에서 예약된 값입니다. 정품 E-marker 칩이라면 예약된 값을 내보내지 않습니다.";
+"The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "케이블의 E-marker가 전류 값 %lld을(를) 보고하는데, 이는 USB-PD 규격에서 예약된 값입니다. 정품 E-marker 칩이라면 예약된 값을 내보내지 않습니다.";
+"The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "케이블의 E-marker가 속도 값 %lld을(를) 보고하는데, 이는 USB-PD 규격에서 예약된 값입니다. 정품 E-marker 칩이라면 예약된 값을 내보내지 않습니다.";
+"The cable's e-marker reports vendor %@, which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies." = "케이블의 E-marker가 벤더 %@을(를) 보고하는데, 이 번호는 앱에 포함된 USB-IF 목록에 없습니다. 이 번호는 미할당이거나, 복제되었거나, 목록이 생성된 이후에 할당된 것일 수 있어요. 이것만으로 문제의 증거가 되지는 않지만, 복제 케이블에서는 다른 불일치와 함께 나타나는 경우가 많습니다.";
 "This port can't read cable details (USB-only port, no Power Delivery)" = "이 포트는 케이블 세부 정보를 읽을 수 없습니다 (USB 전용 포트, Power Delivery 없음)";
 "Thunderbolt / USB4" = "Thunderbolt / USB4";
 "Thunderbolt / USB4 link active" = "Thunderbolt / USB4 링크 활성";
@@ -126,8 +126,8 @@
 "40 Gbps capable" = "40 Gbps 지원";
 "80 Gbps capable" = "80 Gbps 지원";
 "Charger connected. Battery is full, so the Mac isn't drawing power." = "충전기가 연결되어 있어요. 배터리가 가득 차서 Mac이 전력을 끌어오지 않고 있습니다.";
-"E-marker reports passive (no USB signal conditioning). Thunderbolt is negotiated separately by the controller." = "e-marker가 패시브로 보고합니다 (USB 신호 조정 없음). Thunderbolt는 컨트롤러가 별도로 협상합니다.";
-"E-marker reports passive. This is normal for Thunderbolt cables where the active electronics handle Thunderbolt, not USB." = "e-marker가 패시브로 보고합니다. 액티브 전자 회로가 USB가 아닌 Thunderbolt를 처리하는 Thunderbolt 케이블에서는 정상적인 현상이에요.";
+"E-marker reports passive (no USB signal conditioning). Thunderbolt is negotiated separately by the controller." = "E-marker가 패시브로 보고합니다 (USB 신호 조정 없음). Thunderbolt는 컨트롤러가 별도로 협상합니다.";
+"E-marker reports passive. This is normal for Thunderbolt cables where the active electronics handle Thunderbolt, not USB." = "E-marker가 패시브로 보고합니다. 액티브 전자 회로가 USB가 아닌 Thunderbolt를 처리하는 Thunderbolt 케이블에서는 정상적인 현상이에요.";
 "Per-port negotiation data is not available. Wattage is from the system-wide adapter reading." = "포트별 협상 데이터를 사용할 수 없어요. 전력량은 시스템 전체 어댑터 측정값을 기준으로 합니다.";
 "Plugged in · battery full" = "연결됨 · 배터리 가득 참";
 "Try a higher-wattage charger to identify the cable." = "케이블을 식별하려면 더 높은 전력의 충전기를 사용해 보세요.";
@@ -136,7 +136,7 @@
 
 /* DisplayPort lane labels, connected-device variants, pin-diagram Data label */
 "2 DP lanes + USB3 data" = "DP 레인 2개 + USB3 데이터";
-"4 DP lanes (no USB3 alongside video)" = "DP 레인 4개 (영상과 함께 가는 USB3 없음)";
+"4 DP lanes (no USB3 alongside video)" = "DP 레인 4개 (영상과 동시에 전송되는 USB3 데이터 없음)";
 "Carrying DisplayPort video (%@)" = "DisplayPort 영상 전송 중 (%@)";
 "Connected device: %@" = "연결된 기기: %@";
 "Connected device: %@, %@ (%@)" = "연결된 기기: %1$@, %2$@ (%3$@)";
@@ -219,7 +219,7 @@
 "No" = "아니요";
 "No PD contract data" = "PD 계약 데이터 없음";
 "No PD events" = "PD 이벤트 없음";
-"No PDOs advertised" = "알린 PDO 없음";
+"No PDOs advertised" = "제공된 PDO 없음";
 "No Power Data" = "전력 데이터 없음";
 "No SOP identity data" = "SOP ID 데이터 없음";
 "No cable connected." = "연결된 케이블이 없어요.";
@@ -234,7 +234,7 @@
 "PD state" = "PD 상태";
 "PD status update" = "PD 상태 업데이트";
 "PDO position" = "PDO 위치";
-"Partner device identity arrived via SOP (the connected device, not the cable)." = "SOP를 통해 상대 기기 ID가 도착했습니다 (케이블이 아닌 연결된 기기).";
+"Partner device identity arrived via SOP (the connected device, not the cable)." = "SOP를 통해 상대 기기 ID를 수신했습니다 (케이블이 아닌 연결된 기기).";
 "Passive Cable" = "패시브 케이블";
 "Pin Diagram" = "핀 다이어그램";
 "Plug inserted or removed" = "플러그 연결 또는 분리";
@@ -287,7 +287,7 @@
 "Unknown Device" = "알 수 없는 기기";
 "Unknown event %@" = "알 수 없는 이벤트 %@";
 "Unrecognised event code from the port controller." = "포트 컨트롤러에서 인식할 수 없는 이벤트 코드입니다.";
-"Unregistered cable (no e-marker)" = "미등록 케이블 (e-marker 없음)";
+"Unregistered cable (no e-marker)" = "미등록 케이블 (E-marker 없음)";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "비정형 VDM 열거가 시작되었습니다 (벤더 고유 성능 탐색 중).";
 "Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "비정형 VDM 상태가 변경되었습니다 (Alt Mode 설정 같은 벤더 고유 메시징).";
 "VDO fail count" = "VDO 실패 횟수";
@@ -325,10 +325,10 @@
 "See what your USB-C cables can do at a glance." = "USB-C 케이블의 성능을 한눈에 확인하세요.";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
-"The cable's e-marker and the Thunderbolt controller disagree on its speed; the controller's reading is treated as authoritative." = "케이블의 e-marker와 Thunderbolt 컨트롤러가 속도에 대해 서로 다르게 보고하고 있어요. 이때는 컨트롤러의 측정값을 기준으로 삼습니다.";
+"The cable's e-marker and the Thunderbolt controller disagree on its speed; the controller's reading is treated as authoritative." = "케이블의 E-marker와 Thunderbolt 컨트롤러가 속도에 대해 서로 다르게 보고하고 있어요. 이때는 컨트롤러의 측정값을 기준으로 삼습니다.";
 "Running at %@" = "%@로 동작 중";
-"There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "케이블의 e-marker나 컨트롤러 데이터가 없고, 비교할 포트나 기기 성능 정보도 없어서 케이블이 병목인지 판단할 수 없어요.";
-"This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "이 케이블에는 e-marker도 컨트롤러 데이터도 없어서 병목인지 판단할 수 없어요.";
+"There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "케이블의 E-marker나 컨트롤러 데이터가 없고, 비교할 포트나 기기 성능 정보도 없어서 케이블이 병목인지 판단할 수 없어요.";
+"This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "이 케이블에는 E-marker도 컨트롤러 데이터도 없어서 병목인지 판단할 수 없어요.";
 "Running slower than expected (%@)" = "예상보다 느리게 동작 중 (%@)";
 "The parts we can see all support %@ or more, but the link came up slower. Reseating the cable or trying another port may help." = "확인 가능한 부품은 모두 %@ 이상을 지원하지만, 링크는 더 느리게 연결되었어요. 케이블을 다시 꽂거나 다른 포트를 시도해 보면 도움이 될 수 있습니다.";
 "Running at full data speed (%@)" = "최고 데이터 속도로 동작 중 (%@)";
@@ -340,7 +340,7 @@
 "Device runs at %@" = "기기가 %@로 동작 중";
 "This is the fastest the connected device supports. It is not a cable problem." = "이것이 연결된 기기가 지원하는 최고 속도입니다. 케이블 문제가 아니에요.";
 "Cable says %@, link reads %@" = "케이블은 %@라고 하지만, 링크는 %@로 측정됨";
-"The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "케이블의 e-marker는 %@(으)로 보고하지만, 활성 링크는 %@로 측정되고 있어요. 둘 중 하나는 잘못된 값이며, Thunderbolt 컨트롤러로 교차 확인하지 않으면 어느 쪽인지 알 수 없습니다. 정상인 것이 확실한 케이블로 바꿔 보면 원인을 찾을 수 있어요.";
+"The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "케이블의 E-marker는 %@(으)로 보고하지만, 활성 링크는 %@로 측정되고 있어요. 둘 중 하나는 잘못된 값이며, Thunderbolt 컨트롤러로 교차 확인하지 않으면 어느 쪽인지 알 수 없습니다. 정상 작동이 확인된 케이블로 바꿔 보면 원인을 찾을 수 있어요.";
 "Battery full, not charging" = "배터리 가득 참, 충전 안 함";
 "Charger and cable are fine. The Mac will draw up to %lldW when it needs to." = "충전기와 케이블은 정상이에요. Mac은 필요할 때 최대 %lldW까지 끌어옵니다.";
 "Negotiation Diagnostics" = "협상 진단";
@@ -359,7 +359,7 @@
 "Cable signals disagree" = "케이블 신호가 일치하지 않음";
 "an unknown speed" = "알 수 없는 속도";
 "a higher speed" = "더 높은 속도";
-"The cable's own e-marker reports %@, but the Thunderbolt controller sees %@. This can happen with active Thunderbolt cables that under-report (declaring themselves passive at a low speed) or with suspect cables whose e-markers over-state their capability. The controller's reading is the one used above." = "케이블 자체의 e-marker는 %@(으)로 보고하지만, Thunderbolt 컨트롤러는 %@로 인식하고 있어요. 이는 자신을 낮은 속도의 패시브로 신고하며 성능을 낮춰 보고하는 액티브 Thunderbolt 케이블이나, e-marker가 성능을 부풀려 보고하는 의심스러운 케이블에서 나타날 수 있습니다. 위에 표시된 값은 컨트롤러의 측정값입니다.";
+"The cable's own e-marker reports %@, but the Thunderbolt controller sees %@. This can happen with active Thunderbolt cables that under-report (declaring themselves passive at a low speed) or with suspect cables whose e-markers over-state their capability. The controller's reading is the one used above." = "케이블 자체의 E-marker는 %@(으)로 보고하지만, Thunderbolt 컨트롤러는 %@로 인식하고 있어요. 이는 자신을 낮은 속도의 패시브로 보고하며 성능을 낮춰 보고하는 액티브 Thunderbolt 케이블이나, E-marker가 성능을 부풀려 보고하는 의심스러운 케이블에서 나타날 수 있습니다. 위에 표시된 값은 컨트롤러의 측정값입니다.";
 /* Pro overview screen + footer pill (Pro funnel). English; non-English are parity placeholders to be refined by the community translation flow. */
 "Cable Diagnostics" = "케이블 진단";
 "Deep per-port pin maps, plug orientation, and protocol detail." = "포트별 상세 핀 맵, 플러그 방향, 프로토콜 세부 정보를 제공합니다.";
@@ -409,7 +409,7 @@
 "Your %@ is reached through a USB-C to %@ adapter that reports as %@, currently carrying about %@ (%@), short of the monitor's top mode (%@, about %@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "%1$@은(는) %3$@(으)로 보고되는 USB-C to %2$@ 어댑터를 거쳐 연결되어 있고, 현재 약 %4$@(%5$@)을(를) 전송하여 모니터의 최고 모드(%6$@, 약 %7$@)에는 미치지 못하고 있어요. 연결 경로에 어댑터가 있으면 케이블이 아니라 어댑터 자체의 한계가 상한일 수 있습니다. 네이티브 DisplayPort로 연결하거나 더 높은 사양의 어댑터를 써 보면 어느 쪽인지 알 수 있어요.";
 
 /* Billboard device (display dimension). English; community-refined. */
-"Billboard device present" = "Billboard 기기 존재";
+"Billboard device present" = "Billboard 기기 감지됨";
 "A Billboard device is present on this port. That usually appears when an Alt Mode like DisplayPort was set up but didn't fully come up. Your display is below its best mode, so a re-plug, a different cable, or a different adapter may bring it up. Some docks show a Billboard device normally, so this isn't always a fault." = "이 포트에 Billboard 기기가 있어요. 이는 보통 DisplayPort 같은 Alt Mode를 설정하려 했지만 완전히 작동하지 못했을 때 나타납니다. 디스플레이가 최상의 모드보다 낮게 동작하고 있으니, 다시 꽂거나 다른 케이블 또는 다른 어댑터를 쓰면 정상으로 돌아올 수 있어요. 일부 독은 정상 상태에서도 Billboard 기기를 표시하므로, 항상 결함을 뜻하는 것은 아닙니다.";
 
 /* Display dimension: compression at the link ceiling (issue #246). */
@@ -419,22 +419,22 @@
 /* Power Monitor system power source indicator. */
 "Battery" = "배터리";
 "Source" = "전원";
-"Battery Power" = "배터리 전력";
+"Battery Power" = "배터리 전원";
 "Negotiating…" = "협상 중…";
 "Waiting for live reading…" = "실시간 측정값 대기 중…";
 
 /* Softened blank e-marker note (DAR-140) */
-"E-marker vendor ID is blank, but the cable is identified at the connector" = "e-marker의 vendor ID는 비어 있지만 케이블이 커넥터에서 식별됩니다";
-"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "케이블의 e-marker 칩은 vendor ID를 비어 있는 것으로 보고하지만, 커넥터는 이 케이블을 USB-IF에 등록된 vendor인 %1$@(%2$@)(으)로 식별합니다. e-marker VID가 비어 있는 것 자체는 정품 패시브 케이블에서 흔하므로 문제의 징후가 아닙니다.";
+"E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker의 vendor ID는 비어 있지만 케이블이 커넥터에서 식별됩니다";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "케이블의 E-marker 칩은 벤더 ID를 비어 있는 것으로 보고하지만, 커넥터는 이 케이블을 USB-IF에 등록된 벤더인 %1$@(%2$@)(으)로 식별합니다. E-marker VID가 비어 있는 것 자체는 정품 패시브 케이블에서 흔하므로 문제의 징후가 아닙니다.";
 "Cable note:" = "케이블 참고:";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "벤더는 확인되지만 WhatCable에 포함된 USB-IF 목록에는 없음";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "벤더 ID %1$@(%2$@)는 커뮤니티 USB 벤더 목록에서는 확인되는 제조사이지만, WhatCable에 포함된 USB-IF 목록에는 없습니다.";
-"Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt)" = "케이블에 e-marker 칩이 있지만 이 연결에서는 읽지 못했습니다 (3A 초과 또는 Thunderbolt 필요)";
+"Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt)" = "케이블에 E-marker 칩이 있지만 이 연결에서는 읽지 못했습니다 (3A 초과 또는 Thunderbolt 필요)";
 
-"Battery full" = "배터리 가득 참";
+"Battery full" = "충전 완료됨";
 "Thunderbolt" = "Thunderbolt";
 
 "System draw" = "시스템 소비 전력";
 
 "On battery" = "배터리 사용 중";
-"Power connected" = "전원 연결됨";
+"Power connected" = "전원 어댑터 연결됨";

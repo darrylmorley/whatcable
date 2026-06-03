@@ -39,14 +39,18 @@ final class WidgetDataWriter {
     private var writeTask: Task<Void, Never>?
     private var heartbeatTask: Task<Void, Never>?
     private var lastSnapshot: WidgetSnapshot?
+    private var lastReloadSignature: ReloadSignature?
     private var isStarted = false
 
     private var contributorCancellables = Set<AnyCancellable>()
 
-    /// How often to re-write the snapshot even when ports haven't changed.
-    /// Keeps the timestamp fresh so the widget's staleness check doesn't
-    /// discard valid data just because nothing changed for a while.
-    private let heartbeatInterval: Duration = .seconds(120)
+    /// How often to re-write the snapshot and reload the widget even when
+    /// nothing structural changed. Keeps the timestamp fresh so the widget's
+    /// staleness check doesn't discard valid data, and is the one path that
+    /// advances the live power chart: WidgetKit budgets refreshes, so a steady
+    /// ~60s cadence is the most "live" a desktop widget can be without the
+    /// chart blinking from refresh-budget throttling.
+    private let heartbeatInterval: Duration = .seconds(60)
 
     private init() {}
 
@@ -142,11 +146,20 @@ final class WidgetDataWriter {
             guard writeToDefaults(snapshot) else { return }
             lastSnapshot = snapshot
 
-            // Tell WidgetKit to reload. This is a no-op when no widgets
-            // are installed, so it's safe to call unconditionally.
+            // Reload WidgetKit only on a *structural* change (a port plugged or
+            // unplugged, charger or charging state changed, etc). The live
+            // power magnitudes wobble every second; reloading on each wobble
+            // hammers WidgetKit's refresh budget and makes the chart blink in
+            // and out. Those values are already in the file we just wrote, so
+            // WidgetKit picks them up on its next scheduled refresh and on the
+            // heartbeat. reloadAllTimelines() is a no-op when no widgets are
+            // installed, so it's safe to call unconditionally.
+            let signature = ReloadSignature(snapshot)
+            guard signature != lastReloadSignature else { return }
+            lastReloadSignature = signature
             WidgetCenter.shared.reloadAllTimelines()
 
-            Self.log.debug("Widget timelines reloaded after snapshot write")
+            Self.log.debug("Widget timelines reloaded after structural change")
         }
     }
 
@@ -156,6 +169,10 @@ final class WidgetDataWriter {
         let snapshot = buildSnapshot()
         guard writeToDefaults(snapshot) else { return }
         lastSnapshot = snapshot
+        // The heartbeat is the deliberate periodic reload, so resync the
+        // signature here too: it stops the next structural-change check from
+        // firing a second, redundant reload right after this one.
+        lastReloadSignature = ReloadSignature(snapshot)
         WidgetCenter.shared.reloadAllTimelines()
         Self.log.debug("Widget heartbeat: refreshed timestamp and reloaded timelines (\(snapshot.ports.count) ports)")
     }
@@ -303,5 +320,74 @@ final class WidgetDataWriter {
             Self.log.error("Failed to write widget snapshot at \(url.path, privacy: .public): \(error.localizedDescription, privacy: .public)")
             return false
         }
+    }
+}
+
+/// A digest of the snapshot fields that define the widget's labels and shape,
+/// deliberately excluding the fast-fluctuating power magnitudes (system draw,
+/// per-port watts, and the sparkline sample arrays). Two snapshots with the
+/// same signature look the same to the user, so spending a WidgetKit reload on
+/// the difference between them only burns the refresh budget and makes the
+/// chart blink. The fluctuating values still reach the widget: they are written
+/// to the shared file every change, and the widget reads them on its next
+/// scheduled refresh or on the 60s heartbeat.
+private struct ReloadSignature: Equatable {
+    struct Port: Equatable {
+        let id: UInt64
+        let status: WidgetSnapshot.Status
+        let headline: String
+        let subtitle: String
+        let topBullet: String?
+        let iconName: String
+        let deviceCount: Int
+        let portKey: String?
+        let chargerWatts: Int?
+        let linkSpeedBadge: String?
+        let displayMode: String?
+        let monitorName: String?
+    }
+
+    let ports: [Port]
+    let batteryPercent: Int?
+    let isCharging: Bool
+    let fullyCharged: Bool
+    let isDesktopMac: Bool
+    let adapterWatts: Int?
+    let adapterDescription: String?
+    /// Whether a system-draw reading exists at all. The large widget adds or
+    /// removes its whole "System draw" row on this presence, so the nil -> first
+    /// sample transition is structural and must reload; the wattage *value*
+    /// behind it still isn't.
+    let hasSystemPower: Bool
+    /// Which ports currently have power, by key (presence, not wattage). A port
+    /// gaining or losing power is structural; the watts themselves are not.
+    let poweredPortKeys: [String]
+
+    init(_ snapshot: WidgetSnapshot) {
+        ports = snapshot.ports.map { p in
+            Port(
+                id: p.id,
+                status: p.status,
+                headline: p.headline,
+                subtitle: p.subtitle,
+                topBullet: p.topBullet,
+                iconName: p.iconName,
+                deviceCount: p.deviceCount,
+                portKey: p.portKey,
+                chargerWatts: p.chargerWatts,
+                linkSpeedBadge: p.linkSpeed?.badge,
+                displayMode: p.displayMode,
+                monitorName: p.monitorName
+            )
+        }
+        let ps = snapshot.powerState
+        batteryPercent = ps?.batteryPercent
+        isCharging = ps?.isCharging ?? false
+        fullyCharged = ps?.fullyCharged ?? false
+        isDesktopMac = ps?.isDesktopMac ?? false
+        adapterWatts = ps?.adapterWatts
+        adapterDescription = ps?.adapterDescription
+        hasSystemPower = ps?.systemPowerInWatts != nil
+        poweredPortKeys = (ps?.perPortWatts ?? []).map(\.portKey).sorted()
     }
 }
