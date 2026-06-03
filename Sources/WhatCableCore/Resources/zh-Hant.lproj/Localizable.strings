@@ -428,7 +428,7 @@
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "線材的 e-marker 晶片回報空白的 Vendor ID，但接頭將線材識別為 %1$@（%2$@），這是一家已向 USB-IF 註冊的廠商。e-marker VID 為空白本身在正規的被動式線材上相當常見，因此不代表有任何問題。";
 "Cable note:" = "線材備註：";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "廠商已識別，但不在 WhatCable 內建的 USB-IF 清單中";
-"The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "廠商 ID %@（%@）可在社群維護的 USB 廠商清單中識別，但不在 WhatCable 內建的 USB-IF 清單中。";
+"The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Vendor ID %@（%@）可在社群維護的 USB 廠商清單中識別，但不在 WhatCable 內建的 USB-IF 清單中。";
 "Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt)" = "線材具有 e-marker 晶片，但目前無法透過此連線讀取（需超過 3A 或使用 Thunderbolt）";
 
 "Battery full" = "電池已充滿";
