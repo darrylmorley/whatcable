@@ -56,11 +56,11 @@
 "E-marker uses an invalid VDO version" = "E-marker 使用了無效的 VDO 版本";
 "E-marker uses an invalid cable-termination value" = "E-marker 使用了無效的線材端接值";
 "Last leg drops from %@ to %@" = "最後一段從 %1$@ 降到 %2$@";
-"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "這條線材的 e-marker 未回報廠商 ID，這在正品線材上很常見。只有當線材的其他能力資料也不一致時，才值得進一步檢查。";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "此線材的 e-marker 未回報 Vendor ID，這在正規線材上相當常見。只有當線材的其它規格資料也出現不一致時，才值得進一步留意。";
 "Linked at %@" = "連線速度 %@";
 "Negotiation hasn't completed yet." = "協商尚未完成。";
-"Charger on standby" = "充電器待機中";
-"Another charger is powering the Mac right now. macOS draws from one charger at a time, so this charger stays on standby until the other is unplugged." = "目前由另一個充電器為 Mac 供電。macOS 一次只從一個充電器取電，因此在拔除另一個之前，此充電器會保持待機。";
+"Charger on standby" = "充電器待命中";
+"Another charger is powering the Mac right now. macOS draws from one charger at a time, so this charger stays on standby until the other is unplugged." = "目前有另一個充電器正在為 Mac 供電。macOS 一次只會從一個充電器取電，因此此充電器會維持待命狀態，直到另一個充電器中斷連接。";
 "No USB-C / MagSafe ports were found on this Mac." = "這台 Mac 上找不到 USB-C / MagSafe 連接埠。";
 "No e-marker detected. This cable doesn't advertise its capabilities." = "未偵測到 e-marker。此線材未公開其性能參數。";
 "No e-marker detected. The cable may have one, but macOS only reads it above 3A or with Thunderbolt." = "未偵測到 e-marker。線材可能有 e-marker，但 macOS 只會在超出 3A 或使用 Thunderbolt 時讀取。";
@@ -252,7 +252,7 @@
 "Pro features unlocked." = "Pro 功能已解鎖。";
 "Pro features will be locked until you enter your key again." = "在再次輸入金鑰前，Pro 功能將保持鎖定。";
 "Pro required" = "需要 Pro";
-"Product ID" = "產品 ID";
+"Product ID" = "Product ID";
 "Product Type" = "產品類型";
 "Raw VDOs" = "原始 VDO";
 "Raw cable VDOs" = "原始線材 VDO";
@@ -276,7 +276,7 @@
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "連接埠控制器發出警示（過電流、過熱或類似故障）。";
 "The power direction flipped: the port switched between providing and receiving power." = "電源方向已翻轉：連接埠在供電和受電之間切換。";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "此事件代碼不在已知的 TPS6598x 中斷表中。可能是韌體特定事件。";
-"Tunneled" = "隧道傳輸";
+"Tunneled" = "封裝傳輸";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM 探索已開始。控制器正在探測線材或對端上的廠商特定規格。";
 "UVDM enumeration" = "UVDM 列舉";
 "UVDM status update" = "UVDM 狀態更新";
@@ -402,7 +402,7 @@
 "Display links have their own screen: Display Diagnostics." = "顯示器連線有專屬頁面：「顯示器診斷」。";
 
 /* Display dimension: cable attribution. */
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。由於影像是透過 Thunderbolt 或 USB4 隧道傳輸，線材可提供的頻寬遠高於顯示器需求，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項，或是這台 Mac 對此顯示器的限制。";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。由於影像是透過 Thunderbolt 或 USB4 傳輸，線材可提供的頻寬遠高於顯示器需求，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項，或是這台 Mac 對此顯示器的限制。";
 "Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。線材已使用這台 Mac 提供的所有 DisplayPort 通道，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項。";
 
 /* Display dimension: branch device. */
@@ -424,17 +424,17 @@
 "Waiting for live reading…" = "正在等待即時讀數…";
 
 /* Softened blank e-marker note (DAR-140) */
-"E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker 廠商 ID 為空白，但可透過接頭識別線材";
-"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "線材的 e-marker 晶片回報空白的廠商 ID，但接頭將線材識別為 %1$@（%2$@），這是一家已向 USB-IF 註冊的廠商。e-marker VID 為空白本身在正規的被動式線材上相當常見，因此不代表有任何問題。";
+"E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker Vendor ID 為空白，但可透過接頭識別線材";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "線材的 e-marker 晶片回報空白的 Vendor ID，但接頭將線材識別為 %1$@（%2$@），這是一家已向 USB-IF 註冊的廠商。e-marker VID 為空白本身在正規的被動式線材上相當常見，因此不代表有任何問題。";
 "Cable note:" = "線材備註：";
-"Vendor is recognised but not in WhatCable's bundled USB-IF list" = "廠商可識別，但不在 WhatCable 內建的 USB-IF 清單中";
-"The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "廠商 ID %1$@（%2$@）在社群 USB 廠商清單中是可識別的廠商，但不在 WhatCable 內建的 USB-IF 清單中。";
-"Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt)" = "線材有 e-marker 晶片，但本次連線未讀取（需要超過 3A 或 Thunderbolt）";
+"Vendor is recognised but not in WhatCable's bundled USB-IF list" = "廠商已識別，但不在 WhatCable 內建的 USB-IF 清單中";
+"The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "廠商 ID %@（%@）可在社群維護的 USB 廠商清單中識別，但不在 WhatCable 內建的 USB-IF 清單中。";
+"Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt)" = "線材具有 e-marker 晶片，但目前無法透過此連線讀取（需超過 3A 或使用 Thunderbolt）";
 
 "Battery full" = "電池已充滿";
 "Thunderbolt" = "Thunderbolt";
 
-"System draw" = "系統功耗";
+"System draw" = "系統耗電";
 
-"On battery" = "使用電池";
-"Power connected" = "已接通電源";
+"On battery" = "使用電池供電";
+"Power connected" = "已接上電源";
