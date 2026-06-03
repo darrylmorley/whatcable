@@ -90,13 +90,13 @@
 "Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, serial numbers, or personal data are collected or stored." = "你设备的硬件 UUID 在发送前会用 SHA-256 哈希处理。不会收集或存储任何姓名、账户、序列号或个人数据。";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
-"Back" = "Back";
-"Unpin (popover closes when you click away)" = "Unpin (popover closes when you click away)";
-"Open in a separate window" = "Open in a separate window";
-"Power Monitor" = "Power Monitor";
-"Negotiation Diagnostics" = "Negotiation Diagnostics";
-"Cable Diagnostics" = "Cable Diagnostics";
-"%@ Port %lld Diagnostics" = "%@ Port %lld Diagnostics";
+"Back" = "返回";
+"Unpin (popover closes when you click away)" = "取消固定（点击外部区域时关闭弹出窗口）";
+"Open in a separate window" = "在独立窗口中打开";
+"Power Monitor" = "电源监视器";
+"Negotiation Diagnostics" = "协商诊断";
+"Cable Diagnostics" = "线缆诊断";
+"%@ Port %lld Diagnostics" = "%1$@ 端口 %2$lld 诊断";
 
 /* Onboarding / welcome screen (first launch). */
 "Welcome to WhatCable" = "欢迎使用 WhatCable";
@@ -111,7 +111,7 @@
 "You can change this any time in Settings." = "你可以随时在设置中更改。";
 
 /* Billboard device (display dimension). English; community-refined. */
-"Billboard device present" = "Billboard device present";
+"Billboard device present" = "存在 Billboard 设备";
 
 /* Softened blank e-marker note (DAR-140) */
 "Cable note" = "线缆备注";
