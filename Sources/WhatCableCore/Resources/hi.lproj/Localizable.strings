@@ -184,7 +184,7 @@
 "Display Output" = "वीडियो आउटपुट";
 "Enabled" = "सक्षम";
 "Enter your licence key to unlock pro features." = "Pro सुविधाएँ अनलॉक करने के लिए अपनी लाइसेंस कुंजी दर्ज करें।";
-"Estimating cable resistance..." = "केबल प्रतिरोध का अनुमान लगा रहा है...";
+"Estimating cable resistance…" = "केबल प्रतिरोध का अनुमान लगा रहा है…";
 "Event Log" = "इवेंट लॉग";
 "FET enable failures" = "FET सक्रियण विफलताएँ";
 "FET status" = "FET स्थिति";
@@ -200,7 +200,7 @@
 "Invalid licence key. Check the key and try again." = "अमान्य लाइसेंस कुंजी। कुंजी जाँचें और पुनः प्रयास करें।";
 "Lanes" = "लेन";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "लेगेसी USB 2.0 डेटा लाइन (D+/D-) ने पार्टनर पाया। CC-आधारित PD कनेक्शन से अलग।";
-"Licence..." = "लाइसेंस...";
+"Licence…" = "लाइसेंस…";
 "Licensed to: %@" = "लाइसेंस प्राप्तकर्ता: %@";
 "Link rate" = "लिंक रेट";
 "Liquid Detection" = "लिक्विड डिटेक्शन";
@@ -315,7 +315,7 @@
 "Enter Licence Key…" = "लाइसेंस कुंजी दर्ज करें…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "यह वह अधिकतम मान है जिस पर चार्जर और आपके Mac ने सहमति दी है, यह कोई लाइव रीडिंग नहीं है। आपका Mac लाइव मान केवल सिस्टम कुल के रूप में रिपोर्ट करता है, जो नीचे «सिस्टम पावर इनपुट» चार्ट में दिखाया गया है।";
 "No power data for this port right now." = "इस पोर्ट के लिए अभी कोई पावर डेटा नहीं।";
-"Waiting for power telemetry from macOS..." = "macOS से पावर टेलीमेट्री की प्रतीक्षा...";
+"Waiting for power telemetry from macOS…" = "macOS से पावर टेलीमेट्री की प्रतीक्षा…";
 "Upgrade to WhatCable Pro" = "WhatCable Pro में अपग्रेड करें";
 "not reported in this state" = "इस स्थिति में रिपोर्ट नहीं किया गया";
 
@@ -443,3 +443,5 @@
 "Per-Port Metering Unavailable" = "प्रति-पोर्ट मापन अनुपलब्ध";
 "This Mac reports overall power below, but not per-port readings." = "यह Mac नीचे कुल पावर दिखाता है, लेकिन प्रति-पोर्ट रीडिंग नहीं।";
 "Per-port metering isn't available on this Mac." = "इस Mac पर प्रति-पोर्ट मापन उपलब्ध नहीं है।";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS को प्रति-पोर्ट पावर रिपोर्ट करने में कभी-कभी एक मिनट तक लग सकता है।";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "डिस्प्ले कनेक्टेड है। इस पोर्ट से कोई पावर नहीं भेजी जा रही है। आने वाली पावर नीचे «सिस्टम पावर इनपुट» में दिखती है।";

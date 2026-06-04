@@ -184,7 +184,7 @@
 "Display Output" = "Display Output";
 "Enabled" = "Enabled";
 "Enter your licence key to unlock pro features." = "Enter your licence key to unlock pro features.";
-"Estimating cable resistance..." = "Estimating cable resistance...";
+"Estimating cable resistance…" = "Estimating cable resistance…";
 "Event Log" = "Event Log";
 "FET enable failures" = "FET enable failures";
 "FET status" = "FET status";
@@ -200,7 +200,7 @@
 "Invalid licence key. Check the key and try again." = "Invalid licence key. Check the key and try again.";
 "Lanes" = "Lanes";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection.";
-"Licence..." = "Licence...";
+"Licence…" = "Licence…";
 "Licensed to: %@" = "Licensed to: %@";
 "Link rate" = "Link rate";
 "Liquid Detection" = "Liquid Detection";
@@ -315,7 +315,7 @@
 "Enter Licence Key…" = "Enter Licence Key…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below.";
 "No power data for this port right now." = "No power data for this port right now.";
-"Waiting for power telemetry from macOS..." = "Waiting for power telemetry from macOS...";
+"Waiting for power telemetry from macOS…" = "Waiting for power telemetry from macOS…";
 "Upgrade to WhatCable Pro" = "Upgrade to WhatCable Pro";
 "not reported in this state" = "not reported in this state";
 
@@ -443,3 +443,5 @@
 "Per-Port Metering Unavailable" = "Per-Port Metering Unavailable";
 "This Mac reports overall power below, but not per-port readings." = "This Mac reports overall power below, but not per-port readings.";
 "Per-port metering isn't available on this Mac." = "Per-port metering isn't available on this Mac.";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS can be slow to report per-port power, sometimes up to a minute.";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below.";

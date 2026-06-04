@@ -185,7 +185,7 @@
 "Display Output" = "Տեսանյութի ելք";
 "Enabled" = "Միացված";
 "Enter your licence key to unlock pro features." = "Մուտքագրեք ձեր լիցենզիայի բանալին՝ Pro-ի հնարավորությունները բացելու համար:";
-"Estimating cable resistance..." = "Մալուխի դիմադրության գնահատում...";
+"Estimating cable resistance…" = "Մալուխի դիմադրության գնահատում…";
 "Event Log" = "Իրադարձությունների գրանցամատյան";
 "FET enable failures" = "FET միացման ձախողումներ";
 "FET status" = "FET վիճակ";
@@ -201,7 +201,7 @@
 "Invalid licence key. Check the key and try again." = "Անվավեր լիցենզիայի բանալի: Ստուգեք բանալին և կրկին փորձեք:";
 "Lanes" = "Գծեր";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "Հին USB 2.0 տվյալների գծերը (D+/D-) հայտնաբերեցին զուգընկեր: Առանձին է CC-ի վրա հիմնված PD կապից:";
-"Licence..." = "Լիցենզիա...";
+"Licence…" = "Լիցենզիա…";
 "Licensed to: %@" = "Լիցենզիան տրված է՝ %@";
 "Link rate" = "Կապի արագություն";
 "Liquid Detection" = "Հեղուկի հայտնաբերում";
@@ -316,7 +316,7 @@
 "Enter Licence Key…" = "Մուտքագրեք լիցենզիայի բանալին…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Սա առավելագույնն է, ինչի շուրջ պայմանավորվել են լիցքավորիչը և ձեր Mac-ը, ոչ թե կենդանի չափում։ Ձեր Mac-ը կենդանի արժեքը հաղորդում է միայն որպես համակարգի ընդհանուր գումար, որը ցուցադրված է ստորև՝ «Համակարգի սնուցման մուտք» գծապատկերում։";
 "No power data for this port right now." = "Այս պորտի համար այս պահին սնուցման տվյալներ չկան:";
-"Waiting for power telemetry from macOS..." = "Waiting for power telemetry from macOS...";
+"Waiting for power telemetry from macOS…" = "Waiting for power telemetry from macOS…";
 "Upgrade to WhatCable Pro" = "Անցնել WhatCable Pro-ի";
 "not reported in this state" = "այս վիճակում չի հաղորդվում";
 
@@ -444,3 +444,5 @@
 "Per-Port Metering Unavailable" = "Ըստ պորտի չափումը հասանելի չէ";
 "This Mac reports overall power below, but not per-port readings." = "Այս Mac-ը ստորև ցույց է տալիս ընդհանուր հզորությունը, բայց ոչ ըստ պորտի ցուցումները։";
 "Per-port metering isn't available on this Mac." = "Ըստ պորտի չափումն այս Mac-ի վրա հասանելի չէ։";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS-ը կարող է դանդաղ զեկուցել յուրաքանչյուր պորտի հզորությունը, երբեմն մինչև մեկ րոպե։";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Էկրանը միացված է։ Այս պորտից հզորություն չի ուղարկվում։ Մուտքային հզորությունը ցուցադրվում է ստորև՝ «Համակարգի սնուցման մուտք» բաժնում։";

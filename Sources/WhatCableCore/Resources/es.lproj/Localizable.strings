@@ -185,7 +185,7 @@
 "Display Output" = "Salida de vídeo";
 "Enabled" = "Activado";
 "Enter your licence key to unlock pro features." = "Introduce tu clave de licencia para desbloquear las funciones Pro.";
-"Estimating cable resistance..." = "Estimando resistencia del cable...";
+"Estimating cable resistance…" = "Estimando resistencia del cable…";
 "Event Log" = "Registro de eventos";
 "FET enable failures" = "Fallos de activación FET";
 "FET status" = "Estado FET";
@@ -201,7 +201,7 @@
 "Invalid licence key. Check the key and try again." = "Clave de licencia inválida. Verifica la clave e inténtalo de nuevo.";
 "Lanes" = "Carriles";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "Las líneas de datos legacy USB 2.0 (D+/D-) detectaron un dispositivo. Independiente de la conexión PD basada en CC.";
-"Licence..." = "Licencia...";
+"Licence…" = "Licencia…";
 "Licensed to: %@" = "Licencia para: %@";
 "Link rate" = "Tasa de enlace";
 "Liquid Detection" = "Detección de líquido";
@@ -316,7 +316,7 @@
 "Enter Licence Key…" = "Introducir clave de licencia…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Esto es lo máximo que acordaron el cargador y tu Mac, no una lectura en vivo. Tu Mac informa el valor en vivo solo como total del sistema, mostrado en el gráfico «Entrada de alimentación del sistema» de abajo.";
 "No power data for this port right now." = "Sin datos de alimentación para este puerto ahora mismo.";
-"Waiting for power telemetry from macOS..." = "Esperando datos de energía de macOS...";
+"Waiting for power telemetry from macOS…" = "Esperando datos de energía de macOS…";
 "Upgrade to WhatCable Pro" = "Actualizar a WhatCable Pro";
 "not reported in this state" = "no reportado en este estado";
 
@@ -444,3 +444,5 @@
 "Per-Port Metering Unavailable" = "Medición por puerto no disponible";
 "This Mac reports overall power below, but not per-port readings." = "Este Mac informa la potencia total abajo, pero no las lecturas por puerto.";
 "Per-port metering isn't available on this Mac." = "La medición por puerto no está disponible en este Mac.";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS puede tardar en informar la potencia por puerto, a veces hasta un minuto.";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Pantalla conectada. No se envía energía por este puerto. La energía entrante se muestra abajo en «Entrada de alimentación del sistema».";

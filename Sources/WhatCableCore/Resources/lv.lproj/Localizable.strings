@@ -184,7 +184,7 @@
 "Display Output" = "Displeja izeja";
 "Enabled" = "Iespējots";
 "Enter your licence key to unlock pro features." = "Ievadiet licences atslēgu, lai atbloķētu Pro funkcijas.";
-"Estimating cable resistance..." = "Aprēķina kabeļa pretestību...";
+"Estimating cable resistance…" = "Aprēķina kabeļa pretestību…";
 "Event Log" = "Notikumu žurnāls";
 "FET enable failures" = "FET iespējošanas kļūmes";
 "FET status" = "FET statuss";
@@ -200,7 +200,7 @@
 "Invalid licence key. Check the key and try again." = "Nederīga licences atslēga. Pārbaudiet atslēgu un mēģiniet vēlreiz.";
 "Lanes" = "Līnijas";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "Mantotās USB 2.0 datu līnijas (D+/D-) konstatēja partneri. Atsevišķi no CC bāzētā PD savienojuma.";
-"Licence..." = "Licence...";
+"Licence…" = "Licence…";
 "Licensed to: %@" = "Licencēts: %@";
 "Link rate" = "Savienojuma ātrums";
 "Liquid Detection" = "Šķidruma noteikšana";
@@ -315,7 +315,7 @@
 "Enter Licence Key…" = "Ievadiet licences atslēgu…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Šī ir maksimālā vērtība, par kuru vienojās lādētājs un jūsu Mac, nevis tiešais rādījums. Jūsu Mac ziņo tiešo vērtību tikai kā sistēmas kopsummu, kas redzama zemāk esošajā diagrammā „Sistēmas strāvas ievade“.";
 "No power data for this port right now." = "Pašlaik nav strāvas datu par šo portu.";
-"Waiting for power telemetry from macOS..." = "Gaida strāvas telemetriju no macOS...";
+"Waiting for power telemetry from macOS…" = "Gaida strāvas telemetriju no macOS…";
 "Upgrade to WhatCable Pro" = "Jaunināt uz WhatCable Pro";
 "not reported in this state" = "šajā stāvoklī netiek ziņots";
 
@@ -443,3 +443,5 @@
 "Per-Port Metering Unavailable" = "Mērījumi katram portam nav pieejami";
 "This Mac reports overall power below, but not per-port readings." = "Šis Mac zemāk rāda kopējo jaudu, bet ne mērījumus katram portam.";
 "Per-port metering isn't available on this Mac." = "Mērījumi katram portam šajā Mac nav pieejami.";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS reizēm lēni ziņo jaudu katram portam, dažkārt līdz pat minūtei.";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Displejs pievienots. Caur šo portu jauda netiek izvadīta. Ienākošā jauda redzama zemāk sadaļā «Sistēmas strāvas ievade».";

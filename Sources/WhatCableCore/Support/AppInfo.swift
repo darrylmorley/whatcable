@@ -35,6 +35,16 @@ public enum AppInfo {
     public static let copyright = "© \(Calendar.current.component(.year, from: Date())) \(credit)"
     public static let helpURL = URL(string: "https://github.com/darrylmorley/whatcable")!
 
+    /// Link to the GitHub release for the running version. Real builds always
+    /// have a matching `v<version>` tag; `dev` builds (run via `swift run`) have
+    /// no tag, so fall back to the releases list.
+    public static var releaseURL: URL {
+        if version == "dev" {
+            return URL(string: "https://github.com/darrylmorley/whatcable/releases")!
+        }
+        return URL(string: "https://github.com/darrylmorley/whatcable/releases/tag/v\(version)")!
+    }
+
     /// Compare dot-separated numeric versions. Non-numeric segments compare as 0.
     public static func isNewer(remote: String, current: String) -> Bool {
         let r = parts(remote)

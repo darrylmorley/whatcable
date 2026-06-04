@@ -185,7 +185,7 @@
 "Display Output" = "视频输出";
 "Enabled" = "已启用";
 "Enter your licence key to unlock pro features." = "输入许可证密钥以解锁 Pro 功能。";
-"Estimating cable resistance..." = "正在估算线缆电阻……";
+"Estimating cable resistance…" = "正在估算线缆电阻……";
 "Event Log" = "事件日志";
 "FET enable failures" = "FET 启用失败次数";
 "FET status" = "FET 状态";
@@ -201,7 +201,7 @@
 "Invalid licence key. Check the key and try again." = "许可证密钥无效。请检查密钥后重试。";
 "Lanes" = "通道数";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "传统 USB 2.0 数据线（D+/D-）检测到伙伴。与基于 CC 的 PD 连接相互独立。";
-"Licence..." = "许可证……";
+"Licence…" = "许可证……";
 "Licensed to: %@" = "许可证持有者：%@";
 "Link rate" = "链路速率";
 "Liquid Detection" = "液体检测";
@@ -316,7 +316,7 @@
 "Enter Licence Key…" = "输入许可证密钥…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "这是充电器与您的 Mac 协商的最大值，并非实时读数。您的 Mac 仅将实时数值作为系统总量报告，显示在下方的“系统电源输入”图表中。";
 "No power data for this port right now." = "此端口暂无电源数据。";
-"Waiting for power telemetry from macOS..." = "正在等待 macOS 电源数据...";
+"Waiting for power telemetry from macOS…" = "正在等待 macOS 电源数据…";
 "Upgrade to WhatCable Pro" = "升级到 WhatCable Pro";
 "not reported in this state" = "此状态下未报告";
 
@@ -444,3 +444,5 @@
 "Per-Port Metering Unavailable" = "无法使用每端口计量";
 "This Mac reports overall power below, but not per-port readings." = "此 Mac 在下方显示总功率，但不提供每端口的读数。";
 "Per-port metering isn't available on this Mac." = "此 Mac 不支持每端口计量。";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS 报告每个端口的功率可能较慢，有时最多需要一分钟。";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "已连接显示器。此端口未输出电力。输入的电力显示在下方的“系统电源输入”中。";

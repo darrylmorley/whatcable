@@ -262,7 +262,16 @@ struct ContentView: View {
                 .scaledFont(.caption)
                 .foregroundStyle(.secondary)
             Text(verbatim: "·").scaledFont(.caption).foregroundStyle(.secondary)
-            Text(verbatim: "v\(AppInfo.version) · \(AppInfo.credit)")
+            Button {
+                NSWorkspace.shared.open(AppInfo.releaseURL)
+            } label: {
+                Text(verbatim: "v\(AppInfo.version)")
+                    .scaledFont(.caption)
+                    .underline()
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.tint)
+            Text(verbatim: "· \(AppInfo.credit)")
                 .scaledFont(.caption)
                 .foregroundStyle(.tertiary)
             Text(verbatim: "·").scaledFont(.caption).foregroundStyle(.secondary)

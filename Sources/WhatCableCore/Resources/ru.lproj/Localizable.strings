@@ -184,7 +184,7 @@
 "Display Output" = "Вывод на дисплей";
 "Enabled" = "Включено";
 "Enter your licence key to unlock pro features." = "Введите ключ лицензии, чтобы разблокировать функции Pro.";
-"Estimating cable resistance..." = "Оценка сопротивления кабеля…";
+"Estimating cable resistance…" = "Оценка сопротивления кабеля…";
 "Event Log" = "Журнал событий";
 "FET enable failures" = "Сбои включения FET";
 "FET status" = "Состояние FET";
@@ -200,7 +200,7 @@
 "Invalid licence key. Check the key and try again." = "Неверный ключ лицензии. Проверьте ключ и повторите.";
 "Lanes" = "Линии";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "Линии USB 2.0 (D+/D-) обнаружили партнёра. Отдельно от PD по CC.";
-"Licence..." = "Лицензия…";
+"Licence…" = "Лицензия…";
 "Licensed to: %@" = "Лицензия для: %@";
 "Link rate" = "Скорость линка";
 "Liquid Detection" = "Обнаружение жидкости";
@@ -315,7 +315,7 @@
 "Enter Licence Key…" = "Ввести ключ лицензии…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Это максимум, о котором договорились зарядное устройство и ваш Mac, а не текущее показание. Mac сообщает текущее значение только как системный итог, показанный на графике «Вход системного питания» ниже.";
 "No power data for this port right now." = "Сейчас нет данных о питании для этого порта.";
-"Waiting for power telemetry from macOS..." = "Ожидание телеметрии питания от macOS…";
+"Waiting for power telemetry from macOS…" = "Ожидание телеметрии питания от macOS…";
 "Upgrade to WhatCable Pro" = "Перейти на WhatCable Pro";
 "not reported in this state" = "в этом состоянии не сообщается";
 
@@ -443,3 +443,5 @@
 "Per-Port Metering Unavailable" = "Измерение по портам недоступно";
 "This Mac reports overall power below, but not per-port readings." = "Этот Mac показывает общую мощность ниже, но не данные по каждому порту.";
 "Per-port metering isn't available on this Mac." = "Измерение по портам недоступно на этом Mac.";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS может сообщать мощность по каждому порту с задержкой, иногда до минуты.";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Дисплей подключён. Через этот порт питание не подаётся. Входящее питание показано ниже в разделе «Вход системного питания».";

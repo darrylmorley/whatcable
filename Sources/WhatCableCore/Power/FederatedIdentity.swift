@@ -4,7 +4,7 @@ import Foundation
 /// Each entry describes the PD partner connected to a physical port, using
 /// data the battery controller collects independently of the HPM/TC services.
 /// Available on laptops only (the array is absent or all-zeros on desktops).
-public struct FederatedIdentity: Hashable {
+public struct FederatedIdentity: Hashable, Sendable {
     /// 1-based port index (offset in the FedDetails array + 1).
     public let portIndex: Int
     public let vendorID: Int

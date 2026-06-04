@@ -184,7 +184,7 @@
 "Display Output" = "영상 출력";
 "Enabled" = "사용 중";
 "Enter your licence key to unlock pro features." = "라이선스 키를 입력하면 Pro 기능이 잠금 해제됩니다.";
-"Estimating cable resistance..." = "케이블 저항 추정 중...";
+"Estimating cable resistance…" = "케이블 저항 추정 중…";
 "Event Log" = "이벤트 로그";
 "FET enable failures" = "FET 활성화 실패";
 "FET status" = "FET 상태";
@@ -200,7 +200,7 @@
 "Invalid licence key. Check the key and try again." = "유효하지 않은 라이선스 키입니다. 키를 확인하고 다시 시도하세요.";
 "Lanes" = "레인";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "레거시 USB 2.0 데이터 라인(D+/D-)이 상대 기기를 감지했습니다. CC 기반 PD 연결과는 별개입니다.";
-"Licence..." = "라이선스...";
+"Licence…" = "라이선스…";
 "Licensed to: %@" = "라이선스 소유자: %@";
 "Link rate" = "링크 속도";
 "Liquid Detection" = "액체 감지";
@@ -315,7 +315,7 @@
 "Enter Licence Key…" = "라이선스 키 입력…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "이는 충전기와 Mac이 합의한 최대값이며 실시간 측정값이 아닙니다. Mac은 실시간 값을 시스템 합계로만 보고하며, 아래의 ‘시스템 전력 입력’ 차트에 표시됩니다.";
 "No power data for this port right now." = "지금은 이 포트의 전력 데이터가 없어요.";
-"Waiting for power telemetry from macOS..." = "macOS의 전력 측정 데이터를 기다리는 중...";
+"Waiting for power telemetry from macOS…" = "macOS의 전력 측정 데이터를 기다리는 중…";
 "Upgrade to WhatCable Pro" = "WhatCable Pro로 업그레이드";
 "not reported in this state" = "이 상태에서는 보고되지 않음";
 
@@ -443,3 +443,5 @@
 "Per-Port Metering Unavailable" = "포트별 측정 사용 불가";
 "This Mac reports overall power below, but not per-port readings." = "이 Mac은 아래에 전체 전력을 표시하지만 포트별 수치는 표시하지 않습니다.";
 "Per-port metering isn't available on this Mac." = "이 Mac에서는 포트별 측정을 사용할 수 없습니다.";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS가 포트별 전력을 보고하는 데 때때로 최대 1분이 걸릴 수 있습니다.";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "디스플레이가 연결되어 있어요. 이 포트로는 전력이 나가지 않습니다. 들어오는 전력은 아래 ‘시스템 전력 입력’에 표시됩니다.";
