@@ -16,7 +16,7 @@
 "Cable does not advertise an e-marker (basic cable)" = "線材未宣告 e-marker（基本線材）";
 "Cable has an e-marker chip (advertises its capabilities)" = "線材有 e-marker 晶片（會宣告自身規格）";
 "Cable is limiting charging speed" = "線材限制了充電速度";
-"Cable identified as %@" = "線材識別為 %@";
+"Cable identified as %@" = "線材已識別為 %@";
 "Cable made by %@" = "線材製造商：%@";
 "Cable rated for %@ at up to %lldV (~%lldW)" = "線材額定 %1$@，最高 %2$lldV（約 %3$lldW）";
 "Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "線材額定規格為 %1$lldV / %2$@，最高可傳輸 %3$lldW（USB-PD 上限為 48V）";
@@ -24,10 +24,10 @@
 "Cable trust signals:" = "線材驗證資訊：";
 "Carrying DisplayPort video" = "正在傳輸 DisplayPort 影像";
 "Carrying both data and DisplayPort video." = "正在同時傳輸資料和 DisplayPort 影像。";
-"Charger advertises up to %lldW" = "充電器宣告最高 %lldW";
+"Charger advertises up to %lldW" = "充電器宣告最高可達 %lldW";
 "Charger: %@" = "充電器：%@";
 "Charger: %@ %@" = "充電器：%1$@ %2$@";
-"Charger identified as %@" = "充電器識別為 %@";
+"Charger identified as %@" = "充電器已識別為 %@";
 "Charger and cable are well-matched." = "充電器和線材規格搭配良好。";
 "Charger can deliver up to %lldW, but this cable is only rated to carry %lldW. Replace the cable to charge faster." = "充電器最高可提供 %1$lldW，但這條線材額定只能承載 %2$lldW。更換線材可以更快充電。";
 "Charging" = "正在充電";
@@ -58,12 +58,12 @@
 "E-marker uses an invalid cable-termination value" = "E-marker 使用了無效的線材端接值";
 "Last leg drops from %@ to %@" = "最後一段從 %1$@ 降到 %2$@";
 "This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "此線材的 e-marker 未回報 Vendor ID，這在正規線材上相當常見。只有當線材的其它規格資料也出現不一致時，才值得進一步留意。";
-"Linked at %@" = "連線速度 %@";
+"Linked at %@" = "連線速率 %@";
 "Negotiation hasn't completed yet." = "協商尚未完成。";
 "Charger on standby" = "充電器待命中";
 "Another charger is powering the Mac right now. macOS draws from one charger at a time, so this charger stays on standby until the other is unplugged." = "目前有另一個充電器正在為 Mac 供電。macOS 一次只會從一個充電器取電，因此此充電器會維持待命狀態，直到另一個充電器中斷連接。";
 "No USB-C / MagSafe ports were found on this Mac." = "這台 Mac 上找不到 USB-C / MagSafe 連接埠。";
-"No e-marker detected. This cable doesn't advertise its capabilities." = "未偵測到 e-marker。此線材未公開其性能參數。";
+"No e-marker detected. This cable doesn't advertise its capabilities." = "未偵測到 e-marker。此線材未宣告自身規格。";
 "No e-marker detected. The cable may have one, but macOS only reads it above 3A or with Thunderbolt." = "未偵測到 e-marker。線材可能有 e-marker，但 macOS 只會在超出 3A 或使用 Thunderbolt 時讀取。";
 "Nothing connected" = "未連接任何裝置";
 "Only USB 2.0 is active. If you expected high speed, the cable may not support it." = "目前只有 USB 2.0 作用中。如果預期應有高速連線，線材可能不支援。";
@@ -214,7 +214,7 @@
 "Max power" = "最大功率";
 "Mitigations" = "緩解措施";
 "Mode" = "模式";
-"Monitor" = "監控";
+"Monitor" = "顯示器";
 "Native" = "原生";
 "Port maximum. Live per-port metering is not available on this hardware." = "連接埠上限。此硬體無法使用各連接埠即時計量。";
 "No" = "否";
@@ -264,7 +264,7 @@
 "Signal Routing" = "訊號路由";
 "Sleep/wake" = "睡眠/喚醒";
 "Source PDOs" = "Source PDOs";
-"Source capabilities received" = "已收到 Source 規格";
+"Source capabilities received" = "已收到 Source Capabilities";
 "Source_Capabilities message received from the power source. Contains the PDO list (voltages and currents on offer)." = "已從電源收到 Source_Capabilities 訊息。包含 PDO 清單（可提供的電壓和電流）。";
 "State" = "狀態";
 "Status update" = "狀態更新";
@@ -374,13 +374,13 @@
 
 /* Display dimension. */
 "A display is connected but its capabilities aren't readable, so there's nothing to compare the link against." = "已連接顯示器，但無法讀取其規格，因此沒有可供比較的連線資訊。";
-"The link is carrying about %@ (%lld of %lld lanes)." = "連線承載約 %@（%lld/%lld lanes）。";
+"The link is carrying about %@ (%lld of %lld lanes)." = "連線承載約 %@（%lld/%lld 通道）。";
 "display" = "顯示器";
 "Your %@ is connected, but the link rate isn't readable, so there's nothing to compare its capability against." = "您的 %@ 已連接，但無法讀取連線速率，因此沒有可供比較的規格資訊。";
 "Display running at full quality" = "顯示器以最佳畫質運作";
 "Your %@ is connected and the link has the bandwidth for its top mode. Nothing is holding the picture back." = "您的 %@ 已連接，且目前連線頻寬足以支援其最高模式。顯示畫面沒有受到任何限制。";
-"%lld of %lld lanes at %@" = "%lld/%lld lanes（%@）";
-"%lld of %lld lanes" = "%lld/%lld lanes";
+"%lld of %lld lanes at %@" = "%lld/%lld 通道（%@）";
+"%lld of %lld lanes" = "%lld/%lld 通道";
 "up to %lldHz" = "最高 %lldHz";
 "a higher mode than the link is carrying" = "比目前連線承載更高的模式";
 "This estimate assumes standard colour; a display using compression (DSC) may reach more." = "此估算以標準色彩模式為前提；使用影像串流壓縮（DSC）的顯示器可能達到更高規格。";
@@ -415,7 +415,7 @@
 
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "顯示器可能透過壓縮來達到最高模式";
-"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可支援 %@，若不使用壓縮約需 %@。目前連線已讓所有 lanes 以高速運作，承載約 %@（%@）。許多高解析度顯示器會使用影像串流壓縮（DSC），讓最高模式能透過這類連線傳輸，因此僅憑連線速率無法判斷是否已達到最佳模式。若畫面顯示正常，那麼很可能已經達到最佳模式。";
+"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可支援 %@，若不使用壓縮約需 %@。目前連線已讓所有通道以高速運作，承載約 %@（%@）。許多高解析度顯示器會使用影像串流壓縮（DSC），讓最高模式能透過這類連線傳輸，因此僅憑連線速率無法判斷是否已達到最佳模式。若畫面顯示正常，那麼很可能已經達到最佳模式。";
 
 /* Power Monitor system power source indicator. */
 "Battery" = "電池";
@@ -440,6 +440,6 @@
 "On battery" = "使用電池供電";
 "Power connected" = "已接上電源";
 
-"Per-Port Metering Unavailable" = "無法使用各連接埠計量";
-"This Mac reports overall power below, but not per-port readings." = "此 Mac 在下方顯示總功率，但不提供各連接埠的讀數。";
-"Per-port metering isn't available on this Mac." = "此 Mac 不支援各連接埠計量。";
+"Per-Port Metering Unavailable" = "無法取得各連接埠功率讀數";
+"This Mac reports overall power below, but not per-port readings." = "這台 Mac 可回報下方的整體功率，但無法提供各連接埠的功率讀數。";
+"Per-port metering isn't available on this Mac." = "此 Mac 不支援各連接埠功率讀取。";
