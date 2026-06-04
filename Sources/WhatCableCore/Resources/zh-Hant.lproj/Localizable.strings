@@ -184,7 +184,7 @@
 "Display Output" = "顯示器輸出";
 "Enabled" = "已啟用";
 "Enter your licence key to unlock pro features." = "輸入授權金鑰以解鎖 Pro 功能。";
-"Estimating cable resistance..." = "正在估算線材電阻...";
+"Estimating cable resistance…" = "正在估算線材電阻…";
 "Event Log" = "事件記錄";
 "FET enable failures" = "FET 啟用失敗次數";
 "FET status" = "FET 狀態";
@@ -200,7 +200,7 @@
 "Invalid licence key. Check the key and try again." = "授權金鑰無效。請檢查金鑰後再試一次。";
 "Lanes" = "通道數";
 "Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "傳統 USB 2.0 資料線（D+/D-）偵測到對端。這與基於 CC 的 PD 連線彼此獨立。";
-"Licence..." = "授權...";
+"Licence…" = "授權…";
 "Licensed to: %@" = "授權給：%@";
 "Link rate" = "連線速率";
 "Liquid Detection" = "液體偵測";
@@ -315,7 +315,7 @@
 "Enter Licence Key…" = "輸入授權金鑰…";
 "This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "這是充電器與您的 Mac 協商的最大值，並非即時讀數。您的 Mac 僅會回報整體系統的即時總功率，顯示在下方的「系統電源輸入」圖表中。";
 "No power data for this port right now." = "此連接埠目前沒有電源資料。";
-"Waiting for power telemetry from macOS..." = "正在等待 macOS 電源資料...";
+"Waiting for power telemetry from macOS…" = "正在等待 macOS 電源資料…";
 "Upgrade to WhatCable Pro" = "升級到 WhatCable Pro";
 "not reported in this state" = "此狀態下未回報";
 
