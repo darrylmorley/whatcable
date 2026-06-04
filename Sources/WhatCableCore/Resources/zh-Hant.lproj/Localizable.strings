@@ -420,7 +420,7 @@
 /* Power Monitor system power source indicator. */
 "Battery" = "電池";
 "Source" = "電源";
-"Battery Power" = "電池功率";
+"Battery Power" = "電池供電";
 "Negotiating…" = "正在協商…";
 "Waiting for live reading…" = "正在等待即時讀數…";
 
