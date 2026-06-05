@@ -28,7 +28,7 @@
 "Host (%@)" = "主機（%@）";
 "Include Mac model and macOS version" = "包含 Mac 機型與 macOS 版本";
 "Install failed: %@" = "安裝失敗：%@";
-"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "此帳戶無法更新此位置的應用程式。請從 whatcable.uk 下載新版本，或使用 Homebrew 更新。";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "此帳戶無法更新安裝於此位置的應用程式。請從 whatcable.uk 下載新版本，或使用 Homebrew 更新。";
 "Install update" = "安裝更新";
 "Installing, WhatCable will relaunch" = "正在安裝，WhatCable 將重新啟動";
 "Keep window open" = "保持視窗開啟";
