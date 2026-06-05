@@ -100,10 +100,10 @@
 
 /* Onboarding / welcome screen (first launch). */
 "Welcome to WhatCable" = "歡迎使用 WhatCable";
-"See what your USB-C cables, chargers, and devices can actually do." = "查看你的 USB-C 線纜、充電器和裝置的實際能力。";
+"See what your USB-C cables, chargers, and devices can actually do." = "查看你的 USB-C 線材、充電器和裝置的實際能力。";
 "How would you like to use WhatCable?" = "你想如何使用 WhatCable？";
 "Menu bar" = "選單列";
-"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "位於螢幕頂部的選單列中。隨時點選線纜圖示即可檢查連線。";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "位於螢幕頂部的選單列中。隨時點選線材圖示即可檢查連線。";
 "Recommended" = "推薦";
 "Dock app" = "Dock 應用程式";
 "Opens as a regular window with a Dock icon, like most apps." = "像大多數應用程式一樣，以一般視窗開啟並顯示 Dock 圖示。";
