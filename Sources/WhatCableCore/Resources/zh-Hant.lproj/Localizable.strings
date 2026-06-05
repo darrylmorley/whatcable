@@ -100,7 +100,7 @@
 "USB 2.0 only (480 Mbps), no high-speed data" = "僅 USB 2.0（480 Mbps），沒有高速資料傳輸";
 "USB 3.2 Gen 1 (5 Gbps)" = "USB 3.2 Gen 1（5 Gbps）";
 "USB 3.2 Gen 2 (10 Gbps)" = "USB 3.2 Gen 2（10 Gbps）";
-"USB Hub" = "USB 集線器";
+"USB Hub" = "USB Hub";
 "USB Peripheral" = "USB 周邊裝置";
 "USB default" = "USB 預設";
 "USB device" = "USB 裝置";
@@ -142,12 +142,12 @@
 "Connected device: %@" = "已連接裝置：%@";
 "Connected device: %@, %@ (%@)" = "已連接裝置：%1$@，%2$@（%3$@）";
 "Data" = "資料";
-"DisplayPort Alt Mode" = "DisplayPort 替代模式";
+"DisplayPort Alt Mode" = "DisplayPort Alt Mode";
 
 /* Pro plugin UI strings */
 "%@ (spec, not measured)" = "%@（規格值，非實測）";
 "%@ Diagnostics" = "%@ 診斷";
-"%lld (%lld failed)" = "%1$lld（%2$lld 個失敗）";
+"%lld (%lld failed)" = "%1$lld（%2$lld 次失敗）";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap 已成功完成。連接埠已在 DFP（主機）和 UFP（裝置）角色之間切換。";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap 已成功完成。常見於 Hub 或 Dock 重新協商由哪一端供電時。";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "在傳統 D+/D- 針腳上偵測到 USB 2.0 連線。";
@@ -158,12 +158,12 @@
 "Alert" = "警示";
 "Attach count" = "連接次數";
 "Buy a licence at whatcable.uk" = "在 whatcable.uk 購買授權";
-"CC Advertisement" = "CC 廣播";
-"CC line voltage" = "CC 線電壓";
+"CC Advertisement" = "CC Advertisement";
+"CC line voltage" = "CC 線路電壓";
 "Cable Identity" = "線材識別資訊";
 "Cancel" = "取消";
 "Capability mismatch" = "規格不一致";
-"Connect a USB-C power source to view live telemetry." = "連接 USB-C 電源以查看即時遙測資料。";
+"Connect a USB-C power source to view live telemetry." = "連接 USB-C 電源以查看即時電源資料。";
 "Connector" = "連接器";
 "Controller alert: could indicate overcurrent, overtemperature, or a protocol error. Check Port Health for details." = "控制器警示：可能表示過電流、過熱或協定錯誤。請查看「連接埠健康狀況」了解詳細資訊。";
 "Controller app loaded" = "控制器 App 已載入";
@@ -205,7 +205,7 @@
 "Link rate" = "連線速率";
 "Liquid Detection" = "液體偵測";
 "Liquid detected" = "偵測到液體";
-"Live" = "即時";
+"Live" = "Live";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe 充電器";
 "Manufacturer" = "製造商";
@@ -218,7 +218,7 @@
 "Native" = "原生";
 "Port maximum. Live per-port metering is not available on this hardware." = "連接埠上限。此硬體無法使用各連接埠即時計量。";
 "No" = "否";
-"No PD contract data" = "沒有 PD 合約資料";
+"No PD contract data" = "沒有 PD 協議資料";
 "No PD events" = "沒有 PD 事件";
 "No PDOs advertised" = "未宣告 PDO";
 "No Power Data" = "沒有電源資料";
@@ -230,7 +230,7 @@
 "None" = "無";
 "Open Pro diagnostics for this port" = "開啟此連接埠的 Pro 診斷";
 "Requested operating current" = "要求的運作電流";
-"PD protocol engine status changed. Tracks contract state, hard/soft reset counts, and message sequence numbers." = "PD 協定引擎狀態已變更。追蹤合約狀態、硬/軟重置次數和訊息序號。";
+"PD protocol engine status changed. Tracks contract state, hard/soft reset counts, and message sequence numbers." = "PD 協定引擎狀態已變更。追蹤協議狀態、硬/軟重置次數和訊息序號。";
 "PD spec revision" = "PD 規範版本";
 "PD state" = "PD 狀態";
 "PD status update" = "PD 狀態更新";
@@ -243,7 +243,7 @@
 "Port Health" = "連接埠健康狀況";
 "Power" = "功率";
 "Power (W)" = "功率 (W)";
-"Power Contract" = "供電合約";
+"Power Contract" = "供電協議";
 "Power Monitor" = "電源監控";
 "Power delivery parameters changed (voltage, current, or power role)." = "供電參數已變更（電壓、電流或電源角色）。";
 "Power path status changed. Covers VBUS voltage, current draw, and source/sink transitions." = "電源路徑狀態已變更。涵蓋 VBUS 電壓、電流取用，以及 source/sink 轉換。";
@@ -253,7 +253,7 @@
 "Pro features unlocked." = "Pro 功能已解鎖。";
 "Pro features will be locked until you enter your key again." = "在再次輸入金鑰前，Pro 功能將保持鎖定。";
 "Pro required" = "需要 Pro";
-"Product ID" = "產品 ID";
+"Product ID" = "Product ID";
 "Product Type" = "產品類型";
 "Raw VDOs" = "原始 VDO";
 "Raw cable VDOs" = "原始線材 VDO";
@@ -263,7 +263,7 @@
 "Short detect count" = "短路偵測次數";
 "Signal Routing" = "訊號路由";
 "Sleep/wake" = "睡眠/喚醒";
-"Source PDOs" = "電源 PDO";
+"Source PDOs" = "Source PDOs";
 "Source capabilities received" = "已收到 Source Capabilities";
 "Source_Capabilities message received from the power source. Contains the PDO list (voltages and currents on offer)." = "已從電源收到 Source_Capabilities 訊息。包含 PDO 清單（可提供的電壓和電流）。";
 "State" = "狀態";
@@ -282,7 +282,7 @@
 "UVDM enumeration" = "UVDM 列舉";
 "UVDM status update" = "UVDM 狀態更新";
 "USB 2.0 plug event" = "USB 2.0 插拔事件";
-"USB Power Delivery protocol status changed (contract state, message counters)." = "USB Power Delivery 協定狀態已變更（合約狀態、訊息計數器）。";
+"USB Power Delivery protocol status changed (contract state, message counters)." = "USB Power Delivery 協定狀態已變更（協議狀態、訊息計數器）。";
 "USB-C Charger" = "USB-C 充電器";
 "Unknown" = "未知";
 "Unknown Device" = "未知裝置";
@@ -292,7 +292,7 @@
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "非結構化 VDM 列舉已開始（正在探索廠商特定規格）。";
 "Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "非結構化 VDM 狀態已變更（廠商特定訊息，例如 Alt Mode 設定）。";
 "VDO fail count" = "VDO 失敗次數";
-"Vendor ID" = "廠商 ID";
+"Vendor ID" = "Vendor ID";
 "Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "廠商特定的非結構化 VDM 狀態已變更。Apple 會用於自訂 Alt Mode 設定和 Thunderbolt 協商。";
 "Voltage" = "電壓";
 "Voltage (V)" = "電壓 (V)";
