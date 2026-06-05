@@ -26,20 +26,20 @@
 "Host (%@)" = "Host (%@)";
 "Include Mac model and macOS version" = "Includi modello Mac e versione macOS";
 "Install failed: %@" = "Installazione fallita %@";
-"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "Questo account non può aggiornare le app in questa posizione. Scarica la nuova versione da whatcable.uk oppure aggiorna con Homebrew.";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "Questo account non può aggiornare le app in questa percorso. Scarica la versione aggiornata da whatcable.uk o aggiorna con Homebrew.";
 "Install update" = "Installa aggiornamento";
 "Installing, WhatCable will relaunch" = "Installazione, WhatCable verrà riavviato";
 "Keep window open" = "Mantieni finestra aperta";
 "Language" = "Lingua";
 "Launch at login" = "Esegui all'accesso";
 "Lives in the menu bar with no Dock icon." = "Si trova nella barra dei menu senza l'icona del Dock.";
-"Menu bar icon" = "Icona della barra dei menu";
+"Menu bar icon" = "Icona barra menu";
 /* Menu bar icon choices */
 "Cable" = "Cavo";
 "Cable, horizontal" = "Cavo, orizzontale";
 "Bolt" = "Fulmine";
-"Power plug" = "Spina";
-"Power cord" = "Cavo di alimentazione";
+"Power plug" = "Plug alimentazione";
+"Power cord" = "Cavo alimentazione";
 "No" = "No";
 "No USB-C ports detected" = "Nessuna porta USB-C rilevata";
 "Nothing connected" = "Nessun dispositivo collegato";
