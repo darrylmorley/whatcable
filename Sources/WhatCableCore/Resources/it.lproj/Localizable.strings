@@ -443,8 +443,8 @@
 
 "Per-Port Metering Unavailable" = "Misurazione per porta non disponibile";
 "This Mac reports overall power below, but not per-port readings." = "Questo Mac riporta la potenza totale qui sotto, ma non le letture per porta.";
-"Per-port metering isn't available on this Mac." = "La misurazione per porta non è disponibile su questo Mac.";
+"Per-port metering isn't available on this Mac." = "In questo Mac la misurazione per porta non è disponibile.";
 "macOS can be slow to report per-port power, sometimes up to a minute." = "macOS può essere lento nel segnalare la potenza per porta, a volte fino a un minuto.";
-"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Display collegato. Da questa porta non viene erogata alimentazione. L'alimentazione in ingresso è mostrata sotto in «Ingresso alimentazione sistema».";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Schermo collegato. Questa porta non eroga alimentazione. L'alimentazione in ingresso è visualizzata qui sotto in 'Ingresso alimentazione sistema».'";
 "Connected to %lld Thunderbolt devices: %@" = "Connesso a %1$lld dispositivi Thunderbolt: %2$@";
 "Thunderbolt fabric:" = "Topologia Thunderbolt:";
