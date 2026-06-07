@@ -216,7 +216,7 @@
 "Mode" = "模式";
 "Monitor" = "顯示器";
 "Native" = "原生";
-"Port maximum. Live per-port metering is not available on this hardware." = "連接埠上限。此硬體無法使用各連接埠即時計量。";
+"Port maximum. Live per-port metering is not available on this hardware." = "連接埠上限。此硬體不支援各連接埠即時功率測量。";
 "No" = "否";
 "No PD contract data" = "沒有 PD 協議資料";
 "No PD events" = "沒有 PD 事件";
@@ -387,12 +387,12 @@
 "This estimate assumes standard colour; a display using compression (DSC) may reach more." = "此估算以標準色彩模式為前提；使用影像串流壓縮（DSC）的顯示器可能達到更高規格。";
 "Video is going through a %@ adapter" = "影像訊號正透過 %@ 轉接器傳輸";
 "Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，而連線尚未達到顯示器的最高模式（%@，約需 %@）；目前約承載 %@（%@）。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
-"Monitor can do more than the link is carrying" = "顯示器規格高於目前連線承載能力";
+"Monitor can do more than the link is carrying" = "顯示器規格高於目前連線承載";
 "Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。若已選擇較高模式卻無法達成，限制因素可能是線材或轉接器；若尚未嘗試，選擇較高模式可能會讓連線重新協商至更高速率。";
 "Display Diagnostics" = "顯示器診斷";
 "What your monitor can do, and what the link is carrying." = "查看顯示器的規格，以及目前連線實際承載的內容。";
 "No Displays" = "沒有顯示器";
-"Connect a monitor over USB-C or Thunderbolt to see what the link is delivering." = "透過 USB-C 或 Thunderbolt 連接顯示器，即可查看目前連線提供的能力。";
+"Connect a monitor over USB-C or Thunderbolt to see what the link is delivering." = "透過 USB-C 或 Thunderbolt 連接顯示器，即可查看目前連線承載的內容。";
 "%@ port %lld" = "%@ 連接埠 %lld";
 "Display" = "顯示器";
 "%lld × %lld" = "%lld × %lld";
@@ -443,7 +443,7 @@
 
 "Per-Port Metering Unavailable" = "無法取得各連接埠功率讀數";
 "This Mac reports overall power below, but not per-port readings." = "這台 Mac 可回報下方的整體功率，但無法提供各連接埠的功率讀數。";
-"Per-port metering isn't available on this Mac." = "此 Mac 不支援各連接埠功率讀取。";
+"Per-port metering isn't available on this Mac." = "此 Mac 不支援各連接埠功率測量。";
 "macOS can be slow to report per-port power, sometimes up to a minute." = "macOS 回報各連接埠功率可能較慢，有時最多需要一分鐘。";
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "已連接顯示器。此連接埠目前未對外供電。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
 "Connected to %lld Thunderbolt devices: %@" = "已連接 %1$lld 個 Thunderbolt 裝置：%2$@";
