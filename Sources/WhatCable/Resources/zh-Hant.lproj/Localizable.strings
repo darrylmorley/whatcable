@@ -91,7 +91,7 @@
 "Privacy" = "隱私權";
 "Pro" = "Pro";
 "Proceed" = "繼續";
-"Raw IOKit registry properties for each USB-C port, the model and capabilities of any connected display (its EDID, with the serial number removed), your macOS version, and chip type. This is the same data visible in System Information." = "每個 USB-C 連接埠的原始 IOKit 登錄屬性、任何已連接顯示器的型號與功能資訊（其 EDID，已移除序號）、您的 macOS 版本與晶片類型。這些資料與「系統資訊」中可見的內容相同。";
+"Raw IOKit registry properties for each USB-C port, the model and capabilities of any connected display (its EDID, with the serial number removed), your macOS version, and chip type. This is the same data visible in System Information." = "每個 USB-C 連接埠的原始 IOKit 登錄屬性、任何已連接顯示器的型號與規格資訊（其 EDID，已移除序號）、您的 macOS 版本與晶片類型。這些資料與「系統資訊」中可見的內容相同。";
 "What happens" = "會發生什麼";
 "What is collected" = "會收集哪些資料";
 "WhatCable runs 17 IOKit probes that read raw USB-C and Thunderbolt data from your Mac's port controller registers. The results are sent to a secure server to help improve cable and port detection." = "WhatCable 會執行 17 個 IOKit 探測器，從 Mac 的連接埠控制器暫存器讀取原始 USB-C 與 Thunderbolt 資料。結果會傳送至安全伺服器，以協助改善線材與連接埠偵測。";
@@ -108,15 +108,15 @@
 
 /* Onboarding / welcome screen (first launch). */
 "Welcome to WhatCable" = "歡迎使用 WhatCable";
-"See what your USB-C cables, chargers, and devices can actually do." = "查看你的 USB-C 線材、充電器和裝置的實際能力。";
-"How would you like to use WhatCable?" = "你想如何使用 WhatCable？";
+"See what your USB-C cables, chargers, and devices can actually do." = "查看您的 USB-C 線材、充電器和裝置到底能做什麼。";
+"How would you like to use WhatCable?" = "您想如何使用 WhatCable？";
 "Menu bar" = "選單列";
 "Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "位於螢幕頂部的選單列中。隨時點選線材圖示即可檢查連線。";
 "Recommended" = "推薦";
 "Dock app" = "Dock 應用程式";
 "Opens as a regular window with a Dock icon, like most apps." = "像大多數應用程式一樣，以一般視窗開啟並顯示 Dock 圖示。";
 "Get Started" = "開始使用";
-"You can change this any time in Settings." = "你可以隨時在設定中更改。";
+"You can change this any time in Settings." = "您可以隨時在設定中更改。";
 
 /* Billboard device (display dimension). */
 "Billboard device present" = "偵測到 Billboard 裝置";
