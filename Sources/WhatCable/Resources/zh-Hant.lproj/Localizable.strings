@@ -127,24 +127,24 @@
 "Cable details" = "線材資訊";
 
 /* Active Cable VDO 2 section (ActiveCableVDO2Section) */
-"Active cable (VDO 2)" = "有源線材 (VDO 2)";
-"Physical connection" = "實體連線";
-"Active element" = "有源元件";
+"Active cable (VDO 2)" = "主動式線材（VDO 2）";
+"Physical connection" = "實體連接";
+"Active element" = "主動式元件";
 "Optically isolated" = "光學隔離";
 "USB lanes" = "USB 通道";
 "Two" = "兩條";
 "One" = "一條";
-"USB Gen" = "USB 世代";
-"Gen 2 or higher" = "第 2 代或更高";
-"Gen 1" = "第 1 代";
+"USB Gen" = "USB Gen";
+"Gen 2 or higher" = "Gen 2 或以上";
+"Gen 1" = "Gen 1";
 "USB4 supported" = "支援 USB4";
 "USB 3.2 supported" = "支援 USB 3.2";
 "USB 2.0 supported" = "支援 USB 2.0";
-"USB 2.0 hub hops" = "USB 2.0 集線器躍點";
+"USB 2.0 hub hops" = "USB 2.0 集線器跳數";
 "USB4 asymmetric" = "USB4 非對稱";
-"U3 to U0 transition" = "U3 至 U0 切換";
+"U3 to U0 transition" = "U3 至 U0 轉換";
 "Through U3S" = "經由 U3S";
 "Direct" = "直接";
-"Idle power (U3/CLd)" = "閒置功耗 (U3/CLd)";
+"Idle power (U3/CLd)" = "閒置功耗（U3/CLd）";
 "Max operating temp" = "最高工作溫度";
-"Shutdown temp" = "關斷溫度";
+"Shutdown temp" = "熱關斷溫度";

@@ -211,7 +211,7 @@
 "Manufacturer" = "製造商";
 "Marginal" = "勉強可用";
 "Requested max operating current" = "要求的最大運作電流";
-"Requested max operating power" = "Requested max operating power";
+"Requested max operating power" = "請求的最大運作功率";
 "Max power" = "最大功率";
 "Mitigations" = "緩解措施";
 "Mode" = "模式";
@@ -231,8 +231,8 @@
 "None" = "無";
 "Open Pro diagnostics for this port" = "開啟此連接埠的 Pro 診斷";
 "Requested operating current" = "要求的運作電流";
-"Requested operating power" = "Requested operating power";
-"Requested output voltage" = "Requested output voltage";
+"Requested operating power" = "請求的運作功率";
+"Requested output voltage" = "請求的輸出電壓";
 "PD protocol engine status changed. Tracks contract state, hard/soft reset counts, and message sequence numbers." = "PD 協定引擎狀態已變更。追蹤協議狀態、硬/軟重置次數和訊息序號。";
 "PD spec revision" = "PD 規範版本";
 "PD state" = "PD 狀態";
@@ -308,16 +308,16 @@
 "%@ Port %lld" = "%1$@ 連接埠 %2$lld";
 "APDO, %@ to %@ @ %@, %@ max" = "APDO，%1$@ 至 %2$@ @ %3$@，最大 %4$@";
 "Battery, %@ minimum, %@" = "電池，最低 %1$@，%2$@";
-"Battery, %@ to %@, %@" = "Battery, %1$@ to %2$@, %3$@";
-"EPR AVS, %@ to %@, %@" = "EPR AVS, %1$@ to %2$@, %3$@";
+"Battery, %@ to %@, %@" = "電池，%1$@ 至 %2$@，%3$@";
+"EPR AVS, %@ to %@, %@" = "EPR AVS，%1$@ 至 %2$@，%3$@";
 "Fixed, %@ @ %@, %@" = "固定，%1$@ @ %2$@，%3$@";
 "Port" = "連接埠";
 "Rate %lld" = "速率 %lld";
 "Type %lld" = "類型 %lld";
 "Variable, %@ minimum @ %@, %@ minimum" = "可變，最低 %1$@ @ %2$@，最低 %3$@";
-"PPS, %@ to %@ @ %@, %@ max" = "PPS, %1$@ to %2$@ @ %3$@, %4$@ max";
-"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS, %1$@ at 15V / %2$@ at 20V";
-"Variable, %@ to %@ @ %@" = "Variable, %1$@ to %2$@ @ %3$@";
+"PPS, %@ to %@ @ %@, %@ max" = "PPS，%1$@ 至 %2$@ @ %3$@，最高 %4$@";
+"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS，15V 時 %1$@ / 20V 時 %2$@";
+"Variable, %@ to %@ @ %@" = "可變，%1$@ 至 %2$@ @ %3$@";
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "輸入授權金鑰…";
@@ -380,8 +380,8 @@
 "Unlock deep diagnostics, live power graphs, and per-port history. One-off licence, no subscription." = "解鎖進階診斷、即時功率圖表與各連接埠歷史記錄。一次授權，無需訂閱。";
 "Cable says %@, link reads %@" = "線材顯示為 %@，連線偵測為 %@";
 "The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "線材的 e-marker 回報 %@，但目前作用中的連線偵測為 %@。其中一方的讀數有誤，而在沒有 Thunderbolt 控制器交叉比對的情況下，無法判斷是哪一方錯誤。嘗試使用已知正常的線材即可找出問題來源。";
-"Data blocked by macOS accessory security" = "資料已被 macOS 配件安全性封鎖";
-"The link is capable of %@, but macOS is blocking data until you approve the accessory. Click Allow on the connection prompt, or check System Settings > Privacy & Security > Allow accessories to connect, then replug." = "連線能夠達到 %@，但 macOS 正在封鎖資料，直到您核准該配件。點按連線提示中的「允許」，或前往系統設定 > 隱私權與安全性 > 允許配件連線，然後重新插拔。";
+"Data blocked by macOS accessory security" = "資料傳輸已被 macOS 配件安全性封鎖";
+"The link is capable of %@, but macOS is blocking data until you approve the accessory. Click Allow on the connection prompt, or check System Settings > Privacy & Security > Allow accessories to connect, then replug." = "連線可支援 %@，但在您核准該配件前，macOS 會封鎖資料傳輸。請點按連線提示中的「允許」，或前往「系統設定」>「隱私權與安全性」>「允許配件連接」，然後重新插拔。";
 
 /* Display dimension. */
 "A display is connected but its capabilities aren't readable, so there's nothing to compare the link against." = "已連接顯示器，但無法讀取其規格，因此沒有可供比較的連線資訊。";
@@ -410,7 +410,7 @@
 "Top mode needs" = "最高模式需求";
 "Link carries" = "連線承載";
 "Rate" = "速率";
-"See whether the link is carrying your monitor's full resolution and refresh." = "查看連線是否達到顯示器的完整解析度與更新率。";
+"See whether the link is carrying your monitor's full resolution and refresh." = "查看連線是否達到顯示器支援的最高解析度與更新率。";
 "Display links have their own screen: Display Diagnostics." = "顯示器連線有專屬頁面：「顯示器診斷」。";
 
 /* Display dimension: cable attribution. */
@@ -429,7 +429,7 @@
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可支援 %@，若不使用壓縮約需 %@。目前連線已讓所有通道以高速運作，承載約 %@（%@）。許多高解析度顯示器會使用影像串流壓縮（DSC），讓最高模式能透過這類連線傳輸，因此僅憑連線速率無法判斷是否已達到最佳模式。若畫面顯示正常，那麼很可能已經達到最佳模式。";
 
 /* Display dimension: confirmed full quality via CoreGraphics live mode (issue #246 Option B). */
-"Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "您的 %@ 正以最高模式（%@）運作，連線正在傳輸它。許多高解析度顯示器使用影像串流壓縮（DSC）讓這類模式能夠透過連線傳輸；僅憑連線速率無法顯示此情況。您的顯示器正以完整畫質運作。";
+"Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "您的 %@ 正以最高模式（%@）運作，且連線已承載此模式。許多高解析度顯示器會使用影像串流壓縮（DSC），讓這類模式能透過連線傳輸，因此僅憑連線速率無法判斷這一點；您的顯示器正以最佳畫質運作。";
 
 /* Power Monitor system power source indicator. */
 "Battery" = "電池";
@@ -448,7 +448,7 @@
 
 /* DFP product type labels (DAR-24) */
 "Host" = "主機";
-"Power Brick" = "電源轉換器";
+"Power Brick" = "電源供應器";
 
 "Battery full" = "電池已充滿";
 "Thunderbolt" = "Thunderbolt";
@@ -467,7 +467,7 @@
 "Thunderbolt fabric:" = "Thunderbolt 拓撲：";
 
 /* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
-"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker 回報為被動式，但帶有主動式線材結構（可能是 e-marker 程式設定錯誤）";
 
 "Plugged in, charging on hold" = "已插電，充電暫停";
 "Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger." = "充電器和傳輸線均正常。macOS 目前已暫停充電，通常是因為電池充電限制或最佳化電池充電功能已啟用。Mac 仍在從充電器獲取電力。";
