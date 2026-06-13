@@ -10,7 +10,7 @@
 "Active %@ cable, %@" = "主動式 %1$@ 線材，%2$@";
 "Active cable" = "主動式線材";
 "Active cable (contains signal-conditioning electronics)" = "主動式線材（包含訊號調節電子元件）";
-"Active cable (VDO 2):" = "主動式線材（VDO 2）：";
+"Active cable (VDO 2):" = "主動式線材 (VDO 2)：";
 "Alternate Mode Adapter" = "Alternate Mode 轉接器";
 "Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle." = "充電器和線材都能提供更高功率，但 Mac 目前請求的功率較低。電池接近充滿或系統閒置時，這是正常現象。";
 "Cable does not advertise an e-marker (basic cable)" = "線材未宣告 e-marker（基本線材）";
@@ -96,10 +96,10 @@
 "Thunderbolt / USB4" = "Thunderbolt / USB4";
 "Thunderbolt / USB4 link active" = "Thunderbolt / USB4 連線作用中";
 "Thunderbolt / USB4 · %lldW charger" = "Thunderbolt / USB4 · %lldW 充電器";
-"USB 2.0 (480 Mbps)" = "USB 2.0（480 Mbps）";
-"USB 2.0 only (480 Mbps), no high-speed data" = "僅 USB 2.0（480 Mbps），沒有高速資料傳輸";
-"USB 3.2 Gen 1 (5 Gbps)" = "USB 3.2 Gen 1（5 Gbps）";
-"USB 3.2 Gen 2 (10 Gbps)" = "USB 3.2 Gen 2（10 Gbps）";
+"USB 2.0 (480 Mbps)" = "USB 2.0 (480 Mbps)";
+"USB 2.0 only (480 Mbps), no high-speed data" = "僅 USB 2.0 (480 Mbps)，沒有高速資料傳輸";
+"USB 3.2 Gen 1 (5 Gbps)" = "USB 3.2 Gen 1 (5 Gbps)";
+"USB 3.2 Gen 2 (10 Gbps)" = "USB 3.2 Gen 2 (10 Gbps)";
 "USB Hub" = "USB Hub";
 "USB Peripheral" = "USB 周邊裝置";
 "USB default" = "USB 預設";
@@ -107,8 +107,8 @@
 "USB device · %lldW charger" = "USB 裝置 · %lldW 充電器";
 "USB-C with video" = "支援影像的 USB-C";
 "USB-C with video · %lldW charger" = "支援影像的 USB-C · %lldW 充電器";
-"USB4 Gen 3 (20 / 40 Gbps)" = "USB4 Gen 3（20 / 40 Gbps）";
-"USB4 Gen 4 (80 Gbps)" = "USB4 Gen 4（80 Gbps）";
+"USB4 Gen 3 (20 / 40 Gbps)" = "USB4 Gen 3 (20 / 40 Gbps)";
+"USB4 Gen 4 (80 Gbps)" = "USB4 Gen 4 (80 Gbps)";
 "Unknown device" = "未知裝置";
 "Unknown generation (raw speed code 0x%@)" = "未知世代（原始速度代碼 0x%@）";
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "未知世代（原始速度代碼 0x2，推測為 TB5）";
@@ -175,7 +175,7 @@
 "Deactivate" = "停用";
 "Deactivate Licence" = "停用授權";
 "Deactivate WhatCable Pro?" = "要停用 WhatCable Pro 嗎？";
-"Default USB (500/900 mA)" = "USB 預設（500/900 mA）";
+"Default USB (500/900 mA)" = "USB 預設 (500/900 mA)";
 "Detach count" = "中斷連接次數";
 "Device Identity" = "裝置識別資訊";
 "Diagnostics" = "診斷";
