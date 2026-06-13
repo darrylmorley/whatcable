@@ -151,7 +151,7 @@
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap 已成功完成。連接埠已在 DFP（主機）和 UFP（裝置）角色之間切換。";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap 已成功完成。常見於 Hub 或 Dock 重新協商由哪一端供電時。";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "在傳統 D+/D- 針腳上偵測到 USB 2.0 連線。";
-"A cable was physically connected or disconnected from the port." = "線材已實際接上或拔離連接埠。";
+"A cable was physically connected or disconnected from the port." = "線材已實際接上或從連接埠拔除。";
 "Activate" = "啟用";
 "Active Cable" = "主動式線材";
 "Active RDO" = "作用中 RDO";
@@ -188,7 +188,7 @@
 "Event Log" = "事件記錄";
 "FET enable failures" = "FET 啟用失敗次數";
 "FET status" = "FET 狀態";
-"Fired by the TPS6598x controller when a cable is physically inserted or removed. Multiple fires during a single plug event are normal." = "在線材實體插入或拔出時，由 TPS6598x 控制器觸發。單次插拔事件中多次觸發是正常現象。";
+"Fired by the TPS6598x controller when a cable is physically inserted or removed. Multiple fires during a single plug event are normal." = "在線材實際接上或拔除時，由 TPS6598x 控制器觸發。單次插拔事件中多次觸發是正常現象。";
 "General port controller status change (connection state, error flags)." = "一般連接埠控制器狀態變更（連線狀態、錯誤旗標）。";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "通用控制器狀態暫存器已變更。涵蓋連接狀態、方向和錯誤情況。";
 "Good" = "良好";
@@ -241,7 +241,7 @@
 "Partner device identity arrived via SOP (the connected device, not the cable)." = "對端裝置識別資訊已透過 SOP 傳入（已連接的裝置，不是線材）。";
 "Passive Cable" = "被動式線材";
 "Pin Diagram" = "針腳圖";
-"Plug inserted or removed" = "連接器已接上或拔出";
+"Plug inserted or removed" = "連接器已接上或拔除";
 "Plug: %@" = "連接器：%@";
 "Port Health" = "連接埠健康狀況";
 "Power" = "功率";
@@ -370,7 +370,7 @@
 "The cable's own e-marker reports %@, but the Thunderbolt controller sees %@. This can happen with active Thunderbolt cables that under-report (declaring themselves passive at a low speed) or with suspect cables whose e-markers over-state their capability. The controller's reading is the one used above." = "線材本身的 e-marker 回報 %@，但 Thunderbolt 控制器偵測為 %@。這可能發生在低報速度的主動式 Thunderbolt 線材（以較低速度將自己宣告為被動式），或是 e-marker 高報規格的可疑線材上。上方會以控制器的讀數為準。";
 /* Pro overview screen + footer pill (Pro funnel). */
 "Cable Diagnostics" = "線材診斷";
-"Deep per-port pin maps, plug orientation, and protocol detail." = "深入查看各連接埠的針腳配置、插頭方向與協定詳細資訊。";
+"Deep per-port pin maps, plug orientation, and protocol detail." = "深入查看各連接埠的針腳配置、連接器方向與協定詳細資訊。";
 "Licence Key" = "授權金鑰";
 "Live MagSafe pin layout for charging and diagnostics." = "即時顯示用於充電與診斷的 MagSafe 針腳配置。";
 "Live multi-port power graphs and event history." = "即時多連接埠功率圖表與事件記錄。";
@@ -443,7 +443,7 @@
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "線材的 e-marker 晶片回報空白的 Vendor ID，但接頭將線材識別為 %1$@（%2$@），這是一家已向 USB-IF 註冊的廠商。e-marker VID 為空白本身在正規的被動式線材上相當常見，因此不代表有任何問題。";
 "Cable note:" = "線材備註：";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "廠商已識別，但不在 WhatCable 內建的 USB-IF 清單中";
-"The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Vendor ID %@（%@）可在社群維護的 USB 廠商清單中識別，但不在 WhatCable 內建的 USB-IF 清單中。";
+"The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Vendor ID %@（%@）可在社群維護的 USB 廠商清單中找到，但不在 WhatCable 內建的 USB-IF 清單中。";
 "Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt, or try reconnecting the cable)" = "線材具有 e-marker 晶片，但目前無法透過此連線讀取（需超過 3A 或使用 Thunderbolt，或嘗試重新連接線材）";
 
 /* DFP product type labels (DAR-24) */
