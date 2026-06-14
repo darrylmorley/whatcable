@@ -231,8 +231,8 @@
 "None" = "Nessuno";
 "Open Pro diagnostics for this port" = "Apri la diagnostica Pro per questa porta";
 "Requested operating current" = "Corrente operativa richiesta";
-"Requested operating power" = "Potenza operativa massima richiesta";
-"Requested output voltage" = "Voltaggio operativo massimo richiesto";
+"Requested operating power" = "Potenza operativa richiesta";
+"Requested output voltage" = "Voltaggio uscita richiesto";
 "PD protocol engine status changed. Tracks contract state, hard/soft reset counts, and message sequence numbers." = "Stato del motore di protocollo PD modificato. Traccia lo stato del contratto, i conteggi di hard/soft reset e i numeri di sequenza dei messaggi.";
 "PD spec revision" = "Revisione specifica PD";
 "PD state" = "Stato PD";
