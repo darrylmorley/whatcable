@@ -33,7 +33,7 @@
 "Charging" = "In carica";
 "Charging at %lldW (charger can do up to %lldW)" = "Carica a %1$lldW (il caricatore può caricare fino a %2$lldW)";
 "Charging only" = "Solo carica";
-"Charging well · up to %lldW" = "carica corretta · fino a %lldW";
+"Charging well · up to %lldW" = "Carica corretta · fino a %lldW";
 "Charging · %lldW charger" = "In carica · caricatore %lldW";
 "System reports charger at %lldW" = "Il sistema rileva un caricatore %lldW";
 "Charging: " = "In carica: ";
@@ -211,7 +211,7 @@
 "Manufacturer" = "Produttore";
 "Marginal" = "Marginale";
 "Requested max operating current" = "Corrente operativa massima richiesta";
-"Requested max operating power" = "Requested max operating power";
+"Requested max operating power" = "Potenza operativa massima richiesta";
 "Max power" = "Potenza max";
 "Mitigations" = "Mitigazioni";
 "Mode" = "Modalità";
@@ -231,8 +231,8 @@
 "None" = "Nessuno";
 "Open Pro diagnostics for this port" = "Apri la diagnostica Pro per questa porta";
 "Requested operating current" = "Corrente operativa richiesta";
-"Requested operating power" = "Requested operating power";
-"Requested output voltage" = "Requested output voltage";
+"Requested operating power" = "Potenza operativa massima richiesta";
+"Requested output voltage" = "Voltaggio operativo massimo richiesto";
 "PD protocol engine status changed. Tracks contract state, hard/soft reset counts, and message sequence numbers." = "Stato del motore di protocollo PD modificato. Traccia lo stato del contratto, i conteggi di hard/soft reset e i numeri di sequenza dei messaggi.";
 "PD spec revision" = "Revisione specifica PD";
 "PD state" = "Stato PD";
@@ -308,16 +308,16 @@
 "%@ Port %lld" = "%1$@ Porta %2$lld";
 "APDO, %@ to %@ @ %@, %@ max" = "APDO, da %1$@ a %2$@ @ %3$@, %4$@ max";
 "Battery, %@ minimum, %@" = "Batteria, minimo %1$@, %2$@";
-"Battery, %@ to %@, %@" = "Battery, %1$@ to %2$@, %3$@";
-"EPR AVS, %@ to %@, %@" = "EPR AVS, %1$@ to %2$@, %3$@";
+"Battery, %@ to %@, %@" = "Batteria, %1$@ a %2$@, %3$@";
+"EPR AVS, %@ to %@, %@" = "EPR AVS, %1$@ a %2$@, %3$@";
 "Fixed, %@ @ %@, %@" = "Fisso, %1$@ @ %2$@, %3$@";
 "Port" = "Porta";
 "Rate %lld" = "Velocità %lld";
 "Type %lld" = "Tipo %lld";
 "Variable, %@ minimum @ %@, %@ minimum" = "Variabile, minimo %1$@ @ %2$@, minimo %3$@";
-"PPS, %@ to %@ @ %@, %@ max" = "PPS, %1$@ to %2$@ @ %3$@, %4$@ max";
-"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS, %1$@ at 15V / %2$@ at 20V";
-"Variable, %@ to %@ @ %@" = "Variable, %1$@ to %2$@ @ %3$@";
+"PPS, %@ to %@ @ %@, %@ max" = "PPS, %1$@ a %2$@ @ %3$@, %4$@ max";
+"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS, %1$@ a 15V / %2$@ a 20V";
+"Variable, %@ to %@ @ %@" = "Variabile, %1$@ a %2$@ @ %3$@";
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Inserisci chiave di licenza…";
@@ -348,8 +348,17 @@
 "The cable and device can do %@, but this port maxes out at %@." = "Il cavo e il dispositivo supportano %@, ma questa porta raggiunge il limite massimo di %@.";
 "Device runs at %@" = "Dispositivo funzionante a %@";
 "This is the fastest the connected device supports. It is not a cable problem." = "Questa è la velocità massima supportata dal dispositivo connesso. Non è un problema di cavo.";
+"Cable says %@, link reads %@" = "Il cavo riporta %@, il collegamento legge %@";
+"The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "L'e-marker del cavo riporta %@, ma il collegamento attivo riporta %@. Una di queste letture è sbagliata e senza un controllo incrociato del controller Thunderbolt non è possibile confermarla. La prova di un cavo sicuramente funzionante identificherà chi fornisce il dato non corretto.";
+"Data blocked by macOS accessory security" = "Dati bloccati dalla sicurezza accessori di macOS";
+"The link is capable of %@, but macOS is blocking data until you approve the accessory. Click Allow on the connection prompt, or check System Settings > Privacy & Security > Allow accessories to connect, then replug." = "Il collegamento è in grado di %@, ma macOS sta bloccando i dati finché non approvi l'accessorio. Fai clic su Consenti nel messaggio di connessione oppure controlla Impostazioni di Sistema > Privacy e sicurezza > Consenti la connessione degli accessori, poi scollega e ricollega.";
 "Battery full, not charging" = "Batteria completamente carica, non in carica";
 "Charger and cable are fine. The Mac will draw up to %lldW when it needs to." = "Caricabatterie e cavo vanno bene. Il Mac quando necessario erogherà fino a %lldW.";
+"Plugged in, charging on hold" = "Collegato, ricarica in pausa";
+"Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger." = "Il caricabatterie e il cavo sono a posto. macOS ha messo in pausa la ricarica per ora, di solito a causa di un limite di carica o della Ricarica ottimizzata della batteria. Il Mac continua a ricevere alimentazione dal caricabatterie.";
+"Plugged in · %lldW charger" = "Collegato · caricabatterie da %lldW";
+"Plugged in" = "Collegato";
+"Charging on hold (charge limit or Optimized Battery Charging)" = "Ricarica in pausa (limite di carica o Ricarica ottimizzata della batteria)";
 "Negotiation Diagnostics" = "Diagnostica negoziazione";
 "What each link can do, and where the bottleneck is." = "Cosa può fare ciascun collegamento e dov'è il collo di bottiglia.";
 "No Connections" = "Nessuna connessione";
@@ -378,10 +387,6 @@
 "Manage Licence…" = "Gestisci licenza…";
 "See exactly what each link can do, and where the bottleneck is." = "Scopri esattamente cosa può fare ciascun collegamento e dove si trova il collo di bottiglia.";
 "Unlock deep diagnostics, live power graphs, and per-port history. One-off licence, no subscription." = "Sblocca diagnostica approfondita, grafici potenza in tempo reale e cronologia per porta. Licenza una tantum, nessun abbonamento.";
-"Cable says %@, link reads %@" = "Il cavo riporta %@, il collegamento legge %@";
-"The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "L'e-marker del cavo riporta %@, ma il collegamento attivo riporta %@. Una di queste letture è sbagliata e senza un controllo incrociato del controller Thunderbolt non è possibile confermarla. La prova di un cavo sicuramente funzionante identificherà chi fornisce il dato non corretto.";
-"Data blocked by macOS accessory security" = "Dati bloccati dalla sicurezza accessori di macOS";
-"The link is capable of %@, but macOS is blocking data until you approve the accessory. Click Allow on the connection prompt, or check System Settings > Privacy & Security > Allow accessories to connect, then replug." = "Il collegamento è in grado di %@, ma macOS sta bloccando i dati finché non approvi l'accessorio. Fai clic su Consenti nel messaggio di connessione oppure controlla Impostazioni di Sistema > Privacy e sicurezza > Consenti la connessione degli accessori, poi scollega e ricollega.";
 
 /* Display dimension. English; non-English to be refined by the community translation flow. */
 "A display is connected but its capabilities aren't readable, so there's nothing to compare the link against." = "Un display è connesso ma le sue funzionalità non sono leggibili, quindi non c'è nulla con cui confrontare il collegamento.";
@@ -466,11 +471,8 @@
 "Connected to %lld Thunderbolt devices: %@" = "Connesso a %1$lld dispositivi Thunderbolt: %2$@";
 "Thunderbolt fabric:" = "Topologia Thunderbolt:";
 
-/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
-"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
-
-"Plugged in, charging on hold" = "Collegato, ricarica in pausa";
-"Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger." = "Il caricabatterie e il cavo sono a posto. macOS ha messo in pausa la ricarica per ora, di solito a causa di un limite di carica o della Ricarica ottimizzata della batteria. Il Mac continua a ricevere alimentazione dal caricabatterie.";
-"Plugged in · %lldW charger" = "Collegato · caricabatterie da %lldW";
-"Plugged in" = "Collegato";
-"Charging on hold (charge limit or Optimized Battery Charging)" = "Ricarica in pausa (limite di carica o Ricarica ottimizzata della batteria)";
+/* Active-layout contradiction note (DAR-30). The e-marker's ID Header says passive
+   but VDO[3] has the SOP'' Controller Present bit set, which only exists in the
+   active-cable layout. Hedged wording: we describe the structural fact without
+   asserting the cable is fake or definitively active. */
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "L'e-marker segnala la passività, ma con una struttura cavo attiva (potrebbe essere un e-marker programmato in modo errato)";
