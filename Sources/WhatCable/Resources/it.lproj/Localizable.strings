@@ -34,7 +34,7 @@
 "Launch at login" = "Esegui all'accesso";
 "Lives in the menu bar with no Dock icon." = "Si trova nella barra dei menu senza l'icona del Dock.";
 "Menu bar icon" = "Icona barra menu";
-"Show charging watts in the menu bar" = "Mostra i watt di ricarica nella barra dei menu";
+"Show charging watts in the menu bar" = "Visualizza watt ricarica nella barra menu";
 /* Menu bar icon choices */
 "Cable" = "Cavo";
 "Cable, horizontal" = "Cavo, orizzontale";
@@ -130,9 +130,9 @@
 "Physical connection" = "Connessione fisica";
 "Active element" = "Elemento attivo";
 "Optically isolated" = "Isolato otticamente";
-"USB lanes" = "Corsie USB";
+"USB lanes" = "Linee USB";
 "Two" = "Due";
-"One" = "Uno";
+"One" = "Una";
 "USB Gen" = "Gen USB";
 "Gen 2 or higher" = "Gen 2 o superiore";
 "Gen 1" = "Gen 1";
@@ -146,4 +146,4 @@
 "Direct" = "Diretto";
 "Idle power (U3/CLd)" = "Consumo a riposo (U3/CLd)";
 "Max operating temp" = "Temp. operativa massima";
-"Shutdown temp" = "Temp. di spegnimento";
+"Shutdown temp" = "Temp. spegnimento";
