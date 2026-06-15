@@ -432,12 +432,12 @@
 "Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "您的 %@ 正以最高模式（%@）運作，且連線已承載此模式。許多高解析度顯示器會使用影像串流壓縮（DSC），讓這類模式能透過連線傳輸，因此僅憑連線速率無法判斷這一點；您的顯示器正以最佳畫質運作。";
 
 /* Session monitor verdicts. */
-"Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
-"No problems seen while watching this cable." = "No problems seen while watching this cable.";
-"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
-"Isn't performing as expected" = "Isn't performing as expected";
+"Battery full, not drawing power" = "電池已充滿，未取用電力";
+"Performing as expected" = "運作符合預期";
+"No problems seen while watching this cable." = "監控此線材期間未發現問題。";
+"Saw a brief drop or a single high reading. Not conclusive; still watching." = "偵測到短暫下降或單次偏高的讀數，目前無法下結論；會繼續監控。";
+"Not performing as expected" = "運作未如預期";
+"Isn't performing as expected" = "運作未如預期";
 
 /* Power Monitor system power source indicator. */
 "Battery" = "電池";
