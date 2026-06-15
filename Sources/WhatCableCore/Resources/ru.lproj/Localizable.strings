@@ -432,6 +432,7 @@
 "Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "Ваш %@ работает в своём максимальном режиме (%@), и соединение передаёт его. Многие дисплеи высокого разрешения используют сжатие (DSC), чтобы передать подобный режим через соединение; скорость соединения сама по себе не может это показать. Ваш дисплей работает в полном качестве.";
 
 /* Session monitor verdicts. */
+"Battery full, not drawing power" = "Батарея полная, питание не потребляется";
 "Performing as expected" = "Работает как ожидается";
 "No problems seen while watching this cable." = "Проблем при наблюдении за этим кабелем не обнаружено.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Был кратковременный спад или единичное высокое значение. Это не окончательный вывод; продолжаем наблюдение.";
