@@ -18,8 +18,8 @@
 "Cable is limiting charging speed" = "Кабель ограничивает скорость зарядки";
 "Cable identified as %@" = "Кабель идентифицирован как %@";
 "Cable made by %@" = "Кабель произведён: %@";
-"Cable rated for %@ at up to %lldV (~%lldW)" = "Кабель рассчитан на %1$@ при до %2$lld В (~%3$lld Вт)";
-"Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "Cable rated to %1$lldV / %2$@, delivers up to %3$lldW (USB-PD caps at 48V)";
+"Cable rated for %@ at up to %lldV (~%lldW)" = "Кабель рассчитан на %1$@ при напряжении до %2$lld В (~%3$lld Вт)";
+"Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "Кабель рассчитан на %1$lld В / %2$@ и передаёт до %3$lld Вт (предел USB-PD — 48 В)";
 "Cable speed: %@" = "Скорость кабеля: %@";
 "Cable trust signals:" = "Признаки доверия к кабелю:";
 "Carrying DisplayPort video" = "Передаётся видео DisplayPort";
@@ -211,7 +211,7 @@
 "Manufacturer" = "Производитель";
 "Marginal" = "На грани";
 "Requested max operating current" = "Запрошенный макс. рабочий ток";
-"Requested max operating power" = "Requested max operating power";
+"Requested max operating power" = "Запрошенная макс. рабочая мощность";
 "Max power" = "Макс. мощность";
 "Mitigations" = "Меры";
 "Mode" = "Режим";
@@ -231,8 +231,8 @@
 "None" = "Нет";
 "Open Pro diagnostics for this port" = "Открыть диагностику Pro для этого порта";
 "Requested operating current" = "Запрошенный рабочий ток";
-"Requested operating power" = "Requested operating power";
-"Requested output voltage" = "Requested output voltage";
+"Requested operating power" = "Запрошенная рабочая мощность";
+"Requested output voltage" = "Запрошенное выходное напряжение";
 "PD protocol engine status changed. Tracks contract state, hard/soft reset counts, and message sequence numbers." = "Изменилось состояние движка протокола PD: контракт, жёсткие/мягкие сбросы, номера сообщений.";
 "PD spec revision" = "Ревизия спецификации PD";
 "PD state" = "Состояние PD";
@@ -308,16 +308,16 @@
 "%@ Port %lld" = "%1$@, порт %2$lld";
 "APDO, %@ to %@ @ %@, %@ max" = "APDO, %1$@…%2$@ @ %3$@, макс. %4$@";
 "Battery, %@ minimum, %@" = "Батарея, минимум %1$@, %2$@";
-"Battery, %@ to %@, %@" = "Battery, %1$@ to %2$@, %3$@";
-"EPR AVS, %@ to %@, %@" = "EPR AVS, %1$@ to %2$@, %3$@";
+"Battery, %@ to %@, %@" = "Батарея, от %1$@ до %2$@, %3$@";
+"EPR AVS, %@ to %@, %@" = "EPR AVS, от %1$@ до %2$@, %3$@";
 "Fixed, %@ @ %@, %@" = "Фиксированный, %1$@ @ %2$@, %3$@";
 "Port" = "Порт";
 "Rate %lld" = "Скорость %lld";
 "Type %lld" = "Тип %lld";
 "Variable, %@ minimum @ %@, %@ minimum" = "Переменный, минимум %1$@ @ %2$@, минимум %3$@";
-"PPS, %@ to %@ @ %@, %@ max" = "PPS, %1$@ to %2$@ @ %3$@, %4$@ max";
-"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS, %1$@ at 15V / %2$@ at 20V";
-"Variable, %@ to %@ @ %@" = "Variable, %1$@ to %2$@ @ %3$@";
+"PPS, %@ to %@ @ %@, %@ max" = "PPS, от %1$@ до %2$@ @ %3$@, макс. %4$@";
+"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS, %1$@ при 15 В / %2$@ при 20 В";
+"Variable, %@ to %@ @ %@" = "Переменный, от %1$@ до %2$@ @ %3$@";
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Ввести ключ лицензии…";
@@ -467,10 +467,10 @@
 "Thunderbolt fabric:" = "Сеть Thunderbolt:";
 
 /* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
-"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker сообщает пассивный кабель, но содержит структуру данных активного кабеля (возможно, e-marker запрограммирован неверно)";
 
 "Plugged in, charging on hold" = "Подключено, зарядка приостановлена";
 "Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger." = "Зарядное устройство и кабель в порядке. macOS временно приостановила зарядку, обычно из-за ограничения заряда или оптимизированной зарядки аккумулятора. Mac по-прежнему получает питание от зарядного устройства.";
-"Plugged in · %lldW charger" = "Подключено · зарядное устройство %lldW";
+"Plugged in · %lldW charger" = "Подключено · зарядное устройство %lld Вт";
 "Plugged in" = "Подключено";
 "Charging on hold (charge limit or Optimized Battery Charging)" = "Зарядка приостановлена (ограничение заряда или оптимизированная зарядка)";
