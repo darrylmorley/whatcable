@@ -432,6 +432,13 @@
 /* Display dimension: confirmed full quality via CoreGraphics live mode (issue #246 Option B). */
 "Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "Dein %@ läuft im besten Modus (%@) und die Verbindung überträgt ihn. Viele hochauflösende Displays nutzen Komprimierung (DSC), um einen solchen Modus durch die Verbindung zu bringen; die Verbindungsrate allein zeigt das nicht. Dein Display läuft in voller Qualität.";
 
+/* Session monitor verdicts. */
+"Performing as expected" = "Performing as expected";
+"No problems seen while watching this cable." = "No problems seen while watching this cable.";
+"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
+"Not performing as expected" = "Not performing as expected";
+"Isn't performing as expected" = "Isn't performing as expected";
+
 /* Power Monitor system power source indicator. */
 "Battery" = "Batterie";
 "Source" = "Quelle";

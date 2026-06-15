@@ -431,6 +431,13 @@
 /* Display dimension: confirmed full quality via CoreGraphics live mode (issue #246 Option B). */
 "Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "%@이(가) 최고 모드(%@)로 작동하고 있으며 링크가 이를 전송하고 있어요. 많은 고해상도 디스플레이는 이런 링크로 이런 모드를 전달하기 위해 압축(DSC)을 사용하므로, 링크 속도만으로는 알 수 없어요. 디스플레이는 최고 화질로 작동하고 있어요.";
 
+/* Session monitor verdicts. */
+"Performing as expected" = "Performing as expected";
+"No problems seen while watching this cable." = "No problems seen while watching this cable.";
+"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
+"Not performing as expected" = "Not performing as expected";
+"Isn't performing as expected" = "Isn't performing as expected";
+
 /* Power Monitor system power source indicator. */
 "Battery" = "배터리";
 "Source" = "전원";
