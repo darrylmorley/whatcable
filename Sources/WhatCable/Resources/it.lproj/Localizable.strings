@@ -46,7 +46,7 @@
 "Nothing connected" = "Nessun dispositivo collegato";
 "Notifications" = "Notifiche";
 "Notify on cable changes" = "Notifica cambio cavo";
-"Notify on app updates" = "Notifica aggiornamenti dell'app";
+"Notify on app updates" = "Notifica aggiornamenti app";
 "Open in GitHub" = "Apri in GitHub";
 "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "Apri nel browser un ticket di assistenza GitHub precompilato. Non viene inviato nulla finché non lo invii.";
 "Optical" = "Ottico";
