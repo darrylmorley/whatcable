@@ -437,12 +437,12 @@
 "Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "%@ sta funzionando alla modalità massima (%@) e il collegamento la supporta. Molti schermi ad alta risoluzione per abilitare una modalità come questa attraverso il collegamento usano la compressione (DSC); la sola velocità del collegamento non fornisce l'info sulla compressione DSC. Lo schermo sta funzionando alla massima qualità.";
 
 /* Session monitor verdicts. */
-"Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
-"No problems seen while watching this cable." = "No problems seen while watching this cable.";
-"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
-"Isn't performing as expected" = "Isn't performing as expected";
+"Battery full, not drawing power" = "Batteria carica, non assorbe energia";
+"Performing as expected" = "Prestazioni come previsto";
+"No problems seen while watching this cable." = "Nessun problema riscontrato durante i controlli di questo cavo.";
+"Saw a brief drop or a single high reading. Not conclusive; still watching." = "C'è stata una breve caduta o una singola lettura alta. Non conclusivo; controllo ancora in corso.";
+"Not performing as expected" = "Non funziona come previsto";
+"Isn't performing as expected" = "Le prestazioni non sono quelle previste";
 
 /* Power Monitor system power source indicator. */
 "Battery" = "Batteria";
