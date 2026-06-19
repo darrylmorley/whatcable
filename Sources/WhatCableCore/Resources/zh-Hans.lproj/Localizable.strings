@@ -212,7 +212,7 @@
 "Manufacturer" = "制造商";
 "Marginal" = "勉强";
 "Requested max operating current" = "请求最大工作电流";
-"Requested max operating power" = "Requested max operating power";
+"Requested max operating power" = "请求最大工作功率";
 "Max power" = "最大功率";
 "Mitigations" = "缓解措施";
 "Mode" = "模式";
@@ -232,8 +232,8 @@
 "None" = "无";
 "Open Pro diagnostics for this port" = "打开此端口的 Pro 诊断";
 "Requested operating current" = "请求工作电流";
-"Requested operating power" = "Requested operating power";
-"Requested output voltage" = "Requested output voltage";
+"Requested operating power" = "请求工作功率";
+"Requested output voltage" = "请求输出电压";
 "PD protocol engine status changed. Tracks contract state, hard/soft reset counts, and message sequence numbers." = "PD 协议引擎状态已更改。跟踪合同状态、硬/软复位次数和消息序列号。";
 "PD spec revision" = "PD 规范修订版";
 "PD state" = "PD 状态";
@@ -309,16 +309,16 @@
 "%@ Port %lld" = "%1$@ 端口 %2$lld";
 "APDO, %@ to %@ @ %@, %@ max" = "APDO，%1$@ 至 %2$@ @ %3$@，最大 %4$@";
 "Battery, %@ minimum, %@" = "电池，最小 %1$@，%2$@";
-"Battery, %@ to %@, %@" = "Battery, %1$@ to %2$@, %3$@";
-"EPR AVS, %@ to %@, %@" = "EPR AVS, %1$@ to %2$@, %3$@";
+"Battery, %@ to %@, %@" = "电池，%1$@ 至 %2$@，%3$@";
+"EPR AVS, %@ to %@, %@" = "EPR AVS，%1$@ 至 %2$@，%3$@";
 "Fixed, %@ @ %@, %@" = "固定，%1$@ @ %2$@，%3$@";
 "Port" = "端口";
 "Rate %lld" = "速率 %lld";
 "Type %lld" = "类型 %lld";
 "Variable, %@ minimum @ %@, %@ minimum" = "可变，最小 %1$@ @ %2$@，最小 %3$@";
-"PPS, %@ to %@ @ %@, %@ max" = "PPS, %1$@ to %2$@ @ %3$@, %4$@ max";
-"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS, %1$@ at 15V / %2$@ at 20V";
-"Variable, %@ to %@ @ %@" = "Variable, %1$@ to %2$@ @ %3$@";
+"PPS, %@ to %@ @ %@, %@ max" = "PPS，%1$@ 至 %2$@ @ %3$@，最大 %4$@";
+"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS，15V 时 %1$@ / 20V 时 %2$@";
+"Variable, %@ to %@ @ %@" = "可变，%1$@ 至 %2$@ @ %3$@";
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "输入许可证密钥…";
@@ -433,12 +433,12 @@
 "Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "您的 %@ 正在以最高模式（%@）运行，链路正在传输它。许多高分辨率显示器使用压缩（DSC）让这样的模式通过链路传输；仅凭链路速率无法显示这一点。您的显示器正以全质量运行。";
 
 /* Session monitor verdicts. */
-"Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
-"No problems seen while watching this cable." = "No problems seen while watching this cable.";
-"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
-"Isn't performing as expected" = "Isn't performing as expected";
+"Battery full, not drawing power" = "电池已充满，未在取电";
+"Performing as expected" = "表现符合预期";
+"No problems seen while watching this cable." = "监测这条线缆时未发现问题。";
+"Saw a brief drop or a single high reading. Not conclusive; still watching." = "观察到一次短暂下降或单次偏高读数。尚不能下结论，继续监测中。";
+"Not performing as expected" = "表现不符合预期";
+"Isn't performing as expected" = "表现不符合预期";
 
 /* Power Monitor system power source indicator. */
 "Battery" = "电池";
@@ -476,7 +476,7 @@
 "Thunderbolt fabric:" = "Thunderbolt 拓扑：";
 
 /* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
-"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker 报告为无源，但包含有源线缆结构（可能是 e-marker 编程错误）";
 
 "Plugged in, charging on hold" = "已插入，充电已暂停";
 "Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger." = "充电器和数据线正常。macOS 目前已暂停充电，通常是因为电池充电限制或优化电池充电功能已启用。Mac 仍在从充电器获取电力。";
@@ -535,5 +535,5 @@
 "Performing" = "运行正常";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"%lld displays connected" = "%lld displays connected";
-"Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
+"%lld displays connected" = "已连接 %lld 台显示器";
+"Built-in %1$@ port %2$lld" = "内置 %1$@ 端口 %2$lld";
