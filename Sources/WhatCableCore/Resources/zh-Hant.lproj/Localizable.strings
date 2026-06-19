@@ -533,6 +533,6 @@
 "Occasional caution" = "偶發狀況需留意";
 "Performing" = "運作正常";
 
-/* Built-in display port card (issue #352). English placeholders, community can refine. */
-"%lld displays connected" = "%lld displays connected";
-"Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
+/* Built-in display port card (issue #352). */
+"%lld displays connected" = "%lld 台顯示器已連接";
+"Built-in %1$@ port %2$lld" = "內建 %1$@ 連接埠 %2$lld";
