@@ -6,7 +6,7 @@
 "About %@" = "關於 %@";
 "Active" = "作用中";
 "Active cable electronics" = "主動式線材電子元件";
-"All raw IOKit properties (%lld)" = "所有原始 IOKit 屬性（%lld）";
+"All raw IOKit properties (%lld)" = "所有原始 IOKit 屬性 (%lld)";
 "Behavior" = "行為";
 "Built by %@." = "由 %@ 建置。";
 "Cable trust signals" = "線材驗證資訊";
@@ -18,14 +18,14 @@
 "Connected: %@" = "已連接：%@";
 "Connection" = "連線";
 "Display" = "顯示";
-"Desktop Mac: charger identity (FedDetails) is not available." = "桌上型 Mac：無法取得充電器識別資訊（FedDetails）。";
+"Desktop Mac: charger identity (FedDetails) is not available." = "桌上型 Mac：無法取得充電器識別資訊 (FedDetails)。";
 "Done" = "完成";
 "Downloading…" = "正在下載…";
 "File a GitHub issue with this cable's e-marker fingerprint" = "使用此線材的 e-marker 指紋提交 GitHub issue";
 "Font size" = "字體大小";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "協助維護者重現與特定硬體相關的充電器/線材行為。";
 "Hide empty ports" = "隱藏空連接埠";
-"Host (%@)" = "主機（%@）";
+"Host (%@)" = "主機 (%@)";
 "Include Mac model and macOS version" = "包含 Mac 機型與 macOS 版本";
 "Install failed: %@" = "安裝失敗：%@";
 "This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "此帳戶無法更新安裝於此位置的應用程式。請從 whatcable.uk 下載新版本，或使用 Homebrew 更新。";
@@ -128,7 +128,7 @@
 "Cable details" = "線材資訊";
 
 /* Active Cable VDO 2 section (ActiveCableVDO2Section) */
-"Active cable (VDO 2)" = "主動式線材（VDO 2）";
+"Active cable (VDO 2)" = "主動式線材 (VDO 2)";
 "Physical connection" = "實體連接";
 "Active element" = "主動式元件";
 "Optically isolated" = "光學隔離";
@@ -146,14 +146,14 @@
 "U3 to U0 transition" = "U3 至 U0 轉換";
 "Through U3S" = "經由 U3S";
 "Direct" = "直接";
-"Idle power (U3/CLd)" = "閒置功耗（U3/CLd）";
+"Idle power (U3/CLd)" = "閒置功耗 (U3/CLd)";
 "Max operating temp" = "最高工作溫度";
 "Shutdown temp" = "熱關斷溫度";
 "Connected over Thunderbolt" = "透過 Thunderbolt 連接";
 "Other USB devices" = "其他 USB 裝置";
 "Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "透過 Thunderbolt 擴充座或顯示器連接，因此沒有它們的線材、電源或 Thunderbolt 資料。";
 
-/* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Display connected";
-"%lld displays connected" = "%lld displays connected";
-"Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
+/* Built-in display port card (issue #352). */
+"Display connected" = "顯示器已連接";
+"%lld displays connected" = "%lld 台顯示器已連接";
+"Built-in %1$@ port %2$lld" = "內建 %1$@ 連接埠 %2$lld";
