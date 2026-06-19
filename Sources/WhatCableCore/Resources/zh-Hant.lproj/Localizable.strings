@@ -45,7 +45,7 @@
 "Connected." = "已連接。";
 "Copper" = "銅線";
 "Couldn't determine cable type from this port." = "無法從此連接埠判斷線材類型。";
-"Currently negotiated: %@ @ %@ (%@)" = "目前協商：%1$@ @ %2$@（%3$@）";
+"Currently negotiated: %@ @ %@ (%@)" = "目前協商：%1$@ @ %2$@ (%3$@)";
 "Display connected" = "已連接顯示器";
 "Display connected · %lldW charger" = "已連接顯示器 · %lldW 充電器";
 "DisplayPort video over USB-C Alt Mode." = "透過 USB-C Alt Mode 傳輸 DisplayPort 影像。";
@@ -138,9 +138,9 @@
 /* DisplayPort lane labels, connected-device variants, pin-diagram Data label */
 "2 DP lanes + USB3 data" = "2 條 DP 通道 + USB3 資料";
 "4 DP lanes (no USB3 alongside video)" = "4 條 DP 通道（不與 USB3 資料並行）";
-"Carrying DisplayPort video (%@)" = "正在傳輸 DisplayPort 影像（%@）";
+"Carrying DisplayPort video (%@)" = "正在傳輸 DisplayPort 影像 (%@)";
 "Connected device: %@" = "已連接裝置：%@";
-"Connected device: %@, %@ (%@)" = "已連接裝置：%1$@，%2$@（%3$@）";
+"Connected device: %@, %@ (%@)" = "已連接裝置：%1$@，%2$@ (%3$@)";
 "Data" = "資料";
 "DisplayPort Alt Mode" = "DisplayPort Alt Mode";
 
@@ -199,7 +199,7 @@
 "Inactive" = "未作用中";
 "Invalid licence key. Check the key and try again." = "授權金鑰無效。請檢查金鑰後再試一次。";
 "Lanes" = "通道數";
-"Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "傳統 USB 2.0 資料線（D+/D-）偵測到對端。這與基於 CC 的 PD 連線彼此獨立。";
+"Legacy USB 2.0 data lines (D+/D-) detected a partner. Separate from the CC-based PD connection." = "傳統 USB 2.0 資料線 (D+/D-) 偵測到對端。這與基於 CC 的 PD 連線彼此獨立。";
 "Licence…" = "授權…";
 "Licensed to: %@" = "授權給：%@";
 "Link rate" = "連線速率";
@@ -338,9 +338,9 @@
 "Running at %@" = "正在以 %@ 運作";
 "There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "沒有線材 e-marker 或控制器資料，也沒有可用來比較的連接埠或裝置規格，因此無法判斷線材是否為限制因素。";
 "This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "這條線材沒有 e-marker，也沒有控制器資料，因此無法判斷它是否為限制因素。";
-"Running slower than expected (%@)" = "運作速度低於預期（%@）";
+"Running slower than expected (%@)" = "運作速度低於預期 (%@)";
 "The parts we can see all support %@ or more, but the link came up slower. Reseating the cable or trying another port may help." = "目前可見的部分都支援 %@ 或更高速度，但連線建立時速度較低。重新插拔線材或嘗試其他連接埠可能會有幫助。";
-"Running at full data speed (%@)" = "正在以最高資料速度運作（%@）";
+"Running at full data speed (%@)" = "正在以最高資料速度運作 (%@)";
 "Nothing is being held back: the parts we can see all support this speed." = "沒有任何限制：目前偵測到的裝置都支援此速度。";
 "Cable is limiting data speed" = "線材限制了資料傳輸速度";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac 和裝置都能達到 %@，但線材只能承載 %@。使用更快的線材即可解鎖最高速度。";
@@ -390,15 +390,15 @@
 "Your %@ is connected, but the link rate isn't readable, so there's nothing to compare its capability against." = "您的 %@ 已連接，但無法讀取連線速率，因此沒有可供比較的規格資訊。";
 "Display running at full quality" = "顯示器以最佳畫質運作";
 "Your %@ is connected and the link has the bandwidth for its top mode. Nothing is holding the picture back." = "您的 %@ 已連接，且目前連線頻寬足以支援其最高模式。顯示畫面沒有受到任何限制。";
-"%lld of %lld lanes at %@" = "%lld/%lld 條通道（%@）";
+"%lld of %lld lanes at %@" = "%lld/%lld 條通道 (%@)";
 "%lld of %lld lanes" = "%lld/%lld 條通道";
 "up to %lldHz" = "最高 %lldHz";
 "a higher mode than the link is carrying" = "比目前連線承載更高的模式";
-"This estimate assumes standard colour; a display using compression (DSC) may reach more." = "此估算以標準色彩模式為前提；使用影像串流壓縮（DSC）的顯示器可能達到更高規格。";
+"This estimate assumes standard colour; a display using compression (DSC) may reach more." = "此估算以標準色彩模式為前提；使用影像串流壓縮 (DSC) 的顯示器可能達到更高規格。";
 "Video is going through a %@ adapter" = "影像訊號正透過 %@ 轉接器傳輸";
-"Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，而連線尚未達到顯示器的最高模式（%@，約需 %@）；目前約承載 %@（%@）。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
+"Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，而連線尚未達到顯示器的最高模式（%@，約需 %@）；目前約承載 %@ (%@)。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
 "Monitor can do more than the link is carrying" = "顯示器規格高於目前連線承載";
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。若已選擇較高模式卻無法生效，限制因素可能是線材或轉接器；若尚未嘗試，選擇較高模式可能會讓連線重新協商至更高速率。";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@ (%@)。若已選擇較高模式卻無法生效，限制因素可能是線材或轉接器；若尚未嘗試，選擇較高模式可能會讓連線重新協商至更高速率。";
 "Display Diagnostics" = "顯示器診斷";
 "What your monitor can do, and what the link is carrying." = "查看顯示器的規格，以及目前連線實際承載的內容。";
 "No Displays" = "沒有顯示器";
@@ -414,11 +414,11 @@
 "Display links have their own screen: Display Diagnostics." = "顯示器連線有專屬頁面：「顯示器診斷」。";
 
 /* Display dimension: cable attribution. */
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。由於影像是透過 Thunderbolt 或 USB4 傳輸，線材可提供的頻寬遠高於顯示器需求，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項，或是這台 Mac 對此顯示器的限制。";
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@（%@）。線材已使用這台 Mac 提供的所有 DisplayPort 通道，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項。";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@ (%@)。由於影像是透過 Thunderbolt 或 USB4 傳輸，線材可提供的頻寬遠高於顯示器需求，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項，或是這台 Mac 對此顯示器的限制。";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings." = "您的 %@ 可支援 %@，約需 %@，但目前連線僅承載約 %@ (%@)。線材已使用這台 Mac 提供的所有 DisplayPort 通道，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項。";
 
 /* Display dimension: branch device. */
-"Your %@ is reached through a USB-C to %@ adapter that reports as %@, currently carrying about %@ (%@), short of the monitor's top mode (%@, about %@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，該轉接器回報為 %@。目前約承載 %@（%@），尚未達到顯示器的最高模式（%@，約需 %@）。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
+"Your %@ is reached through a USB-C to %@ adapter that reports as %@, currently carrying about %@ (%@), short of the monitor's top mode (%@, about %@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，該轉接器回報為 %@。目前約承載 %@ (%@)，尚未達到顯示器的最高模式（%@，約需 %@）。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
 
 /* Billboard device (display dimension). */
 "Billboard device present" = "偵測到 Billboard 裝置";
@@ -426,10 +426,10 @@
 
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "顯示器可能透過壓縮來達到最高模式";
-"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可支援 %@，若不使用壓縮約需 %@。目前連線已讓所有通道以高速運作，承載約 %@（%@）。許多高解析度顯示器會使用影像串流壓縮（DSC），讓最高模式能透過這類連線傳輸，因此僅憑連線速率無法判斷是否已達到最佳模式。若畫面顯示正常，那麼很可能已經達到最佳模式。";
+"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可支援 %@，若不使用壓縮約需 %@。目前連線已讓所有通道以高速運作，承載約 %@ (%@)。許多高解析度顯示器會使用影像串流壓縮 (DSC)，讓最高模式能透過這類連線傳輸，因此僅憑連線速率無法判斷是否已達到最佳模式。若畫面顯示正常，那麼很可能已經達到最佳模式。";
 
 /* Display dimension: confirmed full quality via CoreGraphics live mode (issue #246 Option B). */
-"Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "您的 %@ 正以最高模式（%@）運作，且連線已承載此模式。許多高解析度顯示器會使用影像串流壓縮（DSC），讓這類模式能透過連線傳輸，因此僅憑連線速率無法判斷這一點；您的顯示器正以最佳畫質運作。";
+"Your %@ is running its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "您的 %@ 正以最高模式 (%@) 運作，且連線已承載此模式。許多高解析度顯示器會使用影像串流壓縮 (DSC)，讓這類模式能透過連線傳輸，因此僅憑連線速率無法判斷這一點；您的顯示器正以最佳畫質運作。";
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "電池已充滿，未取用電力";
@@ -448,10 +448,10 @@
 
 /* Softened blank e-marker note (DAR-140) */
 "E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker Vendor ID 為空白，但可透過接頭識別線材";
-"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "線材的 e-marker 晶片回報空白的 Vendor ID，但接頭將線材識別為 %1$@（%2$@），這是一家已向 USB-IF 註冊的廠商。e-marker VID 為空白本身在正規的被動式線材上相當常見，因此不代表有任何問題。";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "線材的 e-marker 晶片回報空白的 Vendor ID，但接頭將線材識別為 %1$@ (%2$@)，這是一家已向 USB-IF 註冊的廠商。e-marker VID 為空白本身在正規的被動式線材上相當常見，因此不代表有任何問題。";
 "Cable note:" = "線材備註：";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "廠商已識別，但不在 WhatCable 內建的 USB-IF 清單中";
-"The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Vendor ID %@（%@）可在社群維護的 USB 廠商清單中找到，但不在 WhatCable 內建的 USB-IF 清單中。";
+"The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Vendor ID %@ (%@) 可在社群維護的 USB 廠商清單中找到，但不在 WhatCable 內建的 USB-IF 清單中。";
 "Cable has an e-marker chip, not read on this connection (needs above 3A or Thunderbolt, or try reconnecting the cable)" = "線材具有 e-marker 晶片，但目前無法透過此連線讀取（需超過 3A 或使用 Thunderbolt，或嘗試重新連接線材）";
 
 /* DFP product type labels (DAR-24) */
