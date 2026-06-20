@@ -534,5 +534,5 @@
 "Performing" = "運作正常";
 
 /* Built-in display port card (issue #352). */
-"%lld displays connected" = "%lld 台顯示器已連接";
+"%lld displays connected" = "已連接 %lld 台顯示器";
 "Built-in %1$@ port %2$lld" = "內建 %1$@ 連接埠 %2$lld";
