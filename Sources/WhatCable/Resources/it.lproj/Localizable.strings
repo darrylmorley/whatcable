@@ -153,6 +153,6 @@
 "Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "Raggiunti tramite un dock o uno schermo Thunderbolt, quindi non ci sono dati sul cavo, alimentazione o Thunderbolt.";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = Schermo connesso";
+"Display connected" = "Schermo connesso";
 "%lld displays connected" = "%lld schermi connessi";
 "Built-in %1$@ port %2$lld" = "%1$@ porta %2$lld integrata";
