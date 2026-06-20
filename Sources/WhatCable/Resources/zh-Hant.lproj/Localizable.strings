@@ -154,6 +154,6 @@
 "Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "透過 Thunderbolt 擴充座或顯示器連接，因此沒有它們的線材、電源或 Thunderbolt 資料。";
 
 /* Built-in display port card (issue #352). */
-"Display connected" = "顯示器已連接";
-"%lld displays connected" = "%lld 台顯示器已連接";
+"Display connected" = "已連接顯示器";
+"%lld displays connected" = "已連接 %lld 台顯示器";
 "Built-in %1$@ port %2$lld" = "內建 %1$@ 連接埠 %2$lld";
