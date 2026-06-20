@@ -537,4 +537,4 @@
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
 "%lld displays connected" = "%lld schermi connessi";
-"Built-in %1$@ port %2$lld" = "%1$@ port %2$lld integrata";
+"Built-in %1$@ port %2$lld" = "%1$@ porta %2$lld integrata";
