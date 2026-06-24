@@ -399,7 +399,7 @@
 "%lld of %lld lanes" = "%lld di %lld linee";
 "up to %lldHz" = "fino a %lldHz";
 "a higher mode than the link is carrying" = "una modalità più alta di quella fornita";
-"High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally." = "High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally.";
+"High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally." = "Gli schermi ad alta risoluzione spesso usano la compressione (DSC) per adattarsi alla modalità superiore tramite un collegamento come questo, quindi selezionando la modalità superiore nelle impostazioni dello schermo è possibile raggiungerla normalmente.";
 "Video is going through a %@ adapter" = "Il video passa attraverso un adattatore %@";
 "Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "%@ viene raggiunto tramite un adattatore da USB-C a %@ e il collegamento attualmente non supporta la modalità massima del monitor (%@, circa %@); fornisce circa %@ (%@). Con un adattatore nel collegamento, il limite dell'adattatore potrebbe essere il limite del collegamento e non il cavo. Provare il monitor su DisplayPort nativo o con un adattatore con specifiche superiori potrebbe aiutarti a capire chi è il limite.";
 "Monitor can do more than the link is carrying" = "Il monitor può ha maggiori capacità di quanto fornisce il collegamento";
@@ -539,6 +539,6 @@
 "%lld displays connected" = "%lld schermi connessi";
 "Built-in %1$@ port %2$lld" = "%1$@ porta %2$lld integrata";
 
-"Display running compressed (DSC) to fit through the link" = "Display running compressed (DSC) to fit through the link";
+"Display running compressed (DSC) to fit through the link" = "Schermo funzionante in modo compresso (DSC) per adattarsi al collegamento";
 
-"Your %@ is running %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "Your %@ is running %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended.";
+"Your %@ is running %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "%@ sta funzionando in modo %@, il che richiederebbe una larghezza di banda maggiore di quella disponibile con questo collegamento non compresso. Gli schermi ad alta risoluzione usano la compressione (DSC) per adattarsi a una modalità come questa tramite un collegamento come questo.";
