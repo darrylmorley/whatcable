@@ -541,4 +541,4 @@
 
 "Display running compressed (DSC) to fit through the link" = "Schermo funzionante in modo compresso (DSC) per adattarsi al collegamento";
 
-"Your %@ is running %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "%@ sta funzionando in modo %@, il che richiederebbe una larghezza di banda maggiore di quella disponibile con questo collegamento non compresso. Gli schermi ad alta risoluzione usano la compressione (DSC) per adattarsi a una modalità come questa tramite un collegamento come questo.";
+"Your %@ is running %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "%@ sta funzionando in modo %@, il che richiederebbe una larghezza di banda maggiore di quella disponibile con questo collegamento come questo. L'immagine sta raggiungendo lo schermo, quindi funziona come previsto.";
