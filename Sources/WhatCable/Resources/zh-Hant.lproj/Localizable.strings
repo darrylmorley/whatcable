@@ -160,6 +160,6 @@
 "%lld displays connected" = "已連接 %lld 台顯示器";
 "Built-in %1$@ port %2$lld" = "內建 %1$@ 連接埠 %2$lld";
 
-"Watts display" = "瓦特顯示";
-"Number" = "數字";
+"Watts display" = "功率顯示方式";
+"Number" = "數值";
 "Bar" = "長條";
