@@ -484,9 +484,9 @@
 "Charging on hold (charge limit or Optimized Battery Charging)" = "充電暫停（充電上限或啟用了「最佳化電池充電」）";
 "Connected over Thunderbolt" = "透過 Thunderbolt 連接";
 "Other USB devices" = "其他 USB 裝置";
-"Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "透過 Thunderbolt Dock 或顯示器連接，因此沒有它們的線材、電源或 Thunderbolt 資料。";
-"Built-in USB ports" = "內建 USB 埠";
-"Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "連接到 Mac 內部集線器的普通 USB 埠，因此沒有它們的線材、電源或 Thunderbolt 資料。";
+"Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "這些連接埠是透過 Thunderbolt Dock 或顯示器連接，因此沒有可顯示的線材、電源或 Thunderbolt 資料。";
+"Built-in USB ports" = "內建 USB 連接埠";
+"Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "這些是透過 Mac 內部集線器連接的一般 USB 連接埠，因此沒有可顯示的線材、電源或 Thunderbolt 資料。";
 
 /* Cable history (DAR-52) */
 "Add this cable" = "新增此線材";
