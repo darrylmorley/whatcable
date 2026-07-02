@@ -173,7 +173,8 @@ public final class USBWatcher: ObservableObject {
             deviceClass: deviceClass,
             ioClassName: ioClassName,
             billboard: billboard,
-            rawProperties: raw
+            rawProperties: raw,
+            firstSeenAt: Date()
         )
     }
 

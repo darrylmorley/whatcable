@@ -400,6 +400,13 @@ struct ContentView: View {
     private func matchingDevices(for port: AppleHPMInterface) -> [USBDevice] {
         port.matchingDevices(from: deviceWatcher.devices)
     }
+
+    private func uptimeLabel(for device: USBDevice) -> String {
+        guard let firstSeen = device.firstSeenAt else { return "" }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        return " (" + formatter.localizedString(for: firstSeen, relativeTo: Date()) + ")"
+    }
 }
 
 struct UpdateBanner: View {
@@ -531,9 +538,18 @@ struct OtherUSBDevicesCard: View {
             ForEach(tree) { node in
                 let name = node.device.productName ?? String(localized: "Unknown", bundle: _appLocalizedBundle)
                 let prefix = node.depth > 0 ? "\u{21B3} " : "\u{2022} "
-                Text(verbatim: "\(prefix)\(name) - \(node.device.speedLabel)")
+                
+                let uptime: String = {
+                    guard let firstSeen = node.device.firstSeenAt else { return "" }
+                    let formatter = RelativeDateTimeFormatter()
+                    formatter.unitsStyle = .abbreviated
+                    return " (" + formatter.localizedString(for: firstSeen, relativeTo: Date()) + ")"
+                }()
+                
+                Text(verbatim: "\(prefix)\(name) - \(node.device.speedLabel)\(uptime)")
                     .scaledFont(.callout)
                     .padding(.leading, CGFloat(node.depth) * 16)
+                    .fontWeight(node.device.firstSeenAt.map { Date().timeIntervalSince($0) < 60 } == true ? .bold : .regular)
             }
             Text(footer)
                 .scaledFont(.caption)
@@ -631,9 +647,18 @@ struct PortCard: View {
             ForEach(tree) { node in
                 let name = node.device.productName ?? String(localized: "Unknown", bundle: _appLocalizedBundle)
                 let prefix = node.depth > 0 ? "\u{21B3} " : "\u{2022} "
-                Text(verbatim: "\(prefix)\(name) - \(node.device.speedLabel)")
+                
+                let uptime: String = {
+                    guard let firstSeen = node.device.firstSeenAt else { return "" }
+                    let formatter = RelativeDateTimeFormatter()
+                    formatter.unitsStyle = .abbreviated
+                    return " (" + formatter.localizedString(for: firstSeen, relativeTo: Date()) + ")"
+                }()
+                
+                Text(verbatim: "\(prefix)\(name) - \(node.device.speedLabel)\(uptime)")
                     .scaledFont(.callout)
                     .padding(.leading, CGFloat(node.depth) * 16)
+                    .fontWeight(node.device.firstSeenAt.map { Date().timeIntervalSince($0) < 60 } == true ? .bold : .regular)
             }
             if let note {
                 Text(note)

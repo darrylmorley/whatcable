@@ -56,6 +56,7 @@ public struct USBDevice: Identifiable, Hashable {
     /// `nil` when the device has no Billboard capability or the BOS read failed.
     public let billboard: BillboardCapability?
     public let rawProperties: [String: String]
+    public let firstSeenAt: Date?
 
     public init(
         id: UInt64,
@@ -76,7 +77,8 @@ public struct USBDevice: Identifiable, Hashable {
         deviceClass: UInt8? = nil,
         ioClassName: String? = nil,
         billboard: BillboardCapability? = nil,
-        rawProperties: [String: String]
+        rawProperties: [String: String],
+        firstSeenAt: Date? = nil
     ) {
         self.id = id
         self.locationID = locationID
@@ -97,6 +99,7 @@ public struct USBDevice: Identifiable, Hashable {
         self.ioClassName = ioClassName
         self.billboard = billboard
         self.rawProperties = rawProperties
+        self.firstSeenAt = firstSeenAt
     }
 
     /// A USB Billboard device. The USB-C spec uses one to report the Alternate
