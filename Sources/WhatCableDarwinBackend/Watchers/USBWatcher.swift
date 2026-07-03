@@ -49,7 +49,7 @@ public final class USBWatcher: ObservableObject {
             selfPtr,
             &addedIter
         ) == KERN_SUCCESS {
-            handleAdded(iterator: addedIter)
+            handleAdded(iterator: addedIter, isInitialScan: true)
         }
 
         if IOServiceAddMatchingNotification(
@@ -74,9 +74,9 @@ public final class USBWatcher: ObservableObject {
         devices.removeAll()
     }
 
-    private func handleAdded(iterator: io_iterator_t) {
+    private func handleAdded(iterator: io_iterator_t, isInitialScan: Bool = false) {
         while case let service = IOIteratorNext(iterator), service != 0 {
-            if let device = makeDevice(from: service) {
+            if let device = makeDevice(from: service, firstSeenAt: isInitialScan ? nil : Date()) {
                 if !devices.contains(where: { $0.id == device.id }) {
                     devices.append(device)
                 }
@@ -96,7 +96,7 @@ public final class USBWatcher: ObservableObject {
         }
     }
 
-    private func makeDevice(from service: io_service_t) -> USBDevice? {
+    private func makeDevice(from service: io_service_t, firstSeenAt: Date?) -> USBDevice? {
         var entryID: UInt64 = 0
         guard IORegistryEntryGetRegistryEntryID(service, &entryID) == KERN_SUCCESS else { return nil }
 
@@ -174,7 +174,7 @@ public final class USBWatcher: ObservableObject {
             ioClassName: ioClassName,
             billboard: billboard,
             rawProperties: raw,
-            firstSeenAt: Date()
+            firstSeenAt: firstSeenAt
         )
     }
 
