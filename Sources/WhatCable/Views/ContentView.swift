@@ -400,6 +400,12 @@ struct ContentView: View {
     private func matchingDevices(for port: AppleHPMInterface) -> [USBDevice] {
         port.matchingDevices(from: deviceWatcher.devices)
     }
+
+}
+
+private func powerLabel(for device: USBDevice) -> String {
+    guard let req = device.currentMA, let avail = device.busPowerMA else { return "" }
+    return " [\(req)mA / \(avail)mA]"
 }
 
 struct UpdateBanner: View {
@@ -531,7 +537,7 @@ struct OtherUSBDevicesCard: View {
             ForEach(tree) { node in
                 let name = node.device.productName ?? String(localized: "Unknown", bundle: _appLocalizedBundle)
                 let prefix = node.depth > 0 ? "\u{21B3} " : "\u{2022} "
-                Text(verbatim: "\(prefix)\(name) - \(node.device.speedLabel)")
+                Text(verbatim: "\(prefix)\(name) - \(node.device.speedLabel)\(powerLabel(for: node.device))")
                     .scaledFont(.callout)
                     .padding(.leading, CGFloat(node.depth) * 16)
             }
@@ -631,7 +637,7 @@ struct PortCard: View {
             ForEach(tree) { node in
                 let name = node.device.productName ?? String(localized: "Unknown", bundle: _appLocalizedBundle)
                 let prefix = node.depth > 0 ? "\u{21B3} " : "\u{2022} "
-                Text(verbatim: "\(prefix)\(name) - \(node.device.speedLabel)")
+                Text(verbatim: "\(prefix)\(name) - \(node.device.speedLabel)\(powerLabel(for: node.device))")
                     .scaledFont(.callout)
                     .padding(.leading, CGFloat(node.depth) * 16)
             }
