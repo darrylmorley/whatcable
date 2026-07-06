@@ -334,7 +334,7 @@
 "See what your USB-C cables can do at a glance." = "一眼查看 USB-C 線材能做什麼。";
 
 /* Negotiation diagnostics + Pro UX (PR #55). */
-"The cable's e-marker and the Thunderbolt controller disagree on its speed. The controller measured a higher, confirmed rate, so that figure is used." = "線材的 e-marker 與 Thunderbolt 控制器對速度的判定不一致。控制器量測到更高、已確認的速率，因此採用該數值。";
+"The cable's e-marker and the Thunderbolt controller disagree on its speed. The controller measured a higher, confirmed rate, so that figure is used." = "線材的 e-marker 與 Thunderbolt 控制器對速度的判定不一致。控制器測得更高且已確認的速率，因此會使用該數值。";
 "Running at %@" = "正在以 %@ 運作";
 "There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "沒有線材 e-marker 或控制器資料，也沒有可用來比較的連接埠或裝置規格，因此無法判斷線材是否為限制因素。";
 "This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "這條線材沒有 e-marker，也沒有控制器資料，因此無法判斷上限是否來自這條線材。";
@@ -367,7 +367,7 @@
 "Cable signals disagree" = "線材訊號不一致";
 "an unknown speed" = "未知速度";
 "a higher speed" = "更高速度";
-"The cable's own e-marker reports %@, but the Thunderbolt controller measured it running at %@, faster than the e-marker claims. This can happen with active Thunderbolt cables whose e-marker under-reports (declaring themselves passive at a low speed). The controller's confirmed, higher reading is used above." = "線材本身的 e-marker 回報為 %1$@，但 Thunderbolt 控制器量測到其實際運作速率為 %2$@，比 e-marker 宣稱的更快。這種情況可能出現在某些主動式 Thunderbolt 線材上，其 e-marker 低報了速度（將自己標示為低速被動線材）。上方採用的是控制器量測到的更高、已確認數值。";
+"The cable's own e-marker reports %@, but the Thunderbolt controller measured it running at %@, faster than the e-marker claims. This can happen with active Thunderbolt cables whose e-marker under-reports (declaring themselves passive at a low speed). The controller's confirmed, higher reading is used above." = "線材本身的 e-marker 回報 %1$@，但 Thunderbolt 控制器測得其以 %2$@ 運作，高於 e-marker 宣告的速度。這可能發生在 e-marker 低報規格的主動式 Thunderbolt 線材上（將自身回報為低速的被動式線材）。上方會使用控制器已確認的較高讀數。";
 /* Pro overview screen + footer pill (Pro funnel). */
 "Cable Diagnostics" = "線材診斷";
 "Deep per-port pin maps, plug orientation, and protocol detail." = "深入查看各連接埠的針腳配置、連接器方向與協定詳細資訊。";
@@ -543,7 +543,7 @@
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS 回報您的 %@ 目前模式為 %@，若不使用壓縮，所需頻寬會超過此連線可承載的範圍。高解析度顯示器會使用影像串流壓縮 (DSC)，讓這種顯示模式能在這類連線上正常傳輸。畫面已正常傳輸至顯示器，因此這是預期中的運作方式。";
 
-/* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
-"Controller confirms Thunderbolt cable (%@)" = "控制器已確認 Thunderbolt 線材 (%@)";
-"Thunderbolt link active at %@" = "Thunderbolt 連線以 %@ 速率保持連線";
-"The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "該線材宣稱可達 %1$@，且連線實際至少已以 %2$@ 執行過。目前沒有連接埠或裝置資料可供比對，因此無法判斷是否還有其他因素在限制它。";
+/* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). */
+"Controller confirms Thunderbolt cable (%@)" = "控制器確認為 Thunderbolt 線材 (%@)";
+"Thunderbolt link active at %@" = "Thunderbolt 連線正以 %@ 運作";
+"The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有主機或裝置資料可供比對，因此無法判斷是否還有其它因素限制它。";
