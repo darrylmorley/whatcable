@@ -51,7 +51,7 @@
 "Nothing connected" = "未連接任何裝置";
 "Notifications" = "通知";
 "Notify on cable changes" = "線材變更時通知";
-"Notify on app updates" = "App 更新時通知";
+"Notify on app updates" = "應用程式更新時通知";
 "Open in GitHub" = "在 GitHub 中開啟";
 "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "會在瀏覽器中開啟預先填寫好的 GitHub issue。在實際送出前不會傳送任何內容。";
 "Optical" = "光纖";
@@ -63,7 +63,7 @@
 "Quit %@" = "結束 %@";
 "Refresh" = "重新整理";
 "Report this cable" = "回報此線材";
-"Runs as a regular Dock app with a window." = "以一般 Dock App 形式執行並顯示視窗。";
+"Runs as a regular Dock app with a window." = "以一般 Dock 應用程式形式執行並顯示視窗。";
 "System Default" = "系統預設";
 "Settings" = "設定";
 "Settings…" = "設定…";
@@ -121,7 +121,7 @@
 "Dock app" = "Dock 應用程式";
 "Opens as a regular window with a Dock icon, like most apps." = "像大多數應用程式一樣，以一般視窗開啟並顯示 Dock 圖示。";
 "Get Started" = "開始使用";
-"You can change this any time in Settings." = "您可以隨時在設定中更改。";
+"You can change this any time in Settings." = "您可以隨時在「設定」中更改。";
 
 /* Billboard device (display dimension). */
 "Billboard device present" = "偵測到 Billboard 裝置";
@@ -144,7 +144,7 @@
 "USB4 supported" = "支援 USB4";
 "USB 3.2 supported" = "支援 USB 3.2";
 "USB 2.0 supported" = "支援 USB 2.0";
-"USB 2.0 hub hops" = "USB 2.0 集線器跳數";
+"USB 2.0 hub hops" = "USB 2.0 Hub 跳數";
 "USB4 asymmetric" = "USB4 非對稱";
 "U3 to U0 transition" = "U3 至 U0 轉換";
 "Through U3S" = "經由 U3S";
@@ -154,9 +154,9 @@
 "Shutdown temp" = "熱關斷溫度";
 "Connected over Thunderbolt" = "透過 Thunderbolt 連接";
 "Other USB devices" = "其他 USB 裝置";
-"Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "透過 Thunderbolt 擴充座或顯示器連接，因此沒有它們的線材、電源或 Thunderbolt 資料。";
-"Built-in USB ports" = "內建 USB 埠";
-"Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "連接到 Mac 內部集線器的普通 USB 埠，因此沒有它們的線材、電源或 Thunderbolt 資料。";
+"Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "這些裝置是透過 Thunderbolt Dock 或顯示器連接，因此沒有可顯示的線材、電源或 Thunderbolt 資料。";
+"Built-in USB ports" = "內建 USB 連接埠";
+"Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "這些是透過 Mac 內部 Hub 連接的一般 USB 連接埠，因此沒有可顯示的線材、電源或 Thunderbolt 資料。";
 
 /* Built-in display port card (issue #352). */
 "Display connected" = "已連接顯示器";
