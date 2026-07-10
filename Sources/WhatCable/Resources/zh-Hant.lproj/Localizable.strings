@@ -153,7 +153,7 @@
 "Max operating temp" = "最高工作溫度";
 "Shutdown temp" = "熱關斷溫度";
 "Connected over Thunderbolt" = "透過 Thunderbolt 連接";
-"Other USB devices" = "其他 USB 裝置";
+"Other USB devices" = "其它 USB 裝置";
 "Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "這些裝置是透過 Thunderbolt Dock 或顯示器連接，因此沒有可顯示的線材、電源或 Thunderbolt 資料。";
 "Built-in USB ports" = "內建 USB 連接埠";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "這些是透過 Mac 內部 Hub 連接的一般 USB 連接埠，因此沒有可顯示的線材、電源或 Thunderbolt 資料。";
