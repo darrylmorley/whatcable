@@ -475,7 +475,7 @@
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "已連接顯示器。此連接埠目前未對外供電。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
 "Connected to %lld Thunderbolt devices: %@" = "已連接 %1$lld 個 Thunderbolt 裝置：%2$@";
 "Thunderbolt fabric:" = "Thunderbolt 拓撲：";
-"Active tunnels:" = "作用中的隧道：";
+"Active tunnels:" = "作用中的傳輸：";
 "Video" = "影像";
 "USB data" = "USB 資料";
 "PCIe data" = "PCIe 資料";
@@ -555,4 +555,4 @@
 "Thunderbolt link active at %@" = "Thunderbolt 連線正以 %@ 運作";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有主機或裝置資料可供比對，因此無法判斷是否還有其它因素限制它。";
 
-"Shared controller port" = "控制器共用連接埠";
+"Shared controller port" = "共用控制器連接埠";
