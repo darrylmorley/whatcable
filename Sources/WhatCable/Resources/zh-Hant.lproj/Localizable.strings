@@ -168,5 +168,5 @@
 "Bar" = "長條";
 
 /* USB probing compatibility toggle (issue #429). */
-"Skip deep USB probing" = "跳過深度 USB 探測";
-"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "阻止 WhatCable 讀取 USB 裝置的功能資訊。若 WhatCable 執行時 KVM 切換器或集線器出現異常（繼電器喀噠響，或鍵盤與滑鼠斷線），請開啟此項。";
+"Skip deep USB probing" = "略過 USB 深入探測";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "讓 WhatCable 不再讀取 USB 裝置的規格資訊。若執行 WhatCable 時 KVM 切換器或 Hub 出現異常（例如繼電器發出喀噠聲，或鍵盤、滑鼠斷線），請開啟此選項。";
