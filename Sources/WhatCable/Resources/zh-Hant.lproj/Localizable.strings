@@ -97,11 +97,11 @@
 "Privacy" = "隱私權";
 "Pro" = "Pro";
 "Proceed" = "繼續";
-"Raw IOKit registry properties for each USB-C port and connected accessory, the model and capabilities of any connected display (its EDID), your macOS version, and chip type. This is the same data visible in System Information." = "每個 USB-C 連接埠與已連接配件的原始 IOKit 登錄屬性、任何已連接顯示器的型號與規格資訊（其 EDID）、您的 macOS 版本與晶片類型。這些資料與「系統資訊」中可見的內容相同。";
+"Raw IOKit registry properties for each USB-C port and connected accessory, the model and capabilities of any connected display (its EDID), your macOS version, and chip type. This is the same data visible in System Information." = "每個 USB-C 連接埠及所連接配件的原始 IOKit 登錄屬性、已連接顯示器的型號與規格（來自其 EDID），以及您的 macOS 版本與晶片類型。這些資料與「系統資訊」中顯示的內容相同。";
 "What happens" = "會發生什麼";
 "What is collected" = "會收集哪些資料";
 "WhatCable runs %lld IOKit probes that read raw USB-C and Thunderbolt data from your Mac's port controller registers. The results are sent to a secure server to help improve cable and port detection." = "WhatCable 會執行 %lld 個 IOKit 探測器，從 Mac 的連接埠控制器暫存器讀取原始 USB-C 與 Thunderbolt 資料。結果會傳送至安全伺服器，以協助改善線材與連接埠偵測。";
-"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "裝置的硬體 UUID 會在傳送前經過 SHA-256 雜湊處理。不會收集或儲存姓名、帳號、您 Mac 的序號或任何個人資料。";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "裝置的硬體 UUID 會在傳送前經過 SHA-256 雜湊處理。不會收集或儲存您的姓名、帳號、Mac 序號或任何個人資料。";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
 "Back" = "返回";
@@ -173,7 +173,7 @@
 "Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "讓 WhatCable 不再讀取 USB 裝置的規格資訊。若執行 WhatCable 時 KVM 切換器或 Hub 出現異常（例如繼電器發出喀噠聲，或鍵盤、滑鼠斷線），請開啟此選項。";
 
 /* Intel Macs are unsupported; notice shown on every launch. */
-"WhatCable can't read cables on this Mac" = "WhatCable 無法在這台 Mac 上讀取線材";
-"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "這台 Mac 使用 Intel 處理器。WhatCable 的線材與連接埠資料來自 Apple Silicon 的連接埠控制器，而 Intel Mac 並未提供這些資料，因此 App 不會顯示任何有用的內容。\n\n如果你想看看，它會保持開啟，但背後沒有任何資料。";
-"OK" = "好";
+"WhatCable can't read cables on this Mac" = "WhatCable 無法讀取這台 Mac 的線材資訊";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "這台 Mac 使用 Intel 處理器。WhatCable 的線材與連接埠資料來自 Apple Silicon 的連接埠控制器，但 Intel Mac 不會提供這些資料，因此 App 無法顯示任何有用的資訊。\n\n若您仍想查看介面，App 會繼續保持開啟，但其中沒有任何可用資料。";
+"OK" = "知道了";
 "Learn more" = "了解更多";
