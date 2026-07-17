@@ -473,7 +473,7 @@
 "Per-port metering isn't available on this Mac." = "此 Mac 不支援各連接埠功率測量。";
 "macOS can be slow to report per-port power, sometimes up to a minute." = "macOS 回報各連接埠功率可能較慢，有時最多需要一分鐘。";
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "已連接顯示器。此連接埠目前未對外供電。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
-"A charger is connected here, but your Mac is drawing power through %@. Incoming power shows in System Power Input below." = "此處連接了充電器，但你的 Mac 正在透過 %@ 取得電力。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
+"A charger is connected here, but your Mac is drawing power through %@. Incoming power shows in System Power Input below." = "此連接埠已連接充電器，但您的 Mac 目前正透過 %@ 取用電力。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
 "Connected to %lld Thunderbolt devices: %@" = "已連接 %1$lld 個 Thunderbolt 裝置：%2$@";
 "Thunderbolt fabric:" = "Thunderbolt 拓撲：";
 "Active tunnels:" = "作用中的傳輸：";
