@@ -30,7 +30,7 @@
 "Include Mac model and macOS version" = "Includi modello Mac e versione macOS";
 "Install failed: %@" = "Installazione fallita %@";
 "This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "Questo account non può aggiornare le app in questo percorso. Scarica la versione aggiornata da whatcable.uk o aggiorna con Homebrew.";
-"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "WhatCable non può aggiornarsi dalla sua cartella attuale. Sposta WhatCable nella cartella Applicazioni, riavvialo e riprova, oppure scarica l'ultima versione da whatcable.uk.";
+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "WhatCable non può aggiornarsi dalla cartella attuale. Sposta WhatCable nella cartella Applicazioni, riavvialo e riprova, o scarica la versione aggiornata da whatcable.uk.";
 "Install update" = "Installa aggiornamento";
 "Installing, WhatCable will relaunch" = "Installazione, WhatCable verrà riavviato";
 "Keep window open" = "Mantieni finestra aperta";
@@ -96,11 +96,11 @@
 "Privacy" = "Privacy";
 "Pro" = "Pro";
 "Proceed" = "Procedi";
-"Raw IOKit registry properties for each USB-C port and connected accessory, the model and capabilities of any connected display (its EDID), your macOS version, and chip type. This is the same data visible in System Information." = "Proprietà registro Raw IOKit per ciascuna porta USB-C e accessorio collegato, il modello e le funzionalità di qualsiasi display collegato (il suo EDID), la versione di macOS e il tipo di chip. Si tratta degli stessi dati visibili in Informazioni di sistema.";
+"Raw IOKit registry properties for each USB-C port and connected accessory, the model and capabilities of any connected display (its EDID), your macOS version, and chip type. This is the same data visible in System Information." = "Proprietà registro Raw IOKit per ciascuna porta USB-C e accessorio collegato, il modello e le funzionalità di qualsiasi display collegato (il suo EDID), la versione di macOS e il tipo di chip. Si tratta degli stessi dati visibili in Informazioni sistema.";
 "What happens" = "Cosa succede";
 "What is collected" = "Quali dati vengono raccolti";
 "WhatCable runs %lld IOKit probes that read raw USB-C and Thunderbolt data from your Mac's port controller registers. The results are sent to a secure server to help improve cable and port detection." = "WhatCable esegue %lld verifiche IOKit che leggono i dati grezzi USB-C e Thunderbolt dai registri del controller di porta del tuo Mac. I risultati vengono inviati a un server sicuro per aiutare a migliorare il rilevamento di cavi e porte.";
-"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "L'UUID hardware della tua macchina viene sottoposto ad hashing con SHA-256 prima dell'invio. Non vengono raccolti o memorizzati nomi, account, il numero di serie del tuo Mac o dati personali.";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "L'UUID hardware della macchina viene sottoposto ad hashing con SHA-256. Non vengono raccolti o memorizzati nomi, account, il numero di serie del Mac o dati personali.";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
 "Back" = "Indietro";
@@ -168,11 +168,11 @@
 "Bar" = "Barra";
 
 /* USB probing compatibility toggle (issue #429). */
-"Skip deep USB probing" = "Salta il sondaggio USB approfondito";
-"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "Impedisce a WhatCable di leggere le informazioni sulle capacità dei dispositivi USB. Attivala se uno switch KVM o un hub si comporta male (relè che scatta, o tastiera e mouse che si disconnettono) quando WhatCable è in esecuzione.";
+"Skip deep USB probing" = "Salta verifica USB approfondita";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "Impedisce a WhatCable di leggere le informazioni sulle capacità dei dispositivi USB. Attivala se quando WhatCable è in esecuzione uno switch KVM o un hub si comporta male (relè che scatta, o tastiera e mouse che si disconnettono).";
 
 /* Intel Macs are unsupported; notice shown on every launch. */
-"WhatCable can't read cables on this Mac" = "WhatCable non può leggere i cavi su questo Mac";
-"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Questo Mac ha un processore Intel. WhatCable ricava i dati di cavi e porte dal controller delle porte di Apple Silicon, che i Mac Intel non espongono, quindi l'app non mostrerà nulla di utile.\n\nResterà aperta se vuoi dare un'occhiata, ma dietro non c'è nulla.";
+"WhatCable can't read cables on this Mac" = "In questo Mac WhatCable non può leggere le info sui cavi";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Questo Mac ha un processore Intel. WhatCable ricava i dati edi cavi e porte dal controller porte Apple Silicon, che i Mac Intel non espongono, quindi l'app non visualizzerà nulla di utile.\n\nSe vuoi dare un'occhiata resterà aperta , ma dietro non c'è nulla.";
 "OK" = "OK";
-"Learn more" = "Scopri di più";
+"Learn more" = "Maggiori info";
