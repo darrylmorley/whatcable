@@ -58,9 +58,14 @@ extension ChargingDiagnostic {
         // the PowerSource node alone.
         guard port.connectionActive == true else { return nil }
 
-        // Adapter wattage resolution moved to ChargerWattageSource.resolve;
-        // parameter kept for API compatibility.
-        _ = adapter
+        // A controller can retain a winning PDO while the system rejects
+        // external power. If the battery is not charging, is not full, and
+        // IOPSCopyExternalPowerAdapterDetails reports no adapter, the PDO is
+        // not enough evidence to show a charging diagnostic.
+        guard batteryIsCharging != false
+            || batteryFullyCharged == true
+            || adapter != nil
+        else { return nil }
 
         let chargerMaxW: Int
         let isAdapterFallback: Bool

@@ -723,7 +723,7 @@ struct PortCard: View {
                     .padding(.leading, 48)
             }
 
-            if let diag = ChargingDiagnostic(port: port, sources: powerSources, identities: identities, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged, batteryIsCharging: batteryIsCharging, anotherPortActivelyCharging: anotherPortActivelyCharging) {
+            if let diag = ChargingDiagnostic(port: port, sources: powerSources, identities: identities, adapter: adapter, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged, batteryIsCharging: batteryIsCharging, anotherPortActivelyCharging: anotherPortActivelyCharging) {
                 DiagnosticBanner(diagnostic: diag)
                     .padding(.leading, 48)
             }

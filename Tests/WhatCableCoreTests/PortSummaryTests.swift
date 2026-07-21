@@ -1597,11 +1597,28 @@ struct PortSummaryTests {
         let summary = PortSummary(
             port: port,
             sources: [usbPD(maxW: 96, winningW: 96)],
-            batteryIsCharging: false
+            batteryIsCharging: false,
+            adapter: adapter()
         )
         #expect(summary.status == .charging)
         #expect(summary.headline.hasPrefix("Plugged in"))
         #expect(summary.headline.contains("96W"))
+    }
+
+    @Test("Stale PDO: no charging claim when the system has no adapter")
+    func stalePDOWithNoSystemAdapterIsConnected() {
+        let port = makePort(connected: true, active: [], supported: ["USB2"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 96)],
+            batteryFullyCharged: false,
+            batteryIsCharging: false,
+            adapter: nil
+        )
+        #expect(summary.status == .unknown)
+        #expect(summary.headline == "Connected")
+        #expect(summary.subtitle.contains("Power is flowing") == false)
+        #expect(summary.bullets.contains { $0.contains("Currently negotiated") } == false)
     }
 
     @Test("Charge hold: headline shows 'Plugged in' without wattage when no chargerW")

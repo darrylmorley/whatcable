@@ -852,6 +852,7 @@ struct ChargingDiagnosticTests {
             port: port,
             sources: [usbPD(maxW: 96, winningW: 96)],
             identities: [cableIdentity(watts: 100)],
+            adapter: AdapterInfo(watts: 96, isCharging: nil, source: "AC"),
             batteryIsCharging: false
         )
         #expect(diag != nil)
@@ -866,6 +867,7 @@ struct ChargingDiagnosticTests {
             port: port,
             sources: [usbPD(maxW: 96, winningW: 96)],
             identities: [cableIdentity(watts: 100)],
+            adapter: AdapterInfo(watts: 96, isCharging: nil, source: "AC"),
             batteryFullyCharged: true,
             batteryIsCharging: false
         )
@@ -884,5 +886,18 @@ struct ChargingDiagnosticTests {
         )
         #expect(diag != nil)
         #expect(diag!.summary.contains("Charging well"))
+    }
+
+    @Test("Stale PDO: no diagnostic when the system has no adapter")
+    func stalePDOWithNoSystemAdapterReturnsNil() {
+        let diag = ChargingDiagnostic(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 96)],
+            identities: [],
+            adapter: nil,
+            batteryFullyCharged: false,
+            batteryIsCharging: false
+        )
+        #expect(diag == nil)
     }
 }
