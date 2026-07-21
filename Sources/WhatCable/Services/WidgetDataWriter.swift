@@ -245,7 +245,8 @@ final class WidgetDataWriter {
                 cioCapability: trmWatcher.cioCapabilities.first { $0.canonicallyMatches(port: port) },
                 isConnectedOverride: isLive,
                 batteryFullyCharged: batteryFull,
-                batteryIsCharging: batteryCharging
+                batteryIsCharging: batteryCharging,
+                adapter: adapter
             )
 
             let status = WidgetSnapshot.Status(from: summary.status)

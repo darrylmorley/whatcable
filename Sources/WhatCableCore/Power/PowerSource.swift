@@ -144,12 +144,10 @@ extension PowerSource {
         return nil
     }
 
-    /// True when these sources hold a live, negotiated charging contract,
-    /// meaning the Mac is actually drawing power through this port (a
-    /// `winning` PDO with positive wattage). A charger that is merely
-    /// connected and advertising capability, but that the Mac has not
-    /// chosen to draw from, returns false. Used to tell a standby second
-    /// charger apart from one whose negotiation is still in progress.
+    /// True when these sources expose a negotiated contract: a `winning` PDO
+    /// with positive wattage. This does not prove that the system accepted
+    /// external power. Callers that make a charging claim must also check the
+    /// system adapter and battery state.
     public static func hasLiveChargingContract(in sources: [PowerSource]) -> Bool {
         guard let source = preferredChargingSource(in: sources),
               let winning = source.winning else { return false }

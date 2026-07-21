@@ -293,7 +293,8 @@ extension WidgetSnapshot {
                 cioCapability: cio,
                 isConnectedOverride: isLive,
                 batteryFullyCharged: batteryFullyCharged,
-                batteryIsCharging: batteryIsCharging
+                batteryIsCharging: batteryIsCharging,
+                adapter: adapter
             )
 
             let status = Status(from: summary.status)

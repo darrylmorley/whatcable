@@ -186,10 +186,19 @@ extension PortSummary {
             }
         }
 
+        // A controller can retain a winning PDO while the system rejects
+        // external power. In that state the source still describes the port's
+        // last negotiation, but it must not drive charging copy or wattage.
+        let systemPowerUnavailable = batteryIsCharging == false
+            && batteryFullyCharged != true
+            && adapter == nil
+
         // Hoist the charging source lookup early. The identity-block
         // wording below and the e-marker guard further down both need
         // to know whether something is sourcing power on this port.
-        let chargingSource = PowerSource.preferredChargingSource(in: sources)
+        let chargingSource = systemPowerUnavailable
+            ? nil
+            : PowerSource.preferredChargingSource(in: sources)
 
         // Whether we'll emit a richer "Charger: <Manufacturer> <Name>"
         // line later (in the charger details block). We use this to
@@ -442,7 +451,8 @@ extension PortSummary {
                 let watts = win.wattsLabel
                 bullets.append(String(localized: "Currently negotiated: \(volts) @ \(amps) (\(watts))", bundle: _coreLocalizedBundle))
             }
-        } else if case .systemAdapterFallback(let w) = chargerWattageSource, w > 0 {
+        } else if !systemPowerUnavailable,
+                  case .systemAdapterFallback(let w) = chargerWattageSource, w > 0 {
             // No live USB-PD source on this port (e.g. the battery is full so
             // macOS tore the contract down), but the system adapter reading
             // still resolves to a charger for this port. Surface its brand and
@@ -463,6 +473,7 @@ extension PortSummary {
         // Headline wattage: prefer the resolved source, fall back to
         // the per-port PD options for callers that don't pass a source.
         let chargerW: Int? = {
+            if systemPowerUnavailable { return nil }
             if let w = chargerWattageSource.watts, w > 0 { return w }
             guard let chargingSource, !chargingSource.options.isEmpty else { return nil }
             let w = Int((Double(chargingSource.maxPowerMW) / 1000).rounded())
@@ -584,7 +595,7 @@ extension PortSummary {
             // so the subtitle here would just repeat it. Left empty; the
             // render sites skip an empty subtitle.
             self.subtitle = ""
-        } else if active.isEmpty && supported.contains("USB2") {
+        } else if active.isEmpty && supported.contains("USB2") && !systemPowerUnavailable {
             self.status = .charging
             self.headline = String(localized: "Charging only", bundle: _coreLocalizedBundle)
             self.subtitle = String(localized: "Power is flowing but no data link is established.", bundle: _coreLocalizedBundle)
