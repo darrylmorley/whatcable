@@ -1,6 +1,6 @@
 "%@ negotiated" = "%@ negoziato";
 "%@ profiles" = "%@ profili";
-"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld porte USB-C e 1 porta MagSafe rilevate, ma al momento non è collegato nulla. Per visualizzarle disattiva in Impostazioni l'opzione 'Nascondi porte vuote'.";
+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "Rilevate %lld porte USB-C e 1 porta MagSafe, ma al momento non è collegato nulla. Per visualizzare queste porte disattiva in Impostazioni l'opzione 'Nascondi porte vuote'.";
 "%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld porte USB-C rilevate, ma al momento non è collegato nulla. Per visualizzarle disattiva in Impostazioni l'opzione 'Nascondi porte vuote'.";
 "About %@" = "Info su %@";
 "Active" = "Attivo";
