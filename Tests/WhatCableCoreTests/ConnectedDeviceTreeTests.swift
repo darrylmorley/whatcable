@@ -744,6 +744,12 @@ struct ConnectedDeviceTreeCorpusTests {
                 speedRaw: value("Device Speed").flatMap { UInt8($0) },
                 busPowerMA: nil,
                 currentMA: nil,
+                // Upper byte of the locationID is the USB controller index,
+                // exactly how USBWatcher derives it live. Without this every
+                // corpus device would have a nil busIndex, grouping would be
+                // suppressed on every folder, and the sweep would silently
+                // stop covering the grouping path.
+                busIndex: Int(loc >> 24),
                 deviceClass: value("bDeviceClass").flatMap { UInt8($0) },
                 rawProperties: [:]
             )
@@ -771,6 +777,8 @@ struct ConnectedDeviceTreeCorpusTests {
         let folders = (try? FileManager.default.contentsOfDirectory(atPath: Self.probeRoot.path))?.sorted() ?? []
         var swept = 0
         var devicesSeen = 0
+        var withBusIndex = 0
+        var grouped = 0
         for folder in folders {
             let url = Self.probeRoot.appendingPathComponent(folder).appendingPathComponent("38_usb_device_tree.json")
             guard FileManager.default.fileExists(atPath: url.path),
@@ -787,23 +795,22 @@ struct ConnectedDeviceTreeCorpusTests {
                 devices: devices, port: Self.port(),
                 thunderboltSwitches: [], displayPorts: []
             )
-            let expected = USBDeviceNode.flatten(USBDeviceNode.buildTree(from: devices))
-            try #require(rows.count == expected.count, "\(folder): row count diverged from the USB tree")
-            for (row, node) in zip(rows, expected) {
-                // Validates that ConnectedDeviceTree reproduces USBDeviceNode's
-                // tree on every real topology (same devices, order, depth,
-                // routing) AND that the name matches an INDEPENDENT
-                // reimplementation of the naming rule (`referenceName`, below),
-                // not `displayName` itself. Building the expected label from the
-                // property under test would be circular: a regression in
-                // `displayName` would change both sides and the sweep would
-                // still pass. Re-deriving names here means a naming regression
-                // diverges on real corpus data and fails the sweep, per the
-                // project's "a check that reads the same source as the thing it
-                // checks is not a check" rule.
-                let expectedName = Self.referenceName(product: node.device.productName, vendor: node.device.vendorName)
-                let expectedLabel = "\(expectedName) - \(node.device.speedLabel)"
-                #expect(row == ConnectedDeviceTree.Row(label: expectedLabel, depth: node.depth),
+            if devices.contains(where: { $0.busIndex != nil }) { withBusIndex += 1 }
+            let expected = Self.expectedRows(devices)
+            if expected.contains(where: { $0.depth == 0 && $0.label.hasPrefix("USB bus") }) { grouped += 1 }
+
+            // Validates that ConnectedDeviceTree reproduces the expected tree on
+            // every real topology (same devices, order, depth, routing, and bus
+            // grouping) against an INDEPENDENT reimplementation of both rules
+            // (`expectedRows` / `referenceName` below), never against the
+            // production properties themselves. Building the expectation from
+            // `displayName` or `groupedByBus` would be circular: a regression
+            // would change both sides and the sweep would still pass. Per the
+            // project's "a check that reads the same source as the thing it
+            // checks is not a check" rule.
+            try #require(rows.count == expected.count, "\(folder): row count diverged from the expected tree")
+            for (row, want) in zip(rows, expected) {
+                #expect(row == ConnectedDeviceTree.Row(label: want.label, depth: want.depth),
                     "\(folder): row diverged from the canonical rendering: \(row.label)")
             }
         }
@@ -812,6 +819,58 @@ struct ConnectedDeviceTreeCorpusTests {
         // If this fires at 0, the sweep is vacuous, not passing.
         #expect(swept >= 1, "Sweep ran on zero folders; corpus probes missing")
         #expect(devicesSeen > 0)
+        // Non-vacuity floors for the bus grouping specifically. The parser
+        // derives busIndex from the locationID, so every corpus device has one;
+        // without these, a parser that silently stopped setting busIndex would
+        // send every folder down the ungrouped path and the sweep would still
+        // pass while testing nothing about grouping. Real multi-controller
+        // machines exist in the corpus, so `grouped` must not be zero either.
+        if swept > 1 {
+            #expect(withBusIndex == swept, "every corpus folder should carry a bus index")
+            #expect(grouped > 0, "no corpus machine exercised the bus grouping path")
+        }
+    }
+
+    /// Independent reimplementation of the rows `ConnectedDeviceTree.rows`
+    /// should produce for the no-Thunderbolt path, covering both the bus
+    /// grouping rule and the naming rule. Deliberately does not call
+    /// `USBDeviceNode.groupedByBus` or `USBDevice.displayName`; it re-derives
+    /// both so a regression in either diverges here on real corpus data.
+    ///
+    /// The grouping rule restated: group the top-level devices under one header
+    /// per USB controller, but only when every device in the tree has a readable
+    /// bus index and the top-level devices span more than one controller. A lone
+    /// header adds indentation and no information; a partial grouping would
+    /// imply a device sits on a controller nothing established.
+    private static func expectedRows(_ devices: [USBDevice]) -> [(label: String, depth: Int)] {
+        let tree = USBDeviceNode.buildTree(from: devices)
+        func label(_ node: USBDeviceNode) -> String {
+            let name = referenceName(product: node.device.productName, vendor: node.device.vendorName)
+            return "\(name) - \(node.device.speedLabel)"
+        }
+
+        var busOrder: [Int] = []
+        for root in tree {
+            guard let bus = root.device.busIndex else { continue }
+            if !busOrder.contains(bus) { busOrder.append(bus) }
+        }
+        let everyDeviceHasABus = USBDeviceNode.flatten(tree).allSatisfy { $0.device.busIndex != nil }
+
+        guard everyDeviceHasABus, busOrder.count > 1 else {
+            return USBDeviceNode.flatten(tree).map { (label: label($0), depth: $0.depth) }
+        }
+
+        var out: [(label: String, depth: Int)] = []
+        for bus in busOrder {
+            let word = String(localized: "USB bus", bundle: _coreLocalizedBundle)
+            out.append((label: "\(word) \(String(format: "0x%02X", bus))", depth: 0))
+            for root in tree where root.device.busIndex == bus {
+                for node in USBDeviceNode.flatten([root]) {
+                    out.append((label: label(node), depth: node.depth + 1))
+                }
+            }
+        }
+        return out
     }
 
     /// Independent reimplementation of `USBDevice.displayName`'s naming rule,

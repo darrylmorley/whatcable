@@ -138,10 +138,11 @@ public enum ConnectedDeviceTree {
         }
     }
 
+    /// One device row's label. Names go through `USBDevice.displayName` so
+    /// this tree, the CLI and the dashboard can never disagree about how a
+    /// device is named; it also carries the localized "Unknown" fallback.
     private static func deviceLabel(for node: USBDeviceNode) -> String {
-        let name = node.device.productName
-            ?? String(localized: "Unknown", bundle: _coreLocalizedBundle)
-        return "\(name) - \(node.device.speedLabel)"
+        "\(node.device.displayName) - \(node.device.speedLabel)"
     }
 
     /// The host root switch for this port, if it maps to one. Shared by

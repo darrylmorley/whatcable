@@ -632,7 +632,7 @@ struct USBDeviceRow: View {
     }
 
     var body: some View {
-        let name = device.productName ?? String(localized: "Unknown", bundle: _appLocalizedBundle)
+        let name = device.displayName
         // No leading bullet: DisclosureGroup draws its own chevron as the row's
         // leading affordance, so a bullet here would double up. The "↳" on
         // nested devices stays — it marks "behind a hub", which the chevron and

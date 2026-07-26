@@ -160,7 +160,9 @@ public enum TextFormatter {
     /// under a bus header when the devices are grouped by controller.
     private static func renderTunnelledRow(_ node: USBDeviceNode, extraIndent: Int) -> String {
         let indent = String(repeating: "  ", count: node.depth + 1 + extraIndent)
-        let name = terminalField(node.device.productName ?? String(localized: "Unknown", bundle: _coreLocalizedBundle))
+        // displayName folds in the device-reported vendor name, so it is
+        // device-supplied text and still has to go through terminalField.
+        let name = terminalField(node.device.displayName)
         let prefix = node.depth > 0 ? "\u{21B3}" : ANSI.wrap(ANSI.gray, "\u{2022}")
         return "\(indent)\(prefix) \(name) - \(node.device.speedLabel)\n"
     }
