@@ -178,3 +178,8 @@
 "This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "このMacはIntelプロセッサを搭載しています。WhatCableはケーブルとポートのデータをApple Siliconのポートコントローラから取得しますが、Intel Macはこれを公開していないため、有用な情報は何も表示されません。\n\n見て回りたい場合は開いたままにできますが、その先には何もありません。";
 "OK" = "OK";
 "Learn more" = "詳しく見る";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "製造元";
+"Serial" = "シリアル番号";
+"USB" = "USB";

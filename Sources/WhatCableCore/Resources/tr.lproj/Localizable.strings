@@ -565,3 +565,6 @@
 "USB-IF certified. Manufacturer: %@" = "USB-IF sertifikalı. Üretici: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "Kablonun bildirdiği üretici USB-IF sertifikasıyla eşleşiyor";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "Genel kayıtta bulunmayan bir USB-IF sertifika kimliği (%1$@) taşıyor";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "USB veri yolu";

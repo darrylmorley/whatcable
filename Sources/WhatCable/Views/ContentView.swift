@@ -565,7 +565,6 @@ struct OtherUSBDevicesCard: View {
     }
 
     var body: some View {
-        let tree = USBDeviceNode.flatten(USBDeviceNode.buildTree(from: devices))
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
                 Image(systemName: "cable.connector.horizontal")
@@ -573,11 +572,24 @@ struct OtherUSBDevicesCard: View {
                 Text(title)
                     .scaledFont(.headline, weight: .semibold)
             }
-            ForEach(tree) { node in
-                let prefix = node.depth > 0 ? "\u{21B3} " : "\u{2022} "
-                Text(verbatim: "\(prefix)\(node.device.displayName) - \(node.device.speedLabel)")
-                    .scaledFont(.callout)
-                    .padding(.leading, CGFloat(node.depth) * 16)
+            // A dock fans its devices out across several USB controllers, so
+            // group them by bus to show which ones share one. Nil when there
+            // is only one bus: the flat tree then renders exactly as before.
+            if let groups = USBDeviceNode.groupedByBus(from: devices) {
+                ForEach(groups, id: \.bus) { group in
+                    Text(verbatim: USBDeviceNode.busLabel(group.bus))
+                        .scaledFont(.caption, weight: .semibold)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 2)
+                    ForEach(USBDeviceNode.flatten(group.roots)) { node in
+                        USBDeviceRow(node: node)
+                            .padding(.leading, 12)
+                    }
+                }
+            } else {
+                ForEach(USBDeviceNode.flatten(USBDeviceNode.buildTree(from: devices))) { node in
+                    USBDeviceRow(node: node)
+                }
             }
             Text(footer)
                 .scaledFont(.caption)
@@ -586,6 +598,67 @@ struct OtherUSBDevicesCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
         .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+/// One device in a downstream USB tree, rendered as an expandable disclosure
+/// row. Collapsed (the default) it shows name and speed, indented by hub depth,
+/// with the DisclosureGroup chevron as the leading affordance (replacing the old
+/// "•" bullet). Expanded it reveals the detail the `USBDevice` model
+/// already carries: vendor (with VID:PID), serial and USB version. Shared by
+/// `OtherUSBDevicesCard` and `PortCard`'s device tree so the two render the
+/// same content. No new data is read here; every value comes off `USBDevice`.
+struct USBDeviceRow: View {
+    let node: USBDeviceNode
+
+    @State private var expanded = false
+    @Environment(\.fontScale) private var fontScale
+
+    private var device: USBDevice { node.device }
+
+    /// The detail rows to show when expanded, as (label, value) pairs. A row is
+    /// included only when its value is present, so an absent serial or power
+    /// figure leaves no empty line.
+    private var detailRows: [(label: String, value: String)] {
+        var rows: [(String, String)] = []
+        rows.append((String(localized: "Vendor", bundle: _appLocalizedBundle), device.vendorDisplay))
+        if let serial = device.serialNumber?.trimmingCharacters(in: .whitespacesAndNewlines), !serial.isEmpty {
+            rows.append((String(localized: "Serial", bundle: _appLocalizedBundle), serial))
+        }
+        if let version = device.usbVersion {
+            rows.append((String(localized: "USB", bundle: _appLocalizedBundle), version))
+        }
+        return rows
+    }
+
+    var body: some View {
+        let name = device.productName ?? String(localized: "Unknown", bundle: _appLocalizedBundle)
+        // No leading bullet: DisclosureGroup draws its own chevron as the row's
+        // leading affordance, so a bullet here would double up. The "↳" on
+        // nested devices stays — it marks "behind a hub", which the chevron and
+        // indentation alone don't convey.
+        let prefix = node.depth > 0 ? "\u{21B3} " : ""
+        DisclosureGroup(isExpanded: $expanded) {
+            VStack(alignment: .leading, spacing: 2) {
+                ForEach(detailRows, id: \.label) { row in
+                    HStack(alignment: .top, spacing: 8) {
+                        Text(row.label)
+                            .scaledFont(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(width: 70 * fontScale, alignment: .leading)
+                        Text(row.value)
+                            .scaledFont(.caption)
+                            .textSelection(.enabled)
+                        Spacer(minLength: 0)
+                    }
+                }
+            }
+            .padding(.top, 2)
+        } label: {
+            Text(verbatim: "\(prefix)\(name) - \(device.speedLabel)")
+                .scaledFont(.callout)
+        }
+        .padding(.leading, CGFloat(node.depth) * 16)
     }
 }
 
@@ -678,10 +751,7 @@ struct PortCard: View {
                 .scaledFont(.subheadline, weight: .semibold)
                 .foregroundStyle(.secondary)
             ForEach(tree) { node in
-                let prefix = node.depth > 0 ? "\u{21B3} " : "\u{2022} "
-                Text(verbatim: "\(prefix)\(node.device.displayName) - \(node.device.speedLabel)")
-                    .scaledFont(.callout)
-                    .padding(.leading, CGFloat(node.depth) * 16)
+                USBDeviceRow(node: node)
             }
             if let note {
                 Text(note)
@@ -703,14 +773,33 @@ struct PortCard: View {
             Text(title)
                 .scaledFont(.subheadline, weight: .semibold)
                 .foregroundStyle(.secondary)
-            // Offset-keyed: rows are value snapshots rebuilt on every state
-            // change, and two identical monitors would collide on a
-            // label-derived id.
-            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                let prefix = row.depth > 0 ? "\u{21B3} " : "\u{2022} "
-                Text(verbatim: "\(prefix)\(row.label)")
-                    .scaledFont(.callout)
-                    .padding(.leading, CGFloat(row.depth) * 16)
+            // Device rows key on the IOKit entry ID so USBDeviceRow's expanded
+            // state follows its device across a replug that reorders the list.
+            // Offset-keying them would migrate the state to whichever device
+            // landed at that index. Non-device rows (the Thunderbolt root, a
+            // display, a bus header) stay offset-keyed: they hold no state, and
+            // two identical monitors would collide on a label-derived id.
+            let identified = rows.enumerated().map { offset, row in
+                (id: row.device.map { "device-\($0.id)" } ?? "row-\(offset)", row: row)
+            }
+            ForEach(identified, id: \.id) { _, row in
+                // A row carrying its node is a USB device, so it gets the same
+                // expandable detail as the Thunderbolt-tunnelled list. Rows
+                // without one describe the Thunderbolt root, a display, or a
+                // bus header, and stay plain text.
+                if let node = row.device {
+                    // USBDeviceRow already indents by its own hub depth, so
+                    // only the structural depth above that (the Thunderbolt
+                    // root, a bus header) is added here. Applying row.depth
+                    // whole would indent hub children twice.
+                    USBDeviceRow(node: node)
+                        .padding(.leading, CGFloat(max(0, row.depth - node.depth)) * 16)
+                } else {
+                    let prefix = row.depth > 0 ? "\u{21B3} " : "\u{2022} "
+                    Text(verbatim: "\(prefix)\(row.label)")
+                        .scaledFont(.callout)
+                        .padding(.leading, CGFloat(row.depth) * 16)
+                }
             }
         }
         .padding(.leading, 48)

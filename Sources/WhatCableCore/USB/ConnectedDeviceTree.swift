@@ -22,13 +22,29 @@ import Foundation
 public enum ConnectedDeviceTree {
     /// One rendered row: a complete display label plus its indent depth.
     /// The renderers add only their own bullet/arrow prefix and indentation.
+    ///
+    /// `device` carries the node a device row was built from, so a renderer
+    /// that can show more than a label (the app's expandable row) has the
+    /// model to hand. It is `nil` on rows that describe something other than a
+    /// USB device: the Thunderbolt root, a display, a bus header. Text
+    /// renderers ignore it and draw `label` exactly as before.
     public struct Row: Equatable {
         public let label: String
         public let depth: Int
+        public let device: USBDeviceNode?
 
-        public init(label: String, depth: Int) {
+        public init(label: String, depth: Int, device: USBDeviceNode? = nil) {
             self.label = label
             self.depth = depth
+            self.device = device
+        }
+
+        /// Equality is on what the row draws: its label and depth. `device` is
+        /// the model the label was derived from, carried for renderers that can
+        /// show more than text, so two rows that render identically compare
+        /// equal whether or not the node came along.
+        public static func == (lhs: Row, rhs: Row) -> Bool {
+            lhs.label == rhs.label && lhs.depth == rhs.depth
         }
     }
 
@@ -49,12 +65,7 @@ public enum ConnectedDeviceTree {
         thunderboltSwitches: [IOThunderboltSwitch],
         displayPorts: [IOPortTransportStateDisplayPort]
     ) -> [Row] {
-        let deviceRows = USBDeviceNode.flatten(USBDeviceNode.buildTree(from: devices)).map { node in
-            Row(
-                label: "\(node.device.displayName) - \(node.device.speedLabel)",
-                depth: node.depth
-            )
-        }
+        let deviceRows = deviceRowsGroupedByBus(devices)
 
         guard let hostRoot = thunderboltHostRoot(port: port, switches: thunderboltSwitches),
               let root = thunderboltRootRow(hostRoot: hostRoot, switches: thunderboltSwitches)
@@ -100,8 +111,37 @@ public enum ConnectedDeviceTree {
                 rows.append(Row(label: displayLabel(for: dp), depth: 1))
             }
         }
-        rows.append(contentsOf: deviceRows.map { Row(label: $0.label, depth: $0.depth + 1) })
+        // Shift the device rows one level to sit under the Thunderbolt root,
+        // carrying `device` across. Dropping it here would make the expandable
+        // detail work everywhere except behind a dock, which is where the
+        // device tree is longest and the detail is most wanted.
+        rows.append(contentsOf: deviceRows.map {
+            Row(label: $0.label, depth: $0.depth + 1, device: $0.device)
+        })
         return rows
+    }
+
+    /// Device rows, grouped under a header per USB controller when the port
+    /// has more than one. Falls back to the plain tree otherwise, so the
+    /// single-bus case and every directly-attached port render as before.
+    private static func deviceRowsGroupedByBus(_ devices: [USBDevice]) -> [Row] {
+        guard let groups = USBDeviceNode.groupedByBus(from: devices) else {
+            return USBDeviceNode.flatten(USBDeviceNode.buildTree(from: devices)).map {
+                Row(label: deviceLabel(for: $0), depth: $0.depth, device: $0)
+            }
+        }
+        return groups.flatMap { group in
+            [Row(label: USBDeviceNode.busLabel(group.bus), depth: 0)]
+                + USBDeviceNode.flatten(group.roots).map {
+                    Row(label: deviceLabel(for: $0), depth: $0.depth + 1, device: $0)
+                }
+        }
+    }
+
+    private static func deviceLabel(for node: USBDeviceNode) -> String {
+        let name = node.device.productName
+            ?? String(localized: "Unknown", bundle: _coreLocalizedBundle)
+        return "\(name) - \(node.device.speedLabel)"
     }
 
     /// The host root switch for this port, if it maps to one. Shared by

@@ -136,17 +136,33 @@ public enum TextFormatter {
             ? String(localized: "Connected over Thunderbolt", bundle: _coreLocalizedBundle)
             : String(localized: "Other USB devices", bundle: _coreLocalizedBundle)
         out += ANSI.wrap(ANSI.bold, title + ":") + "\n"
-        let tree = USBDeviceNode.flatten(USBDeviceNode.buildTree(from: devices))
-        for node in tree {
-            let indent = String(repeating: "  ", count: node.depth + 1)
-            // displayName folds in the device-reported vendor name, so it is
-            // device-supplied text and still has to go through terminalField.
-            let name = terminalField(node.device.displayName)
-            let prefix = node.depth > 0 ? "\u{21B3}" : ANSI.wrap(ANSI.gray, "\u{2022}")
-            out += "\(indent)\(prefix) \(name) - \(node.device.speedLabel)\n"
+        // A dock fans its devices out across several USB controllers; the
+        // grouping shows which ones share a bus. Nil when there is only one
+        // bus, in which case the tree renders flat exactly as before.
+        if let groups = USBDeviceNode.groupedByBus(from: devices) {
+            for group in groups {
+                out += "  " + ANSI.wrap(ANSI.gray, "\u{2022}") + " "
+                    + ANSI.wrap(ANSI.dim, USBDeviceNode.busLabel(group.bus)) + "\n"
+                for node in USBDeviceNode.flatten(group.roots) {
+                    out += renderTunnelledRow(node, extraIndent: 1)
+                }
+            }
+        } else {
+            for node in USBDeviceNode.flatten(USBDeviceNode.buildTree(from: devices)) {
+                out += renderTunnelledRow(node, extraIndent: 0)
+            }
         }
         out += "  " + ANSI.wrap(ANSI.dim, String(localized: "Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them.", bundle: _coreLocalizedBundle)) + "\n"
         return out
+    }
+
+    /// One device row in the tunnelled block. `extraIndent` shifts the row
+    /// under a bus header when the devices are grouped by controller.
+    private static func renderTunnelledRow(_ node: USBDeviceNode, extraIndent: Int) -> String {
+        let indent = String(repeating: "  ", count: node.depth + 1 + extraIndent)
+        let name = terminalField(node.device.productName ?? String(localized: "Unknown", bundle: _coreLocalizedBundle))
+        let prefix = node.depth > 0 ? "\u{21B3}" : ANSI.wrap(ANSI.gray, "\u{2022}")
+        return "\(indent)\(prefix) \(name) - \(node.device.speedLabel)\n"
     }
 
     /// Render the internal-hub devices block (issue #348). These are devices

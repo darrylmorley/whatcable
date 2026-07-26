@@ -566,3 +566,6 @@
 "USB-IF certified. Manufacturer: %@" = "USB-IF-sertifisert. Produsent: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "Kabelens oppgitte produsent samsvarer med USB-IF-sertifikatet";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "Har en USB-IF-sertifiserings-ID (%1$@) som ikke finnes i det offentlige registeret";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "USB-buss";

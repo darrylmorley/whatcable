@@ -565,3 +565,6 @@
 "USB-IF certified. Manufacturer: %@" = "USB-IF 인증됨. 제조사: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "케이블이 보고한 제조사가 USB-IF 인증서와 일치합니다";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "공개 레지스트리에 없는 USB-IF 인증 ID(%1$@)를 포함합니다";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "USB 버스";

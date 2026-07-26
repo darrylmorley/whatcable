@@ -155,6 +155,36 @@ public struct USBDevice: Identifiable, Hashable {
         return String(localized: "Billboard device present", bundle: bundle)
     }
 
+    /// Vendor label for the detail view: the device-reported `USB Vendor Name`
+    /// when present, else the bundled USB-IF database name for the VID, always
+    /// suffixed with `0xVID:0xPID`. Falls back to bare hex when no name is
+    /// known. Mirrors `VendorDB.label(for:)` so the vendor wording can't drift
+    /// from the cable view, and adds the PID the per-device view wants.
+    ///
+    /// Only the two sentinel VIDs are excluded from the database fallback. For
+    /// VID 0 and 0xFFFF, `VendorDB.name(for:)` returns explanatory sentences
+    /// ("No vendor reported", "No vendor ID assigned …") written for the cable
+    /// view, which would read here as a vendor literally called "No vendor
+    /// reported".
+    ///
+    /// Deliberately not gated on `VendorDB.isRegistered`, which is narrower
+    /// than this view wants: by its own definition it excludes community
+    /// `usb.ids` entries, which resolve to perfectly good vendor names. The
+    /// JSON `vendorName` field does use that stricter gate, because it is a
+    /// machine-readable field where "present" should mean a real registration.
+    /// Here the goal is to show the user the best name available.
+    public var vendorDisplay: String {
+        let ids = String(format: "0x%04X:0x%04X", vendorID, productID)
+        let name = vendorName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let name, !name.isEmpty {
+            return "\(name) (\(ids))"
+        }
+        if vendorID != 0, vendorID != 0xFFFF, let dbName = VendorDB.name(for: Int(vendorID)) {
+            return "\(dbName) (\(ids))"
+        }
+        return ids
+    }
+
     public var speedLabel: String {
         // IOUSBHostDevice "Device Speed" enum values
         switch speedRaw {
@@ -329,6 +359,56 @@ public struct USBDeviceNode: Identifiable {
             result.append(contentsOf: flatten(node.children))
         }
         return result
+    }
+
+    /// One group of top-level devices sharing a USB controller.
+    public struct BusGroup {
+        /// Upper byte of the controller's `locationID`, e.g. `0x21`.
+        public let bus: Int
+        /// Top-level nodes on this controller, each with its hub children.
+        public let roots: [USBDeviceNode]
+    }
+
+    /// Top-level nodes grouped by the USB controller they enumerate on, in
+    /// first-seen order.
+    ///
+    /// A dock spreads its downstream devices across the several USB
+    /// controllers inside it, and which devices share a bus is the difference
+    /// between diagnosing a bandwidth problem and guessing at it.
+    ///
+    /// Returns `nil` when the devices span fewer than two buses, or when any
+    /// device has no `busIndex`: callers render their plain tree then. A lone
+    /// group header would add a level of indentation and no information, and a
+    /// partial grouping would imply a device sits on a bus we could not read.
+    ///
+    /// The completeness check covers every device in the tree, not just the
+    /// roots. A hub child with no readable bus index would otherwise render
+    /// under its parent's header, silently claiming a controller assignment
+    /// nothing established.
+    ///
+    /// Grouping itself is by top-level node, because everything behind a hub
+    /// reaches the Mac through the same controller as the hub itself.
+    public static func groupedByBus(from devices: [USBDevice]) -> [BusGroup]? {
+        let tree = buildTree(from: devices)
+        guard flatten(tree).allSatisfy({ $0.device.busIndex != nil }) else { return nil }
+
+        var order: [Int] = []
+        var byBus: [Int: [USBDeviceNode]] = [:]
+        for root in tree {
+            guard let bus = root.device.busIndex else { return nil }
+            if byBus[bus] == nil { order.append(bus) }
+            byBus[bus, default: []].append(root)
+        }
+        guard order.count > 1 else { return nil }
+        return order.map { BusGroup(bus: $0, roots: byBus[$0] ?? []) }
+    }
+
+    /// "USB bus 0x21", the header shown above a `BusGroup`. The hex identifier
+    /// is kept as-is: it is raw registry truth and the join key people use
+    /// when comparing against `system_profiler` output.
+    public static func busLabel(_ bus: Int) -> String {
+        let word = String(localized: "USB bus", bundle: _coreLocalizedBundle)
+        return "\(word) \(String(format: "0x%02X", bus))"
     }
 
     /// A flat list of (name, speed, depth) tuples for the device tree rooted

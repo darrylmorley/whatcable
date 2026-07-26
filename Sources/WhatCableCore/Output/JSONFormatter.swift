@@ -960,17 +960,35 @@ private struct USBDeviceDTO: Codable {
     let vendorID: Int
     let productID: Int
     let vendorName: String?
+    let serialNumber: String?
+    let usbVersion: String?
     let speed: String
     let locationID: String
     let children: [USBDeviceDTO]?
 
     init(node: USBDeviceNode) {
-        self.name = node.device.productName
-        self.vendorID = Int(node.device.vendorID)
-        self.productID = Int(node.device.productID)
-        self.vendorName = node.device.vendorName
-        self.speed = node.device.speedLabel
-        self.locationID = String(format: "0x%08x", node.device.locationID)
+        let device = node.device
+        self.name = device.productName
+        self.vendorID = Int(device.vendorID)
+        self.productID = Int(device.productID)
+        // Match the UI: device-reported name, else the VID database. Gate the
+        // DB fallback on a real registration so the sentinel sentences
+        // VendorDB.name(for:) returns for VID 0 / 0xFFFF ("No vendor reported",
+        // "No vendor ID assigned …") never leak into this machine-readable
+        // field — downstream consumers parse it, so it stays null when there is
+        // no genuine vendor name (preserving the pre-fallback contract).
+        if let reported = device.vendorName?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !reported.isEmpty {
+            self.vendorName = reported
+        } else if VendorDB.isRegistered(Int(device.vendorID)) {
+            self.vendorName = VendorDB.name(for: Int(device.vendorID))
+        } else {
+            self.vendorName = nil
+        }
+        self.serialNumber = device.serialNumber
+        self.usbVersion = device.usbVersion
+        self.speed = device.speedLabel
+        self.locationID = String(format: "0x%08x", device.locationID)
         self.children = node.children.isEmpty ? nil : node.children.map { USBDeviceDTO(node: $0) }
     }
 }

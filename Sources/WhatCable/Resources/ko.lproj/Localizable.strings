@@ -177,3 +177,8 @@
 "This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "이 Mac은 Intel 프로세서를 사용합니다. WhatCable은 케이블과 포트 데이터를 Apple Silicon의 포트 컨트롤러에서 가져오는데, Intel Mac은 이를 제공하지 않으므로 앱에 유용한 정보가 표시되지 않습니다.\n\n둘러보고 싶다면 열어 둘 수 있지만, 그 뒤에는 아무것도 없습니다.";
 "OK" = "확인";
 "Learn more" = "자세히 알아보기";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "제조사";
+"Serial" = "일련번호";
+"USB" = "USB";

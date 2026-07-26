@@ -565,3 +565,6 @@
 "USB-IF certified. Manufacturer: %@" = "USB-IF प्रमाणित। निर्माता: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "केबल का घोषित निर्माता USB-IF प्रमाणपत्र से मेल खाता है";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "इसमें एक USB-IF प्रमाणन आईडी (%1$@) है जो सार्वजनिक रजिस्ट्री में नहीं है";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "USB बस";

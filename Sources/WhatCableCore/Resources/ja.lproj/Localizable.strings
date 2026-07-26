@@ -567,3 +567,6 @@
 "USB-IF certified. Manufacturer: %@" = "USB-IF認証済み。 製造元: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "ケーブルが申告する製造元がUSB-IF認証と一致します";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "公開レジストリに存在しないUSB-IF認証ID (%1$@) を保持しています";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "USBバス";

@@ -565,3 +565,6 @@
 "USB-IF certified. Manufacturer: %@" = "Certificado USB-IF. Fabricante: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "O fabricante declarado do cabo corresponde ao certificado USB-IF";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "Contém um ID de certificação USB-IF (%1$@) que não está no registro público";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "Barramento USB";

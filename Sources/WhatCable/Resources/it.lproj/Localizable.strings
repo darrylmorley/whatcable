@@ -177,3 +177,8 @@
 "This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Questo Mac ha un processore Intel. WhatCable ricava i dati di cavi e porte dal controller porte Apple Silicon, che i Mac Intel non espongono, quindi l'app non visualizzerà nulla di utile.\n\nSe vuoi dare un'occhiata resterà aperta , ma dietro non c'è nulla.";
 "OK" = "OK";
 "Learn more" = "Maggiori info";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "Produttore";
+"Serial" = "Seriale";
+"USB" = "USB";

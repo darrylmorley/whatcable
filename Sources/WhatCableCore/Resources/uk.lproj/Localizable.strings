@@ -565,3 +565,6 @@
 "USB-IF certified. Manufacturer: %@" = "Сертифіковано USB-IF. Виробник: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "Заявлений виробник кабелю збігається із сертифікатом USB-IF";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "Містить ідентифікатор сертифікації USB-IF (%1$@), якого немає в публічному реєстрі";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "Шина USB";

@@ -566,3 +566,6 @@
 "USB-IF certified. Manufacturer: %@" = "USB-IF հավաստագրված։ Արտադրող: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "Մալուխի հայտարարված արտադրողը համընկնում է USB-IF վկայականի հետ";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "Կրում է USB-IF հավաստագրման ID (%1$@), որը հանրային ռեգիստրում չկա";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "USB մագիստրալ";

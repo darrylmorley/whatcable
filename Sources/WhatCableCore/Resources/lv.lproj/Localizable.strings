@@ -565,3 +565,6 @@
 "USB-IF certified. Manufacturer: %@" = "USB-IF sertificēts. Ražotājs: %1$@";
 "The cable's declared maker matches the USB-IF certificate" = "Kabeļa norādītais ražotājs atbilst USB-IF sertifikātam";
 "Carries a USB-IF certification ID (%@) that isn't in the public registry" = "Satur USB-IF sertifikācijas ID (%1$@), kas nav publiskajā reģistrā";
+
+/* Header for a USB controller group in the connected-devices tree. */
+"USB bus" = "USB kopne";

@@ -178,3 +178,8 @@
 "This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Այս Mac-ն ունի Intel պրոցեսոր։ WhatCable-ը մալուխների և պորտերի տվյալները ստանում է Apple Silicon-ի պորտի կարգավորիչից, իսկ Intel Mac-երն այն չեն տրամադրում, ուստի հավելվածը ոչ մի օգտակար բան ցույց չի տա։\n\nԱյն կմնա բաց, եթե ուզում եք նայել, բայց դրա հետևում ոչինչ չկա։";
 "OK" = "Լավ";
 "Learn more" = "Իմանալ ավելին";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "Արտադրող";
+"Serial" = "Սերիական համար";
+"USB" = "USB";
