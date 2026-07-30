@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "tuikit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/darrylmorley/TUIkit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "18246360bbdefd5ad7e5eab47955d47eac9d824f"
+      }
+    }
+  ],
+  "version" : 2
+}
