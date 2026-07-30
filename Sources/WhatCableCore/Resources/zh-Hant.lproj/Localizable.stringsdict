@@ -13,9 +13,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>one</key>
-			<string>經由 %lld 個集線器</string>
+			<string>透過 %lld 個 Hub</string>
 			<key>other</key>
-			<string>經由 %lld 個集線器</string>
+			<string>透過 %lld 個 Hub</string>
 		</dict>
 	</dict>
 </dict>
