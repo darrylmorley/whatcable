@@ -22,6 +22,7 @@ struct ContentView: View {
     /// card) is correct on the first frame instead of popping in a frame late.
     private static let isDesktopMacAtLaunch = AppleSmartBatteryReader.read().isDesktopMac
     @State private var isDesktopMac = ContentView.isDesktopMacAtLaunch
+    @State private var refreshIconRotation = 0.0
     /// Tracks per-port fault-counter deltas across a connection so
     /// mid-session overcurrent trips and repeated drops surface as a free
     /// inline banner on the relevant port card.
@@ -94,6 +95,9 @@ struct ContentView: View {
         // surface (popover, dock window, detached Pro windows, welcome,
         // licence) tracks the slider live. No need to re-inject here.
         .onChange(of: refresh.tick) { _, _ in
+            withAnimation(.linear(duration: 0.35)) {
+                refreshIconRotation += 360
+            }
             WatcherHub.shared.refreshAll()
         }
         // Fold each refresh into the fault tracker. A counter tick changes the
@@ -286,6 +290,7 @@ struct ContentView: View {
                 Image(systemName: "arrow.clockwise")
                     .frame(width: 20, height: 20)
                     .contentShape(Rectangle())
+                    .rotationEffect(.degrees(refreshIconRotation))
             }
             .buttonStyle(.borderless)
             .help(String(localized: "Refresh", bundle: _appLocalizedBundle))
