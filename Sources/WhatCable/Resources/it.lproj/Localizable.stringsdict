@@ -45,9 +45,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>one</key>
-			<string>Mostra %lld hub</string>
+			<string>Visualizza %lld hub</string>
 			<key>other</key>
-			<string>Mostra %lld hub</string>
+			<string>Visualizza %lld hub</string>
 		</dict>
 	</dict>
 </dict>
