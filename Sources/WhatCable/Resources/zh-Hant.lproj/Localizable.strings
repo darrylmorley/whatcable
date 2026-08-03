@@ -98,10 +98,10 @@
 "Privacy" = "隱私權";
 "Pro" = "Pro";
 "Proceed" = "繼續";
-"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version and chip type. This is data macOS already exposes on your Mac." = "原始 IOKit 登錄屬性、您 Mac 上現有的驅動程式類別清單，以及您的 macOS 版本與晶片類型。這些是 macOS 已經在您 Mac 上公開的資料。";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version and chip type. This is data macOS already exposes on your Mac." = "原始 IOKit 登錄屬性、您的 Mac 上現有的驅動程式類別清單，以及您的 macOS 版本與晶片類型。這些也是 macOS 本身可提供的資料。";
 "What happens" = "會發生什麼";
 "What is collected" = "會收集哪些資料";
-"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable 會執行 %lld 個 IOKit 探測器，讀取 Mac 已經公開的硬體資料。結果會傳送至安全伺服器，以協助改善線材與連接埠偵測。";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable 會執行 %lld 個 IOKit 探測器，讀取您的 Mac 本身可提供的硬體資料。結果會傳送至安全伺服器，以協助改善線材與連接埠偵測。";
 "Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "裝置的硬體 UUID 會在傳送前經過 SHA-256 雜湊處理。不會收集或儲存您的姓名、帳號、Mac 序號或任何個人資料。";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
