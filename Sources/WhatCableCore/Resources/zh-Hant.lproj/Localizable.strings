@@ -58,7 +58,7 @@
 "E-marker uses an invalid cable-termination value" = "E-marker 使用了無效的線材端接值";
 "Last leg drops from %@ to %@" = "最後一段從 %1$@ 降到 %2$@";
 "This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "此線材的 e-marker 未回報 Vendor ID，這在正規線材上相當常見。只有當線材的其它規格資料也出現不一致時，才值得進一步留意。";
-"Linked at %@" = "已以 %@ 連線";
+"Linked at %@" = "目前連線速率：%@";
 "Negotiation hasn't completed yet." = "協商尚未完成。";
 "Charger on standby" = "充電器待命中";
 "Another charger is powering the Mac right now. macOS draws from one charger at a time, so this charger stays on standby until the other is unplugged." = "目前有另一個充電器正在為 Mac 供電。macOS 一次只會從一個充電器取電，因此此充電器會維持待命狀態，直到另一個充電器中斷連接。";
