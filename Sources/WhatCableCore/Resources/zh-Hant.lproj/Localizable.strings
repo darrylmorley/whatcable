@@ -17,7 +17,7 @@
 "Cable has an e-marker chip (advertises its capabilities)" = "線材有 e-marker 晶片（會宣告自身規格）";
 "Cable is limiting charging speed" = "線材限制了充電速度";
 "Cable identified as %@" = "線材已識別為 %@";
-"This e-marker is used in: %@" = "此 e-marker 用於：%@";
+"This e-marker is used in: %@" = "採用此 e-marker 的線材：%@";
 "Cable made by %@" = "線材製造商：%@";
 "Cable rated for %@ at up to %lldV (~%lldW)" = "線材額定 %1$@，最高 %2$lldV（約 %3$lldW）";
 "Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "線材額定規格為 %1$lldV / %2$@，最高可承載 %3$lldW（USB-PD 上限為 48V）";
