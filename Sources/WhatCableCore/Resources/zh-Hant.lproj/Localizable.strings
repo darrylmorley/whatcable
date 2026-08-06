@@ -379,7 +379,7 @@
 "MagSafe pin diagrams" = "MagSafe 針腳圖";
 "Manage Licence…" = "管理授權…";
 "See exactly what each link can do, and where the bottleneck is." = "精確查看每個連線能做什麼，以及限制因素在哪裡。";
-"Find the weak link in a connection and keep the evidence: deep diagnostics, live power, cable history. One-off licence, no subscription." = "找出連線中的弱點並保留證據：進階診斷、即時功率、線材歷史記錄。一次授權，無需訂閱。";
+"Find the weak link in a connection and keep the evidence: deep diagnostics, live power, cable history. One-off licence, no subscription." = "找出連線中的限制因素，並保留相關資料：進階診斷、即時功率與線材歷史記錄。一次授權，無需訂閱。";
 "Cable says %@, link reads %@" = "線材顯示為 %@，連線偵測為 %@";
 "The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "線材的 e-marker 回報 %@，但目前作用中的連線偵測為 %@。其中一方的讀數有誤，而在沒有 Thunderbolt 控制器交叉比對的情況下，無法判斷是哪一方錯誤。嘗試使用已知正常的線材即可找出問題來源。";
 "Data blocked by macOS accessory security" = "資料傳輸已被 macOS 配件安全性封鎖";
