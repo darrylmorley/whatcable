@@ -144,8 +144,22 @@ extension ChargingDiagnostic {
         } else if let n = negotiatedW, n < chargerMaxW - max(5, chargerMaxW / 10),
                   (cableMaxW.map { n < $0 - max(5, $0 / 10) } ?? true) {
             self.bottleneck = .macLimit(negotiatedW: n, chargerW: chargerMaxW, cableW: cableMaxW)
-            self.summary = String(localized: "Charging at \(n)W (charger can do up to \(chargerMaxW)W)", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle.", bundle: _coreLocalizedBundle)
+            // The Mac negotiated below the charger ceiling, but it may still not
+            // be actively charging (battery full / charge on hold). Surface those
+            // states with the same summaries the `.fine` arm uses, instead of
+            // implying active charging with "Charging at XW". The bottleneck
+            // stays `.macLimit`; only the human-facing copy branches on battery
+            // state, and these reuse the existing localised keys verbatim.
+            if batteryFullyCharged == true {
+                self.summary = String(localized: "Battery full, not charging", bundle: _coreLocalizedBundle)
+                self.detail = String(localized: "Charger and cable are fine. The Mac will draw up to \(n)W when it needs to.", bundle: _coreLocalizedBundle)
+            } else if batteryIsCharging == false {
+                self.summary = String(localized: "Plugged in, charging on hold", bundle: _coreLocalizedBundle)
+                self.detail = String(localized: "Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger.", bundle: _coreLocalizedBundle)
+            } else {
+                self.summary = String(localized: "Charging at \(n)W (charger can do up to \(chargerMaxW)W)", bundle: _coreLocalizedBundle)
+                self.detail = String(localized: "Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle.", bundle: _coreLocalizedBundle)
+            }
         } else if let n = negotiatedW {
             self.bottleneck = .fine(negotiatedW: n)
             if batteryFullyCharged == true {

@@ -215,6 +215,75 @@ struct ChargingDiagnosticTests {
         #expect(diag!.isWarning == false)
     }
 
+    // MARK: - macLimit + battery state (the intersection)
+
+    @Test("macLimit with a full battery reports 'Battery full', not 'Charging at XW'")
+    func macLimitWithFullBatterySaysNotCharging() {
+        // 100W charger, Mac negotiated only 30W (would be .macLimit), but the
+        // battery is full. The banner must say so, not imply active charging
+        // with "Charging at 30W" — the same rule the `.fine` arm already applies.
+        let diag = ChargingDiagnostic(
+            port: port,
+            sources: [usbPD(maxW: 100, winningW: 30)],
+            identities: [],
+            batteryFullyCharged: true
+        )
+        guard case .macLimit(let n, let chargerW, let cableW) = diag?.bottleneck else {
+            Issue.record("expected .macLimit, got \(String(describing: diag?.bottleneck))")
+            return
+        }
+        #expect(n == 30)
+        #expect(chargerW == 100)
+        #expect(cableW == nil)
+        // The bottleneck stays .macLimit; only the copy reflects battery state.
+        #expect(diag!.isWarning == false)
+        #expect(diag!.summary == "Battery full, not charging")
+        #expect(diag!.detail == "Charger and cable are fine. The Mac will draw up to 30W when it needs to.")
+    }
+
+    @Test("macLimit with charging on hold reports 'charging on hold', not 'Charging at XW'")
+    func macLimitWithChargeHoldSaysOnHold() {
+        // 100W charger, Mac negotiated only 30W (.macLimit), but charging is on
+        // hold (charge limit / Optimized Battery Charging). The banner must
+        // reflect the hold, mirroring the `.fine` arm — not "Charging at 30W".
+        // An adapter is supplied because `onBattery` is true when
+        // batteryIsCharging == false with no adapter (see chargeHoldIsNotAWarning).
+        let diag = ChargingDiagnostic(
+            port: port,
+            sources: [usbPD(maxW: 100, winningW: 30)],
+            identities: [],
+            adapter: AdapterInfo(watts: 100, isCharging: nil, source: "AC"),
+            batteryIsCharging: false
+        )
+        guard case .macLimit(let n, _, _) = diag?.bottleneck else {
+            Issue.record("expected .macLimit, got \(String(describing: diag?.bottleneck))")
+            return
+        }
+        #expect(n == 30)
+        #expect(diag!.isWarning == false)
+        #expect(diag!.summary == "Plugged in, charging on hold")
+        #expect(diag!.detail == "Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger.")
+    }
+
+    @Test("macLimit while actively charging keeps the 'Charging at XW' summary")
+    func macLimitWithActiveChargingReportsNegotiatedWatts() {
+        // 100W charger, Mac negotiated 30W, battery charging normally / state
+        // unknown. The legitimate macLimit summary is unchanged by the fix.
+        let diag = ChargingDiagnostic(
+            port: port,
+            sources: [usbPD(maxW: 100, winningW: 30)],
+            identities: []
+        )
+        guard case .macLimit(let n, let chargerW, _) = diag?.bottleneck else {
+            Issue.record("expected .macLimit, got \(String(describing: diag?.bottleneck))")
+            return
+        }
+        #expect(n == 30)
+        #expect(chargerW == 100)
+        #expect(diag!.isWarning == false)
+        #expect(diag!.summary == "Charging at 30W (charger can do up to 100W)")
+    }
+
     @Test("Everything matched")
     func everythingMatched() {
         // 96W charger + 100W cable + 96W winning -> .fine
