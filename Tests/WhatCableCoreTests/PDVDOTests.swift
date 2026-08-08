@@ -74,6 +74,34 @@ struct PDVDOTests {
         #expect(header.dfpProductType.label == "Power Brick")
     }
 
+    @Test("Power-brick ID header is not a cable for trust softening")
+    func powerBrickIDHeaderNotACableForTrustSoftening() {
+        // A registered charger (Anker 0x291A, DFP raw 3 = Power Brick per
+        // Table 6.34) answering at SOP as the port partner. The strict
+        // `isCable` field is false; the lenient `identifiesAsCable` heuristic
+        // still returns true because raw DFP 3 happens to match the UFP
+        // passive-cable value. That overlap is exactly why
+        // `CableTrustReport.partnerIsRegisteredCable` adds an explicit
+        // `dfpProductType != .powerBrick` guard on top of `identifiesAsCable`
+        // rather than relying on it.
+        //
+        // Characterization guard (not red→green): the chosen fix catches the
+        // brick at the trust layer, so `identifiesAsCable` is intentionally
+        // left true here and the red→green proof lives in CableTrustReportTests.
+        let sop = USBPDSOP(
+            id: 1, endpoint: .sop, parentPortType: 0, parentPortNumber: 0,
+            vendorID: 0x291A, productID: 0, bcdDevice: 0,
+            vdos: [(3 << 23) | UInt32(0x291A)],   // DFP raw 3 = Power Brick, Anker VID
+            specRevision: 3
+        )
+        #expect(sop.idHeader?.dfpProductType == .powerBrick)
+        #expect(sop.idHeader?.isCable == false)
+        // Raw-bit heuristic still matches; the trust report refuses to soften
+        // on top of this, it does not narrow the heuristic itself.
+        #expect(sop.idHeader?.dfpRawValueLooksLikeCable == true)
+        #expect(sop.identifiesAsCable == true)
+    }
+
     @Test("UFP passive cable (011) is still a cable (SOP' regression guard)")
     func ufpPassiveCableStillIsCable() {
         // UFP product type = 011 (Passive Cable). Bits 29..27.

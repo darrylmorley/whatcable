@@ -332,10 +332,15 @@ struct CableTrustReportTests {
     @Test("DFP-only cable plug still softens the blank e-marker")
     func blankEmarkerSoftenedWhenPlugCableTypeInDFP() {
         // Corpus reality: some cables (e.g. Southchip 0x311C, Kejinming 0x2F16)
-        // respond at SOP with UFP = undefined and DFP bits set to 3 (which the
-        // spec calls Power Brick, but these cables use with UFP-cable semantics).
-        // `identifiesAsCable` catches this via `dfpRawValueLooksLikeCable`.
-        let partner = partnerIdentity(vendorID: 0x05AC, productType: 3, inDFP: true)
+        // respond at SOP with UFP = undefined and the cable type placed in the
+        // DFP field. `identifiesAsCable` catches this via `dfpRawValueLooksLikeCable`.
+        //
+        // The genuinely cable-shaped DFP value is raw 4 (the UFP active-cable
+        // value reused in the DFP field): `.reserved4` is not a real product
+        // type, so it is safe to treat as a non-compliant cable. Raw DFP 3 is
+        // spec-defined Power Brick (Table 6.34) — a charger, not a cable — and
+        // is covered separately by `blankEmarkerNotSoftenedByRegisteredPowerBrick`.
+        let partner = partnerIdentity(vendorID: 0x05AC, productType: 4, inDFP: true)
         let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
         #expect(report.flags == [.eMarkerVIDBlankRegisteredPartner(0x05AC)])
     }
@@ -357,6 +362,57 @@ struct CableTrustReportTests {
         let partner = partnerIdentity(vendorID: 0xDEAD, productType: 3) // passive cable
         let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
         #expect(report.flags == [.zeroVendorID(corroborated: true)])
+    }
+
+    // MARK: - Power-brick plug must not soften a blank e-marker
+    // A registered charger (Anker/Apple/Samsung, DFP raw 3 = Power Brick per
+    // USB PD R3.2 Table 6.34) on the far end of a VID-less cable is a connected
+    // device, not the cable. Its VID says nothing about the cable's origin, so
+    // it must NOT be credited as the cable's maker.
+
+    @Test("A registered power brick does NOT soften a corroborated blank e-marker")
+    func blankEmarkerNotSoftenedByRegisteredPowerBrick() {
+        // Same VID-less, well-formed cable that
+        // `blankEmarkerSoftenedByRegisteredCablePlug` softens for a real cable
+        // plug — but the plug is an Anker brick (DFP raw 3 = Power Brick,
+        // registered VID 0x291A). The brick is a device, so the blank e-marker
+        // stays zeroVendorID.
+        //
+        // RED on main: emits `.eMarkerVIDBlankRegisteredPartner(0x291A)` (note).
+        // GREEN after the .powerBrick guard: `.zeroVendorID(corroborated: true)`.
+        let partner = partnerIdentity(vendorID: 0x291A, productType: 3, inDFP: true) // Anker power brick
+        let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
+        #expect(report.flags == [.zeroVendorID(corroborated: true)])
+        #expect(report.flags.first?.severity == .note)
+        #expect(
+            !report.flags.contains { if case .eMarkerVIDBlankRegisteredPartner = $0 { return true }; return false },
+            "a power brick's VID must not be credited as the cable's maker"
+        )
+    }
+
+    @Test("A registered power brick does NOT soften an uncorroborated blank-e-marker warning")
+    func blankEmarkerNotSoftenedByRegisteredPowerBrick_uncorroborated() {
+        // The reported scenario: a VID-less e-marker whose capability VDO was
+        // not read, so the blank ID is uncorroborated and reads as a warning.
+        // On main the brick softens that warning down to a benign note; the
+        // fix keeps the warning. This is the headline regression.
+        //
+        // RED on main: emits `.eMarkerVIDBlankRegisteredPartner(0x291A)` (note).
+        // GREEN after the fix: `.zeroVendorID(corroborated: false)` (warning).
+        let cable = USBPDSOP(
+            id: 1, endpoint: .sopPrime, parentPortType: 0, parentPortNumber: 0,
+            vendorID: 0, productID: 0, bcdDevice: 0,
+            vdos: [(3 << 27)],   // passive cable type, VID 0; no Cable VDO read
+            specRevision: 3
+        )
+        let partner = partnerIdentity(vendorID: 0x291A, productType: 3, inDFP: true) // Anker power brick
+        let report = CableTrustReport(identity: cable, partner: partner)
+        #expect(report.flags == [.zeroVendorID(corroborated: false)])
+        #expect(report.flags.first?.severity == .warning)
+        #expect(
+            !report.flags.contains { if case .eMarkerVIDBlankRegisteredPartner = $0 { return true }; return false },
+            "a power brick must not soften the blank-e-marker warning into a note"
+        )
     }
 
     @Test("With no plug, a blank e-marker still fires the blank-VID flag")

@@ -51,8 +51,23 @@ public struct CableTrustReport: Hashable {
         // belong to *this cable* (not a connected device), so only then can
         // it soften a blank e-marker VID. We require registration, not just
         // a non-zero value: a registered VID is real proof of a known maker.
+        //
+        // We additionally refuse to soften when the plug's DFP product type
+        // decodes as a Power Brick (DFP raw 3, USB PD R3.2 Table 6.34). A
+        // registered charger on the far end of a VID-less cable is a connected
+        // device, not the cable itself, so its VID says nothing about the
+        // cable's origin — crediting it would present the brick's maker (Anker,
+        // Apple, Samsung, …) as the cable's. The raw-DFP-3 bit pattern also
+        // matches non-compliant cables that put their UFP cable type in the
+        // DFP field; those lose the partner note as a result but keep a calm
+        // zeroVendorID note rather than a counterfeit warning. The DFP raw 4
+        // (active-cable lookalike) case still softens, since `.reserved4` is
+        // not a real product type.
         let partnerIsRegisteredCable = partner.map {
-            $0.identifiesAsCable && $0.vendorID != 0 && VendorDB.isRegistered($0.vendorID)
+            $0.identifiesAsCable
+                && $0.idHeader?.dfpProductType != .powerBrick
+                && $0.vendorID != 0
+                && VendorDB.isRegistered($0.vendorID)
         } ?? false
 
         // A blank vendor ID reads very differently depending on whether the

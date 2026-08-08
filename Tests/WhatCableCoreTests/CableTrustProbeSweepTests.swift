@@ -85,10 +85,12 @@ struct CableTrustProbeSweepTests {
         return result
     }
 
-    /// Build the trust report for the port whose cable e-marker reports a
-    /// zeroed vendor ID, pairing it with that same port's SOP partner.
-    /// Returns nil when the folder has no such port.
-    private static func reportForZeroedEmarkerPort(probe: String) -> CableTrustReport? {
+    /// Find the port whose cable e-marker reports a zeroed vendor ID and build
+    /// its trust report, paired with that same port's SOP partner (the plug).
+    /// Returns the report and the partner it was built from, so callers inspect
+    /// the exact plug the report used (not a global first-match SOP — which
+    /// matters on multi-port probes). Nil when the folder has no such port.
+    private static func zeroedEmarkerPort(probe: String) -> (report: CableTrustReport, partner: USBPDSOP?)? {
         let ids = identities(probe: probe)
         let byPort = Dictionary(grouping: ids, by: \.parentPortNumber)
         for (_, eps) in byPort {
@@ -96,7 +98,7 @@ struct CableTrustProbeSweepTests {
                 ($0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime) && $0.vendorID == 0
             }) else { continue }
             let partner = eps.first { $0.endpoint == .sop }
-            return CableTrustReport(identity: emarker, partner: partner)
+            return (report: CableTrustReport(identity: emarker, partner: partner), partner: partner)
         }
         return nil
     }
@@ -125,23 +127,53 @@ struct CableTrustProbeSweepTests {
     /// The #250 shape: plug identifies the cable as a registered vendor while
     /// the e-marker reads blank. These two folders carry that shape (the plug
     /// declares the cable type in the DFP field, ufp=undefined).
-    @Test("Registered-cable plug softens the blank e-marker (real probes)", arguments: [
+    ///
+    /// After the power-brick fix, a plug whose DFP field decodes as a Power
+    /// Brick (DFP raw 3) must NOT soften — a charger is a device, not the
+    /// cable. The Southchip/Kejinming plugs put the cable type in the DFP field
+    /// non-compliantly; their raw value is private customer data not visible to
+    /// this test, so the assertion encodes the spec-correct outcome for whichever
+    /// raw value the plug actually emits (3 = Power Brick → no soften; 4 =
+    /// active-cable lookalike → soften).
+    @Test("Registered-cable plug softens the blank e-marker unless it is a power brick (real probes)", arguments: [
         "m1_macos15.6.1",   // plug VID 0x311C (Southchip), registered
         "m1_macos26.5_r",   // plug VID 0x2F16 (Shenzhen Kejinming), registered
     ])
     func registeredCablePlugSoftens(probe: String) {
-        guard let report = Self.reportForZeroedEmarkerPort(probe: probe) else {
+        guard let result = Self.zeroedEmarkerPort(probe: probe) else {
             Issue.record("\(probe): expected a port with a zeroed e-marker")
             return
         }
-        #expect(
-            report.flags.contains { if case .eMarkerVIDBlankRegisteredPartner = $0 { return true }; return false },
-            "\(probe): plug identifies the cable as a registered vendor, so the blank e-marker must soften to a note"
-        )
-        #expect(
-            !report.flags.contains { $0.code == "zeroVendorID" },
-            "\(probe): the blank-VID flag must not fire when the cable is registered at the plug"
-        )
+        let report = result.report
+        // Pin the verdict to the same-port partner the report used, not a
+        // global first-match SOP (matters on multi-port probes).
+        let plugIsPowerBrick = result.partner?.idHeader?.dfpProductType == .powerBrick
+
+        if plugIsPowerBrick {
+            // DFP raw 3 = Power Brick: a charger on the far end. Its VID is not
+            // the cable's, so the blank e-marker stays zeroVendorID and is never
+            // credited to the brick's maker.
+            #expect(
+                report.flags.contains { $0.code == "zeroVendorID" },
+                "\(probe): a power-brick plug must not soften the blank e-marker"
+            )
+            #expect(
+                !report.flags.contains { if case .eMarkerVIDBlankRegisteredPartner = $0 { return true }; return false },
+                "\(probe): a power-brick plug's VID must not be credited to the cable"
+            )
+        } else {
+            // DFP raw 4 (active-cable lookalike) or a UFP cable type: the plug
+            // identifies the cable as a registered vendor, so the blank e-marker
+            // softens to a neutral note.
+            #expect(
+                report.flags.contains { if case .eMarkerVIDBlankRegisteredPartner = $0 { return true }; return false },
+                "\(probe): plug identifies the cable as a registered vendor, so the blank e-marker must soften to a note"
+            )
+            #expect(
+                !report.flags.contains { $0.code == "zeroVendorID" },
+                "\(probe): the blank-VID flag must not fire when the cable is registered at the plug"
+            )
+        }
     }
 
     /// The 20-case guard: a zeroed e-marker next to a registered *device*
@@ -153,7 +185,7 @@ struct CableTrustProbeSweepTests {
         "m4pro_macos26.5_d",   // plug 0x0BDA Realtek, peripheral
     ])
     func registeredDevicePlugDoesNotSoften(probe: String) {
-        guard let report = Self.reportForZeroedEmarkerPort(probe: probe) else {
+        guard let report = Self.zeroedEmarkerPort(probe: probe)?.report else {
             Issue.record("\(probe): expected a port with a zeroed e-marker")
             return
         }
