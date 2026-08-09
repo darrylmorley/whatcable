@@ -104,8 +104,16 @@ public struct EDIDInfo: Hashable, Sendable {
             let hBlank  = Int(bytes[off + 3]) | ((Int(bytes[off + 4]) & 0x0F) << 8)
             let vActive = Int(bytes[off + 5]) | ((Int(bytes[off + 7]) >> 4) << 8)
             let vBlank  = Int(bytes[off + 6]) | ((Int(bytes[off + 7]) & 0x0F) << 8)
-            let hTotal = hActive + hBlank
-            let vTotal = vActive + vBlank
+            // EDID 1.4 detailed-timing border bytes: offset +15 is the
+            // horizontal border and +16 the vertical border, and each value
+            // is per side, so the active picture is flanked by two of them.
+            // Border pixels occupy pixel-clock cycles, so they widen the
+            // total period and must be counted (twice) in the refresh
+            // denominator — omitting them makes the rate read too high.
+            let hBorder = Int(bytes[off + 15])
+            let vBorder = Int(bytes[off + 16])
+            let hTotal = hActive + hBlank + 2 * hBorder
+            let vTotal = vActive + vBlank + 2 * vBorder
             width = hActive
             height = vActive
             pixelClockHz = clockHz

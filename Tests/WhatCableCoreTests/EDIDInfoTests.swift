@@ -167,4 +167,107 @@ struct EDIDInfoTests {
         // The name is truncated to nothing before the bad byte, so it should be nil.
         #expect(edid.monitorName == nil)
     }
+
+    // MARK: - Detailed-timing border bytes and the preferred refresh rate
+
+    /// Build a minimal valid 128-byte EDID 1.4 base block whose first
+    /// descriptor slot (offset 54) carries a detailed timing with the given
+    /// fields. Only the bytes `EDIDInfo` reads are populated: the 8-byte
+    /// header, the 1.4 version bytes, the 18-byte detailed timing at offset
+    /// 54, and a zero extension count (byte 126). The other three descriptor
+    /// slots stay zero, so they are inert — a zero pixel clock is not a
+    /// detailed timing, and a zero descriptor tag is not a monitor descriptor.
+    /// Used to exercise the preferred-mode parse in isolation, in particular
+    /// the refresh-rate formula's handling of the horizontal/vertical border
+    /// bytes (detailed-timing offsets +15 / +16 per the EDID 1.4 spec).
+    static func syntheticDetailedTimingBaseBlock(
+        hActive: Int, hBlank: Int,
+        vActive: Int, vBlank: Int,
+        hBorder: Int, vBorder: Int,
+        pixelClock10kHz: Int
+    ) -> [UInt8] {
+        var bytes = [UInt8](repeating: 0, count: 128)
+        let header: [UInt8] = [0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00]
+        for (i, b) in header.enumerated() { bytes[i] = b }
+        bytes[18] = 1   // EDID 1.4
+        bytes[19] = 4
+        bytes[126] = 0  // no extension blocks
+
+        let off = 54 // first descriptor slot == preferred timing
+        // Pixel clock in 10 kHz units, little-endian word.
+        bytes[off]     = UInt8(truncatingIfNeeded: pixelClock10kHz)
+        bytes[off + 1] = UInt8(truncatingIfNeeded: pixelClock10kHz >> 8)
+        // Active / blanking are split across a low byte and a high nibble.
+        bytes[off + 2] = UInt8(truncatingIfNeeded: hActive)
+        bytes[off + 3] = UInt8(truncatingIfNeeded: hBlank)
+        bytes[off + 4] = UInt8(truncatingIfNeeded: (((hActive >> 8) << 4) | ((hBlank >> 8) & 0x0F)))
+        bytes[off + 5] = UInt8(truncatingIfNeeded: vActive)
+        bytes[off + 6] = UInt8(truncatingIfNeeded: vBlank)
+        bytes[off + 7] = UInt8(truncatingIfNeeded: (((vActive >> 8) << 4) | ((vBlank >> 8) & 0x0F)))
+        bytes[off + 15] = UInt8(truncatingIfNeeded: hBorder) // horizontal border, each side
+        bytes[off + 16] = UInt8(truncatingIfNeeded: vBorder) // vertical border, each side
+        return bytes
+    }
+
+    @Test("Preferred refresh accounts for non-zero h/v borders (lowers the rate)")
+    func preferredRefreshHzAccountsForBorders() throws {
+        // 1920x1080 active, 148.5 MHz pixel clock, with a 16-pixel horizontal
+        // border and an 8-line vertical border on each side. Hand-computed
+        // period (borders counted twice — one per side):
+        //   hTotal = 1920 + 280 + 2×16 = 2232
+        //   vTotal = 1080 +  45 + 2×8  = 1141
+        //   rate   = round(148_500_000 / (2232 × 1141)) = round(58.31) = 58
+        // Without borders the period would be 2200 × 1125 and the rate 60 —
+        // the too-high value this test guards against.
+        let bytes = Self.syntheticDetailedTimingBaseBlock(
+            hActive: 1920, hBlank: 280,
+            vActive: 1080, vBlank: 45,
+            hBorder: 16, vBorder: 8,
+            pixelClock10kHz: 14850
+        )
+        let edid = try #require(EDIDInfo(Data(bytes)))
+        // Borders are timing overhead, not addressable pixels: the reported
+        // resolution stays the active (addressable) area.
+        #expect(edid.preferredWidth == 1920)
+        #expect(edid.preferredHeight == 1080)
+        #expect(edid.preferredRefreshHz == 58)
+    }
+
+    @Test("Zero borders leave the preferred refresh rate unchanged (control)")
+    func preferredRefreshHzZeroBordersControl() throws {
+        // Same timing as the bordered case but with zero borders: the rate is
+        // the plain 148_500_000 / (2200 × 1125) = 60. This must hold both
+        // before and after the border fix, proving borders are only ever added.
+        let bytes = Self.syntheticDetailedTimingBaseBlock(
+            hActive: 1920, hBlank: 280,
+            vActive: 1080, vBlank: 45,
+            hBorder: 0, vBorder: 0,
+            pixelClock10kHz: 14850
+        )
+        let edid = try #require(EDIDInfo(Data(bytes)))
+        #expect(edid.preferredRefreshHz == 60)
+    }
+
+    @Test("Each border axis widens the period independently and on both sides")
+    func preferredRefreshHzAppliesEachBorderAxis() throws {
+        // Horizontal border only (16 px each side): hTotal = 2232, vTotal = 1125.
+        //   rate = round(148_500_000 / (2232 × 1125)) = round(59.10) = 59
+        let hOnly = Self.syntheticDetailedTimingBaseBlock(
+            hActive: 1920, hBlank: 280,
+            vActive: 1080, vBlank: 45,
+            hBorder: 16, vBorder: 0,
+            pixelClock10kHz: 14850
+        )
+        #expect(try #require(EDIDInfo(Data(hOnly))).preferredRefreshHz == 59)
+
+        // Vertical border only (8 lines each side): hTotal = 2200, vTotal = 1141.
+        //   rate = round(148_500_000 / (2200 × 1141)) = round(59.16) = 59
+        let vOnly = Self.syntheticDetailedTimingBaseBlock(
+            hActive: 1920, hBlank: 280,
+            vActive: 1080, vBlank: 45,
+            hBorder: 0, vBorder: 8,
+            pixelClock10kHz: 14850
+        )
+        #expect(try #require(EDIDInfo(Data(vOnly))).preferredRefreshHz == 59)
+    }
 }
