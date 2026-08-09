@@ -167,4 +167,85 @@ struct EDIDInfoTests {
         // The name is truncated to nothing before the bad byte, so it should be nil.
         #expect(edid.monitorName == nil)
     }
+
+    // MARK: - Detailed-timing border bytes and the refresh rate
+
+    /// Build a minimal 128-byte EDID 1.4 base block carrying a single
+    /// detailed-timing descriptor in the first descriptor slot (offset 54, the
+    /// preferred-timing slot) with the supplied active area, blanking, and
+    /// per-side borders. Every other byte is zero apart from the fixed 8-byte
+    /// header and a correct block checksum. It lets the border math be exercised
+    /// on a hand-computed timing, in isolation from a real capture's confounding
+    /// fields (sync, image size, range limits).
+    static func syntheticEDID(
+        clock10kHz: Int,
+        hActive: Int, hBlank: Int,
+        vActive: Int, vBlank: Int,
+        hBorder: Int, vBorder: Int
+    ) -> [UInt8] {
+        var bytes = [UInt8](repeating: 0, count: 128)
+        // Fixed EDID header: 00 FF FF FF FF FF FF 00.
+        bytes[0] = 0x00
+        for i in 1...6 { bytes[i] = 0xFF }
+        bytes[7] = 0x00
+        bytes[18] = 1  // EDID structure version
+        bytes[19] = 4  // revision 4 (EDID 1.4)
+
+        let off = 54 // first detailed-timing descriptor = the preferred timing
+        bytes[off]      = UInt8(truncatingIfNeeded: clock10kHz)
+        bytes[off + 1]  = UInt8(truncatingIfNeeded: clock10kHz >> 8)
+        bytes[off + 2]  = UInt8(truncatingIfNeeded: hActive)
+        bytes[off + 3]  = UInt8(truncatingIfNeeded: hBlank)
+        bytes[off + 4]  = UInt8(truncatingIfNeeded: ((hActive >> 8) << 4) | (hBlank >> 8))
+        bytes[off + 5]  = UInt8(truncatingIfNeeded: vActive)
+        bytes[off + 6]  = UInt8(truncatingIfNeeded: vBlank)
+        bytes[off + 7]  = UInt8(truncatingIfNeeded: ((vActive >> 8) << 4) | (vBlank >> 8))
+        // Per the EDID 1.4 detailed-timing layout, bytes +15/+16 are the
+        // per-side horizontal/vertical borders. Each side of the image carries
+        // that many pixels/lines, so a full frame includes 2x each.
+        bytes[off + 15] = UInt8(truncatingIfNeeded: hBorder)
+        bytes[off + 16] = UInt8(truncatingIfNeeded: vBorder)
+
+        // EDID block checksum: byte 127 makes the 128-byte sum a multiple of 256.
+        var sum = 0
+        for b in bytes[0..<127] { sum += Int(b) }
+        bytes[127] = UInt8(truncatingIfNeeded: 256 - sum)
+        return bytes
+    }
+
+    @Test("Preferred refresh is 60 Hz for a borderless 1080p timing")
+    func controlTimingWithoutBorders() throws {
+        // 1920x1080 at a 148.5 MHz pixel clock: a 2200x1125 frame is exactly
+        // 60.00 Hz. No borders, so this is the anchor the bordered case is
+        // compared against.
+        let edid = try #require(EDIDInfo(Data(Self.syntheticEDID(
+            clock10kHz: 14850,
+            hActive: 1920, hBlank: 280,
+            vActive: 1080, vBlank: 45,
+            hBorder: 0, vBorder: 0))))
+        #expect(edid.preferredWidth == 1920)
+        #expect(edid.preferredHeight == 1080)
+        #expect(edid.preferredRefreshHz == 60)
+    }
+
+    @Test("Preferred refresh drops when the detailed timing declares borders")
+    func borderedTimingLowerRefresh() throws {
+        // Same 1920x1080 active area and 148.5 MHz clock as the control, but
+        // with a 20-pixel horizontal border on each side and a 5-line vertical
+        // border on each side. Those border pixels/lines are part of every
+        // frame, so the totals grow to 2240x1135 and the refresh falls:
+        // 148,500,000 / (2240 * 1135) = 58.37 Hz -> 58 Hz. Before the border fix
+        // the totals ignored the borders (2200x1125) and the mode read as 60 Hz,
+        // i.e. too high — exactly the regression this test pins down.
+        let edid = try #require(EDIDInfo(Data(Self.syntheticEDID(
+            clock10kHz: 14850,
+            hActive: 1920, hBlank: 280,
+            vActive: 1080, vBlank: 45,
+            hBorder: 20, vBorder: 5))))
+        // The addressable image (the resolution the monitor runs at) is
+        // unchanged: borders are black bars around the image, not part of it.
+        #expect(edid.preferredWidth == 1920)
+        #expect(edid.preferredHeight == 1080)
+        #expect(edid.preferredRefreshHz == 58)
+    }
 }

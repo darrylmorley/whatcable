@@ -104,8 +104,15 @@ public struct EDIDInfo: Hashable, Sendable {
             let hBlank  = Int(bytes[off + 3]) | ((Int(bytes[off + 4]) & 0x0F) << 8)
             let vActive = Int(bytes[off + 5]) | ((Int(bytes[off + 7]) >> 4) << 8)
             let vBlank  = Int(bytes[off + 6]) | ((Int(bytes[off + 7]) & 0x0F) << 8)
-            let hTotal = hActive + hBlank
-            let vTotal = vActive + vBlank
+            // Per-side borders (EDID 1.4 detailed-timing bytes +15/+16) frame
+            // the image on BOTH sides, so a full line/column carries 2x each.
+            // They are active pixels/lines the pixel clock still has to scan, so
+            // omitting them shrinks the totals and inflates the computed refresh
+            // for any descriptor that declares a non-zero border.
+            let hBorder = Int(bytes[off + 15])
+            let vBorder = Int(bytes[off + 16])
+            let hTotal = hActive + hBlank + 2 * hBorder
+            let vTotal = vActive + vBlank + 2 * vBorder
             width = hActive
             height = vActive
             pixelClockHz = clockHz
