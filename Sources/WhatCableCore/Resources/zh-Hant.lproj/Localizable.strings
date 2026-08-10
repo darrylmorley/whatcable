@@ -88,7 +88,7 @@
 "The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報線材延遲值 %lld；對於此線材類型，該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報電流值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報速度值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
-"The cable's e-marker reports vendor %@, which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies." = "線材的 e-marker 回報廠商 %@，但它不在內建 USB-IF 清單中。這個編號可能尚未分配、遭到複製，或是在內建清單產生後才分配。單獨來看，這不足以證明有問題；但疑似仿冒的線材通常還會有其它不一致的地方。";
+"The cable's e-marker reports vendor %@, which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies." = "線材的 e-marker 回報廠商 %@，但它不在內建的 USB-IF 清單中。這個編號可能尚未分配、遭到複製，或是在內建清單產生後才分配。單獨來看，這不足以證明有問題；但疑似仿冒的線材通常還會有其它不一致的地方。";
 "Thunderbolt / USB4" = "Thunderbolt / USB4";
 "Thunderbolt / USB4 link active" = "Thunderbolt / USB4 連線作用中";
 "Thunderbolt / USB4 · %lldW charger" = "Thunderbolt / USB4 · %lldW 充電器";
