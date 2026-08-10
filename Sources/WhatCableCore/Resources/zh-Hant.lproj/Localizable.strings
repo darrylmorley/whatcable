@@ -576,7 +576,7 @@
 "%@ isn't in our bundled vendor list" = "%1$@ 未收錄於內建廠商清單中";
 "%@ isn't in our copy of the USB-IF registry" = "%1$@ 未收錄於 WhatCable 內建的 USB-IF 登錄資料中";
 "What your Mac measured" = "您的 Mac 測得的資訊";
-"What the cable's e-marker reports" = "線材的 e-marker 回報的資訊";
+"What the cable's e-marker reports" = "線材 e-marker 回報的資訊";
 "What the charger reports" = "充電器回報的資訊";
 "What WhatCable knows" = "WhatCable 已知的資訊";
 "Made by %@ (%@), per our bundled vendor list" = "根據內建廠商清單，製造商為 %1$@ (%2$@)";
