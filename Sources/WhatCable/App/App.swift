@@ -271,7 +271,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         activateApp()
         if AppSettings.shared.useMenuBarMode {
             if let button = statusItem?.button, let popover, !popover.isShown {
-                togglePopover(from: button)
+                showPopover(from: button)
             }
         } else if let window {
             window.makeKeyAndOrderFront(nil)
@@ -482,21 +482,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         }
     }
 
-    /// Re-anchor the popover after the status-item button changed width, so its
-    /// arrow stays centred on the button. This works by closing and reopening,
-    /// so it must never run while the popover is pinned (`keepOpen`): that close
-    /// would dismiss a popover the user deliberately kept open. With the live
-    /// watts label on, the label changes width as the number changes (e.g.
-    /// 9W -> 10W), so without this guard a pinned popover snapped shut whenever
-    /// the wattage ticked over. When pinned we accept a slightly off-centre
-    /// arrow rather than shutting the window.
-    private func reseatPopoverAfterWidthChange(button: NSStatusBarButton, widthBefore: CGFloat) {
-        guard !Self.refreshSignal.keepOpen else { return }
-        guard button.frame.width != widthBefore, let popover, popover.isShown else { return }
-        popover.performClose(nil)
-        togglePopover(from: button)
-    }
-
     /// Single entry point that paints the status item for the current state: the
     /// plain glyph, the glyph plus the numeric "NNW" readout, or the glyph plus a
     /// power bar. One renderer so the icon swap, the watts update, and the style
@@ -532,7 +517,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         guard content != lastMenuBarContent else { return }
         lastMenuBarContent = content
 
-        let widthBefore = button.frame.width
         switch content {
         case .glyphOnly(let symbol):
             applyGlyph(to: button, symbolName: symbol)
@@ -548,7 +532,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         button.needsLayout = true
         button.needsDisplay = true
         button.layoutSubtreeIfNeeded()
-        reseatPopoverAfterWidthChange(button: button, widthBefore: widthBefore)
+        // Do not close/reopen a shown popover to re-centre its arrow after this
+        // layout change. `performClose` is asynchronous, so a subsequent show
+        // can observe the popover as still open and close it a second time.
+        // Power updates and cable hotplug can run this path several times in a
+        // burst, making the race especially easy to hit. A briefly off-centre
+        // arrow is preferable to dismissing an active user session.
     }
 
     /// The figure-space-padded "NNW" title for the menu bar watts label. The
@@ -695,27 +684,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         if popover.isShown {
             popover.performClose(nil)
         } else {
-            // Cap the popover to the display the status item lives on, so a tall
-            // panel (e.g. "show technical details" on a small or heavily scaled
-            // screen) can't grow past the screen and push its own header, and the
-            // settings gear with it, up behind the menu bar out of reach (issue
-            // #454). The status-bar button's window sits on the menu-bar screen,
-            // so its visibleFrame is the real room a downward-growing popover has:
-            // it already excludes the menu bar and the Dock. Small allowance for
-            // the popover's own arrow so the whole thing fits. Never taller than
-            // the historic 760 cap, so larger screens are unaffected.
-            if let visibleHeight = (button.window?.screen ?? NSScreen.main)?.visibleFrame.height {
-                Self.refreshSignal.maxPopoverHeight = min(760, visibleHeight - 12)
-            } else {
-                Self.refreshSignal.maxPopoverHeight = 760
-            }
-            Self.refreshSignal.bump()
-            // Refresh the offered update version on open, throttled so it
-            // doesn't hit GitHub on every panel open (issue #372).
-            UpdateChecker.shared.checkIfStale()
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            popover.contentViewController?.view.window?.makeKey()
+            showPopover(from: button)
         }
+    }
+
+    /// Open the popover without toggle semantics. Programmatic callers use this
+    /// after checking visibility so an asynchronous AppKit state transition can
+    /// never turn an intended show into a close.
+    private func showPopover(from button: NSStatusBarButton) {
+        guard let popover, !popover.isShown else { return }
+        // Cap the popover to the display the status item lives on, so a tall
+        // panel (e.g. "show technical details" on a small or heavily scaled
+        // screen) can't grow past the screen and push its own header, and the
+        // settings gear with it, up behind the menu bar out of reach (issue
+        // #454). The status-bar button's window sits on the menu-bar screen,
+        // so its visibleFrame is the real room a downward-growing popover has:
+        // it already excludes the menu bar and the Dock. Small allowance for
+        // the popover's own arrow so the whole thing fits. Never taller than
+        // the historic 760 cap, so larger screens are unaffected.
+        if let visibleHeight = (button.window?.screen ?? NSScreen.main)?.visibleFrame.height {
+            Self.refreshSignal.maxPopoverHeight = min(760, visibleHeight - 12)
+        } else {
+            Self.refreshSignal.maxPopoverHeight = 760
+        }
+        Self.refreshSignal.bump()
+        // Refresh the offered update version on open, throttled so it
+        // doesn't hit GitHub on every panel open (issue #372).
+        UpdateChecker.shared.checkIfStale()
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        popover.contentViewController?.view.window?.makeKey()
     }
 
     private func showMenu(from button: NSStatusBarButton) {
@@ -775,7 +772,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         Self.refreshSignal.showSettings = true
         if AppSettings.shared.useMenuBarMode {
             if let button = statusItem?.button, let popover, !popover.isShown {
-                togglePopover(from: button)
+                showPopover(from: button)
             }
         } else {
             if let window {
