@@ -7,7 +7,7 @@
 "About %@" = "關於 %@";
 "Active" = "作用中";
 "Active cable electronics" = "主動式線材電子元件";
-"All raw IOKit properties (%lld)" = "所有原始 IOKit 屬性 (%lld)";
+"All raw IOKit properties (%lld)" = "所有 raw IOKit 屬性 (%lld)";
 "Behavior" = "行為";
 "Built by %@." = "由 %@ 開發。";
 "Cable trust signals" = "線材驗證資訊";
@@ -98,7 +98,7 @@
 "Privacy" = "隱私權";
 "Pro" = "Pro";
 "Proceed" = "繼續";
-"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version and chip type. This is data macOS already exposes on your Mac." = "原始 IOKit 登錄屬性、您的 Mac 上現有的驅動程式類別清單，以及您的 macOS 版本與晶片類型。這些也是 macOS 本身可提供的資料。";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version and chip type. This is data macOS already exposes on your Mac." = "Raw IOKit 登錄屬性、您的 Mac 上現有的驅動程式類別清單，以及您的 macOS 版本與晶片類型。這些也是 macOS 本身可提供的資料。";
 "What happens" = "會發生什麼";
 "What is collected" = "會收集哪些資料";
 "WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable 會執行 %lld 項 IOKit 探測，讀取您的 Mac 本身可提供的硬體資料。結果會傳送至安全伺服器，以協助改善線材與連接埠偵測。";
