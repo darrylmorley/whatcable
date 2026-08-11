@@ -158,7 +158,7 @@
 "Cable Identity" = "線材識別資訊";
 "Cancel" = "取消";
 "Capability mismatch" = "規格不一致";
-"Connect a USB-C power source to view live telemetry." = "連接 USB-C 電源以查看即時電源資料。";
+"Connect a USB-C power source to view live telemetry." = "連接 USB-C 電源來查看即時電源資料。";
 "Connector" = "連接器";
 "Controller alert: could indicate overcurrent, overtemperature, or a protocol error. Check Port Health for details." = "控制器警示：可能表示過電流、過熱或協定錯誤。請查看「連接埠健康狀況」了解詳細資訊。";
 "Controller app loaded" = "控制器應用程式已載入";
@@ -178,9 +178,9 @@
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "在 SOP 通道上收到 Discover Identity 回應。包含已連接對端的 VID、PID 和規格 VDO（不是線材；線材識別資訊使用 SOP'）。";
 "Display Output" = "顯示輸出";
 "Enabled" = "已啟用";
-"Enter your licence key to unlock pro features." = "輸入授權金鑰以解鎖 Pro 功能。";
-"Measuring while your Mac charges…" = "正在測量,Mac 充電中…";
-"Waiting for charging load to vary. Use your Mac normally to finish the reading." = "等待充電負載變化。請正常使用 Mac 以完成測量。";
+"Enter your licence key to unlock pro features." = "輸入授權金鑰來解鎖 Pro 功能。";
+"Measuring while your Mac charges…" = "正在測量，Mac 充電中…";
+"Waiting for charging load to vary. Use your Mac normally to finish the reading." = "正在等待充電負載變化。請照常使用 Mac 來完成測量。";
 "Event Log" = "事件記錄";
 "FET enable failures" = "FET 啟用失敗次數";
 "FET status" = "FET 狀態";
@@ -295,9 +295,9 @@
 "WhatCable Pro" = "WhatCable Pro";
 "Year of manufacture" = "製造年份";
 "Yes" = "是";
-"Charging resistance" = "充電電阻";
+"Charging resistance" = "充電路徑電阻";
 "experimental" = "實驗性";
-"Resistance of the whole charging path: cable, plugs and charger together. Lower is better. To judge a cable, compare cables on the same charger and port." = "整個充電路徑的電阻:線材、接頭與充電器的總和。數值越低越好。要判斷線材,請在同一充電器與同一連接埠上比較不同線材。";
+"Resistance of the whole charging path: cable, plugs and charger together. Lower is better. To judge a cable, compare cables on the same charger and port." = "整個充電路徑的電阻：包含線材、接頭與充電器。數值越低越好。若要評估線材，請使用相同的充電器與連接埠，再比較不同的線材。";
 
 /* Pro plugin format strings */
 "%@ Port %lld" = "%1$@ 連接埠 %2$lld";
@@ -325,8 +325,8 @@
 /* Widget strings */
 "Cable Status" = "線材狀態";
 "No cable data" = "沒有線材資料";
-"Open WhatCable to start monitoring." = "開啟 WhatCable 以開始監控。";
-"See what your USB-C cables can do at a glance." = "一眼查看 USB-C 線材能做什麼。";
+"Open WhatCable to start monitoring." = "開啟 WhatCable 即可開始監控。";
+"See what your USB-C cables can do at a glance." = "一眼看懂 USB-C 線材能做什麼。";
 
 /* Negotiation diagnostics + Pro UX (PR #55). */
 "The cable's e-marker and the Thunderbolt controller disagree on its speed. The controller measured a higher, confirmed rate, so that figure is used." = "線材的 e-marker 與 Thunderbolt 控制器對速度的判定不一致。控制器測得更高且已確認的速率，因此會使用該數值。";
@@ -582,4 +582,4 @@
 "Made by %@ (%@), per our bundled vendor list" = "根據內建廠商清單，製造商為 %1$@ (%2$@)";
 "Answered, but reported no capability data." = "e-marker 有回應，但未回報任何規格資料。";
 "Certification ID" = "認證 ID";
-"Connect a charger to identify the cable." = "請連接充電器以識別連接線。";
+"Connect a charger to identify the cable." = "請連接充電器來辨識線材。";
