@@ -73,7 +73,7 @@
 "Plug a cable into %@ to see what it can do." = "將線材接到 %@，即可查看它能做什麼。";
 "Power is flowing but no data link is established." = "正在供電，但未建立資料連線。";
 "Power is flowing. No data connection." = "正在供電。沒有資料連線。";
-"Raw IOKit properties:" = "原始 IOKit 屬性：";
+"Raw IOKit properties:" = "Raw IOKit 屬性：";
 "Re-driver" = "Re-driver";
 "Re-timer" = "Re-timer";
 "Reserved" = "保留";
@@ -125,7 +125,7 @@
 "Charger connected. Battery is full, so the Mac isn't drawing power." = "充電器已連接。電池已充滿，因此 Mac 未取用電力。";
 "Per-port negotiation data is not available. Wattage is from the system-wide adapter reading." = "無法取得各連接埠的協商資料。瓦數來自系統層級的電源轉接器讀數。";
 "Plugged in · battery full" = "已接上 · 電池已充滿";
-"Try a higher-wattage charger to identify the cable." = "嘗試使用更高瓦數的充電器來辨識線材。";
+"Try a higher-wattage charger to identify the cable." = "嘗試使用更高瓦數的充電器來識別線材。";
 "No data link or charger detected on this port." = "在此連接埠上未偵測到資料連線或充電器。";
 "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)" = "USB4 Gen 3（40 Gbps，Thunderbolt 4 等級）";
 "USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)" = "USB4 Gen 4（80 Gbps，Thunderbolt 5 等級）";
@@ -219,7 +219,7 @@
 "No SOP identity data" = "沒有 SOP 識別資料";
 "No cable connected." = "未連接線材。";
 "No cable identity data" = "沒有線材識別資料";
-"No health counters" = "沒有健康狀況計數器";
+"No health counters" = "沒有健康狀況計數資料";
 "No liquid detection data" = "沒有液體偵測資料";
 "None" = "無";
 "Open Pro diagnostics for this port" = "開啟此連接埠的 Pro 診斷";
@@ -251,8 +251,8 @@
 "Pro required" = "需要 Pro";
 "Product ID" = "Product ID";
 "Product Type" = "產品類型";
-"Raw VDOs" = "原始 VDO";
-"Raw cable VDOs" = "原始線材 VDO";
+"Raw VDOs" = "Raw VDOs";
+"Raw cable VDOs" = "Raw cable VDOs";
 "Rp current level" = "Rp 電流等級";
 "Rp resistor" = "Rp 電阻";
 "SOP identity received" = "已收到 SOP 識別資訊";
@@ -272,9 +272,9 @@
 "The port controller firmware finished initialising and is ready." = "連接埠控制器韌體已完成初始化並準備就緒。";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "連接埠控制器發出警示（過電流、過熱或類似故障）。";
 "The power direction flipped: the port switched between providing and receiving power." = "電源方向已切換：連接埠在供電與受電之間切換。";
-"This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "此事件代碼不在已知的 TPS6598x 中斷表中。可能是韌體特定事件。";
+"This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "此事件代碼不在已知的 TPS6598x 中斷表中，可能是韌體特定的事件代碼。";
 "Tunneled" = "穿隧傳輸";
-"UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM 探索已開始。控制器正在探測線材或對端上的廠商特定規格。";
+"UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM 探索已開始。控制器正在探測線材或對端所支援的廠商特定規格。";
 "UVDM enumeration" = "UVDM 列舉";
 "UVDM status update" = "UVDM 狀態更新";
 "USB 2.0 plug event" = "USB 2.0 插拔事件";
@@ -283,13 +283,13 @@
 "Unknown" = "未知";
 "Unknown Device" = "未知裝置";
 "Unknown event %@" = "未知事件 %@";
-"Unrecognised event code from the port controller." = "來自連接埠控制器的無法辨識事件代碼。";
+"Unrecognised event code from the port controller." = "無法辨識連接埠控制器回報的事件代碼。";
 "Unregistered cable (no e-marker)" = "未註冊線材（無 e-marker）";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "非結構化 VDM 列舉已開始（正在探索廠商特定規格）。";
 "Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "非結構化 VDM 狀態已變更（廠商特定訊息，例如 Alt Mode 設定）。";
 "VDO fail count" = "VDO 失敗次數";
 "Vendor ID" = "Vendor ID";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "廠商特定的非結構化 VDM 狀態已變更。Apple 會用於自訂 Alt Mode 設定和 Thunderbolt 協商。";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "廠商特定的非結構化 VDM 狀態已變更。Apple 會將其用於自訂 Alt Mode 設定和 Thunderbolt 協商。";
 "Voltage" = "電壓";
 "Voltage (V)" = "電壓 (V)";
 "WhatCable Pro" = "WhatCable Pro";
@@ -301,7 +301,7 @@
 
 /* Pro plugin format strings */
 "%@ Port %lld" = "%1$@ 連接埠 %2$lld";
-"APDO, %@ to %@ @ %@, %@ max" = "APDO，%1$@ 至 %2$@ @ %3$@，最大 %4$@";
+"APDO, %@ to %@ @ %@, %@ max" = "APDO，%1$@ 至 %2$@ @ %3$@，最高 %4$@";
 "Battery, %@ minimum, %@" = "電池，最低 %1$@，%2$@";
 "Battery, %@ to %@, %@" = "電池，%1$@ 至 %2$@，%3$@";
 "EPR AVS, %@ to %@, %@" = "EPR AVS，%1$@ 至 %2$@，%3$@";
@@ -359,16 +359,16 @@
 "Charger" = "充電器";
 "AC Power" = "交流電源";
 "bottleneck" = "限制因素";
-"Cable signals disagree" = "線材訊號不一致";
+"Cable signals disagree" = "線材驗證資訊不一致";
 "an unknown speed" = "未知速度";
 "a higher speed" = "更高速度";
 "The cable's own e-marker reports %@, but the Thunderbolt controller measured it running at %@, faster than the e-marker claims. This can happen with active Thunderbolt cables whose e-marker under-reports (declaring themselves passive at a low speed). The controller's confirmed, higher reading is used above." = "線材本身的 e-marker 回報 %1$@，但 Thunderbolt 控制器測得其以 %2$@ 運作，高於 e-marker 宣告的速度。這可能發生在 e-marker 低報規格的主動式 Thunderbolt 線材上（將自身回報為低速的被動式線材）。上方會使用控制器已確認的較高讀數。";
 /* Pro overview screen + footer pill (Pro funnel). */
 "Cable Diagnostics" = "線材診斷";
-"Deep per-port pin maps, plug orientation, and protocol detail." = "深入查看各連接埠的針腳配置、連接器方向與協定詳細資訊。";
+"Deep per-port pin maps, plug orientation, and protocol detail." = "深入查看各連接埠的針腳配置、連接器方向與協定細節。";
 "Licence Key" = "授權金鑰";
 "Live MagSafe pin layout for charging and diagnostics." = "即時顯示用於充電與診斷的 MagSafe 針腳配置。";
-"Live multi-port power graphs and event history." = "即時多連接埠功率圖表與事件記錄。";
+"Live multi-port power graphs and event history." = "多連接埠即時功率圖表與事件記錄。";
 "MagSafe pin diagrams" = "MagSafe 針腳圖";
 "Manage Licence…" = "管理授權…";
 "See exactly what each link can do, and where the bottleneck is." = "精確查看每個連線能做什麼，以及限制因素在哪裡。";
@@ -582,4 +582,4 @@
 "Made by %@ (%@), per our bundled vendor list" = "根據內建廠商清單，製造商為 %1$@ (%2$@)";
 "Answered, but reported no capability data." = "e-marker 有回應，但未回報任何規格資料。";
 "Certification ID" = "認證 ID";
-"Connect a charger to identify the cable." = "請連接充電器來辨識線材。";
+"Connect a charger to identify the cable." = "請連接充電器來識別線材。";
