@@ -545,7 +545,7 @@
 
 /* Built-in display port card (issue #352). Used by the CLI text formatter
    and the widget snapshot, when a native HDMI port is showing a display. */
-"%lld displays connected" = "%lld displays connessi";
+"%lld displays connected" = "%lld display connessi";
 "Built-in %1$@ port %2$lld" = "%1$@ porta %2$lld integrata";
 
 "Display running compressed (DSC) to fit through the link" = "Schermo funzionante in modo compresso (DSC) per adattarsi al collegamento";
