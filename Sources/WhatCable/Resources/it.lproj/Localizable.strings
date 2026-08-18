@@ -41,6 +41,9 @@
 "Lives in the menu bar with no Dock icon." = "Si trova nella barra dei menu senza l'icona del Dock.";
 "Menu bar icon" = "Icona barra menu";
 "Show charging watts in the menu bar" = "Visualizza watt ricarica nella barra menu";
+"Watts display" = "Visualizza Watt";
+"Number" = "Numero";
+"Bar" = "Bar";
 /* Menu bar icon choices */
 "Cable" = "Cavo";
 "Cable, horizontal" = "Cavo, orizzontale";
@@ -97,10 +100,10 @@
 "Privacy" = "Privacy";
 "Pro" = "Pro";
 "Proceed" = "Procedi";
-"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version and chip type. This is data macOS already exposes on your Mac." = "Proprietà registro Raw IOKit, un elenco delle classi di driver presenti sul tuo Mac, oltre alla versione di macOS e al tipo di chip. Si tratta di dati che macOS espone già sul tuo Mac.";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version and chip type. This is data macOS already exposes on your Mac." = "Proprietà registro Raw IOKit, un elenco di classi di driver presenti nel Mac, oltre alla versione di macOS e al tipo di chip. Questi sono i dati che macOS espone già nel Mac.";
 "What happens" = "Cosa succede";
 "What is collected" = "Quali dati vengono raccolti";
-"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable esegue %lld verifiche IOKit che leggono i dati hardware che il tuo Mac già pubblica. I risultati vengono inviati a un server sicuro per aiutare a migliorare il rilevamento di cavi e porte.";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable esegue %lld verifiche IOKit che leggono i dati hardware già pubblicati dal Mac. I risultati vengono inviati a un server sicuro per contribuire a migliorare il rilevamento di cavi e porte.";
 "Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "L'UUID hardware della macchina prima dell'invio viene sottoposto ad hashing con SHA-256. Non vengono raccolti o memorizzati nomi, account, il numero di serie del Mac o dati personali.";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
@@ -160,14 +163,11 @@
 "Built-in USB-A ports" = "Porte USB-A integrate";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Porte USB semplici collegate all'hub interno del Mac, quindi non ci sono dati sul cavo, alimentazione o Thunderbolt.";
 
-/* Built-in display port card (issue #352). English placeholders, community can refine. */
+/* Built-in display port card (issue #352). Used by the popover when a
+   native HDMI port is showing a display. */
 "Display connected" = "Schermo connesso";
 "%lld displays connected" = "%lld schermi connessi";
 "Built-in %1$@ port %2$lld" = "%1$@ porta %2$lld integrata";
-
-"Watts display" = "Visualizzazione watt";
-"Number" = "Numero";
-"Bar" = "Barra";
 
 /* USB probing compatibility toggle (issue #429). */
 "Skip deep USB probing" = "Salta verifica USB approfondita";
