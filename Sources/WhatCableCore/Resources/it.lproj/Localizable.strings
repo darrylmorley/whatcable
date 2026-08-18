@@ -180,7 +180,7 @@
 "Enabled" = "Attivato";
 "Enter your licence key to unlock pro features." = "Inserisci la tua chiave di licenza per sbloccare le funzioni Pro.";
 "Measuring while your Mac charges…" = "Misurazione in corso mentre il Mac è in carica…";
-"Waiting for charging load to vary. Use your Mac normally to finish the reading." = "In attesa di variazioni del carico. Usa il Mac normalmente per completare la misurazione.";
+"Waiting for charging load to vary. Use your Mac normally to finish the reading." = "In attesa di variazioni del carico. Per completare la misurazione usa il Mac normalmente.";
 "Event Log" = "Registro eventi";
 "FET enable failures" = "Errori di attivazione FET";
 "FET status" = "Stato FET";
@@ -295,9 +295,9 @@
 "WhatCable Pro" = "WhatCable Pro";
 "Year of manufacture" = "Anno di produzione";
 "Yes" = "Sì";
-"Charging resistance" = "Resistenza di ricarica";
+"Charging resistance" = "Resistenza ricarica";
 "experimental" = "sperimentale";
-"Resistance of the whole charging path: cable, plugs and charger together. Lower is better. To judge a cable, compare cables on the same charger and port." = "Resistenza dell'intero percorso di ricarica: cavo, connettori e caricatore insieme. Più è bassa, meglio è. Per giudicare un cavo, confronta i cavi con lo stesso caricatore e la stessa porta.";
+"Resistance of the whole charging path: cable, plugs and charger together. Lower is better. To judge a cable, compare cables on the same charger and port." = "Resistenza dell'intero percorso di ricarica: cavo, connettori e caricatore. Più è bassa, meglio è. Per giudicare un cavo, confronta i cavi con lo stesso caricatore e la stessa porta.";
 
 /* Pro plugin format strings */
 "%@ Port %lld" = "%1$@ Porta %2$lld";
@@ -306,12 +306,12 @@
 "Battery, %@ to %@, %@" = "Batteria, %1$@ a %2$@, %3$@";
 "EPR AVS, %@ to %@, %@" = "EPR AVS, %1$@ a %2$@, %3$@";
 "Fixed, %@ @ %@, %@" = "Fisso, %1$@ @ %2$@, %3$@";
+"PPS, %@ to %@ @ %@, %@ max" = "PPS, %1$@ a %2$@ @ %3$@, %4$@ max";
 "Port" = "Porta";
 "Rate %lld" = "Velocità %lld";
+"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS, %1$@ a 15V / %2$@ a 20V";
 "Type %lld" = "Tipo %lld";
 "Variable, %@ minimum @ %@, %@ minimum" = "Variabile, minimo %1$@ @ %2$@, minimo %3$@";
-"PPS, %@ to %@ @ %@, %@ max" = "PPS, %1$@ a %2$@ @ %3$@, %4$@ max";
-"SPR AVS, %@ at 15V / %@ at 20V" = "SPR AVS, %1$@ a 15V / %2$@ a 20V";
 "Variable, %@ to %@ @ %@" = "Variabile, %1$@ a %2$@ @ %3$@";
 
 /* Pro plugin strings missing from prior export */
@@ -381,7 +381,7 @@
 "MagSafe pin diagrams" = "Diagramma pin MagSafe";
 "Manage Licence…" = "Gestisci licenza…";
 "See exactly what each link can do, and where the bottleneck is." = "Scopri esattamente cosa può fare ciascun collegamento e dove si trova il collo di bottiglia.";
-"Find the weak link in a connection and keep the evidence: deep diagnostics, live power, cable history. One-off licence, no subscription." = "Trova l'anello debole di una connessione e conserva le prove: diagnostica approfondita, potenza in tempo reale, cronologia dei cavi. Licenza una tantum, nessun abbonamento.";
+"Find the weak link in a connection and keep the evidence: deep diagnostics, live power, cable history. One-off licence, no subscription." = "Trova l'anello debole di una connessione e conserva le prove: diagnostica approfondita, potenza in tempo reale, cronologia cavi. Licenza una tantum, nessun abbonamento.";
 
 /* Display dimension. English; non-English to be refined by the community translation flow. */
 "A display is connected but its capabilities aren't readable, so there's nothing to compare the link against." = "Un display è connesso ma le sue funzionalità non sono leggibili, quindi non c'è nulla con cui confrontare il collegamento.";
@@ -475,6 +475,9 @@
 "A charger is connected here, but your Mac is drawing power through %@. Incoming power shows in System Power Input below." = "Qui è collegato un caricatore, ma il Mac riceve alimentazione tramite %@. L’alimentazione in ingresso è visualizzata qui sotto in “Ingresso alimentazione sistema”.";
 "Connected to %lld Thunderbolt devices: %@" = "Connesso a %1$lld dispositivi Thunderbolt: %2$@";
 "Thunderbolt fabric:" = "Topologia Thunderbolt:";
+
+/* Active tunnels (TB link tree root, Phase B): cross-cable DisplayPort/USB/PCIe
+   tunnels multiplexed over the fabric, e.g. "Video → LG UltraFine · adapter 3". */
 "Active tunnels:" = "Tunnel attivi:";
 "Video" = "Video";
 "USB data" = "Dati USB";
@@ -540,8 +543,9 @@
 "Occasional caution" = "Attenzione occasionale";
 "Performing" = "Funzionante";
 
-/* Built-in display port card (issue #352). English placeholders, community can refine. */
-"%lld displays connected" = "%lld schermi connessi";
+/* Built-in display port card (issue #352). Used by the CLI text formatter
+   and the widget snapshot, when a native HDMI port is showing a display. */
+"%lld displays connected" = "%lld displays connessi";
 "Built-in %1$@ port %2$lld" = "%1$@ porta %2$lld integrata";
 
 "Display running compressed (DSC) to fit through the link" = "Schermo funzionante in modo compresso (DSC) per adattarsi al collegamento";
@@ -569,19 +573,19 @@
 "Video is working. macOS is holding data back until you approve the accessory." = "Il video funziona. macOS blocca i dati finché non autorizzi l'accessorio.";
 "USB device, data blocked · %lldW charger" = "Dispositivo USB, dati bloccati · caricatore %lldW";
 /* Port card source attribution (grouped headers + e-marker read state) */
-"Present, but not read on this connection. Try reconnecting the cable." = "Presente, ma non letto su questa connessione. Prova a ricollegare il cavo.";
-"Present, but not read on this connection. macOS only reads it above 3A or over Thunderbolt." = "Presente, ma non letto su questa connessione. macOS lo legge solo sopra i 3 A o tramite Thunderbolt.";
+"Present, but not read on this connection. Try reconnecting the cable." = "Presente, ma non letto in questa connessione. Prova a ricollegare il cavo.";
+"Present, but not read on this connection. macOS only reads it above 3A or over Thunderbolt." = "Presente, ma non letto in questa connessione. macOS lo legge solo sopra i 3 A o tramite Thunderbolt.";
 "This port can't read cable details: USB-only, no Power Delivery." = "Questa porta non può leggere i dettagli del cavo: solo USB, senza Power Delivery.";
 "No e-marker. This cable doesn't advertise its capabilities." = "Nessun e-marker. Questo cavo non dichiara le sue capacità.";
 "No e-marker read. The cable may have one; macOS only reads it above 3A or over Thunderbolt." = "Nessun e-marker letto. Il cavo potrebbe averne uno; macOS lo legge solo sopra i 3 A o tramite Thunderbolt.";
-"Passive (no signal-conditioning electronics)" = "Passivo (nessuna elettronica di condizionamento del segnale)";
-"%@ isn't in our bundled vendor list" = "%1$@ non è nel nostro elenco di produttori incluso";
+"Passive (no signal-conditioning electronics)" = "Passivo (nessuna elettronica di controllo del segnale)";
+"%@ isn't in our bundled vendor list" = "%1$@ non è incluso nel nostro elenco di produttori";
 "%@ isn't in our copy of the USB-IF registry" = "%1$@ non è nella nostra copia del registro USB-IF";
-"What your Mac measured" = "Cosa ha misurato il tuo Mac";
+"What your Mac measured" = "Cosa ha misurato il Mac";
 "What the cable's e-marker reports" = "Cosa dichiara l'e-marker del cavo";
 "What the charger reports" = "Cosa dichiara il caricatore";
 "What WhatCable knows" = "Cosa sa WhatCable";
-"Made by %@ (%@), per our bundled vendor list" = "Prodotto da %1$@ (%2$@), secondo il nostro elenco di produttori incluso";
+"Made by %@ (%@), per our bundled vendor list" = "Prodotto da %1$@ (%2$@), secondo il nostro elenco di produttori";
 "Answered, but reported no capability data." = "Ha risposto, ma non ha comunicato dati sulle capacità.";
-"Certification ID" = "ID di certificazione";
-"Connect a charger to identify the cable." = "Collega un caricabatterie per identificare il cavo.";
+"Certification ID" = "ID certificazione";
+"Connect a charger to identify the cable." = "Per identificare il cavo collega un caricabatterie.";
