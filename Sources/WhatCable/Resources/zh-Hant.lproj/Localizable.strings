@@ -16,7 +16,7 @@
 "Check for Updates…" = "檢查更新…";
 "Connected devices" = "已連接的裝置";
 "Connected: %@" = "已連接：%@";
-"Disconnected: %@" = "已斷開：%@";
+"Disconnected: %@" = "已中斷連接：%@";
 "Connection" = "連線";
 "Display" = "顯示";
 "Desktop Mac: charger identity (FedDetails) is not available." = "桌上型 Mac：無法取得充電器識別資訊 (FedDetails)。";
@@ -189,6 +189,6 @@
 /* Beta update channel (opt-in pre-release updates). */
 "Updates" = "更新";
 "Include beta versions" = "包含 Beta 版本";
-"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "預發行版本，通常在穩定版發行前幾天推出。可能仍有瑕疵。";
-"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "關閉後將不再收到後續 Beta 版本。它不會讓你退回目前正在執行的 Beta 版本，下一個穩定版發行時才會。";
-"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "你透過 Homebrew 安裝了 WhatCable。執行 brew upgrade 可能會以目前的穩定版取代 Beta 版本。";
+"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "預發行版本會在穩定版發行前幾天推出。可能仍有一些問題。";
+"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "關閉此選項後將不再提供後續 Beta 更新，但不會將您目前使用的 Beta 版本退回穩定版；下一個穩定版更新才會讓您回到穩定版。";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "您是透過 Homebrew 安裝 WhatCable。執行 brew upgrade 可能會用目前的穩定版取代 Beta 版本。";
