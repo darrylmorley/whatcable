@@ -187,7 +187,7 @@
 
 /* Beta update channel (opt-in pre-release updates). */
 "Updates" = "Aggiornamenti";
-"Include beta versions" = "Includi le versioni beta";
+"Include beta versions" = "Includi versioni beta";
 "Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "Versioni preliminari, pubblicate qualche giorno prima di una versione stabile. Aspettati qualche imperfezione.";
 "Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "Disattivarlo interrompe le beta successive. Non ti riporta indietro da una beta che stai già usando. Lo farà la prossima versione stabile.";
-"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "Hai installato WhatCable con Homebrew. Eseguire brew upgrade può sostituire una beta con la versione stabile attuale.";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "Hai installato WhatCable con Homebrew. Se esegui brew upgrade può sostituire una beta con la versione stabile attuale.";
