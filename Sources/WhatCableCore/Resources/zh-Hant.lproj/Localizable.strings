@@ -567,11 +567,11 @@
 "Video is working. macOS is holding data back until you approve the accessory." = "影像傳輸正常。在您允許此配件連接前，macOS 會封鎖資料傳輸。";
 "USB device, data blocked · %lldW charger" = "USB 裝置，資料傳輸已封鎖 · %lldW 充電器";
 /* Port card source attribution (grouped headers + e-marker read state) */
-"Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "已偵測到 e-marker，但本次連線未能讀取其資料。請嘗試重新插拔線材；某些充電器和擴充基座會阻擋讀取。";
-"Present, but not read on this connection. macOS usually reads it above 3A or over Thunderbolt." = "已偵測到 e-marker，但本次連線未能讀取其資料。macOS 通常僅會在超過 3A 或透過 Thunderbolt 連線時讀取。";
+"Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "已偵測到 e-marker，但本次連線未能讀取其資料。請嘗試重新插拔線材；某些充電器和 Dock 會阻止讀取 e-marker。";
+"Present, but not read on this connection. macOS usually reads it above 3A or over Thunderbolt." = "已偵測到 e-marker，但本次連線未能讀取其資料。macOS 通常會在超過 3A 或透過 Thunderbolt 連線時讀取 e-marker。";
 "This port can't read cable details: USB-only, no Power Delivery." = "此連接埠無法讀取線材資訊：僅支援 USB，不支援 Power Delivery。";
-"No e-marker. This cable doesn't advertise its capabilities, so charging is capped at 3A (60W at 20V)." = "沒有 e-marker。此線材未宣告自身規格，因此充電上限為 3A（20V 時 60W）。";
-"No e-marker read. The cable may have one; macOS usually reads it above 3A or over Thunderbolt." = "未讀取到 e-marker。線材可能仍有 e-marker；macOS 通常僅會在超過 3A 或透過 Thunderbolt 連線時讀取。";
+"No e-marker. This cable doesn't advertise its capabilities, so charging is capped at 3A (60W at 20V)." = "沒有 e-marker。此線材未宣告自身規格，因此充電電流上限為 3A（20V 時為 60W）";
+"No e-marker read. The cable may have one; macOS usually reads it above 3A or over Thunderbolt." = "未讀取到 e-marker。線材可能仍有 e-marker；macOS 通常會在超過 3A 或透過 Thunderbolt 連線時讀取 e-marker。";
 "Passive (no signal-conditioning electronics)" = "被動式（不含訊號調節電子元件）";
 "%@ isn't in our bundled vendor list" = "%1$@ 未收錄於內建廠商清單中";
 "%@ isn't in our copy of the USB-IF registry" = "%1$@ 未收錄於 WhatCable 內建的 USB-IF 登錄資料中";
