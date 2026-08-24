@@ -250,7 +250,7 @@
 "Pro features will be locked until you enter your key again." = "在再次輸入金鑰前，Pro 功能將保持鎖定。";
 "Pro required" = "需要 Pro";
 "Product ID" = "Product ID";
-"Product Type" = "產品類型";
+"Product Type" = "Product Type";
 "Raw VDOs" = "Raw VDOs";
 "Raw cable VDOs" = "Raw cable VDOs";
 "Rp current level" = "Rp 電流等級";
@@ -540,12 +540,12 @@
 
 /* Cable history: full-blob identity */
 "Identified by its e-marker (VID 0x%04X, PID 0x%04X)" = "已透過 e-marker 識別（VID 0x%04X，PID 0x%04X）";
-"Has an e-marker, but no unique ID (product ID not set)" = "有 e-marker，但沒有唯一 ID（產品 ID 未設定）";
-"Has an e-marker, but the maker never programmed an ID" = "有 e-marker，但廠商從未寫入 ID";
-"This cable has no e-marker, so it can't be tracked." = "這條連接線沒有 e-marker，因此無法追蹤。";
-"Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "與您已儲存的連接線 %@ 相符。相同型號的兩條線無法區分，如果您也儲存這一條，它們的紀錄將會合併。";
-"This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "這條連接線沒有 e-marker，因此無法為它記錄新的內容。現有紀錄仍然可用。";
-"Can't add this cable" = "無法新增這條連接線";
+"Has an e-marker, but no unique ID (product ID not set)" = "有 e-marker，但沒有唯一識別資訊（Product ID 未設定）";
+"Has an e-marker, but the maker never programmed an ID" = "有 e-marker，但製造商從未寫入 ID";
+"This cable has no e-marker, so it can't be tracked." = "這條線材沒有 e-marker，因此無法追蹤。";
+"Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "與您已儲存的線材 %@ 相符。相同型號的兩條線材無法區分，如果您也儲存這條線材，它們的歷史記錄將會合併。";
+"This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "這條線材沒有 e-marker，因此無法再為它記錄新資料。現有的歷史記錄仍可查看。";
+"Can't add this cable" = "無法新增此線材";
 "OK" = "好";
 
 /* Built-in display port card (issue #352). */
