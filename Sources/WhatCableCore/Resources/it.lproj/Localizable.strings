@@ -548,7 +548,7 @@
 "Has an e-marker, but no unique ID (product ID not set)" = "Ha un e-marker, ma nessun ID univoco (ID prodotto non impostato)";
 "Has an e-marker, but the maker never programmed an ID" = "Ha un e-marker, ma il produttore non ha mai programmato un ID";
 "This cable has no e-marker, so it can't be tracked." = "Questo cavo non ha un e-marker, quindi non può essere monitorato.";
-"Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "Corrisponde al tuo cavo salvato %@. Due unità dello stesso modello non si possono distinguere, quindi la loro cronologia verrà unita se salvi anche questo.";
+"Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "Corrisponde al cavo salvato %@. Due unità dello stesso modello non si possono distinguere, quindi se salvi anche questo la loro cronologia verrà unita.";
 "This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "Questo cavo non ha un e-marker, quindi non può essere registrata nessuna nuova attività. La cronologia esistente resta disponibile.";
 "Can't add this cable" = "Impossibile aggiungere questo cavo";
 "OK" = "OK";
@@ -583,7 +583,7 @@
 "Video is working. macOS is holding data back until you approve the accessory." = "Il video funziona. macOS blocca i dati finché non autorizzi l'accessorio.";
 "USB device, data blocked · %lldW charger" = "Dispositivo USB, dati bloccati · caricatore %lldW";
 /* Port card source attribution (grouped headers + e-marker read state) */
-"Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "Presente, ma non letto in questa connessione. Prova a ricollegare il cavo; alcuni caricabatterie e dock bloccano la lettura.";
+"Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "Presente, ma non letto in questa connessione. Prova a ricollegare il cavo; alcuni caricatori e dock bloccano la lettura.";
 "Present, but not read on this connection. macOS usually reads it above 3A or over Thunderbolt." = "Presente, ma non letto in questa connessione. macOS di norma lo legge solo sopra i 3 A o tramite Thunderbolt.";
 "This port can't read cable details: USB-only, no Power Delivery." = "Questa porta non può leggere i dettagli del cavo: solo USB, senza Power Delivery.";
 "No e-marker. This cable doesn't advertise its capabilities, so charging is capped at 3A (60W at 20V)." = "Nessun e-marker. Questo cavo non dichiara le sue capacità, quindi la ricarica è limitata a 3 A (60 W a 20 V).";
