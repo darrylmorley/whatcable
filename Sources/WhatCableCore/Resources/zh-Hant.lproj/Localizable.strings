@@ -580,8 +580,8 @@
 "Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "已偵測到 e-marker，但本次連線未能讀取其資料。請嘗試重新插拔線材；某些充電器和 Dock 會阻止讀取 e-marker。";
 "Present, but not read on this connection. macOS usually reads it above 3A or over Thunderbolt." = "已偵測到 e-marker，但本次連線未能讀取其資料。macOS 通常會在超過 3A 或透過 Thunderbolt 連線時讀取 e-marker。";
 "This port can't read cable details: USB-only, no Power Delivery." = "此連接埠無法讀取線材資訊：僅支援 USB，不支援 Power Delivery。";
-"The %@ contract shows the charger treated this as an e-marked, 5A-capable cable, so charging isn't limited by the cable. This Mac couldn't get its own read here. Connect the cable to another device to see its details." = "%@ 的協議顯示充電器將此線材視為具備 e-marker、支援 5A 的線材，因此充電並未受到線材限制。此 Mac 無法在此處自行讀取。請將線材連接到其他裝置以查看詳細資訊。";
-"No e-marker response. Cable details aren't available on this connection. Try another device to read it." = "e-marker 無回應。此連線無法取得線材資訊。請嘗試用其他裝置讀取。";
+"The %@ contract shows the charger treated this as an e-marked, 5A-capable cable, so charging isn't limited by the cable. This Mac couldn't get its own read here. Connect the cable to another device to see its details." = "%@ 的協商結果顯示，充電器將此線材視為帶有 e-marker 且支援 5A，因此充電不受線材限制。這台 Mac 無法在此連線自行讀取 e-marker。請將線材連接到其它裝置來查看線材資訊。";
+"No e-marker response. Cable details aren't available on this connection. Try another device to read it." = "e-marker 無回應。此連線無法取得線材資訊。請嘗試使用其它裝置讀取 e-marker。";
 "Reading cable details…" = "正在讀取線材資訊…";
 "No e-marker read. The cable may have one; macOS usually reads it above 3A or over Thunderbolt." = "未讀取到 e-marker。線材可能仍有 e-marker；macOS 通常會在超過 3A 或透過 Thunderbolt 連線時讀取 e-marker。";
 "Passive (no signal-conditioning electronics)" = "被動式（不含訊號調節電子元件）";
