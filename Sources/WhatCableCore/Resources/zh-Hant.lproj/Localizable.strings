@@ -543,6 +543,7 @@
 "Has an e-marker, but no unique ID (product ID not set)" = "有 e-marker，但沒有唯一識別資訊（Product ID 未設定）";
 "Has an e-marker, but the maker never programmed an ID" = "有 e-marker，但製造商從未寫入 ID";
 "This cable has no e-marker, so it can't be tracked." = "這條線材沒有 e-marker，因此無法追蹤。";
+"This cable can't be tracked" = "這條線材無法追蹤";
 "Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "與您已儲存的線材 %@ 相符。相同型號的兩條線材無法區分，如果您也儲存這條線材，它們的歷史記錄將會合併。";
 "This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "這條線材沒有 e-marker，因此無法再為它記錄新資料。現有的歷史記錄仍可查看。";
 "Can't add this cable" = "無法新增此線材";
