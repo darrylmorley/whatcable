@@ -545,8 +545,8 @@
 "This cable has no e-marker, so it can't be tracked." = "這條線材沒有 e-marker，因此無法追蹤。";
 "This cable can't be tracked" = "這條線材無法追蹤";
 "Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "與您已儲存的線材 %@ 相符。相同型號的兩條線材無法區分，如果您也儲存這條線材，它們的歷史記錄將會合併。";
-"Identified by its MagSafe cable ID (VID 0x%04X, PID 0x%04X). Cables of this exact model look identical, so this record tracks the model, not one physical cable." = "已透過 MagSafe 線材 ID 識別（VID 0x%04X，PID 0x%04X）。相同型號的線材外觀完全相同，因此此記錄代表的是型號，而非某條具體線材。";
-"You already have this MagSafe cable saved as %@. Cables of this model can't be told apart, so add its history to that one instead." = "您已將這條 MagSafe 線材儲存為 %@。相同型號的線材無法區分，請改為將記錄新增至該線材。";
+"Identified by its MagSafe cable ID (VID 0x%04X, PID 0x%04X). Cables of this exact model look identical, so this record tracks the model, not one physical cable." = "已透過 MagSafe 線材 ID 識別（VID 0x%04X，PID 0x%04X）。相同型號的線材外觀完全相同，因此此記錄追蹤的是型號，而非某一條實體線材。";
+"You already have this MagSafe cable saved as %@. Cables of this model can't be told apart, so add its history to that one instead." = "您已將這條 MagSafe 線材儲存為 %@。相同型號的線材無法區分，請改為將這條線材的歷史記錄加入該線材。";
 "This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "這條線材沒有 e-marker，因此無法再為它記錄新資料。現有的歷史記錄仍可查看。";
 "Can't add this cable" = "無法新增此線材";
 "OK" = "好";
@@ -600,4 +600,4 @@
 "Connect a charger to identify the cable." = "請連接充電器來識別線材。";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
-"No PD contract on this port. Incoming power shows in System Power Input below." = "此連接埠沒有 PD 合約。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
+"No PD contract on this port. Incoming power shows in System Power Input below." = "此連接埠沒有 PD 協議。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
