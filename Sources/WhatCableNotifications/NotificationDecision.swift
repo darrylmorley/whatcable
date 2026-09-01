@@ -185,11 +185,23 @@ public enum NotificationDecision {
         case deferUntilChargerReconcile
     }
 
-    /// Pure ordering rule: given a charger settle task still pending in the
-    /// same episode as a settling device diff, the device diff must wait for
-    /// that charger reconcile to land it, not run immediately.
-    public static func deviceDiffDisposition(chargerSettlePending: Bool) -> DeviceDiffDisposition {
-        chargerSettlePending ? .deferUntilChargerReconcile : .runNow
+    /// Pure ordering rule: given a charger event still IN FLIGHT in the same
+    /// episode as a settling device diff, the device diff must wait for that
+    /// charger reconcile to land it, not run immediately.
+    ///
+    /// The parameter was `chargerSettlePending` until the issue #593 review
+    /// (F1). A pending settle used to be the whole of "a charger post is
+    /// still owed", because `reconcileChargers` always posted synchronously
+    /// once the settle fired. The cable-name grace broke that: its first pass
+    /// clears the settle flag, posts nothing, and returns, leaving a charger
+    /// banner owed for up to another `chargerCableLabelGraceWindow`. A device
+    /// settle landing in that window read `.runNow` and posted AHEAD of the
+    /// charger banner, the exact inversion this rule exists to prevent. The
+    /// caller now passes the broader signal (`isChargerEventInFlight`), and
+    /// the parameter name says so, so a future third way of owing a charger
+    /// post has one obvious place to be added.
+    public static func deviceDiffDisposition(chargerEventInFlight: Bool) -> DeviceDiffDisposition {
+        chargerEventInFlight ? .deferUntilChargerReconcile : .runNow
     }
 
     /// Whether a Thunderbolt device was involved in this settled batch: a
@@ -288,10 +300,66 @@ public enum NotificationDecision {
         /// value (nothing is attached right now), not a signal about
         /// `hasSavedCables`.
         public let attachedLabelled: [String: String]
+        /// "port canonicalJoinKey -> saved name" for the SAME cables
+        /// `attachedLabelled` holds, keyed by the port they are attached to
+        /// instead of by cable ID. The charger path joins on this; the device
+        /// path cannot (a USB device tree has no reliable port key) and keeps
+        /// using `attachedLabelled` plus the timing machinery.
+        public let attachedLabelledByPort: [String: String]
+        /// Port canonicalJoinKeys whose connected cable has not identified
+        /// itself yet (`CableFingerprint.canTrack` false: no VDO recorded and
+        /// not a MagSafe ID-only identity). A name may still be coming for
+        /// these; for every other connected port the answer is already in, so
+        /// an absent name means the cable simply is not saved.
+        ///
+        /// INDEPENDENT of attribution, and that is the whole point: a port
+        /// can be `canTrack` true and still absent from
+        /// `attachedLabelledByPort` (an identified cable that simply is not
+        /// saved, or one that matched ambiguously). That case must NOT wait,
+        /// and it is the common one, so it cannot be inferred from the two
+        /// maps above; it needs this separate fact.
+        ///
+        /// MagSafe is IN the identified camp, not the awaiting one:
+        /// `canTrack` is true for a MagSafe ID-only fingerprint
+        /// (`isMagSafeIDOnly`), so a MagSafe port leaves this set as soon as
+        /// its VID+PID are read rather than sitting in it forever waiting for
+        /// a VDO blob macOS never publishes for MagSafe.
+        public let portsAwaitingCableIdentity: Set<String>
+        /// The complement of the set above, over CONNECTED ports only:
+        /// connected ports whose cable HAS answered (`canTrack` true). While
+        /// a port is connected it sits in exactly one of the two sets; once
+        /// it is not connected it sits in NEITHER.
+        ///
+        /// That third state is the whole reason this is a separate set
+        /// rather than something inferred from the one above. "Absent from
+        /// `portsAwaitingCableIdentity`" conflates "the chip answered" with
+        /// "the port is not connected right now", and a USB-C port can
+        /// briefly drop out and return during PD renegotiation (the same
+        /// flap `chargerSettleWindow` exists to absorb). The charger grace
+        /// reads presence HERE as "stop waiting, the answer is in", and
+        /// absence from both as "still nothing to go on, keep waiting", so a
+        /// flap costs a little latency instead of costing the name the grace
+        /// exists to wait for.
+        ///
+        /// Two sets rather than one `[String: Bool]`: they carry the same
+        /// three states (absent / present-awaiting / present-resolved), and
+        /// the pair makes the "in neither" case visible at the use site
+        /// instead of hiding it behind an optional lookup that reads as a
+        /// boolean.
+        public let portsWithResolvedCableIdentity: Set<String>
 
-        public init(hasSavedCables: Bool, attachedLabelled: [String: String]) {
+        public init(
+            hasSavedCables: Bool,
+            attachedLabelled: [String: String],
+            attachedLabelledByPort: [String: String] = [:],
+            portsAwaitingCableIdentity: Set<String> = [],
+            portsWithResolvedCableIdentity: Set<String> = []
+        ) {
             self.hasSavedCables = hasSavedCables
             self.attachedLabelled = attachedLabelled
+            self.attachedLabelledByPort = attachedLabelledByPort
+            self.portsAwaitingCableIdentity = portsAwaitingCableIdentity
+            self.portsWithResolvedCableIdentity = portsWithResolvedCableIdentity
         }
     }
 
@@ -554,6 +622,25 @@ public enum NotificationDecision {
         return []
     }
 
+    /// One changed charger port's line: what it is delivering, and the saved
+    /// cable name attributed to that port, when there is one. Issue #593:
+    /// the device path can name a cable because a settled device diff joins
+    /// on cable ID and timing (`attachedLabelled` plus the grace/episode
+    /// machinery in `DeviceDiffSequencer`); the charger path has no device
+    /// tree to time against, so it joins on the port itself
+    /// (`attachedLabelledByPort`) instead. `cableName` is that join's
+    /// result, carried alongside the port key long enough for
+    /// `chargerNotificationContents` to decide where the name goes.
+    public struct ChargerLine: Equatable, Sendable {
+        public let wattage: String
+        public let cableName: String?
+
+        public init(wattage: String, cableName: String?) {
+            self.wattage = wattage
+            self.cableName = cableName
+        }
+    }
+
     /// Decides what to post for one settled charger reconcile. With the
     /// shared "charger-event" identifier (issue #567), posting one
     /// notification per changed port meant each later post replaced the
@@ -571,33 +658,78 @@ public enum NotificationDecision {
     /// "Wattage not reported" instead), so this is a guard rather than a live
     /// path: it is what stops any future label gap from rendering as a blank
     /// line, or as a leading newline beside a describable charger.
+    ///
+    /// Saved-cable name placement (issue #593): a subtitle can only ever say
+    /// one thing, so it can only be trusted with a name when there is
+    /// exactly one line in that direction (added or removed) AND that line
+    /// has a name -- with two or more lines, a subtitle naming one cable
+    /// would read as naming the whole merged notification, so instead each
+    /// named line gets its own "<wattage> (<name>)" suffix in the body
+    /// (`"%@ (%@)"`, restored for this feature) and the subtitle stays
+    /// empty. No names anywhere reproduces today's output exactly, subtitle
+    /// included: this is a strict superset of the old behaviour, not a
+    /// parallel path.
     public static func chargerNotificationContents(
-        addedLabels: [String],
-        removedLabels: [String]
+        added: [ChargerLine],
+        removed: [ChargerLine]
     ) -> [NotificationContent] {
         var contents: [NotificationContent] = []
-        if !removedLabels.isEmpty {
-            contents.append(NotificationContent(
+        if !removed.isEmpty {
+            contents.append(chargerContent(
                 title: String(localized: "Charger disconnected", bundle: _notificationsLocalizedBundle),
-                body: removedLabels.filter { !$0.isEmpty }.joined(separator: "\n")
+                lines: removed
             ))
         }
-        if !addedLabels.isEmpty {
-            contents.append(NotificationContent(
+        if !added.isEmpty {
+            contents.append(chargerContent(
                 title: String(localized: "Charger connected", bundle: _notificationsLocalizedBundle),
-                body: addedLabels.filter { !$0.isEmpty }.joined(separator: "\n")
+                lines: added
             ))
         }
         return contents
     }
 
-    /// Turns a set of changed charger port keys into their labels, sorted by
-    /// the stable port key rather than left in Set iteration order. Set and
-    /// Dictionary don't guarantee a stable order between runs, so without
-    /// this the merged notification's line order would flap for no reason a
-    /// user could see. Pure and separate from `reconcileChargers` so the
-    /// ordering is unit-testable without `WatcherHub`.
-    public static func sortedChargerLabels(for portKeys: some Sequence<String>, labels: [String: String]) -> [String] {
-        portKeys.sorted().compactMap { labels[$0] }
+    /// One direction's (added or removed) content, isolated from
+    /// `chargerNotificationContents` so the subtitle-vs-suffix decision
+    /// isn't duplicated between the two call sites above.
+    private static func chargerContent(title: String, lines: [ChargerLine]) -> NotificationContent {
+        if lines.count == 1, let name = lines[0].cableName {
+            return NotificationContent(
+                title: title,
+                subtitle: cableLabelSubtitle(name),
+                body: lines[0].wattage
+            )
+        }
+        // Two or more lines: no subtitle (it can't say which port the name
+        // belongs to). Each named line carries its own suffix; an unnamed
+        // line passes through untouched, whether or not another line in
+        // this same batch has a name.
+        let bodyLines = lines.map { line -> String in
+            guard let name = line.cableName else { return line.wattage }
+            return String(localized: "\(line.wattage) (\(name))", bundle: _notificationsLocalizedBundle)
+        }
+        return NotificationContent(
+            title: title,
+            body: bodyLines.filter { !$0.isEmpty }.joined(separator: "\n")
+        )
+    }
+
+    /// Turns a set of changed charger port keys into their `ChargerLine`s,
+    /// sorted by the stable port key rather than left in Set iteration
+    /// order. Set and Dictionary don't guarantee a stable order between
+    /// runs, so without this the merged notification's line order would
+    /// flap for no reason a user could see. Pure and separate from
+    /// `reconcileChargers` so the ordering is unit-testable without
+    /// `WatcherHub`. A port key with no entry in `labels` is skipped, same
+    /// as the wattage-only form this replaces.
+    public static func sortedChargerLines(
+        for portKeys: some Sequence<String>,
+        labels: [String: String],
+        cableNames: [String: String]
+    ) -> [ChargerLine] {
+        portKeys.sorted().compactMap { portKey in
+            guard let wattage = labels[portKey] else { return nil }
+            return ChargerLine(wattage: wattage, cableName: cableNames[portKey])
+        }
     }
 }

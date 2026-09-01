@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "Sistēma ziņo par %lld W lādētāju";
 "Charger advertises up to %lldW" = "Lādētājs piedāvā līdz %lld W jaudu";
 "Wattage not reported" = "Jauda netiek ziņota";
+"%@ (%@)" = "%1$@ (%2$@)";

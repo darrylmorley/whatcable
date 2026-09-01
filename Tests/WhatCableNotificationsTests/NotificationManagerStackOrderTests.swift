@@ -12,19 +12,19 @@ import WhatCableNotifications
 final class NotificationManagerStackOrderTests: XCTestCase {
     // MARK: - deviceDiffDisposition
 
-    func testDefersWhenAChargerSettleIsPending() {
+    func testDefersWhenAChargerEventIsInFlight() {
         XCTAssertEqual(
-            NotificationDecision.deviceDiffDisposition(chargerSettlePending: true),
+            NotificationDecision.deviceDiffDisposition(chargerEventInFlight: true),
             .deferUntilChargerReconcile,
-            "a same-episode charger settle still waiting to fire must hold the device post back"
+            "a same-episode charger event still owing a banner must hold the device post back"
         )
     }
 
-    func testRunsNowWhenNoChargerSettleIsPending() {
+    func testRunsNowWhenNoChargerEventIsInFlight() {
         XCTAssertEqual(
-            NotificationDecision.deviceDiffDisposition(chargerSettlePending: false),
+            NotificationDecision.deviceDiffDisposition(chargerEventInFlight: false),
             .runNow,
-            "a device-only event (no charger settle in flight) must post immediately, unchanged"
+            "a device-only event (no charger event in flight) must post immediately, unchanged"
         )
     }
 

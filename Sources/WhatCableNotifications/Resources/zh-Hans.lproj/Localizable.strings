@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "系统报告充电器为 %lldW";
 "Charger advertises up to %lldW" = "充电器声明最高 %lldW";
 "Wattage not reported" = "未报告功率";
+"%@ (%@)" = "%1$@（%2$@）";

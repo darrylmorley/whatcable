@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "Система повідомляє про зарядний пристрій на %lldW";
 "Charger advertises up to %lldW" = "Зарядний пристрій підтримує до %lldW";
 "Wattage not reported" = "Потужність не повідомляється";
+"%@ (%@)" = "%1$@ (%2$@)";

@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "Համակարգը հաղորդում է %lldW լիցքավորիչ";
 "Charger advertises up to %lldW" = "Լիցքավորիչը հայտնում է մինչև %lldW հզորության մասին";
 "Wattage not reported" = "Հզորությունը չի հաղորդվում";
+"%@ (%@)" = "%1$@ (%2$@)";

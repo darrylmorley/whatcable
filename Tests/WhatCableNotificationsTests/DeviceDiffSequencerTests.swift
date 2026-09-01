@@ -756,7 +756,7 @@ final class DeviceDiffSequencerTests: XCTestCase {
     /// A parked device diff must be labelled from the TB switch set that
     /// existed when its batch actually settled, not from whatever the live
     /// closure returns whenever the diff happens to land (up to
-    /// `deferredDeviceDiffDeadlineWindow`, 3.5s in production, later). An
+    /// `deferredDeviceDiffDeadlineWindow`, 5s in production, later). An
     /// UNRELATED TB switch appearing during that wait must not relabel a
     /// batch of plain USB devices.
     ///

@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "Systemet rapporterer %lld W-lader";
 "Charger advertises up to %lldW" = "Laderen annonserer opptil %lld W";
 "Wattage not reported" = "Effekt ikke rapportert";
+"%@ (%@)" = "%1$@ (%2$@)";

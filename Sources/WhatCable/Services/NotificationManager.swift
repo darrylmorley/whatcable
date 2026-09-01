@@ -90,6 +90,30 @@ final class NotificationManager {
     /// `hasSavedCables` folds by OR (any provider reporting a saved cable
     /// is enough), `attachedLabelled` merges first-writer-wins, matching
     /// the same policy the old bare-dictionary fold used.
+    /// `attachedLabelledByPort` (issue #593) folds with the SAME
+    /// first-writer-wins policy as `attachedLabelled`, since it carries the
+    /// same cables, just re-keyed by port instead of by cable ID.
+    /// `portsAwaitingCableIdentity` and `portsWithResolvedCableIdentity`
+    /// both fold by UNION, not first-writer-wins: they are sets of ports,
+    /// not keyed choices between competing values, and union is right for
+    /// each on its own terms. Any provider still waiting on a port is reason
+    /// enough for the charger path to wait on it too (erring toward waiting
+    /// costs one bounded window; erring the other way posts a banner that
+    /// can never be corrected), and any provider that has SEEN a port answer
+    /// is reason enough to stop waiting on it.
+    ///
+    /// With one provider registered, which is the shipping configuration,
+    /// the two sets stay disjoint because that provider partitions its own
+    /// connected ports between them. What a DISAGREEMENT would actually do,
+    /// stated correctly (the previous wording here claimed `reconcileChargers`
+    /// only ever asks whether a port is resolved, which is false and was an
+    /// F5 review finding): a port in both sets ARMS the grace, because
+    /// `reconcileChargers` reads the awaiting set to decide that, and then
+    /// COLLAPSES it on the very next publish, because `updateLabelledCables`
+    /// reads the resolved set to decide that. So the cost of a disagreement
+    /// is one extra publish of latency, bounded by the grace cap either way.
+    /// Nothing is corrupted, but it is not a no-op, and a future reader
+    /// should not be told it is.
     ///
     /// A free function of `providers` rather than a closure reading
     /// `PluginRegistry.shared` directly, purely so it's testable in
@@ -104,6 +128,9 @@ final class NotificationManager {
     ) -> WhatCableNotifications.NotificationDecision.CableLabelFeed? {
         guard !providers.isEmpty else { return nil }
         var attachedLabelled: [String: String] = [:]
+        var attachedLabelledByPort: [String: String] = [:]
+        var portsAwaitingCableIdentity: Set<String> = []
+        var portsWithResolvedCableIdentity: Set<String> = []
         var hasSavedCables = false
         var anyAvailable = false
         for provider in providers {
@@ -111,11 +138,17 @@ final class NotificationManager {
             anyAvailable = true
             hasSavedCables = hasSavedCables || feed.hasSavedCables
             attachedLabelled.merge(feed.attachedLabelled, uniquingKeysWith: { first, _ in first })
+            attachedLabelledByPort.merge(feed.attachedLabelledByPort, uniquingKeysWith: { first, _ in first })
+            portsAwaitingCableIdentity.formUnion(feed.portsAwaitingCableIdentity)
+            portsWithResolvedCableIdentity.formUnion(feed.portsWithResolvedCableIdentity)
         }
         guard anyAvailable else { return nil }
         return WhatCableNotifications.NotificationDecision.CableLabelFeed(
             hasSavedCables: hasSavedCables,
-            attachedLabelled: attachedLabelled
+            attachedLabelled: attachedLabelled,
+            attachedLabelledByPort: attachedLabelledByPort,
+            portsAwaitingCableIdentity: portsAwaitingCableIdentity,
+            portsWithResolvedCableIdentity: portsWithResolvedCableIdentity
         )
     }
 

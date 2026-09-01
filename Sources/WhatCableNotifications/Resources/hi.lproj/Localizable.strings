@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "सिस्टम के अनुसार चार्जर %lld W";
 "Charger advertises up to %lldW" = "चार्जर अधिकतम %lld W बताता है";
 "Wattage not reported" = "वाट क्षमता रिपोर्ट नहीं की गई";
+"%@ (%@)" = "%1$@ (%2$@)";

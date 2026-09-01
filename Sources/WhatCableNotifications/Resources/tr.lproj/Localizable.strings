@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "Sistem şarj aletini %lldW olarak bildiriyor";
 "Charger advertises up to %lldW" = "Şarj aleti en fazla %lldW tanıtıyor";
 "Wattage not reported" = "Güç bildirilmiyor";
+"%@ (%@)" = "%1$@ (%2$@)";
