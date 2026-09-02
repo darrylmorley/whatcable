@@ -281,7 +281,7 @@
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac 進入或結束睡眠，導致連接埠控制器狀態變更。";
 "The charger or power source advertised what voltages and currents it can provide." = "充電器或電源宣告了可提供的電壓和電流。";
 "The data role flipped: the port switched between host and device mode." = "資料角色已切換：連接埠在主機和裝置模式之間切換。";
-"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "無法在授權伺服器上釋放這台 Mac 的名額，因此可能仍被佔用。請在另一台 Mac 的「設定」中釋放此名額，或聯絡支援團隊。
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "無法在授權伺服器上釋放這台 Mac 的名額，因此可能仍被佔用。請在另一台 Mac 的「設定」中釋放此名額，或聯絡支援團隊。";
 "The port controller firmware finished initialising and is ready." = "連接埠控制器韌體已完成初始化並準備就緒。";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "連接埠控制器發出警示（過電流、過熱或類似故障）。";
 "The power direction flipped: the port switched between providing and receiving power." = "電源方向已切換：連接埠在供電與受電之間切換。";
