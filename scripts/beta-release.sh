@@ -163,6 +163,42 @@ fi
 
 echo "    all checks passed"
 
+# Pending-at-release items WARN here rather than blocking, unlike release.sh.
+# A pending item is usually not relevant until the stable ships, and blocking
+# beta builds on it would push people to clear the list early, which defeats
+# the point of the gate. Printed so nobody is surprised by it at stable time.
+PENDING_FILE="planning/RELEASE-PENDING.md"
+# Same matcher as release.sh: loose about bullet and indentation, because a
+# strict pattern would let ordinary Markdown variants through unseen.
+PENDING_RE='^[[:space:]]*([-*+]|[0-9]{1,9}[.)])[[:space:]]+\[[[:space:]]\]'
+if [[ -r "${PENDING_FILE}" ]]; then
+    set +e
+    PENDING_ITEMS=$(grep -nE "${PENDING_RE}" "${PENDING_FILE}")
+    PENDING_STATUS=$?
+    set -e
+    if [[ ${PENDING_STATUS} -gt 1 ]]; then
+        echo
+        echo "    NOTE: could not read ${PENDING_FILE} (grep exit ${PENDING_STATUS})."
+        echo "    Betas are not blocked by it, but check it before the next stable."
+        echo
+    fi
+    if [[ -n "${PENDING_ITEMS}" ]]; then
+        echo
+        echo "    NOTE: ${PENDING_FILE} has unticked items. Betas are not blocked"
+        echo "    by them, but the next STABLE release will be:"
+        echo "${PENDING_ITEMS}" | sed 's/^/      /'
+        echo
+    fi
+else
+    # Absent or unreadable warns here rather than blocking; release.sh is where
+    # that becomes an error.
+    echo
+    echo "    NOTE: ${PENDING_FILE} is missing or unreadable. It is tracked, so"
+    echo "    that is probably a broken checkout. The next stable release will"
+    echo "    refuse to run until it is back."
+    echo
+fi
+
 # ---- 2. Patch smoke-test.sh ----------------------------------------------
 
 echo "==> Updating VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER} in scripts/smoke-test.sh"

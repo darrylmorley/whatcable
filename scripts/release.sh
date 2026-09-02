@@ -142,6 +142,56 @@ if [[ ! -f "${NOTES_FILE}" ]]; then
     exit 1
 fi
 
+# Anything still pending at release time blocks the release.
+#
+# This exists because "remember at release" items were living in PR bodies and
+# in Darryl's head, which is not a system. The gate fires at the moment it
+# matters (running this script) rather than hoping somebody checks a board, and
+# it clears itself: folding the items into the notes file above is normally how
+# they get done.
+PENDING_FILE="planning/RELEASE-PENDING.md"
+# The file is tracked, so it is always meant to be here. A missing or unreadable
+# one is a broken checkout or a bad merge, not permission to ship: a gate whose
+# whole job is to stop a release must not disappear quietly when its input does.
+if [[ ! -f "${PENDING_FILE}" ]]; then
+    echo "ERROR: ${PENDING_FILE} is missing. It is tracked, so this is a broken" >&2
+    echo "checkout or a bad merge. Restore it (git checkout -- ${PENDING_FILE})" >&2
+    echo "before releasing; an empty list is fine, an absent one is not." >&2
+    exit 1
+fi
+if [[ ! -r "${PENDING_FILE}" ]]; then
+    echo "ERROR: ${PENDING_FILE} exists but is not readable, so its contents" >&2
+    echo "cannot be checked. Fix the permissions before releasing." >&2
+    exit 1
+fi
+# An unticked item is a task-list line whose box is empty. Deliberately loose
+# about the bullet and the leading space: "-", "*" and "+" are all valid
+# Markdown bullets, and an item indented under a heading is the obvious thing
+# someone will write. A strict '^- \[ \]' would let any of those through
+# silently, which for this gate means shipping while the list still has work in
+# it. Ticked boxes ("[x]") and the prose around them do not match.
+PENDING_RE='^[[:space:]]*([-*+]|[0-9]{1,9}[.)])[[:space:]]+\[[[:space:]]\]'
+# grep exits 0 when it matches, 1 when it does not, and 2 on a real error.
+# Only 1 is an all-clear; 2 must not be swallowed into one.
+set +e
+PENDING_ITEMS=$(grep -nE "${PENDING_RE}" "${PENDING_FILE}")
+PENDING_STATUS=$?
+set -e
+if [[ ${PENDING_STATUS} -gt 1 ]]; then
+    echo "ERROR: could not read ${PENDING_FILE} (grep exit ${PENDING_STATUS})." >&2
+    echo "Not proceeding: an unchecked list is not an empty one." >&2
+    exit 1
+fi
+if [[ -n "${PENDING_ITEMS}" ]]; then
+    echo "ERROR: ${PENDING_FILE} still has unticked items, so this release is blocked." >&2
+    echo >&2
+    echo "${PENDING_ITEMS}" >&2
+    echo >&2
+    echo "Do each one, tick it, then remove the ticked lines. Items that are" >&2
+    echo "release-note text belong in ${NOTES_FILE}." >&2
+    exit 1
+fi
+
 # Tap dir, if configured, must exist and be clean.
 if [[ -n "${TAP_DIR:-}" ]]; then
     if [[ ! -d "${TAP_DIR}" ]]; then
