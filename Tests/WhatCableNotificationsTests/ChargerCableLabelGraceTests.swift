@@ -34,14 +34,35 @@ final class ChargerCableLabelGraceTests: XCTestCase {
     /// one port at once.
     private let usbcKey = "2/1"
 
-    private func negotiatedSource(port: Int = 17, id: UInt64 = 1, watts: Int = 30) -> PowerSource {
+    private func negotiatedSource(
+        port: Int = 17, id: UInt64 = 1, watts: Int = 30, uuid: String? = nil
+    ) -> PowerSource {
         PowerSource(
             id: id, name: "USB-PD",
             parentPortType: port, parentPortNumber: 1,
             options: [],
-            winning: PowerOption(voltageMV: 20000, maxCurrentMA: watts * 1000 / 20, maxPowerMW: watts * 1000)
+            winning: PowerOption(voltageMV: 20000, maxCurrentMA: watts * 1000 / 20, maxPowerMW: watts * 1000),
+            hpmControllerUUID: uuid
         )
     }
+
+    /// A resolved HPM controller UUID for the MagSafe port under test.
+    ///
+    /// Every other fixture in this file deliberately has none, which is stated
+    /// at `magSafeKey`. That made the whole suite structurally blind to the
+    /// change from grouping charger labels by `canonicalJoinKey` to grouping
+    /// them by `portKey`: with no UUID the two keys are the same string, so no
+    /// test here could have regressed, and none could confirm the change
+    /// either. The four tests at the end of this file are the ones that can.
+    private let magSafeUUID = "aaaabbbbccccddddeeeeffff00001111"
+
+    /// The MagSafe port as the FEED publishes it once a UUID resolved: under
+    /// both of its keys. `NotificationCableLabelProvider.joinAliases(of:)` writes
+    /// every name and every identity-set membership twice, once under the port's
+    /// join key and once under its plain `portKey`, and the charger side relies
+    /// on that to find a name with a plain `portKey` lookup. Hand-built feeds
+    /// have to mirror it or they are not testing the real shape.
+    private var magSafeBothKeys: Set<String> { [magSafeUUID, magSafeKey] }
 
     /// A hub present in BOTH the baseline and the parked diff, plus a child
     /// arriving under it. Copied from `DeviceDiffSequencerCableLabelHoldTests`
@@ -1074,6 +1095,175 @@ final class ChargerCableLabelGraceTests: XCTestCase {
         )
         await clock.advance(by: .seconds(10))
     }
+
+    // MARK: - The grace with a resolved UUID (gate review LOW-3)
+    //
+    // Every other test in this file uses a port with no `hpmControllerUUID`, so
+    // `canonicalJoinKey == portKey` throughout and the suite cannot see the
+    // key-space change at all. These four drive the same machinery with a UUID
+    // resolved, which is the combination the deleted
+    // `chargerCableLabelGracePortKeyFallbacks` existed for. Two of them
+    // discriminate (they go red if the grouping is reverted); the other two pass
+    // either way on purpose, and that is the useful result, because it is the
+    // direct evidence that deleting the alias fallback was inert for the grace
+    // rather than an argument that it was.
+
+    /// Inert-path evidence: the ordinary arm-then-collapse cycle still works
+    /// when both sides resolved a UUID. Passes before and after the grouping
+    /// change; it is here to show the deletion broke nothing, not to catch a
+    /// regression.
+    func testGraceArmsAndCollapsesWhenBothSidesResolvedAUUID() async {
+        let clock = ManualClock()
+        let posted = PostedLog()
+        let box = SourcesBox()
+        let sequencer = makeSequencer(clock: clock, posted: posted, box: box)
+        sequencer.didPrimeBaseline = true
+        sequencer.knownChargerLabels = [:]
+
+        sequencer.updateLabelledCables(feed(byPort: [:], awaiting: magSafeBothKeys))
+        box.sources = [negotiatedSource(uuid: magSafeUUID)]
+        sequencer.reconcileChargers()
+        await flush(clock)
+
+        XCTAssertEqual(posted.entries.count, 0, "a port with no name yet must wait, UUID or not")
+
+        // The e-marker resolves. The provider publishes the name under BOTH keys.
+        sequencer.updateLabelledCables(feed(
+            byPort: [magSafeUUID: "Kitchen MagSafe", magSafeKey: "Kitchen MagSafe"],
+            awaiting: [], resolved: magSafeBothKeys
+        ))
+        await flush(clock)
+
+        XCTAssertEqual(posted.entries.count, 1, "the name must collapse the grace even with a UUID resolved")
+        XCTAssertEqual(posted.entries.first?.1, NotificationContent(
+            title: "Charger connected", subtitle: "Kitchen MagSafe", body: "30W negotiated"
+        ))
+    }
+
+    /// Inert-path evidence, and the failure mode worth ruling out explicitly:
+    /// the one-per-event grace budget must not get stuck in a state where a
+    /// charger event can never post at all. With a UUID resolved and a name that
+    /// never arrives, the cap must still fire exactly one unnamed banner.
+    func testGraceCapStillPostsWithAUUIDPresent() async {
+        let clock = ManualClock()
+        let posted = PostedLog()
+        let box = SourcesBox()
+        let sequencer = makeSequencer(clock: clock, posted: posted, box: box)
+        sequencer.didPrimeBaseline = true
+        sequencer.knownChargerLabels = [:]
+
+        sequencer.updateLabelledCables(feed(byPort: [:], awaiting: magSafeBothKeys))
+        box.sources = [negotiatedSource(uuid: magSafeUUID)]
+        sequencer.reconcileChargers()
+        await flush(clock)
+        XCTAssertEqual(posted.entries.count, 0)
+
+        // No name ever arrives. The cap is the backstop.
+        await clock.advance(by: graceWindow)
+        await flush(clock)
+
+        XCTAssertEqual(posted.entries.count, 1, "the cap must post even when no name ever arrives")
+        XCTAssertEqual(posted.entries.first?.1.title, "Charger connected")
+        XCTAssertEqual(posted.entries.first?.1.body, "30W negotiated")
+
+        // And nothing further: a spent budget must not re-arm or double-post.
+        await clock.advance(by: .seconds(10))
+        XCTAssertEqual(posted.entries.count, 1, "the spent grace must not post twice")
+    }
+
+    /// DISCRIMINATING. Two sibling power-source nodes on ONE physical MagSafe
+    /// port whose UUID walks disagree, driven through the whole grace path
+    /// rather than through a direct `reconcileChargers()` call.
+    ///
+    /// Red-proof: revert the grouping in `chargerLabels(for:)` to
+    /// `canonicalJoinKey`. Goes red with the port split in two, the name stamped
+    /// on both halves, and an empty subtitle. The body comes out as:
+    /// "Wattage not reported (Kitchen MagSafe)\n30W negotiated (Kitchen MagSafe)".
+    ///
+    /// That order is not arbitrary, and an earlier version of this comment had
+    /// it backwards. `sortedChargerLines` sorts by key. Under the revert the
+    /// split port's two keys are "17/1" (the Brick ID sibling, whose walk
+    /// failed, so it has no contract to report) and the UUID
+    /// "aaaabbbb..." (the sibling carrying the contract). "1" sorts before "a",
+    /// so the unreported half prints first. A recipe that does not reproduce is
+    /// worse than none, because the next person assumes they broke something.
+    func testMixedUUIDSiblingsThroughTheFullGracePath() async {
+        let clock = ManualClock()
+        let posted = PostedLog()
+        let box = SourcesBox()
+        let sequencer = makeSequencer(clock: clock, posted: posted, box: box)
+        sequencer.didPrimeBaseline = true
+        sequencer.knownChargerLabels = [:]
+
+        sequencer.updateLabelledCables(feed(byPort: [:], awaiting: magSafeBothKeys))
+        // The sibling whose walk resolved carries the contract; the one whose
+        // walk failed carries nothing. Same physical port.
+        box.sources = [
+            negotiatedSource(id: 1, uuid: magSafeUUID),
+            PowerSource(
+                id: 2, name: "Brick ID", parentPortType: 17, parentPortNumber: 1,
+                options: [], winning: nil, hpmControllerUUID: nil
+            ),
+        ]
+        sequencer.reconcileChargers()
+        await flush(clock)
+        XCTAssertEqual(posted.entries.count, 0, "no name yet, so the grace must be waiting")
+
+        sequencer.updateLabelledCables(feed(
+            byPort: [magSafeUUID: "Kitchen MagSafe", magSafeKey: "Kitchen MagSafe"],
+            awaiting: [], resolved: magSafeBothKeys
+        ))
+        await flush(clock)
+
+        XCTAssertEqual(posted.entries.count, 1)
+        XCTAssertEqual(
+            posted.entries.first?.1,
+            NotificationContent(
+                title: "Charger connected", subtitle: "Kitchen MagSafe", body: "30W negotiated"
+            ),
+            "one physical port must produce one named line through the grace path too"
+        )
+    }
+
+    /// DISCRIMINATING. A UUID walk that resolves on one pass and fails on the
+    /// next, with a feed present and saved cables, so the grace machinery is
+    /// live throughout. Nothing physically moved, so nothing may be posted.
+    ///
+    /// Red-proof: revert the grouping in `chargerLabels(for:)` to
+    /// `canonicalJoinKey`. Goes red with 2 posts instead of 0, a
+    /// "Charger disconnected" followed by a "Charger connected" for a charger
+    /// that never moved.
+    func testFlickerThroughTheFullDebouncePostsNothing() async {
+        let clock = ManualClock()
+        let posted = PostedLog()
+        let box = SourcesBox()
+        let sequencer = makeSequencer(clock: clock, posted: posted, box: box)
+
+        // Already attached and already named, so no grace can arm and any post
+        // from here is a genuine add or remove rather than a wait expiring.
+        sequencer.updateLabelledCables(feed(
+            byPort: [magSafeUUID: "Kitchen MagSafe", magSafeKey: "Kitchen MagSafe"],
+            awaiting: [], resolved: magSafeBothKeys
+        ))
+        sequencer.primeBaseline(devices: [], chargerSources: [negotiatedSource(uuid: magSafeUUID)])
+
+        // The same charger one pass later, its registry walk having failed.
+        box.sources = [negotiatedSource(uuid: nil)]
+        sequencer.reconcileChargers()
+        await flush(clock)
+        await clock.advance(by: graceWindow)
+        await flush(clock)
+
+        XCTAssertEqual(
+            posted.entries.count, 0,
+            "a stationary charger posted: \(posted.entries.map(\.1.title))"
+        )
+
+        // Non-vacuity: this sequencer does post when the charger really goes.
+        box.sources = []
+        sequencer.reconcileChargers()
+        await flush(clock)
+        XCTAssertEqual(posted.entries.count, 1)
+        XCTAssertEqual(posted.entries.last?.1.title, "Charger disconnected")
+    }
 }
-
-

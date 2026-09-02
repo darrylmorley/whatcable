@@ -198,8 +198,13 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     var knownLabelledCables: [String: String]?
 
     /// Issue #593: the SAME cables `knownLabelledCables` holds, keyed by the
-    /// port they are attached to (`canonicalJoinKey`) instead of by cable
-    /// ID. A MagSafe plug produces no USB device at all, so the device path
+    /// port they are attached to instead of by cable ID. Each port appears
+    /// under BOTH of its keys, its join key and its plain `portKey`, because
+    /// `NotificationCableLabelProvider` publishes every name twice (see its
+    /// join-alias helper). That is what lets the charger side, which is keyed
+    /// purely by `portKey`, find a name with a plain lookup even on a port
+    /// whose own registry walk resolved a UUID.
+    /// A MagSafe plug produces no USB device at all, so the device path
     /// (`knownLabelledCables` plus the grace/episode machinery above) can
     /// never reach it; the charger path joins on port identity instead,
     /// which needs this. Same nil-means-unavailable / `[:]`-means-nothing-
@@ -281,21 +286,13 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// the full story.
     private var knownHasSavedCables = false
 
-    /// "port canonicalJoinKey -> saved cable name" for ports that currently
+    /// "port `portKey` -> saved cable name" for ports that currently
     /// hold a charger, captured when the charger was first seen and
     /// refreshed on every later feed publish while it stays. A disconnect
     /// reads this, not the live feed: by the time the charger goes, the
     /// cable has gone too and the feed no longer names it. Same reason
     /// `knownChargerLabels` remembers the wattage.
     private var knownChargerCableLabels: [String: String] = [:]
-
-    /// "charger join key -> that same port's plain `portKey`", for the ports
-    /// currently holding a charger where the two keys differ (F2 review fix).
-    /// Written wherever `knownChargerLabels` is (`primeBaseline` and
-    /// `reconcileChargers`), because it describes the same set of ports.
-    /// Exists so `updateLabelledCables`'s own refresh pass can alias its
-    /// lookups without re-reading the live charger sources.
-    private var knownChargerPortKeyFallbacks: [String: String] = [:]
 
     /// The armed cable-name grace, if a charger reconcile is currently
     /// waiting one out (issue #593). Cancelled by an early collapse in
@@ -317,13 +314,6 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// the grace immediately instead of sitting out the full window. Empty
     /// whenever no grace is armed.
     private var chargerCableLabelGracePortKeys: Set<String> = []
-    /// "waited-on charger key -> that same port's plain `portKey`", captured
-    /// when the grace was armed, for the ports where the two differ (F2
-    /// review fix). The collapse looks each waited-on port up under both
-    /// keys, because the feed may have published its name under either.
-    /// Empty whenever no grace is armed, and only ever holds keys that are
-    /// also in `chargerCableLabelGracePortKeys`.
-    private var chargerCableLabelGracePortKeyFallbacks: [String: String] = [:]
     /// One grace per charger event, no more. Set when a grace is armed,
     /// cleared in `diffSources(_:)`, which is where a genuinely new charger
     /// event starts. Without it the second pass would look at the same
@@ -1129,11 +1119,11 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
             baselineSnapshots.map { ($0.id, $0) },
             uniquingKeysWith: { first, _ in first }
         )
-        // Prime with canonicalJoinKey to match reconcileChargers, so the
-        // baseline and the diff use the same key space (else every connected
-        // charger would fire a spurious "connected" on the first poll).
+        // Primed through `chargerLabels` itself, the same call
+        // `reconcileChargers` makes, so the baseline and the diff use the same
+        // key space (else every connected charger would fire a spurious
+        // "connected" on the first poll).
         knownChargerLabels = chargerLabels(for: chargerSources)
-        knownChargerPortKeyFallbacks = chargerPortKeyFallbacks(for: chargerSources)
         // Issue #593: same priming for the cable-name side, so a cable
         // already attached at launch isn't treated as newly arrived by the
         // first `reconcileChargers()` call. `knownLabelledCablesByPort` can
@@ -2731,11 +2721,6 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         // name outright. The cap still bounds the wait for the ports that
         // never settle, so `allSatisfy` cannot stall anything.
         //
-        // Each port is checked under BOTH of its keys (F2 review fix): the
-        // feed may have published it under its UUID or its `portKey`
-        // depending on which side's registry walk succeeded. See
-        // `chargerPortKeyFallbacks(for:)`.
-        //
         // Accepted cost of `allSatisfy`, recorded so it does not read as an
         // oversight (N2 review finding): a waited-on port that is UNPLUGGED
         // mid-grace lands in neither identity set, which is exactly what "not
@@ -2753,9 +2738,8 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
             if !chargerCableLabelGracePortKeys.isEmpty,
                let feed,
                chargerCableLabelGracePortKeys.allSatisfy({ key in
-                   joinAliases(of: key, fallbacks: chargerCableLabelGracePortKeyFallbacks).contains {
-                       feed.attachedLabelledByPort[$0] != nil || feed.portsWithResolvedCableIdentity.contains($0)
-                   }
+                   feed.attachedLabelledByPort[key] != nil
+                       || feed.portsWithResolvedCableIdentity.contains(key)
                }) {
                 cancelChargerCableLabelGrace()
                 reconcileChargers()
@@ -2787,8 +2771,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
                 refreshCapturedCableName(
                     forChargerPort: portKey,
                     namesByPort: byPort,
-                    resolvedPorts: feed?.portsWithResolvedCableIdentity ?? [],
-                    fallbacks: knownChargerPortKeyFallbacks
+                    resolvedPorts: feed?.portsWithResolvedCableIdentity ?? []
                 )
             }
         }
@@ -2938,14 +2921,12 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         }
 
         let current = currentChargerSources()
-        // Track chargers by canonicalJoinKey (HPM UUID when present, portKey
-        // fallback) so add/remove detection keys on stable port identity.
+        // Track chargers by `portKey` (see `chargerLabels(for:)`), so a
+        // physical port keeps one stable identity here even when its source
+        // nodes' UUID walks disagree or flicker between passes.
         let currentLabels = chargerLabels(for: current)
         let addedPortKeys = Set(currentLabels.keys).subtracting(knownChargerLabels.keys)
         let removedPortKeys = knownChargerLabels.keys.filter { !currentLabels.keys.contains($0) }
-        // The second key each charger port may be published under on the
-        // FEED side (F2 review fix). See `chargerPortKeyFallbacks(for:)`.
-        let joinFallbacks = chargerPortKeyFallbacks(for: current)
 
         // Issue #593: a USB-C cable's e-marker can resolve a second or two
         // after the port reports connected, which is LATER than the 1.5s
@@ -2983,12 +2964,10 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
            let namesByPort = knownLabelledCablesByPort,
            knownHasSavedCables {
             let unnamedAddedPortKeys = addedPortKeys.filter { key in
-                let aliases = joinAliases(of: key, fallbacks: joinFallbacks)
-                return aliases.allSatisfy { namesByPort[$0] == nil }
-                    && aliases.contains { knownPortsAwaitingCableIdentity.contains($0) }
+                namesByPort[key] == nil && knownPortsAwaitingCableIdentity.contains(key)
             }
             if !unnamedAddedPortKeys.isEmpty {
-                armChargerCableLabelGrace(waitingOn: unnamedAddedPortKeys, fallbacks: joinFallbacks)
+                armChargerCableLabelGrace(waitingOn: unnamedAddedPortKeys)
                 return
             }
         }
@@ -3003,17 +2982,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         cancelChargerCableLabelGrace()
 
         let previousLabels = knownChargerLabels
-        // Captured alongside `previousLabels` and for the same reason: the
-        // removed side has to be read against the key space it was written
-        // in. A removed key is by definition absent from `currentLabels`, so
-        // a split detected against the CURRENT set can never describe it.
-        let previousFallbacks = knownChargerPortKeyFallbacks
         knownChargerLabels = currentLabels
-        // Same lifecycle as `knownChargerLabels` (both describe "the ports
-        // that currently hold a charger"), so `updateLabelledCables` can
-        // alias its own refresh pass without doing a live charger read of
-        // its own. See `knownChargerPortKeyFallbacks`.
-        knownChargerPortKeyFallbacks = joinFallbacks
 
         log("reconcileChargers: added=\(addedPortKeys.count) removed=\(removedPortKeys.count)")
 
@@ -3029,43 +2998,17 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         // (the live feed has already lost it), so building this first is
         // what makes the disconnect banner able to name it at all.
         let currentCableNames = knownLabelledCablesByPort ?? [:]
-        // WITHHELD at read time, never deleted from the map (R2 review fix).
-        // The split's second line must not carry a name, but the flag that
-        // says which side is second is not stable: a sibling whose UUID walk
-        // resolves only transiently is flagged on one reconcile and not the
-        // next. Deleting the captured name on the flagged pass destroyed it
-        // permanently, so a LATER feed gap, which the three-way rule in
-        // `refreshCapturedCableName` would otherwise HOLD through, had
-        // nothing left to hold and the disconnect banner came out unnamed.
-        // That is the same mistake H4 fixed and this reintroduced: acting on
-        // a transient absence rather than on a positive answer. Withholding
-        // keeps the map's own record intact, so the name simply reappears if
-        // the flag stops applying, with nothing to re-capture.
-        //
-        // Read against the PREVIOUS key space (`previousLabels` /
-        // `previousFallbacks`), not the current one: these ports have just
-        // left `currentLabels`, so a split detected there would never
-        // match them.
-        let removedDuplicateAliasPortKeys = aliasDuplicatePortKeys(
-            among: previousLabels.keys, fallbacks: previousFallbacks
-        )
-        let removedCableNames = knownChargerCableLabels.filter {
-            !removedDuplicateAliasPortKeys.contains($0.key)
-        }
         let removedLines = NotificationDecision.sortedChargerLines(
-            for: removedPortKeys, labels: previousLabels, cableNames: removedCableNames
+            for: removedPortKeys, labels: previousLabels, cableNames: knownChargerCableLabels
         )
         // Seeds a newly added port's name and refreshes one that already
         // held a charger (both are just "this port currently has a
-        // charger", so one loop covers both). Every port captures, flagged
-        // or not; suppression is entirely a read-time concern now.
-        let duplicateAliasPortKeys = aliasDuplicatePortKeys(among: currentLabels.keys, fallbacks: joinFallbacks)
+        // charger", so one loop covers both).
         for portKey in currentLabels.keys {
             refreshCapturedCableName(
                 forChargerPort: portKey,
                 namesByPort: currentCableNames,
-                resolvedPorts: knownPortsWithResolvedCableIdentity,
-                fallbacks: joinFallbacks
+                resolvedPorts: knownPortsWithResolvedCableIdentity
             )
         }
         // Drop LAST, after `removedLines` already captured whatever name
@@ -3085,14 +3028,12 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         for portKey in addedPortKeys where addedLabelsByPortKey[portKey] == nil {
             addedLabelsByPortKey[portKey] = String(localized: "Wattage not reported", bundle: _notificationsLocalizedBundle)
         }
-        // Aliased, so the added line finds a name the feed published under
-        // this port's OTHER key (F2). `knownChargerCableLabels` needs no such
-        // treatment: it is keyed by the charger side's own key throughout.
+        // A plain lookup: both sides are keyed by `portKey` now, and the feed
+        // publishes every name under a port's `portKey` as well as its join
+        // key, so there is nothing left to alias.
         var addedCableNames: [String: String] = [:]
-        for portKey in addedPortKeys where !duplicateAliasPortKeys.contains(portKey) {
-            if let name = cableName(forChargerPort: portKey, in: currentCableNames, fallbacks: joinFallbacks) {
-                addedCableNames[portKey] = name
-            }
+        for portKey in addedPortKeys {
+            if let name = currentCableNames[portKey] { addedCableNames[portKey] = name }
         }
         let addedLines = NotificationDecision.sortedChargerLines(
             for: addedPortKeys, labels: addedLabelsByPortKey, cableNames: addedCableNames
@@ -3102,91 +3043,6 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         for content in contents {
             postNotification(category: .charger, title: content.title, subtitle: content.subtitle, body: content.body)
         }
-    }
-
-    /// "charger join key -> that same port's plain `portKey`", for every
-    /// charger source currently published. Only the ports whose two keys
-    /// actually DIFFER get an entry; when no UUID resolved they are the same
-    /// string and there is nothing to fall back to.
-    ///
-    /// F2 review fix. `chargerLabels(for:)` keys ports by
-    /// `PowerSource.canonicalJoinKey`, which is the source's UUID when its
-    /// own registry walk found one and its `portKey` otherwise. The feed side
-    /// keys by `AppleHPMInterface.canonicalJoinKey`, which makes the same
-    /// choice independently. When the two walks disagree the strings never
-    /// match, so a plain dictionary lookup silently drops the name AND the
-    /// grace never arms. This map is what lets the lookup try the port's
-    /// other key, matching the tolerance `PowerSource.canonicallyMatches(port:)`
-    /// already has (see `NotificationCableLabelProvider.joinAliases(of:)` for
-    /// the other half, and for why the alias cannot false-match).
-    private func chargerPortKeyFallbacks(for sources: [PowerSource]) -> [String: String] {
-        var fallbacks: [String: String] = [:]
-        for source in sources where source.canonicalJoinKey != source.portKey {
-            fallbacks[source.canonicalJoinKey] = source.portKey
-        }
-        return fallbacks
-    }
-
-    /// One charger port's keys, in LOOKUP ORDER: its own join key first, its
-    /// `portKey` second. Ordered rather than a `Set` so a lookup is
-    /// deterministic; the two can only ever carry the same name anyway (the
-    /// provider writes one name to both aliases), but an unordered iteration
-    /// would make that a fact about the data rather than about this code.
-    private func joinAliases(of key: String, fallbacks: [String: String]) -> [String] {
-        guard let fallback = fallbacks[key], fallback != key else { return [key] }
-        return [key, fallback]
-    }
-
-    /// The keys in `keys` that are the plain-`portKey` form of ANOTHER key in
-    /// the same set: the second half of one physical port that
-    /// `chargerLabels` split in two.
-    ///
-    /// N1 review fix. `chargerLabels` groups charger sources by
-    /// `canonicalJoinKey`, so two sibling `PowerSource` nodes on ONE physical
-    /// port whose UUID walks disagree (the registry teardown race
-    /// `ChargingInputResolverTests.mixedUUIDSiblingsAreOneInput` documents)
-    /// become two charger port keys and two banner lines. That split is
-    /// pre-existing and is NOT fixed here: fixing it means grouping by
-    /// `portKey` the way `ChargingInputResolver` already does, which changes
-    /// the key space `knownChargerLabels` diffs on and so alters add/remove
-    /// detection for the whole charger feature. That is its own piece of work.
-    ///
-    /// What IS fixed here is the damage the F2 alias did to it. Publishing
-    /// each name under both of a port's keys made BOTH phantom lines find it,
-    /// so the banner asserted the same saved cable was plugged into two ports
-    /// at once, one of them reporting no wattage. A stray placeholder line is
-    /// merely unexplained; telling someone their named cable is in two places
-    /// is false. So the duplicate line is left unnamed, which restores the
-    /// pre-alias wording for the second line while keeping the name on the
-    /// first.
-    ///
-    /// Applied at READ time, at both call sites, never by removing anything
-    /// from `knownChargerCableLabels` (R2 review fix). The flag is not
-    /// stable: whether a port is the second half of a split depends on
-    /// whether a sibling's UUID walk happened to resolve on this pass. A
-    /// destructive clear on a flagged pass therefore threw away a name that
-    /// a later, unflagged pass had every right to print.
-    ///
-    /// Detection is exact rather than heuristic: `fallbacks` is built from the
-    /// live charger sources, so a hit means these two keys came from the same
-    /// `parentPortType/parentPortNumber`, not that two strings happen to look
-    /// related.
-    private func aliasDuplicatePortKeys(
-        among keys: Dictionary<String, String>.Keys, fallbacks: [String: String]
-    ) -> Set<String> {
-        let keySet = Set(keys)
-        guard !fallbacks.isEmpty else { return [] }
-        return Set(keySet.compactMap { fallbacks[$0] }).intersection(keySet)
-    }
-
-    /// The feed's name for one charger port, trying both of its keys.
-    private func cableName(
-        forChargerPort key: String, in namesByPort: [String: String], fallbacks: [String: String]
-    ) -> String? {
-        for alias in joinAliases(of: key, fallbacks: fallbacks) {
-            if let name = namesByPort[alias] { return name }
-        }
-        return nil
     }
 
     /// Updates `knownChargerCableLabels` for ONE port that currently holds a
@@ -3224,15 +3080,13 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     private func refreshCapturedCableName(
         forChargerPort portKey: String,
         namesByPort: [String: String],
-        resolvedPorts: Set<String>,
-        fallbacks: [String: String]
+        resolvedPorts: Set<String>
     ) {
-        if let name = cableName(forChargerPort: portKey, in: namesByPort, fallbacks: fallbacks) {
+        if let name = namesByPort[portKey] {
             knownChargerCableLabels[portKey] = name
             return
         }
-        let aliases = joinAliases(of: portKey, fallbacks: fallbacks)
-        if aliases.contains(where: { resolvedPorts.contains($0) }) {
+        if resolvedPorts.contains(portKey) {
             knownChargerCableLabels.removeValue(forKey: portKey)
         }
     }
@@ -3248,22 +3102,16 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// in `portKeys` (the common case, and the reason a plug whose cable IS
     /// saved doesn't sit out the whole window).
     ///
-    /// `fallbacks` is carried alongside so the collapse can look each waited-
-    /// on port up under both of its keys (F2). It is captured HERE, from the
-    /// charger set this grace was armed against, rather than re-derived at
-    /// collapse time from a set that may have moved on.
-    ///
     /// Cancel-then-bump-generation before scheduling, mirroring
     /// `scheduleGapLanding`: a superseded task must be unable to touch shared
     /// state, by construction rather than by relying on `.cancel()` having
     /// been observed.
-    private func armChargerCableLabelGrace(waitingOn portKeys: Set<String>, fallbacks: [String: String]) {
+    private func armChargerCableLabelGrace(waitingOn portKeys: Set<String>) {
         chargerCableLabelGraceTask?.cancel()
         chargerCableLabelGraceGeneration += 1
         let generation = chargerCableLabelGraceGeneration
         chargerCableLabelGraceUsed = true
         chargerCableLabelGracePortKeys = portKeys
-        chargerCableLabelGracePortKeyFallbacks = fallbacks.filter { portKeys.contains($0.key) }
         log("reconcileChargers: waiting \(Self.chargerCableLabelGraceWindow) for cable names on \(portKeys.count) port(s)")
         chargerCableLabelGraceTask = Task { @MainActor [weak self] in
             guard let clock = self?.clock else { return }
@@ -3273,7 +3121,6 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
                   generation == self.chargerCableLabelGraceGeneration
             else { return }
             self.chargerCableLabelGracePortKeys = []
-            self.chargerCableLabelGracePortKeyFallbacks = [:]
             self.chargerCableLabelGraceTask = nil
             // `chargerCableLabelGraceUsed` stays true: this reconcile is the
             // second pass, and it must post rather than wait again.
@@ -3292,7 +3139,6 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         chargerCableLabelGraceTask = nil
         chargerCableLabelGraceGeneration += 1
         chargerCableLabelGracePortKeys = []
-        chargerCableLabelGracePortKeyFallbacks = [:]
     }
 
     /// The current wattage label per charger port, used both to prime the
@@ -3314,12 +3160,25 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         let chargerSourceCount = ChargerWattageSource.chargerSourceCount(ports: ports, sources: sources)
         let adapter = currentAdapter()
         let unreported = String(localized: "Wattage not reported", bundle: _notificationsLocalizedBundle)
-        let portKeys = Set(sources.map(\.canonicalJoinKey))
-        return Dictionary(uniqueKeysWithValues: portKeys.map { portKey -> (String, String) in
-            let portSources = sources.filter { $0.canonicalJoinKey == portKey }
+        // Grouped by `portKey` (type/number), NOT `canonicalJoinKey`. Sibling
+        // source nodes on one physical port ("USB-PD" + "Brick ID", the shape
+        // 95% of corpus charging ports have) each walk the registry for their
+        // own HPM UUID. If one walk succeeds while the other fails, their
+        // canonical keys differ and one physical port becomes two dictionary
+        // entries: two banner lines for one cable, a name that lands on
+        // whichever of them the race picked, and a UUID walk that flips
+        // between passes reading as a disconnect plus a reconnect. `portKey`
+        // is identical for siblings by construction. Mirrors
+        // `ChargingInputResolver`, which groups the same way for the same
+        // reason (`ChargingInputResolverTests.mixedUUIDSiblingsAreOneInput`).
+        //
+        // Nothing downstream needs the UUID here: `NotificationCableLabelProvider`
+        // publishes every name and identity-set membership under BOTH a port's
+        // join key and its `portKey`, so a plain `portKey` lookup always hits.
+        return Dictionary(grouping: sources, by: \.portKey).mapValues { portSources -> String in
             let preferred = PowerSource.preferredChargingSource(in: portSources) ?? portSources.first
             if let winning = preferred?.winning {
-                return (portKey, String(localized: "\(winning.wattsLabel) negotiated", bundle: _notificationsLocalizedBundle))
+                return String(localized: "\(winning.wattsLabel) negotiated", bundle: _notificationsLocalizedBundle)
             }
             let resolved = ChargerWattageSource.resolve(
                 portSources: portSources,
@@ -3330,21 +3189,21 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
             // A Brick ID node's wattage is a placeholder, so suppress it when
             // the adapter divert declined and resolve fell back to it.
             if ChargerWattageSource.isUnquantifiedBrickID(portSources: portSources, resolved: resolved) {
-                return (portKey, unreported)
+                return unreported
             }
             switch resolved {
             case .systemAdapterFallback(let watts):
                 // macOS's own reading of the adapter, so it is a measurement:
                 // same wording `PortSummary` uses for this case.
-                return (portKey, String(localized: "System reports charger at \(watts)W", bundle: _notificationsLocalizedBundle))
+                return String(localized: "System reports charger at \(watts)W", bundle: _notificationsLocalizedBundle)
             case .portNegotiated(let watts):
                 // The source's own advertised maximum, not a settled contract,
                 // so this must never read as negotiated.
-                return (portKey, String(localized: "Charger advertises up to \(watts)W", bundle: _notificationsLocalizedBundle))
+                return String(localized: "Charger advertises up to \(watts)W", bundle: _notificationsLocalizedBundle)
             case .unknown:
-                return (portKey, unreported)
+                return unreported
             }
-        })
+        }
     }
 
     /// The single place ANY notification actually leaves this module,
