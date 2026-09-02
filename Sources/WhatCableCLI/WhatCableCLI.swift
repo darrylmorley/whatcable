@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import WhatCableCore
 import WhatCableDarwinBackend
@@ -51,10 +52,41 @@ struct WhatCableCLI {
                 exit(2)
             }
             // These launch the GUI app as a separate process, which reads its
-            // own Settings, not our CLI flags. --no-usb-probe can't reach it, so
-            // say so rather than silently ignoring it (issue #429).
+            // own Settings, not our CLI flags. Our process-local gate therefore
+            // cannot reach it, so write the app's own preference instead
+            // (issues #429 and #571).
             if args.contains("--no-usb-probe") {
-                FileHandle.standardError.write(Data("whatcable: --no-usb-probe has no effect when launching the app; use the app's \"Skip deep USB probing\" setting instead\n".utf8))
+                // Fail closed. If the suite cannot be opened we must not launch
+                // the app anyway: the user is asking to escape a probe that has
+                // already broken something, and launching without the setting
+                // reproduces exactly that.
+                guard let defaults = UserDefaults(suiteName: "uk.whatcable.whatcable") else {
+                    FileHandle.standardError.write(Data("whatcable: could not open WhatCable's settings, so not launching the app. Run: defaults write uk.whatcable.whatcable skipDeepUSBProbing -bool true\n".utf8))
+                    exit(1)
+                }
+                defaults.set(true, forKey: "skipDeepUSBProbing")
+                defaults.synchronize()
+                // Read back rather than trusting the flush. The whole point of
+                // this command is escaping a probe that has already broken
+                // something, so launching the app with the preference not
+                // actually visible reproduces exactly what the user is fleeing
+                // (issue #571).
+                guard defaults.bool(forKey: "skipDeepUSBProbing") else {
+                    FileHandle.standardError.write(Data("whatcable: could not save the \"Skip deep USB probing\" setting, so not launching the app. Set it in Settings, or run: defaults write uk.whatcable.whatcable skipDeepUSBProbing -bool true\n".utf8))
+                    exit(1)
+                }
+                // An already-running app will NOT pick this up: `open` activates
+                // the existing process, and AppSettings reads its preferences
+                // once at init. Say so rather than implying a fix that has not
+                // happened.
+                let alreadyRunning = !NSRunningApplication
+                    .runningApplications(withBundleIdentifier: "uk.whatcable.whatcable")
+                    .isEmpty
+                if alreadyRunning {
+                    FileHandle.standardError.write(Data("whatcable: turned on the app's \"Skip deep USB probing\" setting, but WhatCable is already running and will not pick it up until you quit and reopen it\n".utf8))
+                } else {
+                    FileHandle.standardError.write(Data("whatcable: turned on the app's \"Skip deep USB probing\" setting; change it in Settings when you want it back\n".utf8))
+                }
             }
             launchApp(menuBarMode: wantsPopover)
             return
@@ -176,6 +208,9 @@ struct WhatCableCLI {
                          us design the Thunderbolt fabric feature). See issue tracker.
           --no-usb-probe Skip deep USB probing. Issues no USB control transfers; use
                          if a KVM switch or hub misbehaves when WhatCable runs.
+                         With --desktop or --popover, also turns on the app's
+                         "Skip deep USB probing" setting, so the app keeps it off
+                         until you change it in Settings.
           --version      Print version and exit
           -h, --help     Show this help and exit
 
@@ -363,7 +398,13 @@ private func launchApp(menuBarMode: Bool) {
     let suiteName = "uk.whatcable.whatcable"
     if let defaults = UserDefaults(suiteName: suiteName) {
         defaults.set(menuBarMode, forKey: "useMenuBarMode")
-        defaults.set(true, forKey: "hasCompletedOnboarding")
+        // Deliberately does NOT set hasCompletedOnboarding. That flag is the
+        // app's "has it loaded far enough to show a UI" condition for the USB
+        // probe gate (issue #571), so writing it here would open the gate for a
+        // brand new user before the app had drawn anything, which is the bug
+        // being fixed. Leaving it alone means a CLI-launched first run still
+        // gets the welcome screen, opening on the mode written just above.
+        defaults.synchronize()
     }
 
     // If running from inside the .app bundle (Contents/Helpers/whatcable),

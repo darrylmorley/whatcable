@@ -134,17 +134,35 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Compatibility switch for USB probing, off by default. When off (the
-    /// default), WhatCable reads each USB device's capability descriptor so the
-    /// Pro diagnostics can show alt modes. That read is a real USB control
-    /// transfer, and a few KVM switches and hubs react badly to it (issue #429),
-    /// so turning this switch on makes `USBWatcher` issue no USB traffic at all.
+    /// Compatibility switch for USB probing, off by default. When off, and once
+    /// the user has been through the welcome screen, WhatCable reads each USB
+    /// device's capability descriptor so the Pro diagnostics can show alt modes.
+    /// That read is a real USB control transfer, and a few KVM switches and hubs
+    /// react badly to it (issue #429), so turning this switch on makes
+    /// `USBWatcher` issue no USB traffic at all.
+    ///
+    /// This switch is only half the gate: on a first run nothing is read no
+    /// matter how it is set, so that a machine the probe breaks still reaches a
+    /// UI (issue #571). See `USBProbeGate`.
     @Published var skipDeepUSBProbing: Bool {
         didSet {
             guard skipDeepUSBProbing != oldValue else { return }
             UserDefaults.standard.set(skipDeepUSBProbing, forKey: Keys.skipDeepUSBProbing)
-            USBWatcher.probeBillboardDescriptors = !skipDeepUSBProbing
+            applyUSBProbeGate()
         }
+    }
+
+    /// Push both gate inputs through the one decision.
+    ///
+    /// Called from both inputs' setters and from launch, so no caller has to
+    /// remember: `skipDeepUSBProbing`'s didSet, `hasCompletedOnboarding`'s
+    /// setter, and `continueNormalLaunch`. `AppSettings.init` cannot call it
+    /// (self is not fully initialised there) and spells the same expression out.
+    func applyUSBProbeGate() {
+        USBWatcher.probeBillboardDescriptors = USBProbeGate.shouldProbe(
+            hasCompletedOnboarding: hasCompletedOnboarding,
+            skipDeepUSBProbing: skipDeepUSBProbing
+        )
     }
 
     /// BCP 47 language code to override the system language, or empty string
@@ -251,16 +269,25 @@ final class AppSettings: ObservableObject {
 
     var hasCompletedOnboarding: Bool {
         get { UserDefaults.standard.bool(forKey: Keys.hasCompletedOnboarding) }
-        set { UserDefaults.standard.set(newValue, forKey: Keys.hasCompletedOnboarding) }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Keys.hasCompletedOnboarding)
+            // One of the two USB probe gate inputs (issue #571), so re-apply the
+            // gate here rather than relying on every caller to remember.
+            applyUSBProbeGate()
+        }
     }
 
-    /// True when the user has never explicitly chosen a display mode.
-    /// Fresh installs see the welcome screen. Existing users who never
-    /// toggled the setting in Settings also see it once on upgrade
-    /// (pre-selecting their current mode), because the init assignment
-    /// doesn't fire didSet and the key stays absent until toggled.
+    /// True when the user has never been through the welcome screen.
+    ///
+    /// This used to also require the display-mode key to be absent. That had to
+    /// go (issue #571): `whatcable --desktop` and `--popover` write that key, so
+    /// a CLI-launched first run would never see the welcome screen, and since
+    /// the USB probe gate now depends on onboarding completing, deep probing
+    /// would be disabled forever on those machines. Accepted side effect: a
+    /// legacy user who has a mode key but never completed onboarding sees the
+    /// welcome screen once, pre-selecting their current mode.
     var needsOnboarding: Bool {
-        !hasCompletedOnboarding && UserDefaults.standard.object(forKey: Keys.useMenuBarMode) == nil
+        !hasCompletedOnboarding
     }
 
     /// Whether a never-touched `receiveBetaUpdates` key should default to on,
@@ -320,12 +347,20 @@ final class AppSettings: ObservableObject {
             self.useMenuBarMode = UserDefaults.standard.bool(forKey: Keys.useMenuBarMode)
         }
         self.showTechnicalDetails = UserDefaults.standard.bool(forKey: Keys.showTechnicalDetails)
-        // Deep USB probing is on by default; absent key reads as false (don't
-        // skip). Seed the watcher's static so the very first enumeration honours
-        // the saved preference, before the settings UI is ever opened.
+        // Deep USB probing is on by default once onboarding is done; the absent
+        // key reads as false (don't skip). Seed the watcher's static so the very
+        // first enumeration honours both gate inputs, before the settings UI is
+        // ever opened.
         let skipProbing = UserDefaults.standard.bool(forKey: Keys.skipDeepUSBProbing)
         self.skipDeepUSBProbing = skipProbing
-        USBWatcher.probeBillboardDescriptors = !skipProbing
+        // Seed the watcher's static from both gate inputs: the saved preference,
+        // and whether the app has ever loaded far enough to show its UI
+        // (issue #571). Spelled out rather than calling applyUSBProbeGate(),
+        // because self is not fully initialised here.
+        USBWatcher.probeBillboardDescriptors = USBProbeGate.shouldProbe(
+            hasCompletedOnboarding: UserDefaults.standard.bool(forKey: Keys.hasCompletedOnboarding),
+            skipDeepUSBProbing: skipProbing
+        )
         let savedLanguage = UserDefaults.standard.string(forKey: Keys.preferredLanguage) ?? ""
         self.preferredLanguage = savedLanguage
         setCoreLocale(savedLanguage)

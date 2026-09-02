@@ -96,6 +96,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
     // Onboarding
     private var welcomeWindow: NSWindow?
+    /// Mode applied if the welcome window is dismissed without clicking a card.
+    /// Seeded from the stored preference in `showWelcomeWindow`, not defaulted:
+    /// `WelcomeView` only reports a selection when a card is clicked, so a user
+    /// who launched with `whatcable --desktop` and closed the window would
+    /// otherwise have their Dock app silently converted to a menu bar app
+    /// (issue #571 made this reachable by showing the welcome screen to legacy
+    /// users who have a mode key but never onboarded).
     private var onboardingMenuBarChoice = true
 
     private var cancellables: Set<AnyCancellable> = []
@@ -222,12 +229,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
         ProcessInfo.processInfo.setValue(AppInfo.name, forKey: "processName")
 
-        // Apply the USB-probing preference BEFORE the watchers start. Their
-        // first act is to enumerate the devices already plugged in, which fires
-        // the Billboard probe; on a machine that must not be probed (issue #429)
+        // Apply the USB-probing gate BEFORE the watchers start. Their first
+        // act is to enumerate the devices already plugged in, which fires the
+        // Billboard probe; on a machine that must not be probed (issue #429)
         // that one launch-time burst is enough to restart the loop. Touching
         // AppSettings.shared also runs its init, which seeds the same gate.
-        USBWatcher.probeBillboardDescriptors = !AppSettings.shared.skipDeepUSBProbing
+        //
+        // The gate is two conditions now, not just the compatibility switch:
+        // a first run keeps the bus quiet until the welcome screen has been
+        // through, because this line runs before any UI exists and a user
+        // whose hardware the probe breaks would otherwise never get a window
+        // to fix it from (issue #571).
+        AppSettings.shared.applyUSBProbeGate()
         WatcherHub.shared.start()
         NotificationManager.shared.start()
         WidgetDataWriter.shared.start()
@@ -431,9 +444,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
     private func showWelcomeWindow() {
         NSApp.setActivationPolicy(.regular)
+        // Seed the dismissal fallback from the same value the view opens on, so
+        // closing the window without clicking a card cannot change the mode.
+        onboardingMenuBarChoice = AppSettings.shared.useMenuBarMode
         let host = NSHostingController(
             rootView: ScaledHost {
                 WelcomeView(
+                    useMenuBarInitially: AppSettings.shared.useMenuBarMode,
                     onSelectionChanged: { [weak self] useMenuBar in
                         self?.onboardingMenuBarChoice = useMenuBar
                     },
@@ -460,10 +477,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private func completeOnboarding(useMenuBar: Bool) {
         guard let w = welcomeWindow else { return }
         welcomeWindow = nil
-        AppSettings.shared.hasCompletedOnboarding = true
+        // Mode first, completion marker last. Each is a separate UserDefaults
+        // write, so if the process dies between them an interrupted prefix must
+        // not leave onboarding marked complete with the mode unset: that would
+        // skip the welcome screen next launch AND open the probe gate. (The
+        // mode's didSet no-ops on an unchanged value, so on the common path
+        // where the user accepts the recommended menu bar card nothing is
+        // written at all. That is fine, absent reads as menu bar; the ordering
+        // matters for the case where it does write.)
         AppSettings.shared.useMenuBarMode = useMenuBar
+        // Setting this re-applies the USB probe gate through its own setter, so
+        // there is no separate call to forget here (issue #571).
+        AppSettings.shared.hasCompletedOnboarding = true
         applyDisplayMode(menuBar: useMenuBar)
-        log.notice("launch: onboarding complete, menuBar=\(useMenuBar)")
+        // Launch deliberately enumerated with probing off, so the devices we
+        // already hold carry no alt-mode data. Re-read them now the gate is
+        // open. This does not disturb the notification registration; see
+        // USBWatcher.reenumerate() for why stop()/start() is the wrong tool.
+        //
+        // AFTER applyDisplayMode and deferred a runloop turn, both deliberate.
+        // The read is a synchronous control transfer on the main thread with no
+        // timeout, and on the hardware this whole change exists for it is the
+        // thing that hangs. Doing it before the status item or window exists
+        // would repeat the original bug one click later: a frozen machine with
+        // no UI. This way there is a visible app first, and a hang is
+        // attributable to the click that caused it.
+        if USBWatcher.probeBillboardDescriptors {
+            DispatchQueue.main.async {
+                WatcherHub.shared.deviceWatcher.reenumerate()
+            }
+        }
+        log.notice("launch: onboarding complete, menuBar=\(useMenuBar), usbProbe=\(USBWatcher.probeBillboardDescriptors)")
         DispatchQueue.main.async { w.close() }
     }
 

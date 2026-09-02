@@ -26,9 +26,30 @@ public final class USBWatcher: ObservableObject {
     /// at runtime takes effect immediately; all `USBWatcher` instances (menu
     /// bar, CLI snapshot, Pro diagnostics) honour the one value.
     ///
-    /// Defaults true so everyone keeps the alt-mode / dock capability data. The
-    /// app writes it from `AppSettings`; the CLI from `--no-usb-probe`.
-    public static var probeBillboardDescriptors = true
+    /// Whether the Billboard/BOS descriptor read may be issued at all.
+    ///
+    /// Defaults FALSE so an unset gate fails closed. Fail-open is what made
+    /// issue #571 possible: a watcher started before anything had decided would
+    /// put traffic on the bus. Every real entry point sets this explicitly
+    /// before starting a watcher (the app from `AppSettings`, the CLI from
+    /// `--no-usb-probe`, the widget forces it off), so nobody loses the
+    /// alt-mode data by this default; it only governs a path that forgot to
+    /// decide, and such a path should be silent rather than probing.
+    public static var probeBillboardDescriptors = false
+
+    /// The Billboard/BOS read itself, injectable so tests can observe whether a
+    /// control transfer was issued. Production keeps the real reader. This
+    /// exists because "no probe happened" is otherwise unprovable: nothing logs
+    /// the read, so its absence could only be argued from the absence of a line
+    /// that never existed. Issue #571 is exactly a bug about a probe happening
+    /// when it should not have.
+    static var billboardReader: (io_service_t) -> BillboardCapability? = {
+        BillboardDescriptorReader.read(from: $0)
+    }
+
+    /// Count of Billboard reads issued since it was last reset. Diagnostic only;
+    /// nothing in production branches on it.
+    static var billboardReadCount = 0
 
     private var notifyPort: IONotificationPortRef?
     private var addedIter: io_iterator_t = 0
@@ -92,6 +113,33 @@ public final class USBWatcher: ObservableObject {
             notifyPort = nil
         }
         devices.removeAll()
+    }
+
+    /// Rebuild the device list from what is attached right now, WITHOUT
+    /// touching the notification registration.
+    ///
+    /// Needed when the probe gate opens after launch (issue #571): the devices
+    /// already held were built with probing off, so they carry no alt-mode data.
+    ///
+    /// Deliberately not `stop()` then `start()`, which looks equivalent and is
+    /// not. That path empties `devices` and republishes it, which every
+    /// observer sees as a mass disconnect, and it destroys and recreates the
+    /// notification port: if re-registration then failed, `notifyPort` would be
+    /// left non-nil with nothing registered, so the `guard notifyPort == nil`
+    /// in `start()` would suppress every future retry and USB watching would be
+    /// dead for the rest of the process. This replaces the array in one
+    /// assignment, so there is no empty intermediate and no teardown to fail.
+    public func reenumerate() {
+        var iterator: io_iterator_t = 0
+        guard IOServiceGetMatchingServices(
+            kIOMainPortDefault,
+            IOServiceMatching("IOUSBHostDevice"),
+            &iterator
+        ) == KERN_SUCCESS else { return }
+        defer { IOObjectRelease(iterator) }
+
+        let rebuilt = wcDrainAllRetrying(iterator) { makeDevice(from: $0) }.compactMap { $0 }
+        devices = rebuilt.sorted { ($0.productName ?? "") < ($1.productName ?? "") }
     }
 
     private func handleAdded(iterator: io_iterator_t) {
@@ -180,9 +228,13 @@ public final class USBWatcher: ObservableObject {
         // NOT invisible: it is a real control transfer on the bus, and some KVM
         // switches and hubs react to it (issue #429). `probeBillboardDescriptors`
         // is the user's escape hatch for that; when off, we issue nothing.
-        let billboard = Self.probeBillboardDescriptors
-            ? BillboardDescriptorReader.read(from: service)
-            : nil
+        let billboard: BillboardCapability?
+        if Self.probeBillboardDescriptors {
+            Self.billboardReadCount += 1
+            billboard = Self.billboardReader(service)
+        } else {
+            billboard = nil
+        }
 
         return USBDevice(
             id: entryID,
