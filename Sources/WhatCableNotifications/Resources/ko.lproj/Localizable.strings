@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "시스템에서 %lldW 충전기로 보고함";
 "Charger advertises up to %lldW" = "충전기가 최대 %lldW를 지원한다고 알림";
 "Wattage not reported" = "전력이 보고되지 않음";
+"%@ (%@)" = "%1$@ (%2$@)";

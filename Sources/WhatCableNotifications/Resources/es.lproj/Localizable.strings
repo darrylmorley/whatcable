@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "El sistema indica un cargador de %lld W";
 "Charger advertises up to %lldW" = "El cargador anuncia hasta %lld W";
 "Wattage not reported" = "Potencia no reportada";
+"%@ (%@)" = "%1$@ (%2$@)";

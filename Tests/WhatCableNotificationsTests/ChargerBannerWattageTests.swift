@@ -208,8 +208,11 @@ final class ChargerBannerWattageTests: XCTestCase {
     /// an empty label must never become a blank line in a merged body.
     func testEmptyLabelIsDroppedFromAMergedBody() {
         let contents = NotificationDecision.chargerNotificationContents(
-            addedLabels: ["", "30W negotiated"],
-            removedLabels: []
+            added: [
+                NotificationDecision.ChargerLine(wattage: "", cableName: nil),
+                NotificationDecision.ChargerLine(wattage: "30W negotiated", cableName: nil)
+            ],
+            removed: []
         )
 
         XCTAssertEqual(contents, [

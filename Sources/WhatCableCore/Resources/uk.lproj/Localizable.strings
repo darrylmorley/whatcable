@@ -143,6 +143,7 @@
 "%@ (spec, not measured)" = "%@ (за специфікацією, не виміряно)";
 "%@ Diagnostics" = "Діагностика %@";
 "%lld (%lld failed)" = "%1$lld (%2$lld невдалих)";
+"%lld of %lld devices used" = "%lld із %lld пристроїв використано";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap виконано успішно. Порт змінив роль між DFP (хост) і UFP (пристрій).";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap виконано успішно. Типово для хаба або Dock, коли вони переузгоджують, яка сторона подає живлення.";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "З'єднання USB 2.0 виявлено на застарілих контактах D+/D-.";
@@ -173,6 +174,7 @@
 "Default USB (500/900 mA)" = "USB за замовчуванням (500/900 mA)";
 "Detach count" = "Кількість відключень";
 "Device Identity" = "Ідентичність пристрою";
+"Devices" = "Пристрої";
 "Diagnostics" = "Діагностика";
 "Disabled" = "Вимкнено";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "Отримано відповідь Discover Identity на каналі SOP. Містить VID, PID і capability VDOs підключеного партнера (не кабелю; ідентичність кабелю використовує SOP').";
@@ -188,6 +190,7 @@
 "General port controller status change (connection state, error flags)." = "Загальна зміна стану контролера порту (стан з'єднання, прапори помилок).";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "Загальний регістр стану контролера змінився. Охоплює стан підключення, орієнтацію та умови помилок.";
 "Hard reset count" = "Кількість жорстких скидань";
+"Could not load the device list. Try again later." = "Не вдалося завантажити список пристроїв. Спробуйте пізніше.";
 "Could not reach the licence server. Check your internet connection and try again." = "Не вдалося зв'язатися із сервером ліцензій. Перевірте підключення до інтернету та спробуйте знову.";
 "I2C error count" = "Кількість помилок I2C";
 "Inactive" = "Неактивний";
@@ -200,6 +203,7 @@
 "Liquid Detection" = "Виявлення рідини";
 "Liquid detected" = "Рідину виявлено";
 "Live" = "В реальному часі";
+"Loading devices…" = "Завантаження пристроїв…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "Зарядний пристрій MagSafe";
 "Manufacturer" = "Виробник";
@@ -219,6 +223,7 @@
 "No SOP identity data" = "Немає даних ідентичності SOP";
 "No cable connected." = "Кабель не підключено.";
 "No cable identity data" = "Немає даних ідентичності кабелю";
+"No devices registered." = "Немає зареєстрованих пристроїв.";
 "No health counters" = "Немає лічильників стану";
 "No liquid detection data" = "Немає даних про виявлення рідини";
 "None" = "Немає";
@@ -253,6 +258,12 @@
 "Product Type" = "Тип продукту";
 "Raw VDOs" = "Необроблені VDO";
 "Raw cable VDOs" = "Необроблені VDO кабелю";
+"Refresh" = "Оновити";
+"Registered %@" = "Зареєстровано %@";
+"Registration date unknown" = "Дата реєстрації невідома";
+"Remove" = "Видалити";
+"Remove %@ from your licence?" = "Видалити %@ з вашої ліцензії?";
+"Removing this Mac will lock Pro here until you activate again." = "Видалення цього Mac заблокує Pro тут, доки ви не активуєте знову.";
 "Rp current level" = "Рівень струму Rp";
 "Rp resistor" = "Резистор Rp";
 "SOP identity received" = "Ідентичність SOP отримана";
@@ -266,12 +277,15 @@
 "Status update" = "Оновлення стану";
 "System Power Input" = "Вхідне живлення системи";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "Перехід системи у сон/пробудження. Стан контролера порту зберігається та відновлюється при переходах.";
+"That Mac will lose Pro until it activates again." = "Той Mac втратить Pro, доки не буде активований знову.";
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac перейшов у режим сну або вийшов із нього, що спричинило зміни стану контролера порту.";
 "The charger or power source advertised what voltages and currents it can provide." = "Зарядний пристрій або джерело живлення оголосило, які напруги та струми воно може забезпечити.";
 "The data role flipped: the port switched between host and device mode." = "Роль даних змінилася: порт переключився між режимами хоста та пристрою.";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "Не вдалося звільнити місце цього Mac на сервері ліцензій, тож воно, можливо, досі зайняте. Звільніть його в налаштуваннях на іншому Mac або зверніться до підтримки.";
 "The port controller firmware finished initialising and is ready." = "Прошивка контролера порту завершила ініціалізацію і готова до роботи.";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "Контролер порту видав попередження (перевищення струму, перегрів або подібна несправність).";
 "The power direction flipped: the port switched between providing and receiving power." = "Напрямок живлення змінився: порт переключився між подачею та прийомом живлення.";
+"This Mac" = "Цей Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "Цей код події відсутній у відомій таблиці переривань TPS6598x. Може бути специфічним для прошивки.";
 "Tunneled" = "Тунельований";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "Розпочато виявлення UVDM. Контролер перевіряє наявність специфічних для виробника можливостей на кабелі або партнері.";
@@ -282,6 +296,7 @@
 "USB-C Charger" = "Зарядний пристрій USB-C";
 "Unknown" = "Невідомо";
 "Unknown Device" = "Невідомий пристрій";
+"Unknown Mac" = "Невідомий Mac";
 "Unknown event %@" = "Невідома подія %@";
 "Unrecognised event code from the port controller." = "Нерозпізнаний код події від контролера порту.";
 "Unregistered cable (no e-marker)" = "Незареєстрований кабель (без e-marker)";

@@ -2,9 +2,24 @@ import SwiftUI
 import WhatCableAppKit
 
 struct WelcomeView: View {
-    @State private var useMenuBar = true
+    @State private var useMenuBar: Bool
     var onSelectionChanged: ((Bool) -> Void)?
     var onComplete: (Bool) -> Void
+
+    /// `useMenuBarInitially` seeds the selection from the stored preference
+    /// rather than hardcoding menu bar. Issue #571 made the welcome screen
+    /// reachable for users who already have a display mode (a CLI launch writes
+    /// one, and legacy users who never onboarded have one), and opening on the
+    /// wrong card would overwrite their choice the moment they clicked through.
+    init(
+        useMenuBarInitially: Bool,
+        onSelectionChanged: ((Bool) -> Void)? = nil,
+        onComplete: @escaping (Bool) -> Void
+    ) {
+        _useMenuBar = State(initialValue: useMenuBarInitially)
+        self.onSelectionChanged = onSelectionChanged
+        self.onComplete = onComplete
+    }
 
     var body: some View {
         VStack(spacing: 20) {

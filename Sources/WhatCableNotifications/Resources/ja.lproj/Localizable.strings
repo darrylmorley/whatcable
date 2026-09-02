@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "システムは%lld W充電器と報告";
 "Charger advertises up to %lldW" = "充電器は最大%lld Wを通知";
 "Wattage not reported" = "電力は報告されません";
+"%@ (%@)" = "%1$@（%2$@）";

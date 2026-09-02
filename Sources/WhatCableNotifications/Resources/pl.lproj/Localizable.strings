@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "System zgłasza ładowarkę %lldW";
 "Charger advertises up to %lldW" = "Ładowarka deklaruje do %lldW";
 "Wattage not reported" = "Moc nie jest raportowana";
+"%@ (%@)" = "%1$@ (%2$@)";

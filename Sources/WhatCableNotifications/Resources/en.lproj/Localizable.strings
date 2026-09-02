@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "System reports charger at %lldW";
 "Charger advertises up to %lldW" = "Charger advertises up to %lldW";
 "Wattage not reported" = "Wattage not reported";
+"%@ (%@)" = "%@ (%@)";

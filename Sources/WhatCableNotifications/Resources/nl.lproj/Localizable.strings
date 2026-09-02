@@ -12,3 +12,4 @@
 "System reports charger at %lldW" = "Systeem meldt oplader op %lldW";
 "Charger advertises up to %lldW" = "Oplader biedt tot %lldW";
 "Wattage not reported" = "Vermogen niet gerapporteerd";
+"%@ (%@)" = "%1$@ (%2$@)";

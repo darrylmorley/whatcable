@@ -82,7 +82,11 @@ import WhatCableCore
 /// The absolute deadline is derived from both, because the worst case has
 /// to cover one full charger settle (in case the diff was parked before
 /// the charger even started reconciling) plus one full presentation gap
-/// (in case the charger reconciles right at the last moment).
+/// (in case the charger reconciles right at the last moment). It carries a
+/// THIRD term, `chargerCableLabelGraceWindow`, because a charger reconcile
+/// can return without posting at all while it waits a bounded window for a
+/// saved cable name (issue #593); a deadline that didn't cover that could
+/// expire mid-grace and land the device banner first.
 @MainActor
 public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duration == Duration {
     private let clock: ClockType
@@ -193,6 +197,76 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// provider-supplied fact that answers that question instead.
     var knownLabelledCables: [String: String]?
 
+    /// Issue #593: the SAME cables `knownLabelledCables` holds, keyed by the
+    /// port they are attached to instead of by cable ID. Each port appears
+    /// under BOTH of its keys, its join key and its plain `portKey`, because
+    /// `NotificationCableLabelProvider` publishes every name twice (see its
+    /// join-alias helper). That is what lets the charger side, which is keyed
+    /// purely by `portKey`, find a name with a plain lookup even on a port
+    /// whose own registry walk resolved a UUID.
+    /// A MagSafe plug produces no USB device at all, so the device path
+    /// (`knownLabelledCables` plus the grace/episode machinery above) can
+    /// never reach it; the charger path joins on port identity instead,
+    /// which needs this. Same nil-means-unavailable / `[:]`-means-nothing-
+    /// attached shape as `knownLabelledCables`, updated in the same place
+    /// (`updateLabelledCables(_:)`), for the same reason: both come out of
+    /// one attribution pass, so they can never disagree with each other.
+    var knownLabelledCablesByPort: [String: String]?
+
+    /// Ports whose connected cable has not answered yet, as of the most
+    /// recent `updateLabelledCables(_:)` call
+    /// (`NotificationDecision.CableLabelFeed.portsAwaitingCableIdentity`).
+    /// The charger cable-name grace waits ONLY on ports in this set.
+    ///
+    /// Why it has to exist separately: "this added port has no saved name"
+    /// on its own cannot tell "the e-marker read is still outstanding" from
+    /// "the chip already answered and the cable simply is not saved".
+    /// Waiting on the second case charges every charger plug a full grace
+    /// window for a name that was never coming, and that is the COMMON case
+    /// for anyone who has saved even one cable. This is the provider-supplied
+    /// fact that separates them, the same shape of fix as
+    /// `knownHasSavedCables` for the device path's own hold.
+    ///
+    /// A plain `Set`, not an optional: unlike `knownLabelledCablesByPort` it
+    /// carries no availability meaning of its own. A nil feed clears it to
+    /// empty, which reads as "nothing is awaiting", and that is correct:
+    /// with no feed the grace is already blocked by its own nil check, so an
+    /// emptied set can never be the thing that lets a wait through.
+    ///
+    /// The floor this does NOT lift, stated honestly: a cable with a
+    /// genuinely silent chip stays in this set for as long as it is plugged
+    /// in, so it pays the full window on every charger connect. IOKit cannot
+    /// distinguish "the read is outstanding" from "the read completed and
+    /// found nothing", so no signal exists that would tell those apart.
+    var knownPortsAwaitingCableIdentity: Set<String> = []
+
+    /// The other half of the same partition
+    /// (`NotificationDecision.CableLabelFeed.portsWithResolvedCableIdentity`):
+    /// connected ports whose cable HAS answered. An armed grace collapses
+    /// the moment a port it is waiting on turns up here, whether or not a
+    /// name came with it.
+    ///
+    /// Why this is not simply "absent from
+    /// `knownPortsAwaitingCableIdentity`": a port sits in NEITHER set while
+    /// it is not connected, and a USB-C port can flap out and back during PD
+    /// renegotiation (the same flap `chargerSettleWindow` exists to absorb).
+    /// Collapsing on absence would end the grace on a flap and post the
+    /// banner unnamed a moment before the name it was waiting for actually
+    /// arrived, which is the exact outcome this whole mechanism exists to
+    /// prevent. Collapsing on PRESENCE here means a flap fires nothing and
+    /// the grace simply runs on: a little latency, no correctness lost.
+    ///
+    /// What it buys, and why it is not a tail case: a USB-C e-marker is
+    /// readable a variable ~2-3s after plug (see
+    /// `NotificationCableLabelProvider`'s own doc comment) against a 1.5s
+    /// charger settle, so MOST USB-C charger plugs are still awaiting
+    /// identity when the settle runs and do arm the grace. The saved ones
+    /// already collapsed on the name arriving; without this, every unsaved
+    /// one sat out the full cap. `knownPortsAwaitingCableIdentity` alone
+    /// only removed the cost for cables that had already answered within the
+    /// first 1.5s.
+    var knownPortsWithResolvedCableIdentity: Set<String> = []
+
     /// Whether a saved cable exists ANYWHERE (the whole catalog, not just
     /// what's attached), as of the most recent `updateLabelledCables(_:)`
     /// call. `false` while unavailable (no feed yet, or the feed's own
@@ -211,6 +285,41 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// catalog. See `NotificationDecision.CableLabelFeed`'s doc comment for
     /// the full story.
     private var knownHasSavedCables = false
+
+    /// "port `portKey` -> saved cable name" for ports that currently
+    /// hold a charger, captured when the charger was first seen and
+    /// refreshed on every later feed publish while it stays. A disconnect
+    /// reads this, not the live feed: by the time the charger goes, the
+    /// cable has gone too and the feed no longer names it. Same reason
+    /// `knownChargerLabels` remembers the wattage.
+    private var knownChargerCableLabels: [String: String] = [:]
+
+    /// The armed cable-name grace, if a charger reconcile is currently
+    /// waiting one out (issue #593). Cancelled by an early collapse in
+    /// `updateLabelledCables(_:)` (a name arrived for a port this grace is
+    /// waiting on) and by `diffSources(_:)` (a fresh charger episode
+    /// starting, whose own settle will reconcile anyway).
+    private var chargerCableLabelGraceTask: Task<Void, Never>?
+    /// Identity for the CURRENT grace task, bumped every time one is armed
+    /// and checked by that task after its sleep before it touches anything.
+    /// Same belt-and-braces discipline as
+    /// `deferredDeviceDiffPresentationGapGeneration`, for the same reason: a
+    /// cancelled or superseded task must not be able to mutate shared state
+    /// even if `.cancel()` somehow wasn't observed in time.
+    private var chargerCableLabelGraceGeneration = 0
+    /// The ADDED port keys the armed grace is waiting on: exactly the ports
+    /// that gained a charger but had no saved cable name yet.
+    /// `updateLabelledCables(_:)` watches this set so the common case (the
+    /// e-marker resolving a couple of hundred milliseconds later) collapses
+    /// the grace immediately instead of sitting out the full window. Empty
+    /// whenever no grace is armed.
+    private var chargerCableLabelGracePortKeys: Set<String> = []
+    /// One grace per charger event, no more. Set when a grace is armed,
+    /// cleared in `diffSources(_:)`, which is where a genuinely new charger
+    /// event starts. Without it the second pass would look at the same
+    /// still-unnamed port, decide to wait again, and a charger whose cable
+    /// simply isn't saved would never produce a banner at all.
+    private var chargerCableLabelGraceUsed = false
 
     /// The most recent, not-yet-consumed single-cable label transition
     /// (`NotificationDecision.cableLabelChange`'s result), computed fresh
@@ -582,13 +691,46 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// non-nil `chargerSettleTask` isn't enough on its own to mean "still
     /// pending": the task reference is never cleared after it fires, so a
     /// long-finished task would look identical to one still waiting out its
-    /// window. This is the value `scheduleDeviceDiff` feeds into
-    /// `deviceDiffDisposition`, and it gates a DEFERRAL of the device post,
-    /// never an early run of the charger reconcile itself (see
-    /// `deferDeviceDiff`'s doc comment for why an early flush was rejected on
-    /// review). `private(set)`, not `private`: a sequencer test drives the
-    /// sequencer end to end and needs to read it.
+    /// window. It gates a DEFERRAL of the device post, never an early run of
+    /// the charger reconcile itself (see `deferDeviceDiff`'s doc comment for
+    /// why an early flush was rejected on review). `private(set)`, not
+    /// `private`: a sequencer test drives the sequencer end to end and needs
+    /// to read it.
+    ///
+    /// NOT what `scheduleDeviceDiff` routes on any more: it feeds
+    /// `isChargerEventInFlight` into `deviceDiffDisposition`, and this is one
+    /// of the two things that answers to. See that property (F1 review fix).
     private(set) var isChargerSettlePending = false
+
+    /// Whether a charger banner is still OWED for an event already underway.
+    /// This, not `isChargerSettlePending` alone, is what a settling device
+    /// diff routes on (`deviceDiffDisposition`).
+    ///
+    /// F1 review fix, a MEASURED ordering regression. `isChargerSettlePending`
+    /// used to be the whole answer, because the settle task cleared it and
+    /// then called `reconcileChargers()`, which posted synchronously in the
+    /// same turn: there was never an observable moment where the flag read
+    /// false and a charger banner was still coming. The cable-name grace
+    /// creates exactly that moment and holds it open for up to
+    /// `chargerCableLabelGraceWindow`. A device settle landing inside it took
+    /// `.runNow`, found `lastChargerPostTime` untouched (the first pass posted
+    /// nothing, so there was no recent charger post to space against either),
+    /// and posted the device banner AHEAD of the charger banner. That is the
+    /// inversion the whole park/defer/gap machinery exists to prevent, and the
+    /// base commit does not have it.
+    ///
+    /// Deferring instead is not a new code path: the diff parks exactly as it
+    /// would for a pending settle, and `reconcileChargers`'s own `defer`
+    /// lands it on the second pass, after the charger post, through the
+    /// normal presentation gap. The parked diff's absolute deadline already
+    /// covers the grace (see `deferredDeviceDiffDeadlineWindow`), so it
+    /// cannot expire mid-grace and land early either.
+    ///
+    /// Any future third way of owing a charger post belongs here, not at the
+    /// call site.
+    var isChargerEventInFlight: Bool {
+        isChargerSettlePending || chargerCableLabelGraceTask != nil
+    }
 
     /// State for a device diff that is waiting on a same-episode charger
     /// reconcile to post first (see `deviceDiffDisposition`). Only one diff
@@ -599,7 +741,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// The downstream TB switch-ID set captured ALONGSIDE `deferredDeviceDiffDevices`,
     /// at the same settle-time moment, not re-read when the diff eventually
     /// lands. Landing can be delayed up to `deferredDeviceDiffDeadlineWindow`
-    /// (3.5s in production) after settle time; sampling
+    /// (5s in production) after settle time; sampling
     /// `currentDownstreamTBSwitchIDs()` at landing instead of settle would
     /// let an UNRELATED TB switch change during that window mislabel a
     /// batch of plain USB devices as Thunderbolt (or the reverse: a real
@@ -624,14 +766,22 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// `supersedeAnyParkedDiff` (the zero-delay `.runNow` path cancelling
     /// this one outright, with no replacement parked) can stop it.
     /// Worst case, a device banner waits `deferredDeviceDiffPresentationGapWindow`
-    /// + `chargerSettleWindow` from the moment it was parked: one full
-    /// charger debounce (in case the charger hadn't even reconciled yet when
-    /// the diff was parked) plus one full presentation gap (in case the
-    /// charger reconciles right at the last moment and needs the full gap to
-    /// present). Derived from those two windows at `init()` time (3.5s at
-    /// their defaults), not a fresh literal, so it moves automatically if
-    /// either window changes. `var`, like the other windows, so a test can
+    /// + `chargerSettleWindow` + `chargerCableLabelGraceWindow` from the
+    /// moment it was parked: one full charger debounce (in case the charger
+    /// hadn't even reconciled yet when the diff was parked), plus one full
+    /// cable-name grace (issue #593: the charger reconcile can return without
+    /// posting anything at all, waiting on a saved cable name, and only post
+    /// on its SECOND pass one grace window later), plus one full presentation
+    /// gap (in case the charger reconciles right at the last moment and needs
+    /// the full gap to present). Derived from those windows at `init()` time
+    /// (5s at their defaults), not a fresh literal, so it moves automatically
+    /// if any of them changes. `var`, like the other windows, so a test can
     /// shrink it.
+    ///
+    /// The grace term is load-bearing, not padding: without it a diff parked
+    /// at the start of a graced charger event hits this deadline DURING the
+    /// grace and lands the device banner first, which is precisely the
+    /// inversion the parking machinery exists to prevent.
     ///
     /// Starvation fix (both reviewers, on an earlier design this replaces):
     /// that design cancelled the parked diff's backstop the moment a
@@ -800,7 +950,59 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     public nonisolated static var defaultDeviceSettleWindow: Duration { .milliseconds(1500) }
     public nonisolated static var defaultChargerSettleWindow: Duration { .milliseconds(1500) }
     public nonisolated static var defaultPresentationGapWindow: Duration { .milliseconds(2000) }
-    public nonisolated static var defaultDeadlineWindow: Duration { defaultPresentationGapWindow + defaultChargerSettleWindow }
+
+    /// How long a charger connect may wait for a saved cable name that has not
+    /// resolved yet. One charger settle window, so a settled charger event
+    /// waits at most `chargerSettleWindow` + this, 3s. Deliberately far below
+    /// the device path's 5s `cablePlausibilityHoldWindow`: a charger banner is
+    /// the only notification a MagSafe plug produces, so a long silence reads
+    /// as the app having missed the event entirely, where a device plug has
+    /// other evidence on screen.
+    ///
+    /// That 3s is per SETTLED EVENT, not per physical plug, and the
+    /// difference is worth stating because an earlier version of this comment
+    /// claimed the stronger thing (F7 review finding). `diffSources` resets
+    /// the one-grace budget on every power publish, because that is where a
+    /// genuinely new charger event starts and the debounce cannot tell a new
+    /// event from a flap of the current one. So a source-set change during
+    /// the grace buys a fresh settle AND a fresh grace. MEASURED: one flap at
+    /// t=1600ms moves the banner from t=3000ms to t=4600ms
+    /// (`ChargerCableLabelGraceTests.testAPowerFlapDuringTheGraceWidensTheWait`).
+    ///
+    /// Not bounded, deliberately. The settle window has always been unbounded
+    /// under sustained flapping (`chargerSettleTask?.cancel()` on every
+    /// publish, which is the whole point of a trailing debounce), so this
+    /// amplifies an accepted property rather than introducing a new stall,
+    /// and every round still terminates in a post. Capping the budget instead
+    /// would deny a grace to a real unplug-then-replug, which is the case the
+    /// reset exists to serve.
+    ///
+    /// Why a grace is needed at all (issue #593): a USB-C cable's e-marker can
+    /// resolve a second or two after the port reports connected, which is
+    /// later than the 1.5s charger settle, so the connect banner can post
+    /// before the name exists. MagSafe is EXPECTED to be immediate (its IDs
+    /// come from `StateCC` with no Discover Identity round trip), but that is
+    /// inferred, not measured, so this grace covers both.
+    ///
+    /// Not an `init` parameter, unlike the settle/gap windows: it is a fixed
+    /// property of the feature (mirroring `cablePlausibilityHoldWindow`, which
+    /// is also a bare static), and the deadline arithmetic below reads the
+    /// static directly rather than a per-instance value, so making it
+    /// injectable would need a second parameter threading through `init` for
+    /// no behaviour a test can't already reach by shrinking
+    /// `deferredDeviceDiffDeadlineWindow`.
+    public nonisolated static var chargerCableLabelGraceWindow: Duration { .milliseconds(1500) }
+
+    /// `presentationGap + chargerSettle + chargerCableLabelGrace`: the grace
+    /// term is there because a parked device diff can be waiting while a
+    /// charger event sits out its cable-name grace, and that grace happens
+    /// entirely BEFORE the charger reconcile completes and posts. Without it
+    /// the parked diff's deadline could expire mid-grace and land the device
+    /// banner ahead of the charger banner, inverting the ordering this whole
+    /// file exists to protect. See `deferredDeviceDiffDeadlineWindow`.
+    public nonisolated static var defaultDeadlineWindow: Duration {
+        defaultPresentationGapWindow + defaultChargerSettleWindow + chargerCableLabelGraceWindow
+    }
 
     private var deviceSettleTask: Task<Void, Never>?
     /// A hub's own termination and its children's terminations don't arrive
@@ -888,13 +1090,20 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         self.deferredDeviceDiffPresentationGapWindow = presentationGapWindow
         self.deliveryLedger = NotificationDeliveryLedger(launchToken: launchToken)
         // Derived, not a fresh literal: see `deferredDeviceDiffDeadlineWindow`'s
-        // doc comment for why the deadline is presentationGap + chargerSettleWindow.
-        // Computed once here rather than as a property-declaration default so
-        // it tracks whatever the other two windows' OWN values are, instead
-        // of a hand-copied literal going stale if either one changes. Still a
-        // plain `var` afterward: a test can overwrite it directly, same as
-        // it always could.
-        self.deferredDeviceDiffDeadlineWindow = presentationGapWindow + chargerSettleWindow
+        // doc comment for why the deadline is presentationGap + chargerSettleWindow
+        // + chargerCableLabelGraceWindow. Computed once here rather than as a
+        // property-declaration default so it tracks whatever the injected
+        // windows' OWN values are, instead of a hand-copied literal going stale
+        // if any of them changes. Still a plain `var` afterward: a test can
+        // overwrite it directly, same as it always could.
+        //
+        // The grace term is the static, not an injected value: it isn't an
+        // `init` parameter (see `chargerCableLabelGraceWindow`'s doc comment),
+        // and `reconcileChargers` arms the real grace off that same static, so
+        // reading it here keeps the deadline and the thing it has to outlast
+        // derived from one source rather than two.
+        self.deferredDeviceDiffDeadlineWindow =
+            presentationGapWindow + chargerSettleWindow + Self.chargerCableLabelGraceWindow
     }
 
     /// Sets the baseline device/charger state without diffing against it, so
@@ -910,10 +1119,24 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
             baselineSnapshots.map { ($0.id, $0) },
             uniquingKeysWith: { first, _ in first }
         )
-        // Prime with canonicalJoinKey to match reconcileChargers, so the
-        // baseline and the diff use the same key space (else every connected
-        // charger would fire a spurious "connected" on the first poll).
+        // Primed through `chargerLabels` itself, the same call
+        // `reconcileChargers` makes, so the baseline and the diff use the same
+        // key space (else every connected charger would fire a spurious
+        // "connected" on the first poll).
         knownChargerLabels = chargerLabels(for: chargerSources)
+        // Issue #593: same priming for the cable-name side, so a cable
+        // already attached at launch isn't treated as newly arrived by the
+        // first `reconcileChargers()` call. `knownLabelledCablesByPort` can
+        // legitimately still be nil here (the app-side shim's first
+        // `updateLabelledCables(_:)` call can land before or after this
+        // method, see that property's doc comment); when it is, this seeds
+        // nothing and `updateLabelledCables(_:)`'s own refresh -- gated on
+        // the port already being in `knownChargerLabels`, which it now is
+        // -- backfills the name once the feed does arrive.
+        let primedCableNames = knownLabelledCablesByPort ?? [:]
+        knownChargerCableLabels = Dictionary(uniqueKeysWithValues: knownChargerLabels.keys.compactMap { portKey in
+            primedCableNames[portKey].map { (portKey, $0) }
+        })
         knownTBSwitchIDs = currentDownstreamTBSwitchIDs()
         didPrimeBaseline = true
     }
@@ -943,7 +1166,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
             try? await clock.sleep(for: self?.deviceSettleWindow ?? Self.defaultDeviceSettleWindow)
             guard !Task.isCancelled, let self else { return }
             let devices = self.currentDevices()
-            switch NotificationDecision.deviceDiffDisposition(chargerSettlePending: self.isChargerSettlePending) {
+            switch NotificationDecision.deviceDiffDisposition(chargerEventInFlight: self.isChargerEventInFlight) {
             case .runNow:
                 // Both-orders fix: `isChargerSettlePending` being false here
                 // only means no charger settle is CURRENTLY pending; it says
@@ -976,7 +1199,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// Accepted trade-off: a charger event that is UNRELATED to the parked
     /// device diff (arrives, and its own settle task overlaps the window)
     /// can delay that device notification by up to the full deadline window
-    /// (`deferredDeviceDiffDeadlineWindow`, 3.5s in production), because
+    /// (`deferredDeviceDiffDeadlineWindow`, 5s in production), because
     /// `isChargerSettlePending` can't distinguish "the same physical episode"
     /// from "an unrelated charger event that happens to overlap". That delay
     /// is bounded by the deadline below and never drops the notification, so
@@ -2389,9 +2612,23 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// returns `nil` on every call, so this is an idle no-op there (accepted
     /// cost, spec design 2).
     ///
-    /// Updates `knownLabelledCables` and `knownHasSavedCables` UNCONDITIONALLY,
-    /// independent of any device diff (see `knownLabelledCables`'s doc
-    /// comment for why). Computes a `pendingCableLabelEvent` only when both
+    /// Updates `knownLabelledCables`, `knownLabelledCablesByPort`,
+    /// `knownPortsAwaitingCableIdentity` and `knownHasSavedCables`
+    /// UNCONDITIONALLY, independent of any device diff (see
+    /// `knownLabelledCables`'s doc comment for why). Also refreshes
+    /// `knownChargerCableLabels` (issue #593) for any port that already
+    /// holds a charger, so a name resolving after the connect banner still
+    /// reaches the disconnect banner, and can COLLAPSE an armed
+    /// `chargerCableLabelGraceWindow` early (re-entering `reconcileChargers`
+    /// synchronously, from a `defer` so it lands after everything below) the
+    /// moment it supplies a name the waiting charger reconcile needs. It
+    /// also clears that same map outright on
+    /// a nil feed, so a name captured while Pro was unlocked can't survive
+    /// a licence lock into a disconnect banner posted while locked; see the
+    /// inline comments below for why the refresh is gated the way it is and
+    /// why the clear needs no fire-time backstop.
+    ///
+    /// Computes a `pendingCableLabelEvent` only when both
     /// the OLD and NEW attached maps are non-nil and differ by exactly one
     /// cable ID (`NotificationDecision.cableLabelChange`); a transition
     /// across availability (nil feed -> some, or some -> nil, i.e. a
@@ -2405,9 +2642,139 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// right up until an unattributed cable's e-marker resolves) from being
     /// misread as "no saved cables exist anywhere".
     public func updateLabelledCables(_ feed: NotificationDecision.CableLabelFeed?) {
+        // Early collapse of an armed cable-name grace (issue #593): the name
+        // this publish just supplied is what the waiting charger reconcile
+        // was waiting for, so run it NOW rather than sitting out the rest of
+        // the window. This is what keeps the common case (an e-marker
+        // resolving a couple of hundred milliseconds after the settle) at
+        // roughly its real cost instead of a flat 1.5s on every charger plug.
+        //
+        // A `defer` at the TOP so it runs LAST, on both exit paths, without
+        // the call being duplicated. Two placement constraints, and only the
+        // end of the function satisfies both:
+        //
+        //  1. It has to run AFTER the `known...` assignments below, because
+        //     the reconcile it triggers reads `knownLabelledCablesByPort` for
+        //     the name and must see THIS publish, not the previous one. Those
+        //     assignments are the first thing this function does, so running
+        //     last satisfies this just as well as running mid-function did.
+        //  2. It has to run AFTER `assignCableLabelEvent(_:)` at the bottom.
+        //     `reconcileChargers()` can land a parked device diff on its way
+        //     out, and `resolveDevicePost` binds that batch's label from
+        //     `pendingCableLabelEvent` as it stands right then. Running the
+        //     collapse first meant the landing saw the PREVIOUS publish's
+        //     event rather than this one's.
+        //
+        //     Narrow, and worth being precise about rather than overclaiming.
+        //     Most of the time this is inert: an unlabelled port-level batch
+        //     HOLDS rather than posting, and `assignCableLabelEvent`'s own
+        //     `heldDeviceBatchEpisodeID` branch (which calls
+        //     `tryFlushHeldDeviceBatchForPendingEvent()`) then picks the event
+        //     up moments later, so the label arrives either way. The case
+        //     that genuinely differs is TWO cable-label events arriving while
+        //     ONE diff is parked: with the collapse first, the landing
+        //     consumes the older event and the newer one is never applied to
+        //     it, contradicting this file's own "latest event wins for an
+        //     episode" policy (`assignCableLabelEvent` overwrites
+        //     unconditionally). `ChargerCableLabelGraceTests`'s
+        //     `testTheCollapseRunsAfterTheCableLabelEventIsAssigned` is that
+        //     case, and it is the only one that discriminates the two
+        //     placements. It also needs the collapse's own reconcile to post
+        //     nothing, so it lands the diff synchronously (`.immediate`)
+        //     rather than through the presentation gap, which happens when
+        //     the charger set vanished between the two grace passes; via the
+        //     gap the landing runs in a later task, after the assignment, and
+        //     the placement stops mattering.
+        //
+        //     So: a defensive ordering fix with one demonstrated
+        //     discriminating case, not a bug anyone reported. It also removes
+        //     a dependency on that unstated hold-then-reassign invariant,
+        //     which spans two mechanisms and is not written down anywhere it
+        //     would be noticed.
+        //
+        // WHAT ends the wait, and it is the exact negation of what started
+        // it. `reconcileChargers` arms on "unnamed AND unresolved", so this
+        // collapses on "named OR resolved":
+        //
+        //  - NAMED: the saved cable's e-marker resolved and attributed. The
+        //    banner gets its name, which is the outcome the grace exists for.
+        //  - RESOLVED: the chip answered and produced no name, so the cable
+        //    is not saved and no name is ever coming. Waiting out the rest of
+        //    the cap would buy nothing. This half matters more than it looks:
+        //    an e-marker takes a variable ~2-3s against a 1.5s settle, so
+        //    most USB-C charger plugs DO arm the grace, and without this half
+        //    every unsaved one paid the full window.
+        //
+        // Deliberately NOT "no longer in `portsAwaitingCableIdentity`". A
+        // port is in neither set while it is not connected, so a flap would
+        // read as resolution and end the grace early, posting unnamed a
+        // moment before the name arrived. Presence in the resolved set is a
+        // positive statement that the chip answered; absence from the
+        // awaiting set is not. See `knownPortsWithResolvedCableIdentity`.
+        //
+        // EVERY waited-on port must be settled, not just one (H3 review
+        // fix). A grace can wait on several ports at once, and the reconcile
+        // it wakes posts ONE banner covering all of them. Collapsing as soon
+        // as any single port settled published that banner while another
+        // port's name was still on its way, and a banner already on screen
+        // cannot be corrected: `contains(where:)` here lost the second port's
+        // name outright. The cap still bounds the wait for the ports that
+        // never settle, so `allSatisfy` cannot stall anything.
+        //
+        // Accepted cost of `allSatisfy`, recorded so it does not read as an
+        // oversight (N2 review finding): a waited-on port that is UNPLUGGED
+        // mid-grace lands in neither identity set, which is exactly what "not
+        // connected" means, so it can never satisfy this and the wait runs to
+        // the cap even though everything knowable is known. Deliberate. It is
+        // bounded by the cap, needs a multi-port charger event to happen at
+        // all, and the alternative (treating absence as settled) is the flap
+        // hole `knownPortsWithResolvedCableIdentity` exists to close.
+        //
+        // A publish that settles no waited-on port changes nothing: the armed
+        // task stays and the cap still applies. A nil feed can never collapse
+        // either (both reads go through `feed`), so the licence-lock return
+        // below is safe.
+        defer {
+            if !chargerCableLabelGracePortKeys.isEmpty,
+               let feed,
+               chargerCableLabelGracePortKeys.allSatisfy({ key in
+                   feed.attachedLabelledByPort[key] != nil
+                       || feed.portsWithResolvedCableIdentity.contains(key)
+               }) {
+                cancelChargerCableLabelGrace()
+                reconcileChargers()
+            }
+        }
+
         let previous = knownLabelledCables
         knownLabelledCables = feed?.attachedLabelled
+        knownLabelledCablesByPort = feed?.attachedLabelledByPort
+        knownPortsAwaitingCableIdentity = feed?.portsAwaitingCableIdentity ?? []
+        knownPortsWithResolvedCableIdentity = feed?.portsWithResolvedCableIdentity ?? []
         knownHasSavedCables = feed?.hasSavedCables ?? false
+
+        // Issue #593: refresh the charger path's own name map for ports
+        // that already hold a charger, so a name resolving AFTER the
+        // connect banner already posted (the e-marker read finishing later
+        // than the charger settle) still reaches that charger's eventual
+        // disconnect banner.
+        //
+        // Iterating `knownChargerLabels` rather than the feed's name map is
+        // what keeps the load-bearing gate ("a port with no charger on it
+        // must never gain an entry here, or a cable plugged into a bare data
+        // port today would show a stale name the first time that same port
+        // later becomes a charger") while also letting this pass CLEAR a
+        // name the feed has positively withdrawn (H4 / F3 review fix). The
+        // three-way decision lives in `refreshCapturedCableName`.
+        if let byPort = feed?.attachedLabelledByPort {
+            for portKey in knownChargerLabels.keys {
+                refreshCapturedCableName(
+                    forChargerPort: portKey,
+                    namesByPort: byPort,
+                    resolvedPorts: feed?.portsWithResolvedCableIdentity ?? []
+                )
+            }
+        }
 
         // A transition across availability (nil feed -> some, or some ->
         // nil, i.e. a licence lock or unlock) never itself produces an
@@ -2430,10 +2797,34 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         // close clearing, closes that gap. `graceCableLabelEvent` is
         // cleared here too, for the same reason: it is just as reachable by
         // a quick lock/unlock as the owned slot is.
+        //
+        // `knownChargerCableLabels` gets the same treatment (issue #593
+        // review fix), for the same underlying reason as the two events
+        // above: a name captured while Pro was unlocked must not survive a
+        // licence lock and reach a banner posted while locked. The
+        // reachable path is a charger attached and named, then Pro
+        // deactivated (feed goes nil), then the charger unplugged:
+        // `reconcileChargers` builds the disconnect line from this map, not
+        // the live feed (the live feed has already lost the attribution by
+        // disconnect time regardless -- that's the whole reason this map
+        // exists), so an unlocked-only name sitting here would leak into a
+        // locked build's own notification.
+        //
+        // Unlike `pendingCableLabelEvent`, this map has no fire-time guard
+        // to fall back on, and doesn't need one: there is no queued job
+        // reading it later, only `reconcileChargers` reading it
+        // synchronously, in the very call that would post the leaked name.
+        // Clearing here is therefore the WHOLE fix, not a belt-and-braces
+        // layer on top of one. A charger attached before the lock and still
+        // attached after it simply reads as unlabelled from this point on,
+        // exactly like a charger that was never attributed in the first
+        // place; it refills itself normally on the next non-nil feed, same
+        // as `knownLabelledCables` and `knownLabelledCablesByPort` above.
         guard let previous, let current = feed?.attachedLabelled else {
             if feed == nil {
                 pendingCableLabelEvent = nil
                 graceCableLabelEvent = nil
+                knownChargerCableLabels = [:]
             }
             return
         }
@@ -2464,6 +2855,16 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// site the app-side shim still drives.
     public func diffSources(_ current: [PowerSource]) {
         guard didPrimeBaseline else { return }
+        // A raw charger publish is where a new charger event starts, so this
+        // is where the one-grace-per-event budget resets (issue #593). Any
+        // grace still armed from the previous event is cancelled outright
+        // rather than left to fire: the settle task armed just below will
+        // reconcile anyway, so letting the old grace also call
+        // `reconcileChargers` would only add a second, earlier reconcile of
+        // a charger set that is still flapping, which is exactly what the
+        // debounce exists to avoid.
+        cancelChargerCableLabelGrace()
+        chargerCableLabelGraceUsed = false
         // Trailing-edge debounce: keep resetting the timer while the set is
         // still changing, then reconcile once it settles. This absorbs the
         // flap so a single connect produces a single notification.
@@ -2482,6 +2883,14 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
     /// the published list has settled. Notify once per charger (port), not once
     /// per power-source entry: a single charger advertises several entries on
     /// the same port (USB-PD, Brick ID, TypeC). See issue #227 follow-up.
+    ///
+    /// Can run TWICE for one charger event (issue #593). The first pass
+    /// returns early, having mutated nothing and posted nothing, if an added
+    /// port has no saved cable name yet and one could still arrive; the
+    /// second, triggered either by an early collapse in
+    /// `updateLabelledCables(_:)` or by `chargerCableLabelGraceWindow`
+    /// expiring, proceeds and posts whether or not a name turned up. The
+    /// grace is spent once per charger event, reset in `diffSources(_:)`.
     func reconcileChargers() {
         // Lands any device diff waiting on this reconcile (stack-order fix),
         // whichever exit path is taken below, and AFTER every charger post
@@ -2494,19 +2903,120 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         // deep inside this function. A no-op when nothing is deferred, and
         // immediate (no presentation gap) when nothing was posted: see
         // `landDeferredDeviceDiff(token:afterChargerPost:)`.
+        //
+        // Gated on `passCompleted` (issue #593): the cable-name grace return
+        // below exits this function WITHOUT having reconciled anything, and
+        // landing a parked device diff there would put the device banner
+        // ahead of the charger banner this pass is still waiting to post,
+        // inverting the ordering the whole park machinery exists to enforce.
+        // The grace return is the ONLY exit that leaves this false; every
+        // other return (including the `notifyOnChanges()` one) has finished
+        // its charger work and must land the diff exactly as before.
         var chargerPostedContent = false
-        defer { landDeferredDeviceDiff(token: deferredDeviceDiffToken, afterChargerPost: chargerPostedContent) }
+        var passCompleted = false
+        defer {
+            if passCompleted {
+                landDeferredDeviceDiff(token: deferredDeviceDiffToken, afterChargerPost: chargerPostedContent)
+            }
+        }
 
         let current = currentChargerSources()
-        // Track chargers by canonicalJoinKey (HPM UUID when present, portKey
-        // fallback) so add/remove detection keys on stable port identity.
+        // Track chargers by `portKey` (see `chargerLabels(for:)`), so a
+        // physical port keeps one stable identity here even when its source
+        // nodes' UUID walks disagree or flicker between passes.
         let currentLabels = chargerLabels(for: current)
         let addedPortKeys = Set(currentLabels.keys).subtracting(knownChargerLabels.keys)
         let removedPortKeys = knownChargerLabels.keys.filter { !currentLabels.keys.contains($0) }
+
+        // Issue #593: a USB-C cable's e-marker can resolve a second or two
+        // after the port reports connected, which is LATER than the 1.5s
+        // charger settle, so an added port can legitimately have no saved
+        // name yet at this moment and gain one shortly after. Wait one
+        // bounded window for it rather than posting an unnamed banner that
+        // can never be corrected.
+        //
+        // Everything below this point mutates (`knownChargerLabels`,
+        // `knownChargerCableLabels`, `lastChargerPostTime`), so the decision
+        // has to be made HERE, before any of it: the second pass re-derives
+        // `addedPortKeys` from `knownChargerLabels`, and a first pass that
+        // had already absorbed the current set into it would hand the second
+        // pass an empty added set and post nothing at all. That is a silent
+        // total failure, strictly worse than the missing name this fixes.
+        //
+        // Only the ADDED side ever waits. A removal's name comes from
+        // `knownChargerCableLabels`, captured back at connect time, so it is
+        // either already there or never coming; waiting could not produce it.
+        //
+        // `knownHasSavedCables` is what keeps this off every user who has
+        // saved no cables at all: for them there is provably no name coming,
+        // so the banner posts at the settle window exactly as before.
+        //
+        // `knownPortsAwaitingCableIdentity` is what keeps it off the OTHER
+        // common case, and it is the one that matters for anyone who does
+        // have saved cables: a port whose chip has already answered will
+        // never gain a name it doesn't have now, so an absent name there
+        // means "this cable simply isn't saved", not "the read is still
+        // outstanding". Waiting only on ports still awaiting identity is
+        // what stops a routine plug of an unsaved cable paying the full
+        // window for nothing. See that property's doc comment, including
+        // the silent-chip case this still cannot fix.
+        if !chargerCableLabelGraceUsed,
+           let namesByPort = knownLabelledCablesByPort,
+           knownHasSavedCables {
+            let unnamedAddedPortKeys = addedPortKeys.filter { key in
+                namesByPort[key] == nil && knownPortsAwaitingCableIdentity.contains(key)
+            }
+            if !unnamedAddedPortKeys.isEmpty {
+                armChargerCableLabelGrace(waitingOn: unnamedAddedPortKeys)
+                return
+            }
+        }
+        // Past the only early return that skips the reconcile, so the parked
+        // device diff must land on this pass's way out however it exits.
+        passCompleted = true
+        // Whatever grace was armed has served its purpose: this pass is
+        // reconciling now. Dropping the task here stops a still-pending one
+        // waking later and running a third, pointless reconcile (it would
+        // find no added ports and post nothing, but it would still churn the
+        // parked-diff landing machinery).
+        cancelChargerCableLabelGrace()
+
         let previousLabels = knownChargerLabels
         knownChargerLabels = currentLabels
 
         log("reconcileChargers: added=\(addedPortKeys.count) removed=\(removedPortKeys.count)")
+
+        // Cable-name bookkeeping (issue #593), unconditional and BEFORE the
+        // `notifyOnChanges()` guard below, same as `knownChargerLabels`
+        // just above: a disconnect must still be able to name its cable
+        // even if notifications were off for the entire time the charger
+        // was attached, so this can't wait behind that guard.
+        //
+        // `removedLines` reads `knownChargerCableLabels` BEFORE the
+        // seed/refresh/drop pass that follows touches it -- a removed
+        // port's name lives only in that map by the time it disconnects
+        // (the live feed has already lost it), so building this first is
+        // what makes the disconnect banner able to name it at all.
+        let currentCableNames = knownLabelledCablesByPort ?? [:]
+        let removedLines = NotificationDecision.sortedChargerLines(
+            for: removedPortKeys, labels: previousLabels, cableNames: knownChargerCableLabels
+        )
+        // Seeds a newly added port's name and refreshes one that already
+        // held a charger (both are just "this port currently has a
+        // charger", so one loop covers both).
+        for portKey in currentLabels.keys {
+            refreshCapturedCableName(
+                forChargerPort: portKey,
+                namesByPort: currentCableNames,
+                resolvedPorts: knownPortsWithResolvedCableIdentity
+            )
+        }
+        // Drop LAST, after `removedLines` already captured whatever name
+        // these ports had: a port whose charger went and later comes back
+        // with no cable attributed must not inherit the old name.
+        for portKey in removedPortKeys {
+            knownChargerCableLabels.removeValue(forKey: portKey)
+        }
 
         guard notifyOnChanges() else { return }
 
@@ -2518,13 +3028,117 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         for portKey in addedPortKeys where addedLabelsByPortKey[portKey] == nil {
             addedLabelsByPortKey[portKey] = String(localized: "Wattage not reported", bundle: _notificationsLocalizedBundle)
         }
-        let addedLabels = NotificationDecision.sortedChargerLabels(for: addedPortKeys, labels: addedLabelsByPortKey)
-        let removedLabels = NotificationDecision.sortedChargerLabels(for: removedPortKeys, labels: previousLabels)
-        let contents = NotificationDecision.chargerNotificationContents(addedLabels: addedLabels, removedLabels: removedLabels)
+        // A plain lookup: both sides are keyed by `portKey` now, and the feed
+        // publishes every name under a port's `portKey` as well as its join
+        // key, so there is nothing left to alias.
+        var addedCableNames: [String: String] = [:]
+        for portKey in addedPortKeys {
+            if let name = currentCableNames[portKey] { addedCableNames[portKey] = name }
+        }
+        let addedLines = NotificationDecision.sortedChargerLines(
+            for: addedPortKeys, labels: addedLabelsByPortKey, cableNames: addedCableNames
+        )
+        let contents = NotificationDecision.chargerNotificationContents(added: addedLines, removed: removedLines)
         chargerPostedContent = !contents.isEmpty
         for content in contents {
             postNotification(category: .charger, title: content.title, subtitle: content.subtitle, body: content.body)
         }
+    }
+
+    /// Updates `knownChargerCableLabels` for ONE port that currently holds a
+    /// charger. Three outcomes, and telling the middle one from the last is
+    /// the whole point (H4 / F3 review fix):
+    ///
+    ///  - the feed names it: capture the name.
+    ///  - the feed says the port is RESOLVED and does not name it: the chip
+    ///    answered and no name applies, so clear any name captured earlier.
+    ///    This is what stops a deleted saved cable, or a cable swapped for an
+    ///    unsaved one inside the charger debounce, from still naming the
+    ///    eventual disconnect banner.
+    ///  - neither: a momentary feed gap (the port is in NEITHER identity set,
+    ///    so it is not connected right now, or there is no feed at all). Hold
+    ///    whatever was captured before rather than dropping a good name over
+    ///    a flap.
+    ///
+    /// Before this fix the map was write-only while a charger stayed
+    /// attached, so the second case fell into the third and the stale name
+    /// survived. The identity partition is what makes the two separable at
+    /// all; see `knownPortsWithResolvedCableIdentity`.
+    ///
+    /// No "is the feed available" parameter, deliberately. An earlier draft
+    /// had one, guarding the clear against a nil feed; removing it left the
+    /// whole suite green, because it could never change an outcome:
+    /// `knownPortsWithResolvedCableIdentity` is emptied on a nil feed (see
+    /// its own doc comment), so the membership test below is already false in
+    /// exactly the case that guard claimed to cover. A guard that cannot fail
+    /// is worse than no guard, because it advertises protection it does not
+    /// provide, so the availability contract stays where it is enforced: on
+    /// the property. That contract had no test of its own when this reasoning
+    /// was first written down (N3 review finding, and the same pattern the
+    /// guard above was deleted for); it is pinned now by
+    /// `ChargerCapturedCableNameTests.testANilFeedEmptiesBothIdentitySets`.
+    private func refreshCapturedCableName(
+        forChargerPort portKey: String,
+        namesByPort: [String: String],
+        resolvedPorts: Set<String>
+    ) {
+        if let name = namesByPort[portKey] {
+            knownChargerCableLabels[portKey] = name
+            return
+        }
+        if resolvedPorts.contains(portKey) {
+            knownChargerCableLabels.removeValue(forKey: portKey)
+        }
+    }
+
+    /// Arms the one-shot cable-name grace for `portKeys` (issue #593), the
+    /// added ports that gained a charger with no saved name yet, and marks
+    /// the budget spent so the reconcile this eventually triggers proceeds
+    /// and posts whether or not a name turned up.
+    ///
+    /// Two things can end the wait, and both call `reconcileChargers()`
+    /// again: this task's own expiry (the cap), and an early collapse from
+    /// `updateLabelledCables(_:)` once a feed publish has resolved EVERY port
+    /// in `portKeys` (the common case, and the reason a plug whose cable IS
+    /// saved doesn't sit out the whole window).
+    ///
+    /// Cancel-then-bump-generation before scheduling, mirroring
+    /// `scheduleGapLanding`: a superseded task must be unable to touch shared
+    /// state, by construction rather than by relying on `.cancel()` having
+    /// been observed.
+    private func armChargerCableLabelGrace(waitingOn portKeys: Set<String>) {
+        chargerCableLabelGraceTask?.cancel()
+        chargerCableLabelGraceGeneration += 1
+        let generation = chargerCableLabelGraceGeneration
+        chargerCableLabelGraceUsed = true
+        chargerCableLabelGracePortKeys = portKeys
+        log("reconcileChargers: waiting \(Self.chargerCableLabelGraceWindow) for cable names on \(portKeys.count) port(s)")
+        chargerCableLabelGraceTask = Task { @MainActor [weak self] in
+            guard let clock = self?.clock else { return }
+            try? await clock.sleep(for: Self.chargerCableLabelGraceWindow)
+            guard !Task.isCancelled,
+                  let self,
+                  generation == self.chargerCableLabelGraceGeneration
+            else { return }
+            self.chargerCableLabelGracePortKeys = []
+            self.chargerCableLabelGraceTask = nil
+            // `chargerCableLabelGraceUsed` stays true: this reconcile is the
+            // second pass, and it must post rather than wait again.
+            self.reconcileChargers()
+        }
+    }
+
+    /// Drops any armed cable-name grace without reconciling. Deliberately
+    /// does NOT touch `chargerCableLabelGraceUsed`: that budget belongs to
+    /// the charger EVENT and is reset only in `diffSources(_:)`, where a new
+    /// event starts. Bumping the generation is what stops an already-sleeping
+    /// task from doing anything when it wakes, even if the `.cancel()` above
+    /// isn't observed.
+    private func cancelChargerCableLabelGrace() {
+        chargerCableLabelGraceTask?.cancel()
+        chargerCableLabelGraceTask = nil
+        chargerCableLabelGraceGeneration += 1
+        chargerCableLabelGracePortKeys = []
     }
 
     /// The current wattage label per charger port, used both to prime the
@@ -2546,12 +3160,25 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         let chargerSourceCount = ChargerWattageSource.chargerSourceCount(ports: ports, sources: sources)
         let adapter = currentAdapter()
         let unreported = String(localized: "Wattage not reported", bundle: _notificationsLocalizedBundle)
-        let portKeys = Set(sources.map(\.canonicalJoinKey))
-        return Dictionary(uniqueKeysWithValues: portKeys.map { portKey -> (String, String) in
-            let portSources = sources.filter { $0.canonicalJoinKey == portKey }
+        // Grouped by `portKey` (type/number), NOT `canonicalJoinKey`. Sibling
+        // source nodes on one physical port ("USB-PD" + "Brick ID", the shape
+        // 95% of corpus charging ports have) each walk the registry for their
+        // own HPM UUID. If one walk succeeds while the other fails, their
+        // canonical keys differ and one physical port becomes two dictionary
+        // entries: two banner lines for one cable, a name that lands on
+        // whichever of them the race picked, and a UUID walk that flips
+        // between passes reading as a disconnect plus a reconnect. `portKey`
+        // is identical for siblings by construction. Mirrors
+        // `ChargingInputResolver`, which groups the same way for the same
+        // reason (`ChargingInputResolverTests.mixedUUIDSiblingsAreOneInput`).
+        //
+        // Nothing downstream needs the UUID here: `NotificationCableLabelProvider`
+        // publishes every name and identity-set membership under BOTH a port's
+        // join key and its `portKey`, so a plain `portKey` lookup always hits.
+        return Dictionary(grouping: sources, by: \.portKey).mapValues { portSources -> String in
             let preferred = PowerSource.preferredChargingSource(in: portSources) ?? portSources.first
             if let winning = preferred?.winning {
-                return (portKey, String(localized: "\(winning.wattsLabel) negotiated", bundle: _notificationsLocalizedBundle))
+                return String(localized: "\(winning.wattsLabel) negotiated", bundle: _notificationsLocalizedBundle)
             }
             let resolved = ChargerWattageSource.resolve(
                 portSources: portSources,
@@ -2562,21 +3189,21 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
             // A Brick ID node's wattage is a placeholder, so suppress it when
             // the adapter divert declined and resolve fell back to it.
             if ChargerWattageSource.isUnquantifiedBrickID(portSources: portSources, resolved: resolved) {
-                return (portKey, unreported)
+                return unreported
             }
             switch resolved {
             case .systemAdapterFallback(let watts):
                 // macOS's own reading of the adapter, so it is a measurement:
                 // same wording `PortSummary` uses for this case.
-                return (portKey, String(localized: "System reports charger at \(watts)W", bundle: _notificationsLocalizedBundle))
+                return String(localized: "System reports charger at \(watts)W", bundle: _notificationsLocalizedBundle)
             case .portNegotiated(let watts):
                 // The source's own advertised maximum, not a settled contract,
                 // so this must never read as negotiated.
-                return (portKey, String(localized: "Charger advertises up to \(watts)W", bundle: _notificationsLocalizedBundle))
+                return String(localized: "Charger advertises up to \(watts)W", bundle: _notificationsLocalizedBundle)
             case .unknown:
-                return (portKey, unreported)
+                return unreported
             }
-        })
+        }
     }
 
     /// The single place ANY notification actually leaves this module,

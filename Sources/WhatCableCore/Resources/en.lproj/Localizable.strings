@@ -143,6 +143,7 @@
 "%@ (spec, not measured)" = "%@ (spec, not measured)";
 "%@ Diagnostics" = "%@ Diagnostics";
 "%lld (%lld failed)" = "%1$lld (%2$lld failed)";
+"%lld of %lld devices used" = "%lld of %lld devices used";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles.";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power.";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "A USB 2.0 connection was detected on the legacy D+/D- pins.";
@@ -173,6 +174,7 @@
 "Default USB (500/900 mA)" = "Default USB (500/900 mA)";
 "Detach count" = "Detach count";
 "Device Identity" = "Device Identity";
+"Devices" = "Devices";
 "Diagnostics" = "Diagnostics";
 "Disabled" = "Disabled";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP').";
@@ -188,6 +190,7 @@
 "General port controller status change (connection state, error flags)." = "General port controller status change (connection state, error flags).";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "Generic controller status register changed. Covers plug state, orientation, and error conditions.";
 "Hard reset count" = "Hard reset count";
+"Could not load the device list. Try again later." = "Could not load the device list. Try again later.";
 "Could not reach the licence server. Check your internet connection and try again." = "Could not reach the licence server. Check your internet connection and try again.";
 "I2C error count" = "I2C error count";
 "Inactive" = "Inactive";
@@ -200,6 +203,7 @@
 "Liquid Detection" = "Liquid Detection";
 "Liquid detected" = "Liquid detected";
 "Live" = "Live";
+"Loading devices…" = "Loading devices…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe Charger";
 "Manufacturer" = "Manufacturer";
@@ -219,6 +223,7 @@
 "No SOP identity data" = "No SOP identity data";
 "No cable connected." = "No cable connected.";
 "No cable identity data" = "No cable identity data";
+"No devices registered." = "No devices registered.";
 "No health counters" = "No health counters";
 "No liquid detection data" = "No liquid detection data";
 "None" = "None";
@@ -253,6 +258,12 @@
 "Product Type" = "Product Type";
 "Raw VDOs" = "Raw VDOs";
 "Raw cable VDOs" = "Raw cable VDOs";
+"Refresh" = "Refresh";
+"Registered %@" = "Registered %@";
+"Registration date unknown" = "Registration date unknown";
+"Remove" = "Remove";
+"Remove %@ from your licence?" = "Remove %@ from your licence?";
+"Removing this Mac will lock Pro here until you activate again." = "Removing this Mac will lock Pro here until you activate again.";
 "Rp current level" = "Rp current level";
 "Rp resistor" = "Rp resistor";
 "SOP identity received" = "SOP identity received";
@@ -266,12 +277,15 @@
 "Status update" = "Status update";
 "System Power Input" = "System Power Input";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries.";
+"That Mac will lose Pro until it activates again." = "That Mac will lose Pro until it activates again.";
 "The Mac entered or exited sleep, causing port controller state changes." = "The Mac entered or exited sleep, causing port controller state changes.";
 "The charger or power source advertised what voltages and currents it can provide." = "The charger or power source advertised what voltages and currents it can provide.";
 "The data role flipped: the port switched between host and device mode." = "The data role flipped: the port switched between host and device mode.";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support.";
 "The port controller firmware finished initialising and is ready." = "The port controller firmware finished initialising and is ready.";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "The port controller raised an alert (overcurrent, overtemperature, or similar fault).";
 "The power direction flipped: the port switched between providing and receiving power." = "The power direction flipped: the port switched between providing and receiving power.";
+"This Mac" = "This Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "This event code is not in the known TPS6598x interrupt table. May be firmware-specific.";
 "Tunneled" = "Tunneled";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner.";
@@ -282,6 +296,7 @@
 "USB-C Charger" = "USB-C Charger";
 "Unknown" = "Unknown";
 "Unknown Device" = "Unknown Device";
+"Unknown Mac" = "Unknown Mac";
 "Unknown event %@" = "Unknown event %@";
 "Unrecognised event code from the port controller." = "Unrecognised event code from the port controller.";
 "Unregistered cable (no e-marker)" = "Unregistered cable (no e-marker)";

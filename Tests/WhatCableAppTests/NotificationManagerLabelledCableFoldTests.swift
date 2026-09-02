@@ -85,4 +85,45 @@ final class NotificationManagerLabelledCableFoldTests: XCTestCase {
         ])
         XCTAssertEqual(result, feed(hasSavedCables: true, ["a": "Apple TB 1m"]))
     }
+
+    /// `portsAwaitingCableIdentity` folds by UNION, not first-writer-wins:
+    /// it is a set of ports, not a keyed choice between competing values, so
+    /// a port only one provider is still waiting on has to survive the
+    /// fold. The charger grace then waits on it, which costs one bounded
+    /// window; dropping it posts a banner that can never be corrected.
+    ///
+    /// Red-proof: leave `portsAwaitingCableIdentity` out of the fold's
+    /// result (so it defaults to `[]`), and this goes red with `[]` instead
+    /// of both ports.
+    func testPortsAwaitingCableIdentityFoldsByUnion() {
+        let result = NotificationManager.foldLabelledCables(from: [
+            { NotificationDecision.CableLabelFeed(
+                hasSavedCables: true, attachedLabelled: [:], portsAwaitingCableIdentity: ["port-a"]
+            ) },
+            { NotificationDecision.CableLabelFeed(
+                hasSavedCables: true, attachedLabelled: [:], portsAwaitingCableIdentity: ["port-b"]
+            ) },
+        ])
+        XCTAssertEqual(result?.portsAwaitingCableIdentity, ["port-a", "port-b"])
+    }
+
+    /// `portsWithResolvedCableIdentity` folds by UNION too: any provider
+    /// that has SEEN a port answer is reason enough for the charger grace to
+    /// stop waiting on it.
+    ///
+    /// Red-proof: leave `portsWithResolvedCableIdentity` out of the fold's
+    /// result (so it defaults to `[]`), and this goes red with `[]` instead
+    /// of both ports. Without it a multi-provider build would never collapse
+    /// a grace on resolution, only on a name or the cap.
+    func testPortsWithResolvedCableIdentityFoldsByUnion() {
+        let result = NotificationManager.foldLabelledCables(from: [
+            { NotificationDecision.CableLabelFeed(
+                hasSavedCables: true, attachedLabelled: [:], portsWithResolvedCableIdentity: ["port-a"]
+            ) },
+            { NotificationDecision.CableLabelFeed(
+                hasSavedCables: true, attachedLabelled: [:], portsWithResolvedCableIdentity: ["port-b"]
+            ) },
+        ])
+        XCTAssertEqual(result?.portsWithResolvedCableIdentity, ["port-a", "port-b"])
+    }
 }
