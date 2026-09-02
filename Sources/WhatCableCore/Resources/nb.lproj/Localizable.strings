@@ -144,6 +144,7 @@
 "%@ (spec, not measured)" = "%@ (spesifikasjon, ikke målt)";
 "%@ Diagnostics" = "%@-diagnostikk";
 "%lld (%lld failed)" = "%1$lld (%2$lld feilet)";
+"%lld of %lld devices used" = "%lld av %lld enheter brukt";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap fullført. Porten skiftet mellom DFP- (vert) og UFP-rolle (enhet).";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap fullført. Vanlig når en hub eller dock reforhandler hvilken ende som leverer strøm.";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "En USB 2.0-tilkobling ble oppdaget på de eldre D+/D--pinnene.";
@@ -174,6 +175,7 @@
 "Default USB (500/900 mA)" = "USB standard (500/900 mA)";
 "Detach count" = "Frakoblingsantall";
 "Device Identity" = "Enhetsidentitet";
+"Devices" = "Enheter";
 "Diagnostics" = "Diagnostikk";
 "Disabled" = "Deaktivert";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "Discover Identity-svar mottatt på SOP-kanal. Inneholder den tilkoblede partnerens VID, PID og egenskaps-VDOer (ikke kabelen; kabelidentitet bruker SOP').";
@@ -189,6 +191,7 @@
 "General port controller status change (connection state, error flags)." = "Generell statusendring for portkontroller (tilkoblingsstatus, feilflagg).";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "Generisk kontrollerstatusregister endret. Dekker tilkoblingsstatus, orientering og feilbetingelser.";
 "Hard reset count" = "Antall harde tilbakestillinger";
+"Could not load the device list. Try again later." = "Kunne ikke laste enhetslisten. Prøv igjen senere.";
 "Could not reach the licence server. Check your internet connection and try again." = "Kunne ikke nå lisensserveren. Sjekk internettforbindelsen din og prøv igjen.";
 "I2C error count" = "I2C-feilantall";
 "Inactive" = "Inaktiv";
@@ -201,6 +204,7 @@
 "Liquid Detection" = "Væskedeteksjon";
 "Liquid detected" = "Væske oppdaget";
 "Live" = "Sanntid";
+"Loading devices…" = "Laster enheter…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe-lader";
 "Manufacturer" = "Produsent";
@@ -220,6 +224,7 @@
 "No SOP identity data" = "Ingen SOP-identitetsdata";
 "No cable connected." = "Ingen kabel tilkoblet.";
 "No cable identity data" = "Ingen kabelidentitetsdata";
+"No devices registered." = "Ingen enheter registrert.";
 "No health counters" = "Ingen helsetellere";
 "No liquid detection data" = "Ingen væskedeteksjonsdata";
 "None" = "Ingen";
@@ -254,6 +259,12 @@
 "Product Type" = "Produkttype";
 "Raw VDOs" = "VDOer (rådata)";
 "Raw cable VDOs" = "Kabel-VDOer (rådata)";
+"Refresh" = "Oppdater";
+"Registered %@" = "Registrert %@";
+"Registration date unknown" = "Registreringsdato ukjent";
+"Remove" = "Fjern";
+"Remove %@ from your licence?" = "Fjerne %@ fra lisensen din?";
+"Removing this Mac will lock Pro here until you activate again." = "Hvis du fjerner denne Mac-en, låses Pro her til du aktiverer på nytt.";
 "Rp current level" = "Rp-strømnivå";
 "Rp resistor" = "Rp-motstand";
 "SOP identity received" = "SOP-identitet mottatt";
@@ -267,12 +278,15 @@
 "Status update" = "Statusoppdatering";
 "System Power Input" = "Systemstrøminngang";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "System dvale-/vekkingsovergang. Portkontrollerens tilstand lagres og gjenopprettes på tvers av dvalegrenser.";
+"That Mac will lose Pro until it activates again." = "Den Mac-en mister Pro til den aktiveres på nytt.";
 "The Mac entered or exited sleep, causing port controller state changes." = "Macen gikk i eller ut av dvale, noe som forårsaket endringer i portkontrollertilstand.";
 "The charger or power source advertised what voltages and currents it can provide." = "Laderen eller strømkilden annonserte hvilke spenninger og strømmer den kan levere.";
 "The data role flipped: the port switched between host and device mode." = "Datarollen ble byttet: porten vekslet mellom verts- og enhetsmodus.";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "Kunne ikke frigjøre plassen til denne Mac-en på lisensserveren, så den kan fortsatt være opptatt. Frigjør den fra innstillinger på en annen Mac, eller kontakt support.";
 "The port controller firmware finished initialising and is ready." = "Portkontrollerens fastvare har fullført initialisering og er klar.";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "Portkontrolleren utløste et varsel (overstrøm, overtemperatur eller lignende feil).";
 "The power direction flipped: the port switched between providing and receiving power." = "Strømretningen ble byttet: porten vekslet mellom å levere og motta strøm.";
+"This Mac" = "Denne Mac-en";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "Denne hendelseskoden er ikke i den kjente TPS6598x-avbruddstabellen. Kan være fastvarespesifikk.";
 "Tunneled" = "Tunnelert";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM-oppdagelse startet. Kontrolleren undersøker produsentspesifikke egenskaper på kabelen eller partneren.";
@@ -283,6 +297,7 @@
 "USB-C Charger" = "USB-C-lader";
 "Unknown" = "Ukjent";
 "Unknown Device" = "Ukjent enhet";
+"Unknown Mac" = "Ukjent Mac";
 "Unknown event %@" = "Ukjent hendelse %@";
 "Unrecognised event code from the port controller." = "Ukjent hendelseskode fra portkontrolleren.";
 "Unregistered cable (no e-marker)" = "Uregistrert kabel (ingen e-marker)";

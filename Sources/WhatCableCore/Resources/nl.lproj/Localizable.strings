@@ -143,6 +143,7 @@
 "%@ (spec, not measured)" = "%@ (specificatie, niet gemeten)";
 "%@ Diagnostics" = "%@ Diagnostiek";
 "%lld (%lld failed)" = "%1$lld (%2$lld mislukt)";
+"%lld of %lld devices used" = "%lld van %lld apparaten gebruikt";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "Een DR_Swap is geslaagd. De poort wisselde tussen DFP- (host) en UFP- (apparaat) rollen.";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "Een PR_Swap is geslaagd. Gebruikelijk wanneer een hub of dock heronderhandelt welk uiteinde stroom levert.";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "Een USB 2.0-verbinding werd gedetecteerd op de oudere D+/D- pinnen.";
@@ -173,6 +174,7 @@
 "Default USB (500/900 mA)" = "Standaard USB (500/900 mA)";
 "Detach count" = "Aantal loskoppelingen";
 "Device Identity" = "Apparaatidentiteit";
+"Devices" = "Apparaten";
 "Diagnostics" = "Diagnostiek";
 "Disabled" = "Uitgeschakeld";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "Discover Identity-antwoord ontvangen op SOP-kanaal. Bevat VID, PID en mogelijkheids-VDO's van de verbonden partner (niet de kabel; kabelidentiteit gebruikt SOP').";
@@ -188,6 +190,7 @@
 "General port controller status change (connection state, error flags)." = "Algemene statuswijziging van poortcontroller (verbindingsstatus, foutmarkeringen).";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "Algemeen statusregister van controller gewijzigd. Omvat inschuifstatus, oriëntatie en foutcondities.";
 "Hard reset count" = "Aantal harde resets";
+"Could not load the device list. Try again later." = "Kan de apparatenlijst niet laden. Probeer het later opnieuw.";
 "Could not reach the licence server. Check your internet connection and try again." = "De licentieserver kon niet worden bereikt. Controleer uw internetverbinding en probeer opnieuw.";
 "I2C error count" = "Aantal I2C-fouten";
 "Inactive" = "Inactief";
@@ -200,6 +203,7 @@
 "Liquid Detection" = "Vloeistofdetectie";
 "Liquid detected" = "Vloeistof gedetecteerd";
 "Live" = "Live";
+"Loading devices…" = "Apparaten laden…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe-oplader";
 "Manufacturer" = "Fabrikant";
@@ -219,6 +223,7 @@
 "No SOP identity data" = "Geen SOP-identiteitsdata";
 "No cable connected." = "Geen kabel verbonden.";
 "No cable identity data" = "Geen kabelidentiteitsdata";
+"No devices registered." = "Geen apparaten geregistreerd.";
 "No health counters" = "Geen gezondheidstelwaarden";
 "No liquid detection data" = "Geen vloeistofdetectiedata";
 "None" = "Geen";
@@ -253,6 +258,12 @@
 "Product Type" = "Producttype";
 "Raw VDOs" = "Ruwe VDO's";
 "Raw cable VDOs" = "Ruwe kabel-VDO's";
+"Refresh" = "Vernieuwen";
+"Registered %@" = "Geregistreerd %@";
+"Registration date unknown" = "Registratiedatum onbekend";
+"Remove" = "Verwijderen";
+"Remove %@ from your licence?" = "%@ verwijderen uit uw licentie?";
+"Removing this Mac will lock Pro here until you activate again." = "Als u deze Mac verwijdert, wordt Pro hier vergrendeld totdat u opnieuw activeert.";
 "Rp current level" = "Rp-stroomniveau";
 "Rp resistor" = "Rp-weerstand";
 "SOP identity received" = "SOP-identiteit ontvangen";
@@ -266,12 +277,15 @@
 "Status update" = "Statusupdate";
 "System Power Input" = "Systeemvermogensinvoer";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "Systeem slaap/wakker overgang. De status van de poortcontroller wordt opgeslagen en hersteld bij slaapgrenzen.";
+"That Mac will lose Pro until it activates again." = "Die Mac verliest Pro totdat deze opnieuw wordt geactiveerd.";
 "The Mac entered or exited sleep, causing port controller state changes." = "De Mac ging in of uit slaapstand, waardoor de status van de poortcontroller veranderde.";
 "The charger or power source advertised what voltages and currents it can provide." = "De oplader of stroombron adverteerde welke spanningen en stromen het kan leveren.";
 "The data role flipped: the port switched between host and device mode." = "De datarol is omgekeerd: de poort schakelde tussen host- en apparaatmodus.";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "De plek van deze Mac kon niet worden vrijgegeven op de licentieserver, dus deze is mogelijk nog bezet. Maak deze vrij via Instellingen op een andere Mac, of neem contact op met support.";
 "The port controller firmware finished initialising and is ready." = "De firmware van de poortcontroller heeft de initialisatie voltooid en is gereed.";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "De poortcontroller heeft een alarm gegeven (overstroom, oververhitting of vergelijkbare fout).";
 "The power direction flipped: the port switched between providing and receiving power." = "De vermogensrichting is omgekeerd: de poort schakelde tussen het leveren en ontvangen van stroom.";
+"This Mac" = "Deze Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "Deze gebeurteniscode staat niet in de bekende TPS6598x-interrupttabel. Kan firmwarespecifiek zijn.";
 "Tunneled" = "Getunneld";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM-detectie gestart. De controller zoekt naar fabrikantspecifieke mogelijkheden op de kabel of partner.";
@@ -282,6 +296,7 @@
 "USB-C Charger" = "USB-C-oplader";
 "Unknown" = "Onbekend";
 "Unknown Device" = "Onbekend apparaat";
+"Unknown Mac" = "Onbekende Mac";
 "Unknown event %@" = "Onbekende gebeurtenis %@";
 "Unrecognised event code from the port controller." = "Niet-herkende gebeurteniscode van de poortcontroller.";
 "Unregistered cable (no e-marker)" = "Niet-geregistreerde kabel (geen e-marker)";

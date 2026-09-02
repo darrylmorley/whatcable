@@ -143,6 +143,7 @@
 "%@ (spec, not measured)" = "%@ (विनिर्देश, मापा नहीं गया)";
 "%@ Diagnostics" = "%@ डायग्नोस्टिक्स";
 "%lld (%lld failed)" = "%1$lld (%2$lld विफल)";
+"%lld of %lld devices used" = "%lld/%lld डिवाइस उपयोग में";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap सफल हुआ। पोर्ट ने DFP (होस्ट) और UFP (डिवाइस) भूमिकाओं के बीच स्विच किया।";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap सफल हुआ। सामान्य है जब हब या डॉक यह तय करता है कि कौन सा सिरा पावर देगा।";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "लेगेसी D+/D- पिन पर USB 2.0 कनेक्शन मिला।";
@@ -173,6 +174,7 @@
 "Default USB (500/900 mA)" = "USB डिफ़ॉल्ट (500/900 mA)";
 "Detach count" = "डिस्कनेक्शन गणना";
 "Device Identity" = "डिवाइस पहचान";
+"Devices" = "डिवाइस";
 "Diagnostics" = "डायग्नोस्टिक्स";
 "Disabled" = "अक्षम";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "SOP चैनल पर Discover Identity प्रतिक्रिया मिली। कनेक्टेड पार्टनर का VID, PID, और क्षमता VDOs शामिल हैं (केबल नहीं; केबल पहचान SOP' उपयोग करती है)।";
@@ -188,6 +190,7 @@
 "General port controller status change (connection state, error flags)." = "पोर्ट कंट्रोलर की सामान्य स्थिति परिवर्तन (कनेक्शन स्थिति, एरर फ़्लैग)।";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "जनरिक कंट्रोलर स्टेटस रजिस्टर बदला। कनेक्शन स्थिति, ओरिएंटेशन, और एरर कंडीशन को कवर करता है।";
 "Hard reset count" = "हार्ड रीसेट गणना";
+"Could not load the device list. Try again later." = "डिवाइस सूची लोड नहीं हो सकी। बाद में फिर कोशिश करें।";
 "Could not reach the licence server. Check your internet connection and try again." = "लाइसेंस सर्वर तक नहीं पहुँच सके। अपना इंटरनेट कनेक्शन जाँचें और पुनः प्रयास करें।";
 "I2C error count" = "I2C एरर गणना";
 "Inactive" = "निष्क्रिय";
@@ -200,6 +203,7 @@
 "Liquid Detection" = "लिक्विड डिटेक्शन";
 "Liquid detected" = "लिक्विड मिला";
 "Live" = "लाइव";
+"Loading devices…" = "डिवाइस लोड हो रहे हैं…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe चार्जर";
 "Manufacturer" = "निर्माता";
@@ -219,6 +223,7 @@
 "No SOP identity data" = "SOP पहचान डेटा नहीं";
 "No cable connected." = "कोई केबल कनेक्ट नहीं।";
 "No cable identity data" = "केबल पहचान डेटा नहीं";
+"No devices registered." = "कोई डिवाइस पंजीकृत नहीं है।";
 "No health counters" = "कोई हेल्थ काउंटर नहीं";
 "No liquid detection data" = "लिक्विड डिटेक्शन डेटा नहीं";
 "None" = "कोई नहीं";
@@ -253,6 +258,12 @@
 "Product Type" = "प्रोडक्ट प्रकार";
 "Raw VDOs" = "VDO (रॉ डेटा)";
 "Raw cable VDOs" = "केबल VDO (रॉ डेटा)";
+"Refresh" = "रीफ़्रेश करें";
+"Registered %@" = "पंजीकृत %@";
+"Registration date unknown" = "पंजीकरण तिथि अज्ञात";
+"Remove" = "हटाएँ";
+"Remove %@ from your licence?" = "क्या %@ को आपके लाइसेंस से हटाएँ?";
+"Removing this Mac will lock Pro here until you activate again." = "इस Mac को हटाने पर, जब तक आप फिर सक्रिय नहीं करते, यहाँ Pro लॉक रहेगा।";
 "Rp current level" = "Rp करंट स्तर";
 "Rp resistor" = "Rp रेसिस्टर";
 "SOP identity received" = "SOP पहचान प्राप्त";
@@ -266,12 +277,15 @@
 "Status update" = "स्थिति अपडेट";
 "System Power Input" = "सिस्टम पावर इनपुट";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "सिस्टम स्लीप/वेक ट्रांज़ीशन। पोर्ट कंट्रोलर की स्थिति स्लीप के आर-पार सहेजी और पुनर्स्थापित की जाती है।";
+"That Mac will lose Pro until it activates again." = "वह Mac तब तक Pro खो देगा जब तक वह फिर सक्रिय नहीं होता।";
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac स्लीप में गया या जागा, जिससे पोर्ट कंट्रोलर की स्थिति बदली।";
 "The charger or power source advertised what voltages and currents it can provide." = "चार्जर या पावर सोर्स ने बताया कि वह कौन से वोल्टेज और करंट दे सकता है।";
 "The data role flipped: the port switched between host and device mode." = "डेटा रोल बदला: पोर्ट ने होस्ट और डिवाइस मोड के बीच स्विच किया।";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "इस Mac का स्लॉट लाइसेंस सर्वर पर मुक्त नहीं किया जा सका, इसलिए यह अब भी उपयोग में हो सकता है। इसे किसी अन्य Mac पर सेटिंग्स से मुक्त करें, या सहायता से संपर्क करें।";
 "The port controller firmware finished initialising and is ready." = "पोर्ट कंट्रोलर फ़र्मवेयर इनिशियलाइज़ हो गया और तैयार है।";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "पोर्ट कंट्रोलर ने अलर्ट दिया (ओवरकरंट, ओवरटेम्परेचर, या समान दोष)।";
 "The power direction flipped: the port switched between providing and receiving power." = "पावर दिशा बदली: पोर्ट ने पावर देने और प्राप्त करने के बीच स्विच किया।";
+"This Mac" = "यह Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "यह इवेंट कोड ज्ञात TPS6598x इंटरप्ट टेबल में नहीं है। फ़र्मवेयर-विशिष्ट हो सकता है।";
 "Tunneled" = "टनल्ड";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM डिस्कवरी शुरू। कंट्रोलर केबल या पार्टनर पर वेंडर-विशिष्ट क्षमताओं की जाँच कर रहा है।";
@@ -282,6 +296,7 @@
 "USB-C Charger" = "USB-C चार्जर";
 "Unknown" = "अज्ञात";
 "Unknown Device" = "अज्ञात डिवाइस";
+"Unknown Mac" = "अज्ञात Mac";
 "Unknown event %@" = "अज्ञात इवेंट %@";
 "Unrecognised event code from the port controller." = "पोर्ट कंट्रोलर से अपरिचित इवेंट कोड।";
 "Unregistered cable (no e-marker)" = "अपंजीकृत केबल (e-marker नहीं)";

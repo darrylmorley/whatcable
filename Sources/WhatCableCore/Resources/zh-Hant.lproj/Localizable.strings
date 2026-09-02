@@ -143,6 +143,7 @@
 "%@ (spec, not measured)" = "%@（規格值，非實測）";
 "%@ Diagnostics" = "%@ 診斷";
 "%lld (%lld failed)" = "%1$lld（%2$lld 次失敗）";
+"%lld of %lld devices used" = "已使用 %lld/%lld 台裝置";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap 已成功完成。連接埠已在 DFP（主機）和 UFP（裝置）角色之間切換。";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap 已成功完成。常見於 Hub 或 Dock 重新協商由哪一端供電時。";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "在傳統 D+/D- 針腳上偵測到 USB 2.0 連線。";
@@ -173,6 +174,7 @@
 "Default USB (500/900 mA)" = "USB 預設 (500/900 mA)";
 "Detach count" = "中斷連接次數";
 "Device Identity" = "裝置識別資訊";
+"Devices" = "裝置";
 "Diagnostics" = "診斷";
 "Disabled" = "已停用";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "在 SOP 通道上收到 Discover Identity 回應。包含已連接對端的 VID、PID 和規格 VDO（不是線材；線材識別資訊使用 SOP'）。";
@@ -188,6 +190,7 @@
 "General port controller status change (connection state, error flags)." = "一般連接埠控制器狀態變更（連線狀態、錯誤旗標）。";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "通用控制器狀態暫存器已變更。涵蓋連接狀態、方向和錯誤情況。";
 "Hard reset count" = "硬重設次數";
+"Could not load the device list. Try again later." = "無法載入裝置清單，請稍後再試。";
 "Could not reach the licence server. Check your internet connection and try again." = "無法連接授權伺服器。請檢查網路連線後再試一次。";
 "I2C error count" = "I2C 錯誤次數";
 "Inactive" = "未作用中";
@@ -200,6 +203,7 @@
 "Liquid Detection" = "液體偵測";
 "Liquid detected" = "偵測到液體";
 "Live" = "Live";
+"Loading devices…" = "正在載入裝置…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe 充電器";
 "Manufacturer" = "製造商";
@@ -219,6 +223,7 @@
 "No SOP identity data" = "沒有 SOP 識別資料";
 "No cable connected." = "未連接線材。";
 "No cable identity data" = "沒有線材識別資料";
+"No devices registered." = "沒有已註冊的裝置。";
 "No health counters" = "沒有健康狀況計數資料";
 "No liquid detection data" = "沒有液體偵測資料";
 "None" = "無";
@@ -253,6 +258,12 @@
 "Product Type" = "Product Type";
 "Raw VDOs" = "Raw VDOs";
 "Raw cable VDOs" = "Raw cable VDOs";
+"Refresh" = "重新整理";
+"Registered %@" = "註冊於 %@";
+"Registration date unknown" = "註冊日期不明";
+"Remove" = "移除";
+"Remove %@ from your licence?" = "要將 %@ 從授權中移除嗎？";
+"Removing this Mac will lock Pro here until you activate again." = "移除這台 Mac 後，Pro 將在此鎖定，直到你再次啟用。";
 "Rp current level" = "Rp 電流等級";
 "Rp resistor" = "Rp 電阻";
 "SOP identity received" = "已收到 SOP 識別資訊";
@@ -266,12 +277,15 @@
 "Status update" = "狀態更新";
 "System Power Input" = "系統電源輸入";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "系統睡眠/喚醒轉換。連接埠控制器狀態會在睡眠前後儲存並還原。";
+"That Mac will lose Pro until it activates again." = "該 Mac 將失去 Pro，直到再次啟用。";
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac 進入或結束睡眠，導致連接埠控制器狀態變更。";
 "The charger or power source advertised what voltages and currents it can provide." = "充電器或電源宣告了可提供的電壓和電流。";
 "The data role flipped: the port switched between host and device mode." = "資料角色已切換：連接埠在主機和裝置模式之間切換。";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "無法在授權伺服器上釋放這台 Mac 的名額，可能仍被佔用。請在另一台 Mac 的設定中釋放，或聯絡支援團隊。";
 "The port controller firmware finished initialising and is ready." = "連接埠控制器韌體已完成初始化並準備就緒。";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "連接埠控制器發出警示（過電流、過熱或類似故障）。";
 "The power direction flipped: the port switched between providing and receiving power." = "電源方向已切換：連接埠在供電與受電之間切換。";
+"This Mac" = "這台 Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "此事件代碼不在已知的 TPS6598x 中斷表中，可能是韌體特定的事件代碼。";
 "Tunneled" = "穿隧傳輸";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM 探索已開始。控制器正在探測線材或對端所支援的廠商特定規格。";
@@ -282,6 +296,7 @@
 "USB-C Charger" = "USB-C 充電器";
 "Unknown" = "未知";
 "Unknown Device" = "未知裝置";
+"Unknown Mac" = "未知 Mac";
 "Unknown event %@" = "未知事件 %@";
 "Unrecognised event code from the port controller." = "無法辨識連接埠控制器回報的事件代碼。";
 "Unregistered cable (no e-marker)" = "未註冊線材（無 e-marker）";

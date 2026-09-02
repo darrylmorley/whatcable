@@ -143,6 +143,7 @@
 "%@ (spec, not measured)" = "%@ (especificação, não medido)";
 "%@ Diagnostics" = "Diagnóstico de %@";
 "%lld (%lld failed)" = "%1$lld (%2$lld com falha)";
+"%lld of %lld devices used" = "%lld de %lld dispositivos usados";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "Um DR_Swap foi concluído com sucesso. A porta alternou entre as funções DFP (host) e UFP (dispositivo).";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "Um PR_Swap foi concluído com sucesso. É comum quando um hub ou dock renegocia qual ponta fornece energia.";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "Uma conexão USB 2.0 foi detectada nos pinos legados D+/D-.";
@@ -173,6 +174,7 @@
 "Default USB (500/900 mA)" = "USB padrão (500/900 mA)";
 "Detach count" = "Contagem de desconexões";
 "Device Identity" = "Identidade do dispositivo";
+"Devices" = "Dispositivos";
 "Diagnostics" = "Diagnóstico";
 "Disabled" = "Desativado";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "Resposta Discover Identity recebida no canal SOP. Contém o VID, PID e VDOs de capacidade do parceiro conectado (não do cabo; a identidade do cabo usa SOP').";
@@ -188,6 +190,7 @@
 "General port controller status change (connection state, error flags)." = "Alteração geral de status do controlador da porta (estado da conexão, flags de erro).";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "O registro de status genérico do controlador mudou. Abrange estado de conexão, orientação e condições de erro.";
 "Hard reset count" = "Contagem de hard resets";
+"Could not load the device list. Try again later." = "Não foi possível carregar a lista de dispositivos. Tente novamente mais tarde.";
 "Could not reach the licence server. Check your internet connection and try again." = "Não foi possível acessar o servidor de licenças. Verifique sua conexão com a internet e tente novamente.";
 "I2C error count" = "Contagem de erros I2C";
 "Inactive" = "Inativo";
@@ -200,6 +203,7 @@
 "Liquid Detection" = "Detecção de líquido";
 "Liquid detected" = "Líquido detectado";
 "Live" = "Ao vivo";
+"Loading devices…" = "Carregando dispositivos…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "Carregador MagSafe";
 "Manufacturer" = "Fabricante";
@@ -219,6 +223,7 @@
 "No SOP identity data" = "Sem dados de identidade SOP";
 "No cable connected." = "Nenhum cabo conectado.";
 "No cable identity data" = "Sem dados de identidade do cabo";
+"No devices registered." = "Nenhum dispositivo registrado.";
 "No health counters" = "Sem contadores de saúde";
 "No liquid detection data" = "Sem dados de detecção de líquido";
 "None" = "Nenhum";
@@ -253,6 +258,12 @@
 "Product Type" = "Tipo de produto";
 "Raw VDOs" = "VDOs brutos";
 "Raw cable VDOs" = "VDOs brutos do cabo";
+"Refresh" = "Atualizar";
+"Registered %@" = "Registrado %@";
+"Registration date unknown" = "Data de registro desconhecida";
+"Remove" = "Remover";
+"Remove %@ from your licence?" = "Remover %@ da sua licença?";
+"Removing this Mac will lock Pro here until you activate again." = "Remover este Mac vai bloquear o Pro aqui até você ativar novamente.";
 "Rp current level" = "Nível de corrente Rp";
 "Rp resistor" = "Resistor Rp";
 "SOP identity received" = "Identidade SOP recebida";
@@ -266,12 +277,15 @@
 "Status update" = "Atualização de status";
 "System Power Input" = "Entrada de energia do sistema";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "Transição de repouso/despertar do sistema. O estado do controlador da porta é salvo e restaurado através dos limites de repouso.";
+"That Mac will lose Pro until it activates again." = "Aquele Mac vai perder o Pro até ser ativado novamente.";
 "The Mac entered or exited sleep, causing port controller state changes." = "O Mac entrou ou saiu do repouso, causando alterações no estado do controlador da porta.";
 "The charger or power source advertised what voltages and currents it can provide." = "O carregador ou fonte de alimentação anunciou quais tensões e correntes pode fornecer.";
 "The data role flipped: the port switched between host and device mode." = "A função de dados foi invertida: a porta alternou entre modo host e dispositivo.";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "Não foi possível liberar a vaga deste Mac no servidor de licenças, então ela ainda pode estar ocupada. Libere-a nas Configurações em outro Mac, ou entre em contato com o suporte.";
 "The port controller firmware finished initialising and is ready." = "O firmware do controlador da porta concluiu a inicialização e está pronto.";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "O controlador da porta gerou um alerta (sobrecorrente, sobretemperatura ou falha semelhante).";
 "The power direction flipped: the port switched between providing and receiving power." = "A direção da energia foi invertida: a porta alternou entre fornecer e receber energia.";
+"This Mac" = "Este Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "Este código de evento não está na tabela conhecida de interrupções TPS6598x. Pode ser específico do firmware.";
 "Tunneled" = "Tunelado";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "A descoberta UVDM começou. O controlador está sondando capacidades específicas do fornecedor no cabo ou parceiro.";
@@ -282,6 +296,7 @@
 "USB-C Charger" = "Carregador USB-C";
 "Unknown" = "Desconhecido";
 "Unknown Device" = "Dispositivo desconhecido";
+"Unknown Mac" = "Mac desconhecido";
 "Unknown event %@" = "Evento desconhecido %@";
 "Unrecognised event code from the port controller." = "Código de evento não reconhecido do controlador da porta.";
 "Unregistered cable (no e-marker)" = "Cabo não registrado (sem e-marker)";

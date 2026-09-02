@@ -144,6 +144,7 @@
 "%@ (spec, not measured)" = "%@ (ըստ բնութագրի, ոչ չափված)";
 "%@ Diagnostics" = "%@ ախտորոշում";
 "%lld (%lld failed)" = "%1$lld (%2$lld ձախողված)";
+"%lld of %lld devices used" = "%lld/%lld սարք օգտագործված է";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap-ը հաջողությամբ ավարտվեց: Պորտը փոխվեց DFP (հոսթ) և UFP (սարք) դերերի միջև:";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap-ը հաջողությամբ ավարտվեց: Տարածված է, երբ hub-ը կամ dock-ը նորից համաձայնեցնում է, թե որ ծայրն է սնուցում մատակարարում:";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "USB 2.0 կապ հայտնաբերվեց հին D+/D- կոնտակտների վրա:";
@@ -174,6 +175,7 @@
 "Default USB (500/900 mA)" = "Լռելյայն USB (500/900 մԱ)";
 "Detach count" = "Անջատումների քանակ";
 "Device Identity" = "Սարքի ինքնություն";
+"Devices" = "Սարքեր";
 "Diagnostics" = "Ախտորոշում";
 "Disabled" = "Անջատված";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "Discover Identity պատասխան ստացվեց SOP ալիքով: Պարունակում է միացված զուգընկերոջ VID-ը, PID-ը և հնարավորությունների VDO-ները (ոչ մալուխինը, մալուխի ինքնությունն օգտագործում է SOP'):";
@@ -189,6 +191,7 @@
 "General port controller status change (connection state, error flags)." = "Պորտի կարգավորիչի ընդհանուր վիճակի փոփոխություն (կապի վիճակ, սխալի դրոշակներ):";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "Կարգավորիչի ընդհանուր վիճակի ռեգիստրը փոխվեց: Ընդգրկում է միակցիչի վիճակը, կողմնորոշումը և սխալի պայմանները:";
 "Hard reset count" = "Կոշտ վերակայումների քանակ";
+"Could not load the device list. Try again later." = "Չհաջողվեց բեռնել սարքերի ցանկը: Փորձեք կրկին ավելի ուշ:";
 "Could not reach the licence server. Check your internet connection and try again." = "Հնարավոր չեղավ կապ հաստատել լիցենզիայի սերվերի հետ: Ստուգեք ձեր ինտերնետ կապը և կրկին փորձեք:";
 "I2C error count" = "I2C սխալների քանակ";
 "Inactive" = "Ոչ ակտիվ";
@@ -201,6 +204,7 @@
 "Liquid Detection" = "Հեղուկի հայտնաբերում";
 "Liquid detected" = "Հեղուկ է հայտնաբերվել";
 "Live" = "Ակտիվ";
+"Loading devices…" = "Սարքերը բեռնվում են…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe լիցքավորիչ";
 "Manufacturer" = "Արտադրող";
@@ -220,6 +224,7 @@
 "No SOP identity data" = "SOP ինքնության տվյալներ չկան";
 "No cable connected." = "Միացված մալուխ չկա:";
 "No cable identity data" = "Մալուխի ինքնության տվյալներ չկան";
+"No devices registered." = "Գրանցված սարքեր չկան:";
 "No health counters" = "Վիճակի հաշվիչներ չկան";
 "No liquid detection data" = "Հեղուկի հայտնաբերման տվյալներ չկան";
 "None" = "Չկա";
@@ -254,6 +259,12 @@
 "Product Type" = "Արտադրանքի տեսակ";
 "Raw VDOs" = "Հում VDO-ներ";
 "Raw cable VDOs" = "Մալուխի հում VDO-ներ";
+"Refresh" = "Թարմացնել";
+"Registered %@" = "Գրանցված է %@";
+"Registration date unknown" = "Գրանցման ամսաթիվը անհայտ է";
+"Remove" = "Հեռացնել";
+"Remove %@ from your licence?" = "Հեռացնե՞լ %@-ը ձեր լիցենզիայից:";
+"Removing this Mac will lock Pro here until you activate again." = "Այս Mac-ը հեռացնելը կփակի Pro-ն այստեղ, մինչև կրկին ակտիվացնեք:";
 "Rp current level" = "Rp հոսանքի մակարդակ";
 "Rp resistor" = "Rp դիմադրություն";
 "SOP identity received" = "SOP ինքնությունը ստացվեց";
@@ -267,12 +278,15 @@
 "Status update" = "Վիճակի թարմացում";
 "System Power Input" = "Համակարգի սնուցման մուտք";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "Համակարգի քուն/արթնացում անցում: Պորտի կարգավորիչի վիճակը պահպանվում և վերականգնվում է քնի սահմաններում:";
+"That Mac will lose Pro until it activates again." = "Այդ Mac-ը կկորցնի Pro-ն, մինչև այն կրկին ակտիվացվի:";
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac-ը մտավ կամ դուրս եկավ քնի ռեժիմից՝ առաջացնելով պորտի կարգավորիչի վիճակի փոփոխություններ:";
 "The charger or power source advertised what voltages and currents it can provide." = "Լիցքավորիչը կամ սնուցման աղբյուրը հայտնեց, թե ինչ լարումներ և հոսանքներ կարող է ապահովել:";
 "The data role flipped: the port switched between host and device mode." = "Տվյալների դերը շրջվեց՝ պորտը փոխվեց հոսթ և սարք ռեժիմների միջև:";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "Չհաջողվեց ազատել այս Mac-ի տեղը լիցենզիայի սերվերում, ուստի այն դեռ կարող է զբաղեցված մնալ: Ազատեք այն մեկ այլ Mac-ի կարգավորումներից կամ դիմեք աջակցությանը:";
 "The port controller firmware finished initialising and is ready." = "Պորտի կարգավորիչի որոնվածքն ավարտեց նախապատրաստումը և պատրաստ է:";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "Պորտի կարգավորիչը ազդանշան բարձրացրեց (գերհոսանք, գերտաքացում կամ նմանատիպ անսարքություն):";
 "The power direction flipped: the port switched between providing and receiving power." = "Սնուցման ուղղությունը շրջվեց՝ պորտը փոխվեց սնուցում տրամադրելու և ստանալու միջև:";
+"This Mac" = "Այս Mac-ը";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "Այս իրադարձության կոդը հայտնի TPS6598x ընդհատումների աղյուսակում չէ: Կարող է լինել որոնվածքին հատուկ:";
 "Tunneled" = "Թունելավորված";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM հայտնաբերումը սկսվեց: Կարգավորիչը զննում է արտադրողին հատուկ հնարավորությունները մալուխի կամ զուգընկերոջ վրա:";
@@ -283,6 +297,7 @@
 "USB-C Charger" = "USB-C լիցքավորիչ";
 "Unknown" = "Անհայտ";
 "Unknown Device" = "Անհայտ սարք";
+"Unknown Mac" = "Անհայտ Mac";
 "Unknown event %@" = "Անհայտ իրադարձություն %@";
 "Unrecognised event code from the port controller." = "Չճանաչված իրադարձության կոդ պորտի կարգավորիչից:";
 "Unregistered cable (no e-marker)" = "Չգրանցված մալուխ (e-marker չկա)";

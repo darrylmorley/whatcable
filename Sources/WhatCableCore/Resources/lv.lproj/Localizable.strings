@@ -143,6 +143,7 @@
 "%@ (spec, not measured)" = "%@ (specifikācija, nav mērīts)";
 "%@ Diagnostics" = "%@ diagnostika";
 "%lld (%lld failed)" = "%1$lld (%2$lld neizdevās)";
+"%lld of %lld devices used" = "%lld no %lld ierīcēm izmantotas";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap veiksmīgi pabeigts. Ports mainījās starp DFP (resursdatora) un UFP (ierīces) lomām.";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap veiksmīgi pabeigts. Bieži notiek, kad centrmezgls vai dokstacija pārrunā, kura puse piegādā strāvu.";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "USB 2.0 savienojums tika konstatēts uz mantotajiem D+/D- kontaktiem.";
@@ -173,6 +174,7 @@
 "Default USB (500/900 mA)" = "Noklusējuma USB (500/900 mA)";
 "Detach count" = "Atvienošanas skaits";
 "Device Identity" = "Ierīces identitāte";
+"Devices" = "Ierīces";
 "Diagnostics" = "Diagnostika";
 "Disabled" = "Atspējots";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "Discover Identity atbilde saņemta SOP kanālā. Satur pievienotā partnera VID, PID un spēju VDO (nevis kabeli; kabeļa identitāte izmanto SOP').";
@@ -188,6 +190,7 @@
 "General port controller status change (connection state, error flags)." = "Vispārēja porta kontrollera statusa maiņa (savienojuma stāvoklis, kļūdu karodziņi).";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "Vispārēja kontrollera statusa reģistra maiņa. Ietver kontakta stāvokli, orientāciju un kļūdu apstākļus.";
 "Hard reset count" = "Pilnīgo atiestati skaits";
+"Could not load the device list. Try again later." = "Neizdevās ielādēt ierīču sarakstu. Mēģiniet vēlreiz vēlāk.";
 "Could not reach the licence server. Check your internet connection and try again." = "Nevarēja sasniegt licences serveri. Pārbaudiet interneta savienojumu un mēģiniet vēlreiz.";
 "I2C error count" = "I2C kļūdu skaits";
 "Inactive" = "Neaktīvs";
@@ -200,6 +203,7 @@
 "Liquid Detection" = "Šķidruma noteikšana";
 "Liquid detected" = "Konstatēts šķidrums";
 "Live" = "Tiešraide";
+"Loading devices…" = "Ielādē ierīces…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe lādētājs";
 "Manufacturer" = "Ražotājs";
@@ -219,6 +223,7 @@
 "No SOP identity data" = "Nav SOP identitātes datu";
 "No cable connected." = "Nav pievienots kabelis.";
 "No cable identity data" = "Nav kabeļa identitātes datu";
+"No devices registered." = "Nav reģistrētu ierīču.";
 "No health counters" = "Nav veselības skaitītāju";
 "No liquid detection data" = "Nav šķidruma noteikšanas datu";
 "None" = "Nav";
@@ -253,6 +258,12 @@
 "Product Type" = "Produkta tips";
 "Raw VDOs" = "Neapstrādāti VDO";
 "Raw cable VDOs" = "Neapstrādāti kabeļa VDO";
+"Refresh" = "Atsvaidzināt";
+"Registered %@" = "Reģistrēts %@";
+"Registration date unknown" = "Reģistrācijas datums nezināms";
+"Remove" = "Noņemt";
+"Remove %@ from your licence?" = "Noņemt %@ no jūsu licences?";
+"Removing this Mac will lock Pro here until you activate again." = "Noņemot šo Mac, Pro šeit tiks bloķēts, līdz to aktivizēsiet no jauna.";
 "Rp current level" = "Rp strāvas līmenis";
 "Rp resistor" = "Rp rezistors";
 "SOP identity received" = "SOP identitāte saņemta";
@@ -266,12 +277,15 @@
 "Status update" = "Statusa atjauninājums";
 "System Power Input" = "Sistēmas strāvas ievade";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "Sistēmas miega/modināšanas pāreja. Porta kontrollera stāvoklis tiek saglabāts un atjaunots pāri miega robežām.";
+"That Mac will lose Pro until it activates again." = "Tas Mac zaudēs Pro, līdz tas tiks aktivizēts no jauna.";
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac iegāja miegā vai pamodās, izraisot porta kontrollera stāvokļa izmaiņas.";
 "The charger or power source advertised what voltages and currents it can provide." = "Lādētājs vai strāvas avots paziņoja, kādus spriegumus un strāvas tas var nodrošināt.";
 "The data role flipped: the port switched between host and device mode." = "Datu loma mainījās: ports pārslēdzās starp resursdatora un ierīces režīmu.";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "Neizdevās atbrīvot šī Mac vietu licences serverī, tāpēc tā joprojām var būt aizņemta. Atbrīvojiet to iestatījumos citā Mac, vai sazinieties ar atbalstu.";
 "The port controller firmware finished initialising and is ready." = "Porta kontrollera programmaparatūra pabeidza inicializāciju un ir gatava.";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "Porta kontrolleris izdeva brīdinājumu (pārstrāva, pārkaršana vai līdzīga kļūme).";
 "The power direction flipped: the port switched between providing and receiving power." = "Strāvas virziens mainījās: ports pārslēdzās starp strāvas nodrošināšanu un saņemšanu.";
+"This Mac" = "Šis Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "Šis notikuma kods nav zināmajā TPS6598x pārtraukumu tabulā. Var būt specifisks programmaparatūrai.";
 "Tunneled" = "Tunelēts";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM atklāšana sākta. Kontrolleris pārbauda ražotāja specifiskās spējas uz kabeļa vai partnera.";
@@ -282,6 +296,7 @@
 "USB-C Charger" = "USB-C lādētājs";
 "Unknown" = "Nezināms";
 "Unknown Device" = "Nezināma ierīce";
+"Unknown Mac" = "Nezināms Mac";
 "Unknown event %@" = "Nezināms notikums %@";
 "Unrecognised event code from the port controller." = "Neatpazīts notikuma kods no porta kontrollera.";
 "Unregistered cable (no e-marker)" = "Nereģistrēts kabelis (nav e-marķiera)";

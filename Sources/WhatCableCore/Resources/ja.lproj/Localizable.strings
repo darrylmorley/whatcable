@@ -145,6 +145,7 @@
 "%@ (spec, not measured)" = "%@（仕様値、実測値ではありません）";
 "%@ Diagnostics" = "%@ 診断";
 "%lld (%lld failed)" = "%1$lld（%2$lld失敗）";
+"%lld of %lld devices used" = "%lld/%lldデバイス使用中";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swapが完了しました。ポートのロールがDFP（ホスト）とUFP（デバイス）の間で切り替わりました。";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swapが完了しました。ハブやドックがどちら側から給電するかを再ネゴシエーションする際によく発生します。";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "レガシーD+/D-ピンでUSB 2.0接続が検出されました。";
@@ -175,6 +176,7 @@
 "Default USB (500/900 mA)" = "USBデフォルト (500/900 mA)";
 "Detach count" = "切断回数";
 "Device Identity" = "デバイスID";
+"Devices" = "デバイス";
 "Diagnostics" = "診断";
 "Disabled" = "無効";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "SOPチャネルでDiscover Identity応答を受信。接続先のVID、PID、性能VDOを含みます（ケーブルではなく、ケーブルIDはSOP'を使用）。";
@@ -190,6 +192,7 @@
 "General port controller status change (connection state, error flags)." = "ポートコントローラーの一般的なステータス変更（接続状態、エラーフラグ）。";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "汎用コントローラーステータスレジスタが変更。接続状態、向き、エラー条件をカバーします。";
 "Hard reset count" = "ハードリセット回数";
+"Could not load the device list. Try again later." = "デバイスリストを読み込めませんでした。後でもう一度お試しください。";
 "Could not reach the licence server. Check your internet connection and try again." = "ライセンスサーバーに接続できません。インターネット接続を確認して再試行してください。";
 "I2C error count" = "I2Cエラー回数";
 "Inactive" = "非アクティブ";
@@ -202,6 +205,7 @@
 "Liquid Detection" = "液体検出";
 "Liquid detected" = "液体検出";
 "Live" = "ライブ";
+"Loading devices…" = "デバイスを読み込み中…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe充電器";
 "Manufacturer" = "製造元";
@@ -221,6 +225,7 @@
 "No SOP identity data" = "SOP IDデータなし";
 "No cable connected." = "ケーブル未接続。";
 "No cable identity data" = "ケーブルIDデータなし";
+"No devices registered." = "登録済みのデバイスはありません。";
 "No health counters" = "ヘルスカウンターなし";
 "No liquid detection data" = "液体検出データなし";
 "None" = "なし";
@@ -255,6 +260,12 @@
 "Product Type" = "プロダクトタイプ";
 "Raw VDOs" = "VDO（生データ）";
 "Raw cable VDOs" = "ケーブルVDO（生データ）";
+"Refresh" = "更新";
+"Registered %@" = "登録: %@";
+"Registration date unknown" = "登録日不明";
+"Remove" = "削除";
+"Remove %@ from your licence?" = "%@をライセンスから削除しますか？";
+"Removing this Mac will lock Pro here until you activate again." = "このMacを削除すると、再度アクティベートするまでここでProがロックされます。";
 "Rp current level" = "Rp電流レベル";
 "Rp resistor" = "Rp抵抗";
 "SOP identity received" = "SOP ID受信";
@@ -268,12 +279,15 @@
 "Status update" = "ステータス更新";
 "System Power Input" = "システム電源入力";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "システムのスリープ/復帰遷移。ポートコントローラーの状態はスリープ前後で保存・復元されます。";
+"That Mac will lose Pro until it activates again." = "そのMacは再度アクティベートするまでProを失います。";
 "The Mac entered or exited sleep, causing port controller state changes." = "Macがスリープに入ったか復帰し、ポートコントローラーの状態が変化しました。";
 "The charger or power source advertised what voltages and currents it can provide." = "充電器または電源が提供可能な電圧と電流を通知しました。";
 "The data role flipped: the port switched between host and device mode." = "データロールが切り替わりました: ポートがホストモードとデバイスモードの間で切り替わりました。";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "このMacの枠をライセンスサーバーで解放できなかったため、まだ使用中の可能性があります。別のMacの設定から解放するか、サポートにお問い合わせください。";
 "The port controller firmware finished initialising and is ready." = "ポートコントローラーファームウェアの初期化が完了し、準備完了です。";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "ポートコントローラーがアラートを発生しました（過電流、過温度、または類似の障害）。";
 "The power direction flipped: the port switched between providing and receiving power." = "電力の方向が切り替わりました: ポートが給電側と受電側の間で切り替わりました。";
+"This Mac" = "このMac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "このイベントコードは既知のTPS6598x割り込みテーブルにありません。ファームウェア固有の可能性があります。";
 "Tunneled" = "トンネル";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDMディスカバリー開始。コントローラーがケーブルまたはパートナーのベンダー固有性能を探索中です。";
@@ -284,6 +298,7 @@
 "USB-C Charger" = "USB-C充電器";
 "Unknown" = "不明";
 "Unknown Device" = "不明なデバイス";
+"Unknown Mac" = "不明なMac";
 "Unknown event %@" = "不明なイベント %@";
 "Unrecognised event code from the port controller." = "ポートコントローラーからの認識できないイベントコード。";
 "Unregistered cable (no e-marker)" = "未登録ケーブル（e-markerなし）";

@@ -144,6 +144,7 @@
 "%@ (spec, not measured)" = "%@（规格值，非实测）";
 "%@ Diagnostics" = "%@ 诊断";
 "%lld (%lld failed)" = "%1$lld（%2$lld 个失败）";
+"%lld of %lld devices used" = "已使用 %lld/%lld 台设备";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap 已成功完成。端口在 DFP（主机）和 UFP（设备）角色之间切换。";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap 已成功完成。当集线器或扩展坞重新协商由哪一端供电时常见。";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "在传统 D+/D- 引脚上检测到 USB 2.0 连接。";
@@ -174,6 +175,7 @@
 "Default USB (500/900 mA)" = "USB 默认（500/900 mA）";
 "Detach count" = "断开次数";
 "Device Identity" = "设备身份";
+"Devices" = "设备";
 "Diagnostics" = "诊断";
 "Disabled" = "已禁用";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "在 SOP 通道上收到 Discover Identity 响应。包含已连接伙伴的 VID、PID 和能力 VDO（不是线缆；线缆身份使用 SOP'）。";
@@ -189,6 +191,7 @@
 "General port controller status change (connection state, error flags)." = "端口控制器状态发生通用变化（连接状态、错误标志）。";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "通用控制器状态寄存器已更改。涵盖连接器状态、方向和错误情况。";
 "Hard reset count" = "硬复位次数";
+"Could not load the device list. Try again later." = "无法加载设备列表，请稍后重试。";
 "Could not reach the licence server. Check your internet connection and try again." = "无法连接到许可证服务器。请检查网络连接后重试。";
 "I2C error count" = "I2C 错误次数";
 "Inactive" = "未活跃";
@@ -201,6 +204,7 @@
 "Liquid Detection" = "液体检测";
 "Liquid detected" = "检测到液体";
 "Live" = "实时";
+"Loading devices…" = "正在加载设备…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe 充电器";
 "Manufacturer" = "制造商";
@@ -220,6 +224,7 @@
 "No SOP identity data" = "无 SOP 身份数据";
 "No cable connected." = "未连接线缆。";
 "No cable identity data" = "无线缆身份数据";
+"No devices registered." = "没有已注册的设备。";
 "No health counters" = "无健康计数器";
 "No liquid detection data" = "无液体检测数据";
 "None" = "无";
@@ -254,6 +259,12 @@
 "Product Type" = "产品类型";
 "Raw VDOs" = "原始 VDO";
 "Raw cable VDOs" = "原始线缆 VDO";
+"Refresh" = "刷新";
+"Registered %@" = "注册于 %@";
+"Registration date unknown" = "注册日期未知";
+"Remove" = "移除";
+"Remove %@ from your licence?" = "要将 %@ 从许可证中移除吗？";
+"Removing this Mac will lock Pro here until you activate again." = "移除此 Mac 后，Pro 将在此处锁定，直到你再次激活。";
 "Rp current level" = "Rp 电流等级";
 "Rp resistor" = "Rp 电阻";
 "SOP identity received" = "已收到 SOP 身份";
@@ -267,12 +278,15 @@
 "Status update" = "状态更新";
 "System Power Input" = "系统电源输入";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "系统睡眠/唤醒转换。端口控制器状态会在睡眠边界前后保存并恢复。";
+"That Mac will lose Pro until it activates again." = "该 Mac 将失去 Pro，直到再次激活。";
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac 进入或退出睡眠，导致端口控制器状态变化。";
 "The charger or power source advertised what voltages and currents it can provide." = "充电器或电源声明了它能提供的电压和电流。";
 "The data role flipped: the port switched between host and device mode." = "数据角色已翻转：端口在主机和设备模式之间切换。";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "无法在许可证服务器上释放此 Mac 的名额，可能仍被占用。请在另一台 Mac 的设置中释放，或联系支持团队。";
 "The port controller firmware finished initialising and is ready." = "端口控制器固件已完成初始化并就绪。";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "端口控制器发出了警报（过流、过温或类似故障）。";
 "The power direction flipped: the port switched between providing and receiving power." = "电源方向已翻转：端口在供电和受电之间切换。";
+"This Mac" = "此 Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "此事件代码不在已知的 TPS6598x 中断表中。可能是固件特定的。";
 "Tunneled" = "隧道传输";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM 发现已开始。控制器正在探测线缆或伙伴上的厂商特定能力。";
@@ -283,6 +297,7 @@
 "USB-C Charger" = "USB-C 充电器";
 "Unknown" = "未知";
 "Unknown Device" = "未知设备";
+"Unknown Mac" = "未知 Mac";
 "Unknown event %@" = "未知事件 %@";
 "Unrecognised event code from the port controller." = "来自端口控制器的无法识别的事件代码。";
 "Unregistered cable (no e-marker)" = "未注册线缆（无 e-marker）";

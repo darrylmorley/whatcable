@@ -143,6 +143,7 @@
 "%@ (spec, not measured)" = "%@ (özellik, ölçülmedi)";
 "%@ Diagnostics" = "%@ Tanılama";
 "%lld (%lld failed)" = "%1$lld (%2$lld başarısız)";
+"%lld of %lld devices used" = "%lld/%lld cihaz kullanılıyor";
 "A DR_Swap completed successfully. The port changed between DFP (host) and UFP (device) roles." = "DR_Swap başarıyla tamamlandı. Port, DFP (ana bilgisayar) ve UFP (aygıt) rolleri arasında geçiş yaptı.";
 "A PR_Swap completed successfully. Common when a hub or dock renegotiates which end supplies power." = "PR_Swap başarıyla tamamlandı. Bir hub veya dock'un hangi tarafın güç sağlayacağını yeniden müzakere etmesinde yaygındır.";
 "A USB 2.0 connection was detected on the legacy D+/D- pins." = "Eski D+/D- pinlerinde USB 2.0 bağlantısı algılandı.";
@@ -173,6 +174,7 @@
 "Default USB (500/900 mA)" = "Varsayılan USB (500/900 mA)";
 "Detach count" = "Bağlantı kesme sayısı";
 "Device Identity" = "Aygıt Kimliği";
+"Devices" = "Cihazlar";
 "Diagnostics" = "Tanılama";
 "Disabled" = "Devre dışı";
 "Discover Identity response received on SOP channel. Carries the connected partner's VID, PID, and capability VDOs (not the cable; cable identity uses SOP')." = "SOP kanalında Kimlik Keşfetme yanıtı alındı. Bağlı ortağın VID, PID ve özellik VDO'larını taşır (kablo değil; kablo kimliği SOP' kullanır).";
@@ -188,6 +190,7 @@
 "General port controller status change (connection state, error flags)." = "Genel port denetleyicisi durum değişikliği (bağlantı durumu, hata bayrakları).";
 "Generic controller status register changed. Covers plug state, orientation, and error conditions." = "Genel denetleyici durum kaydı değişti. Takma durumu, yönelim ve hata koşullarını kapsar.";
 "Hard reset count" = "Donanımsal sıfırlama sayısı";
+"Could not load the device list. Try again later." = "Cihaz listesi yüklenemedi. Daha sonra tekrar deneyin.";
 "Could not reach the licence server. Check your internet connection and try again." = "Lisans sunucusuna ulaşılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.";
 "I2C error count" = "I2C hata sayısı";
 "Inactive" = "Etkin değil";
@@ -200,6 +203,7 @@
 "Liquid Detection" = "Sıvı Algılama";
 "Liquid detected" = "Sıvı algılandı";
 "Live" = "Canlı";
+"Loading devices…" = "Cihazlar yükleniyor…";
 "MagSafe 3" = "MagSafe 3";
 "MagSafe Charger" = "MagSafe Şarj Aleti";
 "Manufacturer" = "Üretici";
@@ -219,6 +223,7 @@
 "No SOP identity data" = "SOP kimlik verisi yok";
 "No cable connected." = "Kablo bağlı değil.";
 "No cable identity data" = "Kablo kimlik verisi yok";
+"No devices registered." = "Kayıtlı cihaz yok.";
 "No health counters" = "Sağlık sayacı yok";
 "No liquid detection data" = "Sıvı algılama verisi yok";
 "None" = "Yok";
@@ -253,6 +258,12 @@
 "Product Type" = "Ürün Türü";
 "Raw VDOs" = "Ham VDO'lar";
 "Raw cable VDOs" = "Ham kablo VDO'ları";
+"Refresh" = "Yenile";
+"Registered %@" = "Kaydedildi: %@";
+"Registration date unknown" = "Kayıt tarihi bilinmiyor";
+"Remove" = "Kaldır";
+"Remove %@ from your licence?" = "%@ lisansınızdan kaldırılsın mı?";
+"Removing this Mac will lock Pro here until you activate again." = "Bu Mac'i kaldırmak, siz tekrar etkinleştirene kadar Pro'yu burada kilitler.";
 "Rp current level" = "Rp akım seviyesi";
 "Rp resistor" = "Rp direnci";
 "SOP identity received" = "SOP kimliği alındı";
@@ -266,12 +277,15 @@
 "Status update" = "Durum güncellemesi";
 "System Power Input" = "Sistem Güç Girişi";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "Sistem uyku/uyanma geçişi. Port denetleyicisi durumu uyku sınırlarında kaydedilir ve geri yüklenir.";
+"That Mac will lose Pro until it activates again." = "O Mac, tekrar etkinleştirilene kadar Pro'yu kaybeder.";
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac uyku moduna girdi veya çıktı; bu durum port denetleyicisi durum değişikliklerine yol açtı.";
 "The charger or power source advertised what voltages and currents it can provide." = "Şarj aleti veya güç kaynağı sağlayabileceği voltajları ve akımları tanıttı.";
 "The data role flipped: the port switched between host and device mode." = "Veri rolü değişti: port, ana bilgisayar ve aygıt modu arasında geçiş yaptı.";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "Bu Mac'in yeri lisans sunucusunda serbest bırakılamadı, bu yüzden hâlâ dolu olabilir. Başka bir Mac'teki Ayarlar'dan bu yeri boşaltın veya destek ile iletişime geçin.";
 "The port controller firmware finished initialising and is ready." = "Port denetleyicisi donanım yazılımı başlatmayı tamamladı ve hazır.";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "Port denetleyicisi bir uyarı verdi (aşırı akım, aşırı sıcaklık veya benzer bir arıza).";
 "The power direction flipped: the port switched between providing and receiving power." = "Güç yönü değişti: port, güç sağlama ve alma arasında geçiş yaptı.";
+"This Mac" = "Bu Mac";
 "This event code is not in the known TPS6598x interrupt table. May be firmware-specific." = "Bu olay kodu, bilinen TPS6598x kesme tablosunda yok. Donanım yazılımına özgü olabilir.";
 "Tunneled" = "Tünellendi";
 "UVDM discovery started. The controller is probing for vendor-specific capabilities on the cable or partner." = "UVDM keşfi başladı. Denetleyici, kablo veya ortaktaki satıcıya özgü özellikleri araştırıyor.";
@@ -282,6 +296,7 @@
 "USB-C Charger" = "USB-C Şarj Aleti";
 "Unknown" = "Bilinmiyor";
 "Unknown Device" = "Bilinmeyen Aygıt";
+"Unknown Mac" = "Bilinmeyen Mac";
 "Unknown event %@" = "Bilinmeyen olay %@";
 "Unrecognised event code from the port controller." = "Port denetleyicisinden tanınmayan olay kodu.";
 "Unregistered cable (no e-marker)" = "Kayıtsız kablo (e-marker yok)";
