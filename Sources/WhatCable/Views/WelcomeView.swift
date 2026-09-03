@@ -23,8 +23,6 @@ struct WelcomeView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Spacer()
-
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .frame(width: 64, height: 64)
@@ -35,10 +33,22 @@ struct WelcomeView: View {
             Text(String(localized: "See what your USB-C cables, chargers, and devices can actually do.", bundle: _appLocalizedBundle))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+                // Without this the subtitle is squeezed onto one line and
+                // truncated whenever the enclosing VStack is offered less
+                // height than it wants. Same reason the mode descriptions
+                // need it.
+                .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 16) {
                 Text(String(localized: "How would you like to use WhatCable?", bundle: _appLocalizedBundle))
                     .scaledFont(.headline)
+                    // Same reason as the subtitle above. Without it this
+                    // headline is held to one line and truncated with an
+                    // ellipsis whenever the translation is wider than the
+                    // space the frame below leaves for it. The longer
+                    // translations reach that at the top of the font-size
+                    // slider: French, Armenian and Ukrainian all do.
+                    .fixedSize(horizontal: false, vertical: true)
 
                 modeOption(
                     icon: "menubar.rectangle",
@@ -67,11 +77,25 @@ struct WelcomeView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-
-            Spacer()
         }
         .padding(32)
-        .frame(width: 420, height: 480)
+        // Fixed width, but the height is the content's own. The window is sized
+        // from this view: NSHostingController's default sizing options pin the
+        // window's contentMinSize and contentMaxSize to the fitting size here,
+        // so a hardcoded height is a hard ceiling the content silently spills
+        // out of once the font-size slider or a longer language pushes it past
+        // 480pt. `.frame` does not clip, so the overflow was cut symmetrically
+        // by the window edge: the app icon at the top and "Get Started" at the
+        // bottom. Letting the height float fixes that at every scale.
+        //
+        // `minHeight` keeps the original 480pt proportions when the content is
+        // shorter than that, which is what the two Spacers used to do. The
+        // frame centres its child, so the short case looks exactly as before
+        // and the Spacers are no longer needed. They have to go: a Spacer has
+        // no finite ideal height, so leaving them in would make the fitting
+        // size (and therefore the window) meaningless.
+        .frame(width: 420)
+        .frame(minHeight: 480)
     }
 
     @ViewBuilder

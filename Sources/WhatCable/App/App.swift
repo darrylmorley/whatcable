@@ -465,8 +465,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         w.styleMask = [.titled, .closable]
         w.isReleasedWhenClosed = false
         w.delegate = self
-        let scale = AppSettings.shared.fontSize
-        w.setContentSize(NSSize(width: 420 * scale, height: 480 * scale))
+        // Size from the laid-out content, not from the font scale. This used to
+        // ask for 420 x 480 multiplied by the scale, which never took effect:
+        // NSHostingController's default sizing options pin the window's
+        // contentMinSize AND contentMaxSize to the SwiftUI view's fitting size,
+        // so the first layout pass overrode whatever was set here. The window
+        // was therefore always the view's size, and content that outgrew it
+        // (bigger font scale, longer language) was cut off at the window edge.
+        // Asking for the fitting size makes the request honest and, more to the
+        // point, means center() below centres the size the window will actually
+        // end up at.
+        w.setContentSize(host.view.fittingSize)
         w.center()
         welcomeWindow = w
         w.makeKeyAndOrderFront(nil)
