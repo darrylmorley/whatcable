@@ -265,13 +265,26 @@ public enum PowerSourceSynthesis {
         switch pdo {
         case .fixed(let voltage, let maxCurrent):
             guard voltage > 0 else { return nil }
-            return PowerOption(voltageMV: voltage, maxCurrentMA: maxCurrent, maxPowerMW: voltage * maxCurrent / 1000)
+            return PowerOption(
+                voltageMV: voltage, maxCurrentMA: maxCurrent, maxPowerMW: voltage * maxCurrent / 1000,
+                supplyKind: .fixed
+            )
         case .variable(_, let maxVoltage, let maxCurrent):
             guard maxVoltage > 0 else { return nil }
-            return PowerOption(voltageMV: maxVoltage, maxCurrentMA: maxCurrent, maxPowerMW: maxVoltage * maxCurrent / 1000)
+            return PowerOption(
+                voltageMV: maxVoltage, maxCurrentMA: maxCurrent, maxPowerMW: maxVoltage * maxCurrent / 1000,
+                supplyKind: .nonFixed
+            )
         case .pps(_, let maxVoltage, let maxCurrent):
             guard maxVoltage > 0 else { return nil }
-            return PowerOption(voltageMV: maxVoltage, maxCurrentMA: maxCurrent, maxPowerMW: maxVoltage * maxCurrent / 1000)
+            // A PPS option converted at its MAXIMUM voltage is exactly the
+            // case the phase-1 tier proxy could not see: a 20 V-max PPS
+            // supply produced a 20 000 mV option and sailed through. The kind
+            // is what closes that.
+            return PowerOption(
+                voltageMV: maxVoltage, maxCurrentMA: maxCurrent, maxPowerMW: maxVoltage * maxCurrent / 1000,
+                supplyKind: .nonFixed
+            )
         case .battery, .eprAvs, .sprAvs:
             return nil
         }

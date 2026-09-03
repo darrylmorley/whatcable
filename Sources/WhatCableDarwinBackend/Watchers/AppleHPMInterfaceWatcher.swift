@@ -144,7 +144,7 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
                 // pass. Only `rebuilt`/`liveEntryIDs` need the retry-safe
                 // merge-after-walk treatment.
                 let ports = wcDrainAllRetrying(iter) { service -> AppleHPMInterface? in
-                    guard let port = makePort(from: service) else { return nil }
+                    guard let port = Self.makePort(from: service, bulkPropertyFetch: true) else { return nil }
                     registerInterest(for: service, entryID: port.id)
                     return port
                 }
@@ -191,7 +191,7 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
         // transform is idempotent, so a discarded retry pass calling it again
         // is harmless; only the `ports` merge needs to happen after the walk.
         let found = wcDrainAllRetrying(iterator) { service -> AppleHPMInterface? in
-            guard let port = makePort(from: service) else { return nil }
+            guard let port = Self.makePort(from: service, bulkPropertyFetch: true) else { return nil }
             registerInterest(for: service, entryID: port.id)
             return port
         }
@@ -271,7 +271,57 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
         }
     }
 
-    private func makePort(from service: io_service_t) -> AppleHPMInterface? {
+    /// Every HPM port service, read once with no notification registration and
+    /// no published state.
+    ///
+    /// The instance `refresh()` cannot be reused for this: it registers
+    /// interest notifications, prunes them, feeds the session tracker and
+    /// publishes `ports`. A caller that only wants the current port list must
+    /// not do any of that. Mirrors `PowerSourceWatcher.readAllPowerSources()`,
+    /// which exists for the same reason.
+    ///
+    /// Not cheap: it walks every HPM controller class. Callers gate it.
+    ///
+    /// Deliberately skips the bulk property fetch. `PowerService.refresh()`
+    /// calls this once a second, and `IORegistryEntryCreateCFProperties` can
+    /// abort the process from inside `IOCFUnserializeBinary` when a service is
+    /// torn down mid-read (issue #181, and the comment in `makePort`). Paying
+    /// that risk at 1 Hz to fill `rawProperties`, which only CLI verbose and
+    /// `--raw` ever read, is not a trade worth making. Found by the PR #599
+    /// review gate.
+    ///
+    /// `rawProperties` is still populated, from the crash-safe per-key reads
+    /// in `AppleHPMInterface.rawPropertyFallbackKeys`. That covers everything
+    /// the power-source synthesis chain reads, `PortType` included, which is
+    /// what `identity` and `portKey` are built from. A caller that needs the
+    /// complete property dump wants the instance watcher, not this.
+    nonisolated public static func readAllPorts() -> [AppleHPMInterface] {
+        var rebuilt: [AppleHPMInterface] = []
+        for cls in candidateClasses {
+            var iter: io_iterator_t = 0
+            guard IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching(cls), &iter) == KERN_SUCCESS else {
+                continue
+            }
+            defer { IOObjectRelease(iter) }
+            let ports = wcDrainAllRetrying(iter) { service in makePort(from: service, bulkPropertyFetch: false) }
+            for port in ports {
+                guard let port, !rebuilt.contains(where: { $0.id == port.id }) else { continue }
+                rebuilt.append(port)
+            }
+        }
+        rebuilt.sort(by: AppleHPMInterface.stableOrder)
+        return rebuilt
+    }
+
+    /// - Parameter bulkPropertyFetch: whether to populate `rawProperties` with
+    ///   the full property table via `IORegistryEntryCreateCFProperties`. The
+    ///   watcher's own walks pass true, because the complete dump is what CLI
+    ///   verbose and `--raw` exist to show. `readAllPorts()` passes false: see
+    ///   there for why.
+    nonisolated private static func makePort(
+        from service: io_service_t,
+        bulkPropertyFetch: Bool
+    ) -> AppleHPMInterface? {
         var entryID: UInt64 = 0
         guard IORegistryEntryGetRegistryEntryID(service, &entryID) == KERN_SUCCESS else { return nil }
 
@@ -327,16 +377,16 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
             serviceName: serviceName,
             className: className,
             read: read,
-            readAll: readAll,
-            busIndex: busIndex(for: service),
-            hpmControllerUUID: hpmControllerUUID(for: service)
+            readAll: bulkPropertyFetch ? readAll : nil,
+            busIndex: Self.busIndex(for: service),
+            hpmControllerUUID: Self.hpmControllerUUID(for: service)
         )
     }
 
     /// Walks the IOKit parent chain looking for a controller-index node. M3-era
     /// Macs commonly expose `hpm<N>`, while M1/M2 machines can expose `atc<N>`
     /// or `usb-drd<N>`. Direct `UsbIOPort` paths are still preferred.
-    private func busIndex(for service: io_service_t) -> Int? {
+    nonisolated private static func busIndex(for service: io_service_t) -> Int? {
         var current = service
         IOObjectRetain(current)
         defer { IOObjectRelease(current) }
@@ -383,7 +433,7 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
     /// Falls back to `nil` when the parent walk finds no HPM controller or the
     /// controller has no `UUID` property (defensive; corpus says never, but
     /// malformed or sandboxed cases could hit it).
-    private func hpmControllerUUID(for service: io_service_t) -> String? {
+    nonisolated private static func hpmControllerUUID(for service: io_service_t) -> String? {
         var current = service
         IOObjectRetain(current)
         defer { IOObjectRelease(current) }

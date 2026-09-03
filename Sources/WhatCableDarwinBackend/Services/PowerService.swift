@@ -181,7 +181,7 @@ public final class PowerService: ObservableObject {
         // enriches the decoded volts/amps, matched by watts; it never assigns a
         // port. The old code keyed it by array offset, which landed a charger's
         // watts on the wrong port's card.
-        let sources = PowerSourceWatcher.readAllPowerSources()
+        let realSources = PowerSourceWatcher.readAllPowerSources()
         // Per-port power-out, live-first. Priority: live SMC channel (M3+) >
         // PowerOutDetails > contracted controller info. PowerOutDetails is the
         // AppleSmartBattery per-port array, and it is FROZEN under load on Apple
@@ -193,11 +193,88 @@ public final class PowerService: ObservableObject {
         // (M1/M2, App Store sandbox, or a port with no SMC channel). The order
         // itself lives in `PortPowerMerge.merge` (Core), called below.
         let batteryInstalled = wcBool(dict?["BatteryInstalled"])
-        // ExternalConnected: bound once here and reused below (the system-input
-        // override, the on-battery discharge gate, and the hasContract gate).
-        // Defaults true so a desktop, which has no battery node, reads as plugged
-        // in.
-        let externalConnected = dict.map { wcBool($0["ExternalConnected"]) } ?? true
+        // ExternalConnected: bound ONCE and reused by everything below that
+        // needs it (the system-input override, the synthesis pre-filter, the
+        // on-battery discharge gate, the snapshot field, the hasContract gate
+        // and the charging-path resistance feed). Read through the synthesis
+        // chain's own helper, so this function and the chain cannot disagree.
+        // `dict == nil` (a desktop, which has no battery node) defaults true
+        // exactly as the helper does, so a desktop still reads as plugged in.
+        //
+        // This used to be built with `wcBool` and a SECOND value was bound
+        // further down for the resistance feed alone. That split was the
+        // round-2 fix and it achieved nothing: `smcInput` below is gated on
+        // THIS binding, so on the one dictionary the two disagreed about (a
+        // battery node publishing no `ExternalConnected` key) the accumulator
+        // received `input: nil` every tick and the estimate stayed
+        // `insufficient` whatever the resolver returned. Proved by execution
+        // in the PR #599 gate, round 2: 2000 ticks, 0 samples accepted.
+        //
+        // Widening it is safe to do rather than something to hedge about.
+        // Measured 2026-09-03 over probe 32: every one of the 1338 folders
+        // with a non-empty `AppleSmartBattery` dump publishes the key, so no
+        // corpus machine reaches the case where the old and new expressions
+        // differ, and where the key IS present as the CFBoolean IOKit
+        // publishes, `wcBool` and the helper return the same thing.
+        let externalConnected = dict.map { PowerSourceWatcher.externalConnectedFlag(from: $0) } ?? true
+
+        // M1 Pro/Max/Ultra publish no real USB-C `IOPortFeaturePowerSource`
+        // node at all (issue #401), so `readAllPowerSources()` above returns
+        // nothing for the port that is actually charging and every consumer
+        // below, the charging-path resistance resolver included, sees no
+        // charging input. The watcher pipeline already synthesizes one; this
+        // service bypassed it by reading the static directly. Same gate chain,
+        // one copy, so the two surfaces cannot drift.
+        //
+        // The pre-filter here is not the same as the watcher's, and the
+        // difference is deliberate. The watcher gets `context.ports` from an
+        // already-published property, so building a context costs it nothing.
+        // This service has no port watcher, so it has to read the ports
+        // itself, and `readAllPorts()` walks every HPM controller class. That
+        // read has to happen BEFORE the chain's own "is there an active
+        // uncovered USB-C port" gate, because it is what produces the ports
+        // that gate looks at. So the cheap conditions have to be hoisted up
+        // here instead, or an idle laptop on battery with the Power Monitor
+        // open would pay for a full class walk once a second to learn
+        // nothing.
+        //
+        // Both hoisted conditions are already hard gates inside the chain
+        // (`PowerSourceSynthesis` gate 1 and `SMCContractSynthesis` gate 1
+        // both refuse when not externally connected; the chain returns nil
+        // outright without a battery dictionary), so hoisting them changes
+        // what this costs and never what it returns.
+        //
+        // `identities` is empty because this service runs no SOP watcher, the
+        // same as `MonitorCommand.runTextMonitor` and for the same reason. It
+        // costs the DECODED fallback its brick-partner attribution rung and
+        // costs the SMC route nothing, and the SMC route is the one that
+        // answers on M1 Pro/Max/Ultra (23 corpus machines against 4).
+        var sources = realSources
+        // The external-power check uses the single `externalConnected` bound
+        // above, which is now the chain's own helper. It used to be built
+        // here separately because the binding above disagreed with the chain
+        // on a battery dictionary with no `ExternalConnected` key, and
+        // skipping synthesis there was a false negative on exactly the
+        // machines this feature exists for. Found by the PR #599 review gate;
+        // see `externalConnectedFlag`.
+        let anyRealLiveContract = realSources.contains { ($0.winning?.maxPowerMW ?? 0) > 0 }
+        if !anyRealLiveContract,
+           let batteryProperties = dict,
+           externalConnected {
+            let context = PowerSourceSynthesisContext(
+                ports: AppleHPMInterfaceWatcher.readAllPorts(),
+                identities: [],
+                positionalPortKeys: { Self.hpmPortKeysRIDOrdered() }
+            )
+            if let synthesized = PowerSourceWatcher.synthesizedSource(
+                realSources: realSources,
+                context: context,
+                smcReader: smcReader,
+                batteryProperties: batteryProperties
+            ) {
+                sources.append(synthesized)
+            }
+        }
 
         // System power input (the charger / PSU feeding the logic board). The
         // telemetry SystemPowerIn built above comes from AppleSmartBattery, which
@@ -262,6 +339,12 @@ public final class PowerService: ObservableObject {
         // accumulator handles reset, settle, the distinct-tuple rule and the
         // PDTR sanity check. When the SMC is unreadable (older silicon,
         // sandbox) `smcInput` is nil and the estimate stays `insufficient`.
+        //
+        // External power comes from the single `externalConnected` binding at
+        // the top of this function, the same value `smcInput` and the
+        // synthesis pre-filter use. It has to be that one: `smcInput` is
+        // gated on it, so a resolver handed a different value could never
+        // produce an estimate anyway, whatever it returned.
         let chargingFingerprint = ChargingInputResolver.fingerprint(
             sources: sources,
             batteryInstalled: batteryInstalled,

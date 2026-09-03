@@ -64,6 +64,29 @@ public struct AppleHPMInterface: Identifiable, Hashable {
     /// `WhatCableCore` rather than the watcher so it can be exercised against
     /// fixture data without IOKit. The watcher feeds in real CFProperties;
     /// tests feed in hand-crafted dictionaries derived from `ioreg` dumps.
+    /// The keys the per-key fallback reads when no bulk-fetch closure is
+    /// supplied.
+    ///
+    /// Shared rather than inline because a caller can deliberately withhold
+    /// the bulk closure to avoid `IORegistryEntryCreateCFProperties` (see
+    /// `AppleHPMInterfaceWatcher.readAllPorts()` and issue #181), and a test
+    /// pins that such a caller gets nothing outside this set. Every field the
+    /// power-source synthesis chain reads is derived from a key in here,
+    /// `PortType` above all: `identity` and therefore `portKey` are built
+    /// from it.
+    public static let rawPropertyFallbackKeys = [
+        "PortType", "PortTypeDescription", "PortDescription", "PortNumber",
+        "ConnectionActive", "ActiveCable", "OpticalCable",
+        "IOAccessoryUSBActive", "IOAccessoryUSBSuperSpeedActive",
+        "IOAccessoryUSBModeType", "IOAccessoryUSBConnectString",
+        "TransportsSupported", "TransportsActive", "TransportsProvisioned",
+        "PlugOrientation", "Plug Event Count", "ConnectionCount",
+        "Overcurrent Count", "Pin Configuration", "DisplayPortPinAssignment",
+        "IOAccessoryPowerCurrentLimits", "FW Version", "Boot Flags",
+        "LDCM_StateDescription", "FeaturesEnabled",
+        "IOAccessoryPowerMode", "IOAccessoryActivePowerMode",
+    ]
+
     public static func from(
         entryID: UInt64,
         serviceName: String,
@@ -98,19 +121,7 @@ public struct AppleHPMInterface: Identifiable, Hashable {
                 raw[key] = stringifyProperty(value)
             }
         } else {
-            let knownKeys = [
-                "PortType", "PortTypeDescription", "PortDescription", "PortNumber",
-                "ConnectionActive", "ActiveCable", "OpticalCable",
-                "IOAccessoryUSBActive", "IOAccessoryUSBSuperSpeedActive",
-                "IOAccessoryUSBModeType", "IOAccessoryUSBConnectString",
-                "TransportsSupported", "TransportsActive", "TransportsProvisioned",
-                "PlugOrientation", "Plug Event Count", "ConnectionCount",
-                "Overcurrent Count", "Pin Configuration", "DisplayPortPinAssignment",
-                "IOAccessoryPowerCurrentLimits", "FW Version", "Boot Flags",
-                "LDCM_StateDescription", "FeaturesEnabled",
-                "IOAccessoryPowerMode", "IOAccessoryActivePowerMode",
-            ]
-            for key in knownKeys {
+            for key in rawPropertyFallbackKeys {
                 if let v = read(key) { raw[key] = stringifyProperty(v) }
             }
         }

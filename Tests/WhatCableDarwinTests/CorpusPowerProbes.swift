@@ -11,6 +11,28 @@ import Foundation
 // touched here: rewriting five working sweeps is not what this phase is for,
 // and doing it in the same PR would bury the change under churn.
 //
+// BEFORE WRITING A NEW PROBE PARSER, read `research/corpus-parser-traps.md`.
+// It records the ways this corpus has silently fooled a careful parser, all of
+// them generic to the corpus rather than specific to one feature, and all of
+// them producing a clean plausible result while dropping exactly the rows the
+// question was about. The four that bit whatcable-app PR #599, in short:
+//
+//  - probe 32 prints `PortControllerInfo` TWICE (once under its own section,
+//    again under `=== AppleACAdapter / ChargerData ===`), so a flat scan
+//    double-counts every port block. Exactly twice, in all 926 untruncated
+//    folders carrying it.
+//  - a PDO's type is bits 31:30, and both non-fixed classes set bit 31, so
+//    every augmented and every variable PDO prints as a NEGATIVE signed
+//    decimal. A `(\d+)` pattern drops all of them and reports zero.
+//  - `PortControllerNPDOs` is not the array length: augmented PDOs sit AFTER
+//    that count, so truncating to it reproduces a false "zero augmented".
+//  - supply labels are multi-word and can carry a range (`SPR PPS
+//    5000-11000mV`), so a single-word-label pattern drops the PPS rows.
+//
+// The general rule behind all four: make a new parser find something you
+// already know is there before you trust what it reports, and prefer a
+// structural claim over a total.
+//
 // Nothing in here re-implements production logic. Each parser turns raw probe
 // text into the same shape IOKit hands the real code, then calls the real
 // production factory. Where a value could be derived two ways (an SMC float,
@@ -103,7 +125,11 @@ enum CorpusPowerProbes {
         // Cut at the next top-level header so sibling sections cannot leak in.
         // No marker means a dump shape we do not recognise: return nothing
         // rather than parse the whole file, and let the sweep's floors report
-        // it. Every one of the 585 untruncated dumps carries this header.
+        // it. Every untruncated dump carries this header: 1141 of the 1349
+        // folders holding a probe 32 are untruncated, and the header is
+        // present in all 1141 (measured 2026-09-03 two ways, a Python pass
+        // over the JSON and a `jq`/`wc -c` pass, agreeing exactly). The 585
+        // this line used to quote was stale.
         guard let sectionStart = text.range(of: "=== AppleSmartBattery (full property dump) ===") else { return [:] }
         var section = String(text[sectionStart.upperBound...])
         if let nextHeader = section.range(of: "\n===") {
@@ -558,5 +584,119 @@ enum CorpusPowerProbes {
         let digits = trimmed.prefix { $0.isNumber || $0 == "-" }
         guard !digits.isEmpty, let n = Int(digits) else { return nil }
         return NSNumber(value: n)
+    }
+
+    // MARK: - Probe 17: winning power source option class strings
+
+    /// Folders that carry an untruncated probe 17 dump. A truncated dump can
+    /// end mid-block, which would either drop or corrupt whichever
+    /// `WinningPowerSourceOption` block straddles the cut, so those folders
+    /// are excluded the same way ``text(folder:probe:)`` already excludes
+    /// them for every other probe-17 reader in this file.
+    static func foldersWithProbe17() -> [String] {
+        folders().filter { probe17Text($0) != nil }
+    }
+
+    /// Probe 17's raw text for one folder, or nil when the folder has no
+    /// probe 17 dump or it was truncated at the 64 KB pipe cap.
+    static func probe17Text(_ folder: String) -> String? {
+        text(folder: folder, probe: "17_deep_property_dump")
+    }
+
+    /// Which of probe 17's two block shapes a `WinningPowerSourceOption`
+    /// block was found under.
+    enum WinningOptionBlockShape {
+        /// `--- Class[N] ---` header, 4-space inner indent. The flat "All
+        /// IOPortFeature* services" section, present on every machine.
+        case dash
+        /// `=== Class ===` header, 8-space inner indent. The nested "HPM
+        /// Interface -> all children" deep-dive section, M3+ only.
+        case equals
+    }
+
+    /// One `WinningPowerSourceOption: { ... }` block, reduced to its `Class`
+    /// string and which header shape it was found under.
+    struct WinningOptionBlock {
+        let classString: String?
+        /// nil only when no header of either known shape precedes the block,
+        /// which should not happen on a well-formed dump; a reader that hits
+        /// this should be treated as suspect, not as "shape unknown, ignore".
+        let shape: WinningOptionBlockShape?
+    }
+
+    /// Every `WinningPowerSourceOption: { ... }` block in a probe 17 dump,
+    /// with the `Class` value each one carries (or nil when the block has no
+    /// `Class` key).
+    ///
+    /// Probe 17 prints these blocks in two shapes, depending on which section
+    /// of the dump they sit in: a `--- Class[N] ---` header with a 4-space
+    /// inner indent (the flat "All IOPortFeature* services" section, present
+    /// on every machine), and an `=== Class ===` header with an 8-space inner
+    /// indent (the nested "HPM Interface -> all children" deep-dive section,
+    /// M3+ only). Both shapes print the sub-dict itself the same way, one
+    /// `key: value` line per line ending in a lone `}`, so scanning forward
+    /// line by line to that closing brace reads both shapes without caring
+    /// which indent the surrounding block used. `ProbeCorpus.parseWinningOption`
+    /// / `parseWinningOptionFromEqualsBlock` in `WhatCableCoreTests` DO rely on
+    /// the indent, because they need to pull the block's other keys out as
+    /// typed integers; this reader only needs one string value, so it does
+    /// not need their machinery.
+    static func winningOptionClassStrings(in text: String) -> [WinningOptionBlock] {
+        let headers = winningOptionHeaderMarks(in: text)
+        var results: [WinningOptionBlock] = []
+        let marker = "WinningPowerSourceOption: {"
+        var searchRange = text.startIndex..<text.endIndex
+        while let markerRange = text.range(of: marker, range: searchRange) {
+            var classString: String?
+            var cursor = markerRange.upperBound
+            while cursor < text.endIndex {
+                let lineEnd = text[cursor...].firstIndex(of: "\n") ?? text.endIndex
+                let line = String(text[cursor..<lineEnd]).trimmingCharacters(in: .whitespaces)
+                cursor = lineEnd < text.endIndex ? text.index(after: lineEnd) : text.endIndex
+                if line == "}" { break }
+                if line.hasPrefix("Class: \"") {
+                    let afterPrefix = line.dropFirst("Class: \"".count)
+                    if let closingQuote = afterPrefix.firstIndex(of: "\"") {
+                        classString = String(afterPrefix[..<closingQuote])
+                    }
+                }
+            }
+            // The block's shape is whichever header (of either kind) most
+            // recently precedes it. `WinningPowerSourceOption` is a plain
+            // property of the enclosing `IOPortFeaturePowerSource` block, so
+            // no other header can sit between that block's own header and
+            // this marker.
+            let shape = headers.last { $0.location <= markerRange.lowerBound }?.shape
+            results.append(WinningOptionBlock(classString: classString, shape: shape))
+            searchRange = cursor..<text.endIndex
+        }
+        return results
+    }
+
+    /// Every block-header line in a probe 17 dump, with which shape it is,
+    /// in ascending text-position order.
+    ///
+    /// A dash header reads `--- Class[N] ---` (optionally indented). An
+    /// equals header reads `=== Class ===` (optionally indented). Probe 17
+    /// also prints a plain banner line of unbroken `=` characters
+    /// ("============================================================")
+    /// around section titles; that banner has no interior space next to the
+    /// `=` runs, so it does not match the equals-header pattern below, which
+    /// requires whitespace right after the opening `===` and right before the
+    /// closing `===`.
+    private static func winningOptionHeaderMarks(
+        in text: String
+    ) -> [(location: String.Index, shape: WinningOptionBlockShape)] {
+        guard let dashRE = try? NSRegularExpression(pattern: #"(?m)^[ \t]*---\s+\S.*\S\s+---\s*$"#),
+              let equalsRE = try? NSRegularExpression(pattern: #"(?m)^[ \t]*===\s+\S.*\S\s+===\s*$"#)
+        else { return [] }
+        var marks: [(location: String.Index, shape: WinningOptionBlockShape)] = []
+        for (regex, shape) in [(dashRE, WinningOptionBlockShape.dash), (equalsRE, WinningOptionBlockShape.equals)] {
+            for match in regex.matches(in: text, range: NSRange(text.startIndex..., in: text)) {
+                guard let range = Range(match.range, in: text) else { continue }
+                marks.append((range.lowerBound, shape))
+            }
+        }
+        return marks.sorted { $0.location < $1.location }
     }
 }

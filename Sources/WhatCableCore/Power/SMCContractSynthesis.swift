@@ -146,10 +146,17 @@ public enum SMCContractSynthesis {
         // is the misattribution class this whole slice exists to close.
         guard candidates.count == 1, let winner = candidates.first else { return nil }
 
+        // No supply kind. The SMC channel keys (DxMV / DxMI / DxMP) carry
+        // volts, amps and watts and nothing about the PDO the contract came
+        // from, so `.unknown` is the honest answer and the default. Stated
+        // explicitly rather than left to the default so the next reader knows
+        // it was considered: downstream, `.unknown` gets the weaker phase-1
+        // voltage-tier proxy instead of a real supply-type gate.
         let option = PowerOption(
             voltageMV: winner.contract.voltageMV,
             maxCurrentMA: winner.contract.currentMA,
-            maxPowerMW: winner.contract.powerMW
+            maxPowerMW: winner.contract.powerMW,
+            supplyKind: .unknown
         )
         return PowerSource(
             id: idSentinel | UInt64(winner.contract.channel),

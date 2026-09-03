@@ -195,6 +195,132 @@ public final class PowerSourceWatcher: ObservableObject {
     /// read: only once both checks below pass do we read the battery
     /// property dictionary at all.
     private func synthesizeIfNeeded(realSources: [PowerSource]) -> PowerSource? {
+        guard let context = synthesisContext?() else { return nil }
+        // Cheapest gates first, inside the shared chain. The battery
+        // dictionary is only read once those gates have passed, which is why
+        // this closure is evaluated lazily rather than read up front.
+        return Self.synthesizedSource(
+            realSources: realSources,
+            context: context,
+            smcReader: smcReader,
+            batteryProperties: AppleSmartBatteryReader.properties()
+        )
+    }
+
+    /// Whether the battery dictionary says the Mac is externally powered, for
+    /// the synthesis gate chain.
+    ///
+    /// Three cases, and they do not all default the same way.
+    ///
+    /// An ABSENT key reads as CONNECTED. That is the pre-existing behaviour of
+    /// this chain, it matches `refreshChargerInputWatts()`, and it stays. No
+    /// corpus machine actually lands here: measured 2026-09-03 over probe 32,
+    /// all 1338 folders carrying a non-empty `AppleSmartBattery` dump publish
+    /// the key. The eleven folders that publish the section header with
+    /// nothing under it have no battery node at all, which is the `dict == nil`
+    /// path rather than this one, and every one of them is an Intel desktop.
+    ///
+    /// A key present as a number (what IOKit publishes a `CFBoolean` as) reads
+    /// as whatever it says.
+    ///
+    /// A key PRESENT but not readable as a number (`NSNull`, a string, data)
+    /// reads as NOT connected. It used to fall through the cast to the
+    /// absent-key default and read as connected, which is the same
+    /// anti-pattern this PR fixed for `Class` in `parseOption` one file over:
+    /// a present-but-unusable value has to count as "something was reported",
+    /// never as "nothing was". Which way is fail-safe differs between the two
+    /// missing cases, so they are handled separately rather than sharing one
+    /// default. Connected is the permissive answer here: it lets synthesis run
+    /// and lets the resolver start a charging-path measurement. Doing that on
+    /// a machine we cannot confirm is plugged in risks publishing a resistance
+    /// figure measured on the wrong power state, while refusing only costs an
+    /// estimate that the next tick can produce.
+    ///
+    /// It exists as a named helper because `PowerService.refresh()` hoists this
+    /// same check in front of the chain, to avoid a full HPM class walk once a
+    /// second on a machine that is not charging, and it used to build the value
+    /// with `wcBool`, which returns FALSE for an absent key. The two therefore
+    /// disagreed on a battery dictionary that has no `ExternalConnected` key:
+    /// the service skipped synthesis where the chain would have proceeded,
+    /// which is a false negative in exactly the direction this feature exists
+    /// to prevent, on the silicon it was written for. Found by the PR #599
+    /// review gate.
+    ///
+    /// EXACTLY TWO CALLERS SHARE IT, not every reader of the key, and an
+    /// earlier version of this comment claimed "one expression, every caller".
+    /// That was wrong when it was written. The two that do share it are the
+    /// synthesis gate chain below (``synthesizedSource(realSources:context:smcReader:batteryProperties:)``)
+    /// and `PowerService.refresh()`. Those two cannot drift again. Two other
+    /// readers of the same key still do their own cast, and they are recorded
+    /// here so the next person closes the gap deliberately instead of
+    /// discovering it. All three were run side by side (2026-09-03): they
+    /// agree on every value that is a number, including a non-boolean one like
+    /// `NSNumber(value: 5)`, and differ only here.
+    ///
+    /// - `refreshChargerInputWatts()` in this file reads
+    ///   `(dict["ExternalConnected"] as? Bool) ?? true`. A value that is
+    ///   PRESENT but unusable (NSNull, a string, data) reads as CONNECTED
+    ///   there and as not connected here. That is the divergence item 5 of
+    ///   PR #599's round 3 created: it changed this helper's unusable case and
+    ///   left that line alone.
+    /// - `AppleSmartBatteryReader.parseBattery` reads it through `wcBool`, so
+    ///   an ABSENT key reads as NOT connected there and as connected here.
+    ///   That is the original divergence, still live on that path.
+    ///
+    /// Neither is changed here, and the watts path deliberately so: it feeds
+    /// the menu bar charger readout, not the resistance estimate, and no
+    /// machine we hold can tell the three apart. Measured 2026-09-03 across
+    /// every probe-32 dump in the corpus, truncated captures included: 1338 of
+    /// 1349 folders carry a populated `AppleSmartBattery` section, all 1338 of
+    /// those publish `ExternalConnected`, and every printed value is a plain
+    /// `true` or `false`. Absent never happens, and neither does unusable. So
+    /// closing either gap is a tidy-up with no observable effect, which is why
+    /// it is a note rather than a fix.
+    ///
+    /// There is no `as? Bool` branch after the `NSNumber` cast. Round 3 added
+    /// one and it was dead on arrival: on Darwin a Swift `Bool` and a
+    /// `kCFBooleanTrue` both bridge to `NSNumber`, so the first cast takes
+    /// every boolean-shaped value and nothing reaches a second. Executed
+    /// rather than reasoned (2026-09-03): Swift `true` and `false`,
+    /// `NSNumber(value:)`, `kCFBooleanTrue`, and a value pulled back out of an
+    /// `NSDictionary` all take the `NSNumber` branch; only NSNull, a string
+    /// and data fall through to the default. `wcBool` in `IOKitHelpers` still
+    /// carries the same dead branch, untouched here because it predates this
+    /// PR and every other reader in the app goes through it.
+    nonisolated static func externalConnectedFlag(from dict: [String: Any]) -> Bool {
+        guard let value = dict["ExternalConnected"] else { return true }
+        if let number = value as? NSNumber { return number.boolValue }
+        return false
+    }
+
+    /// The synthesis gate chain, shared by the watcher and `PowerService`.
+    ///
+    /// It lives here as a static because two callers need it and only one of
+    /// them is this watcher. `PowerService.refresh()` reads power sources
+    /// through the static `readAllPowerSources()`, which returns real IOKit
+    /// nodes only, so it never used to see a synthesized contract at all: on
+    /// M1 Pro/Max/Ultra, where macOS publishes no USB-C power-source node at
+    /// all (issue #401), the charging-path resistance resolver was handed an
+    /// empty list and the estimate stayed `insufficient` forever. Two copies
+    /// of this chain would drift, so there is one.
+    ///
+    /// - Parameters:
+    ///   - realSources: every real node this tick, synthesized entries excluded.
+    ///   - context: the port and identity snapshot to synthesize against.
+    ///   - smcReader: the SMC route's reader, or nil to skip that route.
+    ///   - batteryProperties: `AppleSmartBattery`'s property dictionary, read
+    ///     ONCE by the caller and passed in. nil means no battery service,
+    ///     which is a desktop, and the answer there is nil rather than a
+    ///     defaulted "connected". Passed in rather than read here because
+    ///     `PowerService.refresh()` has already read it on this same tick and
+    ///     a second registry fetch per tick is exactly the cost an earlier
+    ///     reviewer caught in this function.
+    nonisolated static func synthesizedSource(
+        realSources: [PowerSource],
+        context: PowerSourceSynthesisContext,
+        smcReader: SMCPowerReader?,
+        batteryProperties: @autoclosure () -> [String: Any]?
+    ) -> PowerSource? {
         // Cheapest check first: needs only the sources this tick's
         // readAllPowerSources() already read, no context and no extra IOKit
         // work. Not `PowerSource.hasLiveChargingContract(in:)`: that only
@@ -209,8 +335,6 @@ public final class PowerSourceWatcher: ObservableObject {
             return winning.maxPowerMW > 0
         }
         guard !anyRealSourceHasLiveContract else { return nil }
-
-        guard let context = synthesisContext?() else { return nil }
 
         // context.ports is a cheap read of an already-published property, no
         // IOKit call. USB-C is required explicitly (portKey prefix "2/"),
@@ -243,10 +367,12 @@ public final class PowerSourceWatcher: ObservableObject {
         // A desktop Mac has no AppleSmartBattery service at all, so there is no
         // PortControllerInfo to synthesize from and no ExternalConnected to
         // read; returning nil is correct, not a fallback default.
-        guard let dict = AppleSmartBatteryReader.properties() else { return nil }
-        // A dict without the flag still reads as connected, the same defaulting
-        // refreshChargerInputWatts() uses.
-        let externalConnected = (dict["ExternalConnected"] as? NSNumber)?.boolValue ?? true
+        guard let dict = batteryProperties() else { return nil }
+        // A dict without the flag still reads as connected. So does
+        // refreshChargerInputWatts(), but only on that case: the two paths part
+        // company on a present-but-unusable value. See `externalConnectedFlag`
+        // for the full divergence and why it is unreachable on real hardware.
+        let externalConnected = Self.externalConnectedFlag(from: dict)
 
         // The SMC is only worth asking when the Mac is actually taking power
         // in. Without this, an idle Mac with a plain USB accessory plugged in
@@ -256,7 +382,7 @@ public final class PowerSourceWatcher: ObservableObject {
         // for, and the reviewer was right that the first version did not
         // distinguish them.
         if externalConnected {
-            let contracts = smcReader.readPortContracts()
+            let contracts = smcReader?.readPortContracts() ?? []
             if !contracts.isEmpty,
                let fromSMC = SMCContractSynthesis.synthesizedSource(
                    contracts: contracts,
@@ -478,6 +604,45 @@ public final class PowerSourceWatcher: ObservableObject {
             .sorted { $0.maxPowerMW > $1.maxPowerMW }
     }
 
+    /// The class name IOKit gives a fixed-voltage power-source option.
+    ///
+    /// Corpus, re-derived 2026-09-03: every `WinningPowerSourceOption`
+    /// dictionary in probe 17 carries a `Class` key, and every one of them
+    /// reads this string. 1122 blocks across the 1339 folders carrying an
+    /// untruncated probe 17, counted twice with parsers sharing no code and
+    /// agreeing exactly.
+    ///
+    /// This used to report "1027 and 1122 blocks" from two parsers and
+    /// explained the gap as different handling of captures truncated at the
+    /// 64 KB pipe cap. That explanation cannot be right: including the 41
+    /// truncated captures RAISES the count to 1160, so no truncation rule
+    /// produces a figure below 1122, and whatever found 1027 was dropping
+    /// about 95 blocks for another reason. The finding survives (key present
+    /// on every block, value identical on every block); the 1027 does not.
+    ///
+    /// Consistent with the raw PDO evidence too: every active contract that
+    /// resolves against its own advertised PDO list decodes to a fixed supply
+    /// type, the single exception being a Variable PDO on
+    /// `m1_macos26.5.2_af`, and not one is augmented. That exception sits on a
+    /// port that LOST the supply election, in a register that appears to
+    /// latch, so it is not a Mac charging from a Variable contract. See
+    /// `PowerOption.SupplyKind` for that evidence and for why no total is
+    /// quoted there.
+    nonisolated static let fixedOptionClass = "IOPortFeaturePowerSourceOptionFixed"
+
+    /// Classify an option's `Class` string.
+    ///
+    /// Fail-closed by construction: only the one string we have actually
+    /// observed maps to `.fixed`. Everything else is `.nonFixed`, including
+    /// strings we have never seen. We cannot map an unseen string to a
+    /// specific supply type without inventing the mapping, and we must not
+    /// let it reach `.unknown`, because `.unknown` carries a weaker gate
+    /// downstream and a class string we failed to recognise is evidence that
+    /// the option is NOT fixed, not an absence of evidence.
+    nonisolated static func supplyKind(fromOptionClass className: String) -> PowerOption.SupplyKind {
+        className == fixedOptionClass ? .fixed : .nonFixed
+    }
+
     nonisolated static func parseOption(_ value: Any?) -> PowerOption? {
         let dict: [String: Any]?
         if let d = value as? [String: Any] {
@@ -496,7 +661,38 @@ public final class PowerSourceWatcher: ObservableObject {
         let i = (dict["Max Current (mA)"] as? NSNumber)?.intValue ?? 0
         let p = (dict["Max Power (mW)"] as? NSNumber)?.intValue ?? (v * i / 1000)
         guard v > 0 else { return nil }
-        return PowerOption(voltageMV: v, maxCurrentMA: i, maxPowerMW: p)
+        // `Class` is absent on no corpus machine, but an absent key is still
+        // "nothing was reported" rather than "not fixed", so it maps to
+        // `.unknown` and picks up the weaker downstream gate.
+        //
+        // Presence has to be tested separately from type. The previous line
+        // here was `(dict["Class"] as? String).map(supplyKind(fromOptionClass:))
+        // ?? .unknown`, which cannot tell "the key is absent" from "the key
+        // is present but did not cast to String" (an unexpected CF type, or
+        // NSNull): both fell through the `?? .unknown`. That fails open,
+        // because `.unknown` accepts a standard-tier voltage downstream. A
+        // key that is PRESENT is positive evidence that something was
+        // reported, even if we cannot read it, so it must classify as
+        // `.nonFixed`, the same as any unrecognised string, and must never
+        // reach `.unknown`.
+        //
+        // The empty string is NOT part of that change, and an earlier version
+        // of this comment wrongly said it was. It casts to String fine, so the
+        // old line classified it through `supplyKind(fromOptionClass:)` and
+        // got `.nonFixed`. The `!classString.isEmpty` guard below sends it to
+        // the present-but-unreadable branch instead, which returns `.nonFixed`
+        // as well. Same verdict either way; the guard is there to keep an
+        // empty string from being treated as a readable class name, not to
+        // change what it resolves to.
+        let kind: PowerOption.SupplyKind
+        if let classString = dict["Class"] as? String, !classString.isEmpty {
+            kind = supplyKind(fromOptionClass: classString)
+        } else if dict["Class"] != nil {
+            kind = .nonFixed
+        } else {
+            kind = .unknown
+        }
+        return PowerOption(voltageMV: v, maxCurrentMA: i, maxPowerMW: p, supplyKind: kind)
     }
 }
 
