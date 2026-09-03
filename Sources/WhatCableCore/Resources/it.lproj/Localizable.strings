@@ -566,7 +566,7 @@
 "This cable can't be tracked" = "Questo cavo non può essere monitorato";
 "Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "Corrisponde al cavo salvato %@. Due unità dello stesso modello non si possono distinguere, quindi se salvi anche questo la loro cronologia verrà unita.";
 "Identified by its MagSafe cable ID (VID 0x%04X, PID 0x%04X). Cables of this exact model look identical, so this record tracks the model, not one physical cable." = "Identificato dall'ID del cavo MagSafe (VID 0x%04X, PID 0x%04X). I cavi di questo identico modello sono indistinguibili, quindi questo record rappresenta il modello, non un singolo cavo fisico.";
-"You already have this MagSafe cable saved as %@. Cables of this model can't be told apart, so add its history to that one instead." = "Hai già questo cavo MagSafe salvato come %@. I cavi di questo modello non si possono distinguere, quindi aggiungi la cronologia a quello invece.";
+"You already have this MagSafe cable saved as %@. Cables of this model can't be told apart, so add its history to that one instead." = "Hai già questo cavo MagSafe salvato come %@. I cavi di questo modello non si possono distinguere, quindi invece aggiungi la cronologia a quello.";
 "This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "Questo cavo non ha un e-marker, quindi non può essere registrata nessuna nuova attività. La cronologia esistente resta disponibile.";
 "Can't add this cable" = "Impossibile aggiungere questo cavo";
 "OK" = "OK";
@@ -621,4 +621,4 @@
 "Connect a charger to identify the cable." = "Per identificare il cavo collega un caricabatterie.";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
-"No PD contract on this port. Incoming power shows in System Power Input below." = "Nessun contratto PD su questa porta. L'alimentazione in ingresso è visualizzata qui sotto in 'Ingresso alimentazione sistema'.";
+"No PD contract on this port. Incoming power shows in System Power Input below." = "Nessun contratto PD in questa porta. L'alimentazione in ingresso è visualizzata qui sotto in 'Ingresso alimentazione sistema'.";
