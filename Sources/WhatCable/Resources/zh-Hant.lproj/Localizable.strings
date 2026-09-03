@@ -186,4 +186,4 @@
 "You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "您是透過 Homebrew 安裝 WhatCable。執行 brew upgrade 可能會用目前的穩定版取代 Beta 版本。";
 
 /* Brick ID analog charger identity note (issue #592) */
-"Analog charger identifier, no PD profiles" = "類比充電器識別碼，無 PD 設定檔";
+"Analog charger identifier, no PD profiles" = "類比充電器識別資訊，無 PD 供電配置";

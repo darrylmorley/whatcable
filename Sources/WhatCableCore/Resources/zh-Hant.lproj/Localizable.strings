@@ -263,7 +263,7 @@
 "Registration date unknown" = "註冊日期不明";
 "Remove" = "移除";
 "Remove %@ from your licence?" = "要將 %@ 從授權中移除嗎？";
-"Removing this Mac will lock Pro here until you activate again." = "移除這台 Mac 後，Pro 將在此鎖定，直到你再次啟用。";
+"Removing this Mac will lock Pro here until you activate again." = "移除這台 Mac 後，Pro 功能將在這台 Mac 上保持鎖定，直到您再次啟用。";
 "Rp current level" = "Rp 電流等級";
 "Rp resistor" = "Rp 電阻";
 "SOP identity received" = "已收到 SOP 識別資訊";
@@ -277,11 +277,11 @@
 "Status update" = "狀態更新";
 "System Power Input" = "系統電源輸入";
 "System sleep/wake transition. The port controller state is saved and restored across sleep boundaries." = "系統睡眠/喚醒轉換。連接埠控制器狀態會在睡眠前後儲存並還原。";
-"That Mac will lose Pro until it activates again." = "該 Mac 將失去 Pro，直到再次啟用。";
+"That Mac will lose Pro until it activates again." = "該 Mac 將無法使用 Pro 功能，直到再次啟用。";
 "The Mac entered or exited sleep, causing port controller state changes." = "Mac 進入或結束睡眠，導致連接埠控制器狀態變更。";
 "The charger or power source advertised what voltages and currents it can provide." = "充電器或電源宣告了可提供的電壓和電流。";
 "The data role flipped: the port switched between host and device mode." = "資料角色已切換：連接埠在主機和裝置模式之間切換。";
-"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "無法在授權伺服器上釋放這台 Mac 的名額，可能仍被佔用。請在另一台 Mac 的設定中釋放，或聯絡支援團隊。";
+"This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "無法在授權伺服器上釋放這台 Mac 的名額，因此可能仍被佔用。請在另一台 Mac 的「設定」中釋放此名額，或聯絡支援團隊。";
 "The port controller firmware finished initialising and is ready." = "連接埠控制器韌體已完成初始化並準備就緒。";
 "The port controller raised an alert (overcurrent, overtemperature, or similar fault)." = "連接埠控制器發出警示（過電流、過熱或類似故障）。";
 "The power direction flipped: the port switched between providing and receiving power." = "電源方向已切換：連接埠在供電與受電之間切換。";
@@ -560,8 +560,8 @@
 "This cable has no e-marker, so it can't be tracked." = "這條線材沒有 e-marker，因此無法追蹤。";
 "This cable can't be tracked" = "這條線材無法追蹤";
 "Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "與您已儲存的線材 %@ 相符。相同型號的兩條線材無法區分，如果您也儲存這條線材，它們的歷史記錄將會合併。";
-"Identified by its MagSafe cable ID (VID 0x%04X, PID 0x%04X). Cables of this exact model look identical, so this record tracks the model, not one physical cable." = "已透過 MagSafe 線材 ID 識別（VID 0x%04X，PID 0x%04X）。相同型號的線材外觀完全相同，因此此記錄代表的是型號，而非某條具體線材。";
-"You already have this MagSafe cable saved as %@. Cables of this model can't be told apart, so add its history to that one instead." = "您已將這條 MagSafe 線材儲存為 %@。相同型號的線材無法區分，請改為將記錄新增至該線材。";
+"Identified by its MagSafe cable ID (VID 0x%04X, PID 0x%04X). Cables of this exact model look identical, so this record tracks the model, not one physical cable." = "已透過 MagSafe 線材 ID 識別（VID 0x%04X，PID 0x%04X）。相同型號的線材外觀完全相同，因此此記錄追蹤的是型號，而非某一條實體線材。";
+"You already have this MagSafe cable saved as %@. Cables of this model can't be told apart, so add its history to that one instead." = "您已將這條 MagSafe 線材儲存為 %@。相同型號的線材無法區分，請改為將這條線材的歷史記錄加入該線材。";
 "This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "這條線材沒有 e-marker，因此無法再為它記錄新資料。現有的歷史記錄仍可查看。";
 "Can't add this cable" = "無法新增此線材";
 "OK" = "好";
@@ -615,4 +615,4 @@
 "Connect a charger to identify the cable." = "請連接充電器來識別線材。";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
-"No PD contract on this port. Incoming power shows in System Power Input below." = "此連接埠沒有 PD 合約。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
+"No PD contract on this port. Incoming power shows in System Power Input below." = "此連接埠沒有 PD 協議。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
