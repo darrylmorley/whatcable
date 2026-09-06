@@ -5,7 +5,7 @@ import Testing
 #if DEBUG
 /// Acceptance criteria for the internal diagnostic surface, tested at the
 /// presentation layer (what the view will display) rather than by pixel snapshot.
-/// Everything here proves the render is faithful to the AHG contract, never
+/// Everything here proves the render is faithful to the contract, never
 /// invents certainty, and fails visibly on malformed input.
 struct DiagnosticPresentationTests {
 

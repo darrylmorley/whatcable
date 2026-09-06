@@ -1,9 +1,9 @@
 import Foundation
 
 #if DEBUG
-/// Loads the diagnostic contract fixtures exported by AHG. These are the only
-/// inputs the internal diagnostic screen renders, there is no live AHG
-/// integration in the app.
+/// Loads the diagnostic contract fixtures exported by the diagnostic engine.
+/// These are the only inputs the internal diagnostic screen renders, there is
+/// no live engine integration in the app.
 ///
 /// DEBUG-only, and deliberately NOT bundled as an app resource. The fixtures
 /// carry corpus-derived reasoning, so they live under the mirror-excluded

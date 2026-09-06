@@ -1,12 +1,12 @@
 import Foundation
 
 #if DEBUG
-/// The AHG to WhatCable diagnostic contract: a faithful decode of the JSON that
-/// the apple-hardware-graph reasoning engine emits (`ahg/diagnostic.py`).
+/// The diagnostic contract: a faithful decode of the JSON that a separate
+/// diagnostic engine emits for this app to render.
 ///
 /// WhatCable renders this. It never recomputes confidence, reclassifies a hop, or
 /// re-derives provenance. If a view needs meaning that is not present here, the
-/// fix is to refine the AHG contract, not to infer it in Swift.
+/// fix is to refine the contract upstream, not to infer it in Swift.
 ///
 /// Decoded with `.convertFromSnakeCase`, so `schema_version` becomes
 /// `schemaVersion`, `capability_in` becomes `capabilityIn`, and so on.

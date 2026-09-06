@@ -2,7 +2,7 @@ import SwiftUI
 import WhatCableCore
 
 #if DEBUG
-/// Internal diagnostic screen. Renders an AHG diagnostic contract, nothing more.
+/// Internal diagnostic screen. Renders a diagnostic contract, nothing more.
 /// It reaches only for `DiagnosticFixtures` and `DiagnosticPresentation`; it does
 /// no reasoning, computes no confidence, and classifies no hop. Reachable only via
 /// a debug route (see App.swift, `#if DEBUG`).
