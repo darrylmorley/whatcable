@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableCore
 
 /// Unit tests for `ChainDeviceAttribution`
-/// (`Sources/WhatCableCore/USB/ChainDeviceAttribution.swift`): which
+/// (`Sources/WhatCableCore/Devices/ChainDeviceAttribution.swift`): which
 /// Thunderbolt chain device each USB device sits inside.
 ///
 /// This is inference, so most of these tests are about it NOT firing. The

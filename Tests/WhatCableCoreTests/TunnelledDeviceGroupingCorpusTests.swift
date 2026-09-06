@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableCore
 
 /// Corpus-replay sweep for `TunnelledDeviceGrouping.group`
-/// (`Sources/WhatCableCore/USB/TunnelledDeviceGrouping.swift`).
+/// (`Sources/WhatCableCore/Devices/TunnelledDeviceGrouping.swift`).
 ///
 /// ## Honest limitation (read before extending this file)
 ///

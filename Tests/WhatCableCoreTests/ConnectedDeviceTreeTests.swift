@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableCore
 
 /// Unit tests for `ConnectedDeviceTree.rows`
-/// (`Sources/WhatCableCore/USB/ConnectedDeviceTree.swift`): the shared
+/// (`Sources/WhatCableCore/Devices/ConnectedDeviceTree.swift`): the shared
 /// "Connected devices" row builder that roots the USB tree under the
 /// downstream Thunderbolt device (with its live link speed) when one is
 /// present, and renders the plain USB tree unchanged when not.
