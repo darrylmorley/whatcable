@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableCore
 
 /// Tests for `CableDB.certifications(forXID:)`
-/// (`Sources/WhatCableCore/Cable/CableDB.swift`), the offline USB-IF
+/// (`Sources/WhatCableCore/Database/CableDB.swift`), the offline USB-IF
 /// certification lookup compiled into `whatcable.db` by
 /// `scripts/build-cable-db.swift`.
 ///

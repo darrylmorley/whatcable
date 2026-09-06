@@ -14,7 +14,7 @@ Two things worth knowing before reading the output:
 
 - PID = 0x0000 rows can never resolve at runtime. CableDB.curatedCables(vid:
   pid:) requires both VID and PID to be nonzero (see
-  Sources/WhatCableCore/Cable/CableDB.swift); a zero PID means the app can
+  Sources/WhatCableCore/Database/CableDB.swift); a zero PID means the app can
   never match that cable to a brand no matter how well it's catalogued. This
   is the DAR-39 structural finding: cheap/generic cable silicon overwhelmingly
   ships with PID=0, so a big chunk of "uncatalogued" fingerprints are

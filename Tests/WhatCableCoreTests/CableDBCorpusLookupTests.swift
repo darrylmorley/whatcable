@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableCore
 
 /// Corpus-replay sweep for `CableDB.vendorName(vid:)`, `CableDB.isUSBIFRegistered(_:)`,
-/// and `CableDB.curatedCables(vid:pid:cableVDO:)` (`Sources/WhatCableCore/Cable/CableDB.swift`),
+/// and `CableDB.curatedCables(vid:pid:cableVDO:)` (`Sources/WhatCableCore/Database/CableDB.swift`),
 /// the bundled-SQLite-backed lookup no existing test drives against real
 /// corpus identities.
 ///

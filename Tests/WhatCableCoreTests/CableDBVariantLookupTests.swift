@@ -2,7 +2,7 @@ import Testing
 @testable import WhatCableCore
 
 /// Tests for the Cable VDO discrimination added to
-/// `CableDB.curatedCables(vid:pid:cableVDO:)` (`Sources/WhatCableCore/Cable/CableDB.swift`).
+/// `CableDB.curatedCables(vid:pid:cableVDO:)` (`Sources/WhatCableCore/Database/CableDB.swift`).
 ///
 /// One (VID, PID) pair can now curate more than one row for two different
 /// reasons, and this suite pins both against the real bundled `whatcable.db`:
