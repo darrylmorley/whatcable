@@ -339,8 +339,8 @@ public final class PortDiagnosticsWatcher: ObservableObject {
 
     private static func eventTrace(from dict: [String: Any]) -> PDEventTrace {
         let raw = wcData(dict["PortControllerEvtBuffer"]) ?? Data(wcArray(dict["PortControllerEvtBuffer"]).map(wcUInt8))
-        let filtered = raw.filter { $0 != 0x00 }
-        let events = filtered.map(PDEvent.init(rawValue:))
-        return PDEventTrace(rawBuffer: filtered, events: events)
+        // Hand the buffer over untouched. Tokenising it is Core's job, and zeros
+        // inside it are real argument bytes, not padding.
+        return PDEventTrace.parse(raw)
     }
 }
