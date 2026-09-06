@@ -1,5 +1,5 @@
 import Testing
-@testable import WhatCableCore
+@testable import WhatCableNotifications
 
 /// Fixture topology is the real device tree from issue #551 (a DIGITUS
 /// 8-port dock, `whatcable --json --raw` capture): two VIA Labs branches off

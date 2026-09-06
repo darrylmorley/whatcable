@@ -1,4 +1,5 @@
 import Foundation
+import WhatCableCore
 
 /// Groups a set of connected / disconnected USB devices by hub subtree, so a
 /// hub (or dock) that arrives or leaves along with its children produces one
