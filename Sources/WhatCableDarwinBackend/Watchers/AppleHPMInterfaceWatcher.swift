@@ -385,7 +385,38 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
 
     /// Walks the IOKit parent chain looking for a controller-index node. M3-era
     /// Macs commonly expose `hpm<N>`, while M1/M2 machines can expose `atc<N>`
-    /// or `usb-drd<N>`. Direct `UsbIOPort` paths are still preferred.
+    /// or `usb-drd<N>`. Direct `UsbIOPort` paths are still preferred, so this
+    /// positional fallback only fires where none exists (macOS 14 and 15).
+    ///
+    /// Measured failure set, from probe 36 over 3002 records carrying both a
+    /// real `usb-c-port-number` and a resolvable `UsbIOPort` path: the two
+    /// subsystems agree on 2850 and disagree on 152. Base M1 swaps USB 1 and 2
+    /// (32 records, 16 each way, on 8 of 72 folders). Base M4 and base M5 skip
+    /// `@3`, so USB 3 is `@4` (76 records on 38 of 102 M4 folders, 44 on 22 of
+    /// 59 M5). Every other family agrees on every record. A swap and a skip
+    /// cannot share an offset, so no positional rule fixes this; the path is
+    /// the only truth. (The research register quotes 3000 records and 38 of 101
+    /// M4 folders because it attributes chips from `corpus.jsonl`, which
+    /// records `?` for seven folders, one of them an M4; the disagreement
+    /// figures are identical on both routes.)
+    ///
+    /// The M1 swap is a DESKTOP trait, not a chip one: all 8 swapping M1
+    /// folders are desktops and all 64 M1 laptops agree on every record. Form
+    /// factor does not split the M4/M5 skip the same way (9 of 70 M4 laptops
+    /// disagree, and all 59 M5 folders are laptops), so the real variable is
+    /// more likely the specific machine model than the chip or the form factor.
+    ///
+    /// NOTHING COVERS THIS FUNCTION. `HPMPortNumberDisagreementCorpusSweepTests`
+    /// pins the corpus figures and the path-tail parse, and
+    /// `USBWatcherCorpusSweepTests` covers the join itself (the `UsbIOPort`
+    /// path preference in `USBWatcher`). Neither runs this ancestor walk. It is
+    /// private and takes an `io_service_t`, so no test can call it directly;
+    /// the only test that reaches it at all is `PowerServiceSynthesisGateFixTests`
+    /// via live `readAllPorts()`, and that asserts on `rawProperties` keys,
+    /// never on the bus index. A reviewer made this return `nil`
+    /// unconditionally and the whole suite stayed green. This is the sole
+    /// port-attribution mechanism on macOS 14 and 15, so a regression here
+    /// ships green: refactor it against live hardware and know there is no net.
     nonisolated private static func busIndex(for service: io_service_t) -> Int? {
         var current = service
         IOObjectRetain(current)

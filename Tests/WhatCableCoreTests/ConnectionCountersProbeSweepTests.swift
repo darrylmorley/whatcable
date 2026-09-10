@@ -170,7 +170,7 @@ struct ConnectionCountersProbeSweepTests {
     // (this one, and a standalone Python pass): 2510 port blocks across 731
     // machines publish a `Plug Event Count`. The 7 folders with none are Intel
     // Macs, which publish no port-controller data at all, as documented in
-    // CLAUDE.md. Floors are set below the measured values so ingesting new
+    // research/findings/chip-families.md. Floors are set below the measured values so ingesting new
     // submissions never turns this red, while a parser regression that drops
     // most rows still does.
 

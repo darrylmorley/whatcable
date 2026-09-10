@@ -168,6 +168,22 @@ struct CableDBCorpusLookupTests {
             "0x\(String(format: "%04X", fixture.vid)):0x\(String(format: "%04X", fixture.pid)) resolved \(matches.map(\.brand)); it is meant to stay unnamed until someone confirms what the cable is")
     }
 
+    /// The CalDigit 2 m TB4 cable (issue #111) is the one curated row whose
+    /// `Type` is the port controller's reading rather than the e-marker's:
+    /// its e-marker self-reports passive and every corpus machine carrying
+    /// that fingerprint has the controller reporting `ActiveCable = true`.
+    /// The type lives in `data/known-cables.md` and only reaches the app
+    /// through a `build-cable-db.swift` rebuild, so without this the cell
+    /// could go back to `passive` with the suite still green.
+    @Test("The one port-controller-typed cable ships as active in the bundled database")
+    func caldigitRowShipsAsActive() {
+        let matches = CableDB.curatedCables(vid: 0x2B1D, pid: 0x1901, cableVDO: 0x3208485A)
+        #expect(!matches.isEmpty,
+            "0x2B1D:0x1901 / VDO 0x3208485A resolved no curated cable row; the CalDigit row is missing from the bundled database")
+        #expect(matches.allSatisfy { $0.type == "active" },
+            "the CalDigit row ships as \(matches.map(\.type)); it must be 'active', which is the port controller's reading. If data/known-cables.md was edited, whatcable.db needs rebuilding with scripts/build-cable-db.swift.")
+    }
+
     @Test("The recently-added corpus-identified cables resolve to their curated rows", arguments: Self.recentlyAddedCables)
     func recentlyAddedCablesResolve(_ fixture: (vid: Int, pid: Int, cableVDO: UInt32, brandContains: String)) {
         let matches = CableDB.curatedCables(vid: fixture.vid, pid: fixture.pid, cableVDO: fixture.cableVDO)

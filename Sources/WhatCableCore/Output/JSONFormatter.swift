@@ -375,7 +375,7 @@ private struct PortDTO: Codable {
 
         self.powerSources = port.connectionActive != false ? sources.map { PowerSourceDTO(source: $0) } : []
 
-        self.cable = cableEmarker.map { CableDTO(identity: $0, partner: partnerIdentity) }
+        self.cable = cableEmarker.map { CableDTO(identity: $0, partner: partnerIdentity, port: port) }
 
         self.device = partnerIdentity.map { DeviceDTO(identity: $0) }
 
@@ -411,7 +411,7 @@ private struct PortDTO: Codable {
         }
 
         let displayDTOs = displayPorts
-            .compactMap { DisplayDiagnostic(dp: $0, cable: cableEmarker) }
+            .compactMap { DisplayDiagnostic(dp: $0, cable: cableEmarker, port: port) }
             .map { DisplayDTO(diagnostic: $0) }
         self.displays = displayDTOs.isEmpty ? nil : displayDTOs
 
@@ -518,8 +518,16 @@ private struct CableDTO: Codable {
     /// planning/cable-trust-model.md for the same lesson learned the expensive
     /// way.
     let certID: String?
+    /// Which reading settled `type`: "emarker", "portController" or
+    /// "layoutContradiction". Emitted whenever `type` is, nil when it is not.
+    /// Additive and machine-consumed, so the spellings are fixed.
+    let typeSource: String?
+    /// The cable's plug type from Cable VDO bits 19:18: "Type-A", "Type-B",
+    /// "Type-C" or "captive". `reportLabel`, not `label`: --json must not vary
+    /// with the UI language, same split as `speed` and `currentRating`.
+    let plugType: String?
 
-    init(identity: USBPDSOP, partner: USBPDSOP? = nil) {
+    init(identity: USBPDSOP, partner: USBPDSOP? = nil, port: AppleHPMInterface? = nil) {
         self.endpoint = identity.endpoint.rawValue
         self.vendorID = identity.vendorID
         self.vendorName = VendorDB.name(for: identity.vendorID)
@@ -530,6 +538,13 @@ private struct CableDTO: Codable {
         var seen = Set<String>()
         let unique = curated.map(\.brand).filter { seen.insert($0).inserted }
         self.curatedBrands = unique.isEmpty ? nil : unique
+
+        // Resolved once and used for both `type`/`typeSource` and the
+        // `active` block below. The two are edited apart, and them
+        // disagreeing about the same read is exactly the defect this hoist
+        // makes impossible.
+        let resolution = CableClassification.resolve(identity: identity, port: port)
+
         if let cv = identity.cableVDO {
             // reportLabel, not label: --json is machine-consumed, and the
             // localized label varies with the UI language (same split as
@@ -538,16 +553,32 @@ private struct CableDTO: Codable {
             self.currentRating = cv.current.reportLabel
             self.maxVolts = cv.maxVolts
             self.maxWatts = cv.maxWatts
-            self.type = cv.cableType == .active ? "active" : "passive"
+            // The verdict is the classifier's, so a cable the port controller
+            // promotes reports "active" here too. `typeSource` says which
+            // reading settled it, so a consumer can tell the two apart.
+            self.type = (resolution?.type ?? cv.cableType) == .active ? "active" : "passive"
+            switch resolution?.source {
+            case .emarker, nil: self.typeSource = "emarker"
+            case .portController: self.typeSource = "portController"
+            case .layoutContradiction: self.typeSource = "layoutContradiction"
+            }
+            self.plugType = cv.plugType.reportLabel
         } else {
             self.speed = nil
             self.currentRating = nil
             self.maxVolts = nil
             self.maxWatts = nil
             self.type = nil
+            self.typeSource = nil
+            self.plugType = nil
         }
 
-        self.active = identity.activeCableVDO2.map(ActiveCableDTO.init)
+        // Classifier-gated, matching the port card: a cable only the port
+        // controller calls active still gets VDO[4] decoded, so `type` and
+        // `active` cannot disagree about the same read.
+        self.active = identity
+            .activeCableVDO2(classifiedAs: resolution)
+            .map(ActiveCableDTO.init)
         self.activeLayoutContradiction = identity.hasActiveLayoutContradiction
 
         let report = CableTrustReport(identity: identity, partner: partner)

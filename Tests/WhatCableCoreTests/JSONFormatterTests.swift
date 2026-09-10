@@ -1465,4 +1465,88 @@ struct JSONFormatterTests {
         #expect(top["builtInDisplayPorts"] == nil,
             "top-level builtInDisplayPorts must be absent when there are none")
     }
+
+    // MARK: - Cable type source and plug type
+
+    /// The CalDigit 2M Thunderbolt 4 cable from issue #111, VDO[3] bit 3
+    /// clear: only the port controller can call this one active.
+    private func caldigitBitThreeClear() -> USBPDSOP {
+        USBPDSOP(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [0x1C002B1D, 0x00000000, 0x19010097, 0x32084842],
+            specRevision: 3
+        )
+    }
+
+    private func activeCablePort() -> USBCPort {
+        USBCPort(
+            id: 1, serviceName: "Port-USB-C@1", className: "AppleHPMInterfaceType10",
+            portDescription: "Port-USB-C@1", portTypeDescription: "USB-C",
+            portNumber: 1, connectionActive: true, activeCable: true, opticalCable: nil,
+            usbActive: nil, superSpeedActive: true, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC", "USB2", "USB3"],
+            transportsActive: ["USB3"],
+            transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil, rawProperties: ["PortType": "2"]
+        )
+    }
+
+    private func cableObject(port: USBCPort, identity: USBPDSOP) throws -> [String: Any] {
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [identity], showRaw: false
+        )
+        let portObj = (parse(json)["ports"] as? [[String: Any]])?.first ?? [:]
+        return try #require(portObj["cable"] as? [String: Any])
+    }
+
+    @Test("Port-promoted cable reports type active with typeSource portController")
+    func portPromotedCableReportsTypeSource() throws {
+        let cable = try cableObject(port: activeCablePort(), identity: caldigitBitThreeClear())
+        #expect(cable["type"] as? String == "active")
+        #expect(cable["typeSource"] as? String == "portController")
+    }
+
+    @Test("An ordinary passive cable reports typeSource emarker")
+    func ordinaryPassiveCableReportsEmarkerSource() throws {
+        let id = cableIdentity(vendorID: 0x05AC, cableVDO: (0b10 << 5) | 0b011 | Self.validLatency)
+        let cable = try cableObject(port: makePort(), identity: id)
+        #expect(cable["type"] as? String == "passive")
+        #expect(cable["typeSource"] as? String == "emarker")
+    }
+
+    @Test("plugType carries the stable report label, not the localized one")
+    func plugTypeCarriesReportLabel() throws {
+        let base = (0b10 << 5) | UInt32(0b011) | Self.validLatency
+        let captive = try cableObject(
+            port: makePort(), identity: cableIdentity(vendorID: 0x05AC, cableVDO: base | (0b11 << 18)))
+        #expect(captive["plugType"] as? String == "captive")
+        let typeC = try cableObject(
+            port: makePort(), identity: cableIdentity(vendorID: 0x05AC, cableVDO: base | (0b10 << 18)))
+        #expect(typeC["plugType"] as? String == "Type-C")
+    }
+
+    @Test("A port-promoted cable carrying VDO[4] emits its active-cable block")
+    func portPromotedCableEmitsActiveBlock() throws {
+        // Synthetic, and it has to be: every corpus port the controller
+        // promotes carries exactly 4 VDOs. Without the classifier gate the
+        // JSON says type "active" with active null, while the port card
+        // prints the medium and element for the same read.
+        let passiveIDHeader: UInt32 = (3 << 27) | UInt32(0x2B1D)
+        let passiveVDO3: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency
+        let identity = USBPDSOP(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [passiveIDHeader, 0, 0x19010097, passiveVDO3, 0x11082041],
+            specRevision: 3
+        )
+        let cable = try cableObject(port: activeCablePort(), identity: identity)
+        #expect(cable["type"] as? String == "active")
+        #expect(cable["active"] as? [String: Any] != nil,
+                "a cable reported active must carry its active-cable block")
+    }
 }

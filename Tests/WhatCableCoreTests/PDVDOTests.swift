@@ -869,4 +869,81 @@ struct PDVDOTests {
     func vdoFromData_TooShort() {
         #expect(PDVDO.vdoFromData(Data([0x01, 0x02])) == nil)
     }
+
+    // MARK: - Plug Type (Cable VDO bits 19..18)
+
+    /// Bits 17..16 are set to the inverse of the plug-type value in these
+    /// fixtures, so a decode reading the wrong bit offset fails rather than
+    /// passing by coincidence.
+    private static func plugTypeFixture(_ encoding: UInt32) -> UInt32 {
+        0b011 | UInt32(2 << 5) | Self.validLatency
+            | (encoding << 18)
+            | ((encoding ^ 0b11) << 16)
+    }
+
+    @Test("Plug type 00 decodes as deprecated Type-A")
+    func plugTypeTypeA() {
+        let cable = PDVDO.decodeCableVDO(Self.plugTypeFixture(0b00), isActive: false)
+        #expect(cable.plugType == .typeA)
+        #expect(cable.plugType.reportLabel == "Type-A")
+    }
+
+    @Test("Plug type 01 decodes as deprecated Type-B")
+    func plugTypeTypeB() {
+        let cable = PDVDO.decodeCableVDO(Self.plugTypeFixture(0b01), isActive: false)
+        #expect(cable.plugType == .typeB)
+        #expect(cable.plugType.reportLabel == "Type-B")
+    }
+
+    @Test("Plug type 10 decodes as Type-C")
+    func plugTypeTypeC() {
+        let cable = PDVDO.decodeCableVDO(Self.plugTypeFixture(0b10), isActive: false)
+        #expect(cable.plugType == .typeC)
+        #expect(cable.plugType.reportLabel == "Type-C")
+    }
+
+    @Test("Plug type 11 decodes as captive")
+    func plugTypeCaptive() {
+        let cable = PDVDO.decodeCableVDO(Self.plugTypeFixture(0b11), isActive: false)
+        #expect(cable.plugType == .captive)
+        #expect(cable.plugType.reportLabel == "captive")
+    }
+
+    @Test("Plug type on a real corpus cable VDO decodes as Type-C")
+    func plugTypeFromCorpusVDO() {
+        // CalDigit 2M Thunderbolt 4 cable, VDO[3] = 0x3208485A.
+        // Bits 19..18 are 0b10.
+        let cable = PDVDO.decodeCableVDO(0x3208485A, isActive: false)
+        #expect(cable.plugType == .typeC)
+    }
+
+    // MARK: - Active Cable VDO 2 third gate
+
+    @Test("activeCableVDO2(classifiedAs:) decodes VDO[4] for a port-promoted cable")
+    func activeCableVDO2ThirdGate() {
+        // Synthetic: a passive-reporting e-marker with bit 3 clear (so no
+        // layout contradiction) that carries 5 VDOs. No corpus capture has
+        // this shape yet; the gate exists for hardware that does.
+        let passiveIDHeader: UInt32 = (3 << 27) | UInt32(0x2B1D)
+        let passiveVDO3: UInt32 = 0b011 | UInt32(2 << 5) | Self.validLatency
+        let sop = USBPDSOP(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 3,
+            vendorID: 0x2B1D,
+            productID: 0x1901,
+            bcdDevice: 0x97,
+            vdos: [passiveIDHeader, 0, 0x19010097, passiveVDO3, 0x11082041],
+            specRevision: 3
+        )
+        #expect(!sop.hasActiveLayoutContradiction)
+        #expect(sop.activeCableVDO2 == nil)
+        #expect(sop.activeCableVDO2(classifiedAs: nil) == nil)
+
+        let promoted = CableClassification.Resolution(type: .active, source: .portController)
+        let vdo2 = sop.activeCableVDO2(classifiedAs: promoted)
+        #expect(vdo2 != nil)
+        #expect(vdo2?.maxOperatingTempC == 0x11)
+    }
 }

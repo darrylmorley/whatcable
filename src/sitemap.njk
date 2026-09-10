@@ -6,15 +6,16 @@ eleventyExcludeFromCollections: true
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>{{ site.url }}/</loc>
-    <lastmod>2026-06-30</lastmod>
+    <lastmod>2026-09-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
 {%- set staticPages = [
-  { url: '/cables', changefreq: 'weekly', priority: '0.8' },
-  { url: '/instructions', lastmod: '2026-06-30', changefreq: 'monthly', priority: '0.7' },
-  { url: '/cli', changefreq: 'monthly', priority: '0.7' },
-  { url: '/pro', lastmod: '2026-06-30', changefreq: 'monthly', priority: '1.0' },
+  { url: '/inside-a-cable', lastmod: '2026-09-09', changefreq: 'monthly', priority: '0.7' },
+  { url: '/cables', lastmod: '2026-09-09', changefreq: 'weekly', priority: '0.8' },
+  { url: '/instructions', lastmod: '2026-09-09', changefreq: 'monthly', priority: '0.7' },
+  { url: '/cli', lastmod: '2026-09-09', changefreq: 'monthly', priority: '0.7' },
+  { url: '/pro', lastmod: '2026-09-09', changefreq: 'monthly', priority: '1.0' },
   { url: '/blog', changefreq: 'weekly', priority: '0.8' },
   { url: '/press', changefreq: 'monthly', priority: '0.6' },
   { url: '/privacy', changefreq: 'yearly', priority: '0.3' },
@@ -29,7 +30,7 @@ eleventyExcludeFromCollections: true
 {% endfor %}
 {%- for post in collections.posts %}  <url>
     <loc>{{ site.url }}{{ post.url | cleanUrl }}</loc>
-    <lastmod>{{ post.date | isoDate }}</lastmod>
+    <lastmod>{{ (post.data.updated or post.date) | isoDate }}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

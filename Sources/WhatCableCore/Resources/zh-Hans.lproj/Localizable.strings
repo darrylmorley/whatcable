@@ -608,3 +608,14 @@
 "Argument %@" = "参数 %@";
 "Arguments %@" = "参数 %@ (多个)";
 "Source ready (result unknown)" = "源端就绪 (结果未知)";
+
+/* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
+"USB Type-A plug (deprecated)" = "USB Type-A 插头（已弃用）";
+"USB Type-B plug (deprecated)" = "USB Type-B 插头（已弃用）";
+"USB Type-C plug" = "USB Type-C 插头";
+"Captive cable (built into the device)" = "固定线缆（内置于设备）";
+
+/* Cable type source: the port controller's own ActiveCable reading, and the
+   e-marker silicon vendor hint. */
+"E-marker reports passive, but the port controller detects an active cable" = "E-marker 报告为无源，但端口控制器检测到有源线缆";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker 使用其芯片厂商的默认厂商 ID (%@)，线缆品牌未被记录";

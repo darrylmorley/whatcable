@@ -52,7 +52,7 @@ hand-maintained markdown table; format may change once the consumer exists.
 | CUKTECH CTC615N 6A 240 W 1.5 m, USB-IF certified | `0x2B01` | `0x4051` | `0x000A4640` | Zimi Corporation | `0x9DC` | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#138](https://github.com/darrylmorley/whatcable/issues/138) |
 | CalDigit TS4 dock bundled cable (Lintes silicon) | `0x2B1D` | `0x1512` | `0x11082043` | Lintes Technology Co., Ltd. | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 20 V (100 W) | passive | [#62](https://github.com/darrylmorley/whatcable/issues/62) |
 | Cable Matters Thunderbolt 5 cable 1 m | `0x2B1D` | `0x1533` | `0x110A2644` | Lintes Technology Co., Ltd. | `0x5F5` | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#110](https://github.com/darrylmorley/whatcable/issues/110) |
-| CalDigit 2 m TB4 active cable | `0x2B1D` | `0x1901` | `0x3208485A` | Lintes Technology Co., Ltd. | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#111](https://github.com/darrylmorley/whatcable/issues/111) |
+| CalDigit 2 m TB4 active cable | `0x2B1D` | `0x1901` | `0x3208485A` | Lintes Technology Co., Ltd. | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | active | [#111](https://github.com/darrylmorley/whatcable/issues/111) |
 | AGFINEST / ULT-unite TB5-class USB4 80 Gbps cable, 3.94 ft (no USB-IF cert) | `0x2BD3` | `0x0000` | `0x000A4644` | Dongguan ULT-unite Electronic Technology Co., LTD | none | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#151](https://github.com/darrylmorley/whatcable/issues/151) |
 | Baseus Pudding Series 100 W 1.2 m | `0x2E87` | `0x0000` | `0x00082040` | Shenzhen Injoinic Technology Co., Ltd. | none | USB 2.0 (480 Mbps) | 5 A / 20 V (100 W) | passive | [#167](https://github.com/darrylmorley/whatcable/issues/167) |
 | CUKTECH PB200N powerbank built-in cable | `0x2E87` | `0x0000` | `0x00082040` | Shenzhen Injoinic Technology Co., Ltd. | none | USB 2.0 (480 Mbps) | 5 A / 20 V (100 W) | passive | [#168](https://github.com/darrylmorley/whatcable/issues/168) |
@@ -215,6 +215,15 @@ Patterns the planned Cable Trust Signals heuristics should pick up:
    rather than picking one; `PortSummary` still shows the first brand
    (multi-brand wording is a follow-up), but the data no longer silently
    drops the second brand's identity.
+7. **Port controller contradicts the e-marker's own self-report.** #111
+   (CalDigit 2 m TB4) declares itself a passive cable in its ID Header,
+   while the port controller reports `ActiveCable = true` for that same
+   fingerprint on all four corpus submissions that report it. The
+   `Type` cell for that row is therefore the port controller's reading,
+   not the e-marker's: it is the only row in the table above whose type
+   does not come from the e-marker. `CableClassification` resolves the
+   two readings the same way, promoting a passive self-report when the
+   controller disagrees and never demoting an active one.
 
 ## Adding new entries
 

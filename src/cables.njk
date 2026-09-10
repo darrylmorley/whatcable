@@ -1,88 +1,19 @@
 ---
 permalink: /cables.html
 layout: base.njk
-documentTitle: "USB-C Cable Database: E-Marker Fingerprints | WhatCable"
-description: "A growing database of USB-C cables with real e-marker fingerprints reported by WhatCable users. Search by brand, vendor, speed, or VID to identify what your cable actually is."
+documentTitle: "USB-C Cable Database: Compare Reported Speed & Charging | WhatCable"
+description: "Find USB-C cable reports by name, speed, charging rating or identity code. Compare the essentials, then open the technical details."
 ogImage: "https://www.whatcable.uk/screenshot.webp"
 extraHead: |
-  <style>
-    .cables-page .wrap-cables { width: min(960px, calc(100% - 40px)); margin: 0 auto; }
-    .cables-page main { padding: 48px 0 80px; }
-    .cables-page h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 8px; }
-    .cables-page .subtitle { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
-    .cables-page h2 { font-size: 20px; font-weight: 700; margin: 36px 0 12px; }
-    .cables-page p { margin: 0 0 14px; color: var(--ink-soft); }
-    .cables-page ul, .cables-page ol { color: var(--ink-soft); }
-
-    .search-bar { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
-    .search-bar input {
-      flex: 1; padding: 10px 14px;
-      border: 1px solid var(--line); border-radius: 8px;
-      font-family: inherit; font-size: 14px;
-      color: var(--ink); background: var(--panel);
-      outline: none; transition: border-color 0.15s;
-    }
-    .search-bar input:focus { border-color: var(--accent); }
-    .search-bar input::placeholder { color: var(--muted); }
-    .search-count { font-size: 13px; color: var(--muted); white-space: nowrap; }
-
-    .table-wrap {
-      margin: 8px 0 28px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--panel);
-      overflow-x: auto;
-    }
-    table.cables { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-    table.cables th, table.cables td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--line);
-      vertical-align: top; text-align: left;
-      white-space: nowrap;
-    }
-    table.cables th {
-      background: #f4f6f9;
-      font-weight: 600; font-size: 12px;
-      text-transform: uppercase; letter-spacing: 0.04em;
-      color: var(--ink-soft);
-    }
-    table.cables tr:last-child td { border-bottom: 0; }
-    table.cables td.col-context, table.cables th.col-context {
-      white-space: normal; min-width: 220px; color: var(--ink-soft);
-    }
-    table.cables code {
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12.5px; color: var(--ink);
-      background: #f4f6f9; padding: 1px 6px; border-radius: 4px;
-    }
-    .no-results { padding: 24px 12px; text-align: center; color: var(--muted); font-size: 14px; }
-    .load-error { padding: 16px; color: #b91c1c; font-size: 14px; }
-    ol.patterns { margin: 0 0 16px; padding-left: 22px; color: var(--ink-soft); }
-    ol.patterns li { margin-bottom: 10px; }
-    ol.patterns li strong { color: var(--ink); }
-
-    .cables-cta {
-      margin: 32px 0 0; padding: 16px 18px;
-      background: var(--panel); border: 1px solid var(--line);
-      border-radius: 10px; font-size: 14px; color: var(--ink-soft);
-      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
-    }
-    .cables-cta strong { color: var(--ink); }
-    .cables-cta .button {
-      display: inline-flex; align-items: center;
-      padding: 10px 18px; border-radius: 8px;
-      font-weight: 600; font-size: 14px; text-decoration: none;
-    }
-    .cables-cta .button.primary { background: var(--accent); color: #fff; }
-    .cables-cta .button.secondary { background: #fff; color: var(--ink); border: 1px solid var(--line); }
-  </style>
+  <link rel="stylesheet" href="/assets/cable-database/catalog.css">
 ---
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Dataset",
+  "@id": "https://www.whatcable.uk/cables#dataset",
   "name": "WhatCable cable fingerprint database",
-  "description": "Crowd-sourced USB-C cable e-marker fingerprints reported via WhatCable. Each entry records the cable's USB-IF VID/PID, cable VDO bitfield, advertised speed, power rating, and a link to the original report.",
+  "description": "Crowd-sourced USB-C cable e-marker fingerprints reported via WhatCable. Entries record the reported manufacturer and product identifiers, encoded cable capabilities, declared speed and charging rating, with links to the original reports. These are identity reports, not physical performance tests.",
   "url": "https://www.whatcable.uk/cables",
   "dateModified": {{ cabledb.updated | isoDate | dump | safe }},
   "keywords": [
@@ -91,7 +22,7 @@ extraHead: |
   ],
   "creator": {
     "@type": "Person",
-    "name": "Darryl Morley",
+    "name": "Darryl",
     "url": "https://github.com/darrylmorley"
   },
   "license": "https://opensource.org/licenses/MIT",
@@ -105,80 +36,25 @@ extraHead: |
   ]
 }
 </script>
-<div class="cables-page">
-<main>
-  <div class="wrap-cables">
-    <h1>USB-C Cable Database</h1>
-    <p class="subtitle">Last updated {{ cabledb.updated | readableDate }}. {{ cabledb.count }} cables.</p>
 
-    <p>
-      Every USB-C cable with an e-marker chip reports an identity when you
-      plug it in: vendor ID, speed rating, power limit, cable type. This
-      database records what cables actually report, not what the marketing
-      claims.
-    </p>
-
-    <h2>What this is for</h2>
-    <ul>
-      <li><strong>Verify a cable before you buy.</strong> Search by brand or vendor to see what cables from that manufacturer actually report.</li>
-      <li><strong>Identify a mystery cable.</strong> Got a cable with no markings? Search by VID or speed to find a match.</li>
-      <li><strong>Spot suspicious patterns.</strong> Zeroed VIDs, missing XIDs, and speed claims that don't match the e-marker are all red flags.</li>
-      <li><strong>Compare what you have.</strong> See how your cable stacks up against others in its class.</li>
-    </ul>
-
-    <h2>Patterns we're seeing</h2>
-    <p>A few reports show patterns that are worth knowing about:</p>
-    <ol class="patterns">
-      <li><strong>Marketing outpaces the e-marker.</strong> #49 (Dbilida) is sold as "Thunderbolt 4 / 40 Gbps / 240 W" but reports passive USB4 Gen 3 with no USB-IF cert. The cable may carry the advertised rate, but nothing in the e-marker backs that claim.</li>
-      <li><strong>Unregistered VID, no XID.</strong> #71 (UGOURD, AliExpress) reports 80 Gbps USB4 Gen 4 from an unregistered vendor with zero XID. Plausibly real silicon, but unverifiable from the identity alone.</li>
-      <li><strong>Zeroed identity fields.</strong> #61 (CUKTECH No.6) has a present e-marker that reports <code>0x0000</code> for VID, PID, and no speed. This pattern usually means the e-marker was programmed with blank defaults.</li>
-    </ol>
-
-    <h2>How to read this table</h2>
-    <ul>
-      <li><strong>VID / PID</strong> - Vendor ID and Product ID. Assigned by USB-IF. A zeroed VID (<code>0x0000</code>) means the cable didn't identify its manufacturer.</li>
-      <li><strong>Cable VDO</strong> - Cable Vendor Defined Object. A bitfield encoding the cable's speed, current rating, and construction type.</li>
-      <li><strong>Vendor (USB-IF)</strong> - The registered name for that VID. "Unregistered" means the VID isn't in the USB-IF database.</li>
-      <li><strong>XID</strong> - A secondary identifier some vendors use. "none" means the cable didn't report one.</li>
-      <li><strong>Speed</strong> - The maximum data rate the e-marker advertises.</li>
-      <li><strong>Power</strong> - Maximum current and voltage the cable's e-marker claims. The wattage is the real deliverable at the USB-PD ceiling, not current x voltage: PD never exceeds 48 V, so a cable that reports 50 V still tops out at 48 V × 5 A = 240 W, not 250 W.</li>
-      <li><strong>Source</strong> - Link to the GitHub issue where this cable was reported.</li>
-    </ul>
-
-    <div class="search-bar" id="search-bar" hidden>
-      <input type="text" id="search" placeholder="Search cables by brand, vendor, speed, VID..." autocomplete="off">
-      <span class="search-count" id="search-count"></span>
-    </div>
-
-    <div id="cable-table"></div>
-
-    <noscript>
-      <div class="table-wrap">
-        {% include "cables-table.njk" %}
-      </div>
-    </noscript>
-
-    <h2>Add your cable</h2>
-    <p>Every report makes the database more useful. Here's how:</p>
-    <ol class="patterns">
-      <li><strong>Install WhatCable</strong> (free, open source). Download from <a href="/">the homepage</a> or via Homebrew.</li>
-      <li><strong>Plug in a cable</strong> and open the menu bar popover.</li>
-      <li><strong>Click "Report this cable".</strong> WhatCable opens a pre-filled GitHub issue with the e-marker fields. Review it and submit.</li>
-    </ol>
-    <p>
-      Reports land at
-      <a href="https://github.com/darrylmorley/whatcable/issues?q=label%3Acable-report">the cable-report tracker</a>.
-      Once triaged, they appear here within a day or two.
-    </p>
-
-    <div class="cables-cta">
-      <a href="/" class="button primary">Download WhatCable</a>
-      <a href="https://github.com/darrylmorley/whatcable/issues?q=label%3Acable-report" class="button secondary">Browse all reports on GitHub</a>
-    </div>
-  </div>
+<main class="cables-page" data-catalog>
+  <header class="catalog-heading"><div><span class="catalog-eyebrow">The community cable library</span><h1>Get to know your cable.</h1><p>Find a cable by name or by the identity code shown in WhatCable. Compare its reported data speed and charging rating, then open the details when you need them.</p><p class="catalog-meta">{{ cabledb.count }} entries · Updated {{ cabledb.updated | readableDate }}</p></div><a class="catalog-help-link" href="/inside-a-cable"><strong>Same plug. Different insides. →</strong><span>Explore the 3D diagram to see what the wires and identity chip actually do.</span></a></header>
+  <section aria-label="Search and filter cables" class="catalog-controls" id="catalog-controls" hidden>
+    <div class="catalog-search-row"><label for="catalog-search">Find a cable<input id="catalog-search" type="search" placeholder="Try Apple, CalDigit, 0x05AC or a report number" autocomplete="off"></label><button type="button" id="catalog-clear" disabled>Reset filters</button></div>
+    <div class="catalog-filters"><label for="catalog-speed">Reported data speed<select id="catalog-speed"><option value="">All speeds</option>{% for speed in cablecatalog.speeds %}<option value="{{ speed | escape }}">{{ speed }}</option>{% endfor %}</select></label><label for="catalog-power">Reported charging rating<select id="catalog-power"><option value="">All ratings</option>{% for power in cablecatalog.powers %}<option value="{{ power | escape }}">{{ power }}</option>{% endfor %}</select></label><label for="catalog-sort">Sort results<select id="catalog-sort"><option value="name">Cable name · A–Z</option><option value="speed">Highest reported speed</option><option value="power">Highest reported power</option></select></label></div>
+  </section>
+  <div class="catalog-results-bar"><p id="catalog-count" role="status" aria-live="polite">{{ cabledb.count }} entries</p><a href="#reading-reports">Reported ratings, not performance tests ↓</a></div>
+  <noscript><p>All entries are shown below. Use your browser’s Find command to search; each entry’s details still open without JavaScript.</p></noscript>
+  <div class="catalog-column-head" aria-hidden="true"><span>Cable / report description</span><span>Reported speed</span><span>Reported power</span><span>Details</span></div>
+  <section id="catalog-results" aria-label="Cable reports">
+  {% for cable in cablecatalog.records %}
+    <details class="catalog-record" data-search="{{ cable.search | escape }}" data-name="{{ cable.brand | escape }}" data-speed="{{ cable.speedLabel | escape }}" data-power="{{ cable.powerLabel | escape }}" data-speed-number="{{ cable.speedNumber }}" data-power-number="{{ cable.powerNumber }}">
+      <summary class="catalog-summary"><h2 class="catalog-name">{{ cable.brand | escape }}<span class="catalog-id">{{ cable.type | capitalize }} cable · Report {{ cable.issueNum | escape }}</span></h2><span class="catalog-stat"><span class="catalog-stat-label">Reported speed</span><strong>{{ cable.speedLabel | escape }}</strong><small>Data capacity</small></span><span class="catalog-stat"><span class="catalog-stat-label">Reported power</span><strong>{{ cable.powerLabel | escape }}</strong><small>Charging rating</small></span><span class="catalog-open-label">Details</span></summary>
+      <div class="catalog-details"><p>These values come from the cable’s identity chip—its digital label. They do not measure the speed or charging power your setup will achieve.</p><h3>The complete report</h3><dl class="catalog-fields"><div><dt>Data declaration</dt><dd>{{ cable.speed | escape }}</dd></div><div><dt>Power declaration</dt><dd>{{ cable.power | escape }}</dd></div><div><dt>Construction reported</dt><dd>{{ cable.type | capitalize }}</dd></div><div><dt>Manufacturer ID · VID</dt><dd><code>{{ cable.vid | default("Not reported", true) | escape }}</code></dd></div><div><dt>Product ID · PID</dt><dd><code>{{ cable.pid | default("Not reported", true) | escape }}</code></dd></div><div><dt>Registered vendor name</dt><dd>{{ cable.vendor | default("Not reported", true) | escape }}</dd></div><div><dt>Encoded capabilities · cable VDO</dt><dd><code>{{ cable.cableVDO | default("Not reported", true) | escape }}</code></dd></div><div><dt>Certification identifier · XID</dt><dd><code>{{ cable.xid | default("Not reported", true) | escape }}</code></dd></div></dl><div class="catalog-source"><a href="{{ cable.issueURL | escape }}">Read original report {{ cable.issueNum | escape }} on GitHub ↗</a><a href="#reading-reports">What do these fields mean?</a></div></div>
+    </details>
+  {% endfor %}
+  </section>
+  <div id="catalog-empty" hidden><h2>No matching cable reports</h2><p>Try a shorter name, an identity code, or remove a filter. Not every cable has been reported yet.</p><button type="button" id="catalog-empty-reset">Show all cables</button></div>
+  <section class="catalog-notes" id="reading-reports"><div><h2>Read the label. Check the connection.</h2><p>This library collects identity-chip reports from WhatCable users. A familiar name or matching code can help identify a cable, but is not a unique serial number or proof of authenticity.</p><p>A missing manufacturer or certificate alone does not mean a cable is faulty. A compatible passive cable may also carry newer signals faster than its older label suggests. WhatCable compares available reports across the port, cable and connected device to help explain your actual connection.</p><details><summary>Speed, charging and technical terms</summary><p><strong>Mbps / Gbps</strong> describe data capacity; <strong>W (watts)</strong> describes power. More charging power does not mean faster file transfers. The charger and device must also support the power being requested.</p><p><strong>Passive</strong> cables do not boost or rebuild data signals; <strong>active</strong> cables contain electronics that do. Both can have an identity chip.</p><p><strong>VID and PID</strong> identify the reported vendor and product. <strong>VDO</strong> is the encoded capability data. <strong>XID</strong> is a certification identifier, not proof of Thunderbolt certification. “Unregistered” means the vendor ID was not found in the list used here.</p><p>Power values are preserved from the reports, including unusual combinations. A declared voltage/current pair alone does not establish compliance. A 50 V, 5 A cable rating permits a maximum nominal USB Power Delivery contract of 48 V × 5 A = 240 W.</p></details><p><a href="/pro#connection-diagnostics">See how Pro compares the whole connection →</a> · <a href="/cables.json">Download the report data (JSON)</a></p></div><div class="catalog-report"><h2>Help fill in the gaps.</h2><p>Have a cable that is missing from the library?</p><ol><li><a href="/">Get WhatCable</a> and connect your cable.</li><li>Choose <strong>Report this cable</strong> in the app.</li><li>Review the pre-filled GitHub report and submit it.</li></ol><p>Reports appear here after they have been reviewed and added.</p><a href="https://github.com/darrylmorley/whatcable/issues?q=label%3Acable-report">Browse community reports ↗</a></div></section>
 </main>
-</div>
-
-{% raw %}
-<script src="/cables-search.js" defer></script>
-{% endraw %}
+<script src="/assets/cable-database/catalog.js" defer></script>

@@ -857,4 +857,61 @@ struct DisplayDiagnosticTests {
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: g34w))
         #expect(diag.bottleneck == .adapterLimit)
     }
+
+    // MARK: - Cable classification (port controller)
+
+    private func hpmPort(activeCable: Bool?) -> USBCPort {
+        USBCPort(
+            id: 1, serviceName: "Port-USB-C@1", className: "AppleHPMInterfaceType10",
+            portDescription: "Port-USB-C@1", portTypeDescription: "USB-C",
+            portNumber: 1, connectionActive: true, activeCable: activeCable, opticalCable: nil,
+            usbActive: nil, superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC", "DisplayPort"], transportsActive: ["DisplayPort"],
+            transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil, rawProperties: [:]
+        )
+    }
+
+    @Test("A port-promoted cable is no longer exonerated on the lane signal")
+    func portPromotedCableIsNotExonerated() throws {
+        // Same all-lanes shortfall as `allLanesExonerates`. The e-marker says
+        // passive, but the port controller says the cable is active, and we
+        // never exonerate a cable that could be active (issue #111).
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "1.62 Gbps (RBR)")
+        let diag = try #require(
+            DisplayDiagnostic(dp: dp, edid: g34w, cable: cable(active: false), port: hpmPort(activeCable: true))
+        )
+        #expect(diag.cableAssessment == .inconclusive)
+    }
+
+    @Test("With no port the passive exoneration is unchanged")
+    func noPortLeavesExonerationUnchanged() throws {
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "1.62 Gbps (RBR)")
+        let diag = try #require(
+            DisplayDiagnostic(dp: dp, edid: g34w, cable: cable(active: false), port: nil)
+        )
+        #expect(diag.cableAssessment == .unlikelyTheCable)
+    }
+
+    @Test("A layout-contradiction cable loses its exoneration even with no port")
+    func layoutContradictionCableIsNotExoneratedWithoutAPort() throws {
+        // The CalDigit 2M Thunderbolt 4 cable from issue #111: VDO[3] is
+        // decoded under the passive layout on purpose, so the old
+        // self-report read it as passive and exonerated it. The classifier
+        // resolves it active from the layout contradiction alone, with no
+        // port involved, so the exoneration goes away on this path too.
+        let identity = USBPDSOP(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [0x1C002B1D, 0x00000000, 0x19010097, 0x3208485A],
+            specRevision: 3
+        )
+        #expect(identity.cableVDO?.cableType == .passive, "fixture guard: the self-report still reads passive")
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "1.62 Gbps (RBR)")
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: g34w, cable: identity, port: nil))
+        #expect(diag.cableAssessment == .inconclusive)
+    }
 }

@@ -180,9 +180,9 @@ extension DisplayDiagnostic {
 
     /// Production entry point. Parses the EDID from the DisplayPort node's own
     /// monitor blob, then defers to the injectable initialiser below.
-    public init?(dp: IOPortTransportStateDisplayPort, cable: USBPDSOP? = nil, billboardPresent: Bool = false) {
+    public init?(dp: IOPortTransportStateDisplayPort, cable: USBPDSOP? = nil, billboardPresent: Bool = false, port: AppleHPMInterface? = nil) {
         let edid = dp.monitor?.edid.flatMap { EDIDInfo($0) }
-        self.init(dp: dp, edid: edid, cable: cable, billboardPresent: billboardPresent)
+        self.init(dp: dp, edid: edid, cable: cable, billboardPresent: billboardPresent, port: port)
     }
 
     /// Test seam: the parsed EDID is injected rather than read from `dp`.
@@ -192,7 +192,10 @@ extension DisplayDiagnostic {
     /// `cable` is the port's USB-PD e-marker (SOP' / SOP''), used only to tell
     /// whether the cable is active (issue #111: active cables misreport, so we
     /// never exonerate one on its e-marker).
-    public init?(dp: IOPortTransportStateDisplayPort, edid: EDIDInfo?, cable: USBPDSOP? = nil, billboardPresent: Bool = false) {
+    ///
+    /// `port` must be the port that `cable` belongs to, so the classifier can
+    /// read its `ActiveCable` flag. See `CableClassification.resolve`.
+    public init?(dp: IOPortTransportStateDisplayPort, edid: EDIDInfo?, cable: USBPDSOP? = nil, billboardPresent: Bool = false, port: AppleHPMInterface? = nil) {
         guard dp.link.active else { return nil }
         self.billboardPresent = billboardPresent
 
@@ -230,7 +233,18 @@ extension DisplayDiagnostic {
         // rate-limiting), and an active cable can misreport its own e-marker
         // (issue #111). The e-marker's claimed rating is never used to
         // exonerate. Assigned once here so it holds on every return path.
-        let cableKnownPassive = cable?.cableVDO?.cableType == .passive
+        // Read through the classifier, not the e-marker's self-report. Two
+        // cables lose their exoneration by that change, both in the direction
+        // the paragraph above asks for, so `cableAssessment` moves from
+        // `.unlikelyTheCable` to `.inconclusive` for each:
+        //
+        //   1. a cable on a port whose controller reports an active cable;
+        //   2. a cable carrying the issue #111 layout contradiction, with or
+        //      without a port. Its VDO[3] is decoded under the passive layout
+        //      on purpose, so the raw self-report used to read passive.
+        let cableKnownPassive = cable.flatMap {
+            CableClassification.resolve(identity: $0, port: port)
+        }?.type == .passive
         let cableUnlikely = dp.link.tunneled
             || (lanes > 0 && lanes == maxLanes && cableKnownPassive)
         self.cableAssessment = cableUnlikely ? .unlikelyTheCable : .inconclusive

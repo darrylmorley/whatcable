@@ -322,7 +322,7 @@ public enum TextFormatter {
         // active-cable check.
         let displayCable = cableEmarker
         for displayPort in displayPorts {
-            guard let displayDiag = DisplayDiagnostic(dp: displayPort, cable: displayCable) else { continue }
+            guard let displayDiag = DisplayDiagnostic(dp: displayPort, cable: displayCable, port: port) else { continue }
             let displayColor = displayDiag.isWarning ? ANSI.yellow : ANSI.green
             out += "\n" + ANSI.wrap(ANSI.bold, "Display: ") + ANSI.wrap(displayColor, terminalField(displayDiag.summary)) + "\n"
             out += "  " + ANSI.wrap(ANSI.dim, terminalField(displayDiag.detail)) + "\n"

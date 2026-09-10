@@ -608,3 +608,14 @@
 "Argument %@" = "Արգումենտ %@";
 "Arguments %@" = "Արգումենտներ %@";
 "Source ready (result unknown)" = "Աղբյուրը պատրաստ է (արդյունքն անհայտ)";
+
+/* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
+"USB Type-A plug (deprecated)" = "USB Type-A միակցիչ (հնացած)";
+"USB Type-B plug (deprecated)" = "USB Type-B միակցիչ (հնացած)";
+"USB Type-C plug" = "USB Type-C միակցիչ";
+"Captive cable (built into the device)" = "Ամրակցված մալուխ (ներկառուցված է սարքի մեջ)";
+
+/* Cable type source: the port controller's own ActiveCable reading, and the
+   e-marker silicon vendor hint. */
+"E-marker reports passive, but the port controller detects an active cable" = "E-marker-ը հայտնում է պասիվ, բայց պորտի կարգավորիչը հայտնաբերում է ակտիվ մալուխ";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker-ը կրում է իր չիպի արտադրողի կանխադրված վաճառողի ID-ն (%@). մալուխի ապրանքանիշը գրանցված չէ";

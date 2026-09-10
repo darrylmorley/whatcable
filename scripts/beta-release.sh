@@ -19,12 +19,13 @@
 #   - No TAP_DIR checks, no tap push.
 #   - No issue auto-close: a beta isn't "the fix is out", so issues stay
 #     open until the matching stable release ships.
-#   - release-notes/v<version>.md is optional. If missing, a stock beta
-#     blurb is used instead.
+#   - release-notes/v<version>.md is REQUIRED, same as a stable. Testers
+#     need to know what changed and what to check. (A stock blurb is still
+#     used as the body if the file exists but is empty.)
 #
 # Steps, in order:
 #   1.  Sanity checks: clean tree, on main, tag doesn't exist, gh CLI
-#       present.
+#       present, release-notes/v<version>.md exists.
 #   2.  Patch VERSION and BUILD_NUMBER in scripts/smoke-test.sh.
 #   3.  Commit the version bump.
 #   4.  Run scripts/smoke-test.sh (build, sign, notarise, smoke-test).
@@ -161,6 +162,22 @@ if ! gh auth status >/dev/null 2>&1; then
     exit 1
 fi
 
+# Release notes must exist, same as release.sh.
+#
+# This used to be optional here: a missing file fell back to a stock blurb
+# ("Beta build for testers...", plus install steps) and the build shipped
+# silently. That blurb says nothing about what changed or what to look at,
+# which is the entire reason for sending testers a build, so "optional" in
+# practice meant "sometimes shipped with no useful notes at all". The stock
+# text is still used as the BODY fallback further down for an empty file, but
+# an absent file now stops the run here, before anything is built or notarised.
+NOTES_FILE="release-notes/v${VERSION}.md"
+if [[ ! -f "${NOTES_FILE}" ]]; then
+    echo "ERROR: ${NOTES_FILE} not found. Write the beta notes first." >&2
+    echo "       Testers need to know what changed and what to check." >&2
+    exit 1
+fi
+
 echo "    all checks passed"
 
 # Pending-at-release items WARN here rather than blocking, unlike release.sh.
@@ -273,7 +290,7 @@ fi
 
 # ---- 6. Create the GitHub PRE-release on PUBLIC repo ----------------------
 
-NOTES_FILE="release-notes/v${VERSION}.md"
+# NOTES_FILE was validated in the sanity checks above.
 STOCK_NOTES="Beta build for testers. Not recommended for general use.
 
 Install by downloading WhatCable.zip below, unzipping, and dragging

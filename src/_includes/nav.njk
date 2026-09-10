@@ -4,7 +4,7 @@
       <img class="mark" src="/icon.png" alt="" aria-hidden="true" width="28" height="28">
       <span>{{ site.name }}</span>
     </a>
-    <div class="nav-links">
+    <div class="nav-links desktop-nav">
       {% for item in nav.primary %}
         <a href="{{ item.href }}"{% if item.label == 'Docs' %} data-keep-mobile{% endif %}>{{ item.label }}</a>
       {% endfor %}
@@ -12,5 +12,37 @@
         <a class="button {{ btn.style }}" href="{{ btn.href }}">{{ btn.label }}</a>
       {% endfor %}
     </div>
+    <div class="mobile-nav">
+      <a class="button accent" href="/pro">Get Pro</a>
+      <details class="mobile-menu">
+        <summary aria-controls="mobile-nav-links"><span>Menu</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary>
+        <div id="mobile-nav-links" class="mobile-nav-panel">
+          {% for item in nav.primary %}
+            <a href="{{ item.href }}"{% if (page.url | cleanUrl) == item.href %} aria-current="page"{% endif %}>{{ item.label }}</a>
+          {% endfor %}
+          <a href="/inside-a-cable"{% if (page.url | cleanUrl) == '/inside-a-cable' %} aria-current="page"{% endif %}>Inside a cable</a>
+          <a href="/pro"{% if (page.url | cleanUrl) == '/pro' %} aria-current="page"{% endif %}>WhatCable Pro</a>
+          <a href="/support"{% if (page.url | cleanUrl) == '/support' %} aria-current="page"{% endif %}>Support</a>
+          <a href="{{ site.repoUrl }}">GitHub</a>
+        </div>
+      </details>
+    </div>
   </div>
 </nav>
+<script>
+(() => {
+  const menu = document.querySelector('.mobile-menu');
+  const trigger = menu.querySelector('summary');
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu.open) {
+      menu.open = false; trigger.focus();
+    }
+  });
+  document.addEventListener('click', event => {
+    if (menu.open && !menu.contains(event.target)) menu.open = false;
+  });
+  menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+  const desktop = matchMedia('(min-width: 721px)');
+  desktop.addEventListener('change', event => { if (event.matches) menu.open = false; });
+})();
+</script>

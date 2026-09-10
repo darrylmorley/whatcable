@@ -165,6 +165,28 @@ extraHead: |
       .blog-index .cta-actions, .blog-index .cta-button { width: 100%; }
       .blog-index .cta-button { justify-content: center; }
     }
+
+    .blog-index { --accent: #08768b; --muted: #596675; }
+    .blog-index .blog-hero { padding: 48px 0 40px; }
+    .blog-index .blog-hero h1 { font-size: clamp(34px,5vw,56px); line-height: 1.12; text-wrap: balance; }
+    .blog-index .hero-links a { padding: 8px 0; text-decoration: underline; text-underline-offset: 4px; }
+    .blog-index .featured-section { padding: 40px 0 28px; }
+    .blog-index .featured-card { min-height: 0; box-shadow: none; }
+    .blog-index .featured-media { min-height: 0; aspect-ratio: 4 / 3; }
+    .blog-index .featured-copy { padding: 32px; }
+    .blog-index .featured-copy h2 { font-size: clamp(26px,3vw,34px); line-height: 1.2; }
+    .blog-index .topics-section { padding: 24px 0 40px; }
+    .blog-index .latest-section { padding: 40px 0; }
+    .blog-index .archive { padding: 16px 0 40px; }
+    .blog-index .blog-cta { padding: 40px 0; }
+    .blog-index :is(a,button):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+    @media(max-width:820px) {
+      .blog-index .featured-media { aspect-ratio: 16 / 9; }
+      .blog-index .featured-copy { padding: 24px; }
+      .blog-index .topics-grid { gap: 12px; }
+      .blog-index .topic-card { padding: 20px; }
+    }
+    @media(prefers-reduced-motion:reduce) { .blog-index .topic-card { transition: none; } .blog-index .topic-card:hover { transform: none; } }
   </style>
 ---
 <main class="blog-index">
@@ -172,9 +194,10 @@ extraHead: |
     <div class="wrap-wide hero-inner">
       <span class="eyebrow">WhatCable Field Notes</span>
       <h1>What the connector doesn't tell you.</h1>
-      <p class="lede">Practical guides, protocol deep dives and findings from real Apple hardware. We explain what negotiated, what limited the connection and how to prove it.</p>
+      <p class="lede">Practical guides, protocol deep dives and findings from real Apple hardware. Understand your cable, follow the connection and find a useful next step.</p>
       <div class="hero-links">
         <a href="#latest">Read the latest</a>
+        <a href="/inside-a-cable">Explore the cable diagram</a>
         <a href="/blog/feed.xml">Subscribe via RSS</a>
       </div>
     </div>
@@ -184,16 +207,16 @@ extraHead: |
     {% set featured = collections.posts[0] %}
     <section class="featured-section">
       <div class="wrap-wide">
-        <span class="section-label">Featured investigation</span>
+        <span class="section-label">Featured guide</span>
         <article class="featured-card">
           <a class="featured-media" href="{{ featured.url | cleanUrl }}" aria-label="Read {{ featured.data.title }}">
-            <img src="{{ featured.data.coverImage }}" alt="{{ featured.data.coverAlt }}">
+            <img src="{{ featured.data.coverImage or site.ogImage }}" alt="{{ featured.data.coverAlt or featured.data.title }}" decoding="async">
           </a>
           <div class="featured-copy">
             <p class="post-meta"><span class="category">{{ featured.data.category }}</span> &nbsp;·&nbsp; <time datetime="{{ featured.date | isoDate }}">{{ featured.date | readableDate }}</time></p>
             <h2><a href="{{ featured.url | cleanUrl }}">{{ featured.data.title }}</a></h2>
             <p class="summary">{{ featured.data.summary }}</p>
-            <a class="read-link" href="{{ featured.url | cleanUrl }}">Read the investigation →</a>
+            <a class="read-link" href="{{ featured.url | cleanUrl }}">Read the guide →</a>
           </div>
         </article>
       </div>
@@ -231,7 +254,7 @@ extraHead: |
             {% if loop.index0 > 0 and loop.index0 < 3 %}
               <article class="article-card">
                 <a href="{{ post.url | cleanUrl }}" aria-label="Read {{ post.data.title }}">
-                  <img src="{{ post.data.coverImage }}" alt="{{ post.data.coverAlt }}" loading="lazy">
+                  <img src="{{ post.data.coverImage or site.ogImage }}" alt="{{ post.data.coverAlt or post.data.title }}" decoding="async" loading="lazy">
                 </a>
                 <div class="article-copy">
                   <p class="post-meta"><span class="category">{{ post.data.category }}</span> &nbsp;·&nbsp; <time datetime="{{ post.date | isoDate }}">{{ post.date | readableDate }}</time></p>

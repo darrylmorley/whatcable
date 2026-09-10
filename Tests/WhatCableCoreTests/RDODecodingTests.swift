@@ -1,19 +1,20 @@
 import Testing
+@testable import WhatCableCore
 
 /// USB PD R3.2 RDO field layouts by selected-PDO type:
 ///
 /// Fixed/Variable (Table 6.23):
-///   bits 30:28 = Object Position
+///   bits 31:28 = Object Position
 ///   bits 19:10 = Operating Current in 10 mA units
 ///   bits  9:0  = Maximum Operating Current in 10 mA units
 ///
 /// Battery (Table 6.24):
-///   bits 30:28 = Object Position
+///   bits 31:28 = Object Position
 ///   bits 19:10 = Operating Power in 250 mW units
 ///   bits  9:0  = Maximum Operating Power in 250 mW units
 ///
 /// PPS/AVS APDO (Table 6.26):
-///   bits 30:28 = Object Position
+///   bits 31:28 = Object Position
 ///   bits 19:9  = Output Voltage in 20 mV units (11-bit field)
 ///   bits  6:0  = Operating Current in 50 mA units
 ///
@@ -23,11 +24,11 @@ import Testing
 struct RDODecodingTests {
     @Test("5V 3A contract: operating 2A, max 3A, PDO position 1")
     func basic5V3A() {
-        // PDO position 1 (bits 30:28 = 001)
+        // PDO position 1 (bits 31:28 = 0001)
         // Operating current 200 (200 * 10mA = 2000mA) at bits 19:10
         // Max operating current 300 (300 * 10mA = 3000mA) at bits 9:0
         let rdo: UInt32 = (1 << 28) | (200 << 10) | 300
-        let position = Int((rdo >> 28) & 0x7)
+        let position = PDContract.objectPosition(of: rdo)
         let operating = Int((rdo >> 10) & 0x3FF) * 10
         let max = Int(rdo & 0x3FF) * 10
         #expect(position == 1)
@@ -38,7 +39,7 @@ struct RDODecodingTests {
     @Test("20V 5A contract: operating 4.5A, max 5A, PDO position 4")
     func highPower20V() {
         let rdo: UInt32 = (4 << 28) | (450 << 10) | 500
-        let position = Int((rdo >> 28) & 0x7)
+        let position = PDContract.objectPosition(of: rdo)
         let operating = Int((rdo >> 10) & 0x3FF) * 10
         let max = Int(rdo & 0x3FF) * 10
         #expect(position == 4)
@@ -61,7 +62,7 @@ struct RDODecodingTests {
     @Test("Zero RDO produces all zeros")
     func zeroRDO() {
         let rdo: UInt32 = 0
-        let position = Int((rdo >> 28) & 0x7)
+        let position = PDContract.objectPosition(of: rdo)
         let operating = Int((rdo >> 10) & 0x3FF) * 10
         let max = Int(rdo & 0x3FF) * 10
         #expect(position == 0)
@@ -72,7 +73,7 @@ struct RDODecodingTests {
     @Test("Max values: PDO position 7, both currents at 1023 (10.23A)")
     func maxValues() {
         let rdo: UInt32 = (7 << 28) | (0x3FF << 10) | 0x3FF
-        let position = Int((rdo >> 28) & 0x7)
+        let position = PDContract.objectPosition(of: rdo)
         let operating = Int((rdo >> 10) & 0x3FF) * 10
         let max = Int(rdo & 0x3FF) * 10
         #expect(position == 7)
@@ -88,7 +89,7 @@ struct RDODecodingTests {
         // Operating power 160 (160 * 250 mW = 40 000 mW = 40 W) at bits 19:10
         // Max power 240 (240 * 250 mW = 60 000 mW = 60 W) at bits 9:0
         let rdo: UInt32 = (2 << 28) | (160 << 10) | 240
-        let position = Int((rdo >> 28) & 0x7)
+        let position = PDContract.objectPosition(of: rdo)
         let operatingPowerMW = Int((rdo >> 10) & 0x3FF) * 250
         let maxPowerMW = Int(rdo & 0x3FF) * 250
         #expect(position == 2)
@@ -117,7 +118,7 @@ struct RDODecodingTests {
         // Output voltage 750 (750 * 20 mV = 15 000 mV = 15 V) at bits 19:9
         // Operating current 60 (60 * 50 mA = 3000 mA = 3 A) at bits 6:0
         let rdo: UInt32 = (6 << 28) | (750 << 9) | 60
-        let position = Int((rdo >> 28) & 0x7)
+        let position = PDContract.objectPosition(of: rdo)
         let outputVoltageMV = Int((rdo >> 9) & 0x7FF) * 20
         let operatingCurrentMA = Int(rdo & 0x7F) * 50
         #expect(position == 6)
@@ -145,12 +146,28 @@ struct RDODecodingTests {
     @Test("PPS APDO RDO: real corpus value decodes to a valid PPS point")
     func ppsRDORealCorpusValue() {
         let rdo: UInt32 = 0x518759d6
-        let position = Int((rdo >> 28) & 0x7)
+        let position = PDContract.objectPosition(of: rdo)
         let outputVoltageMV = Int((rdo >> 9) & 0x7FF) * 20
         let operatingCurrentMA = Int(rdo & 0x7F) * 50
         #expect(position == 5)
         #expect(outputVoltageMV == 18_800)
         #expect(operatingCurrentMA == 4_300)
         #expect((3_000...21_000).contains(outputVoltageMV), "Output voltage must be a valid PPS voltage")
+    }
+
+    // Real value pulled from the customer-probe corpus
+    // (machine m5max_macos26.5.2_f, PortControllerInfo entry 3, MaxPower
+    // 139720): an Apple 140 W brick's live EPR contract,
+    // PortControllerActiveContractRdo = 0x81c759d6. Bit 31 is set, so the
+    // old 3-bit read returned position 0 ("no active contract") and power
+    // synthesis found no winning option. The 4-bit read gives position 8,
+    // which lands on the Fixed 28 V / 4.99 A slot whose 139.72 W matches
+    // MaxPower exactly.
+    @Test("EPR RDO: real corpus 140 W contract selects object position 8")
+    func eprObjectPositionRealCorpusValue() {
+        let rdo: UInt32 = 0x81c759d6
+        let position = PDContract.objectPosition(of: rdo)
+        #expect(position == 8, "EPR object position is 4 bits wide (31:28), not 3")
+        #expect(position != 0, "A 3-bit read reports no active contract for this real EPR contract")
     }
 }

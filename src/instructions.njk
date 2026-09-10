@@ -166,6 +166,7 @@ extraHead: |
       .install-grid { grid-template-columns: 1fr; }
       .doc-card { padding: 24px 22px; }
     }
+  .plain-detail{margin:12px 0 18px}.plain-detail summary{cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:3px}.plain-detail summary:focus-visible{outline:2px solid currentColor;outline-offset:4px}.plain-detail p{margin-top:10px}
   </style>
 ---
 <ul class="toc-groups">
@@ -261,7 +262,7 @@ extraHead: |
 </section>
 
 <section class="doc-card">
-<h2 id="what-it-shows">What it shows</h2>
+<h2 id="what-it-shows">What it shows</h2><p><a href="/inside-a-cable">Look inside a USB-C cable with our interactive diagram</a> for a visual introduction to charging wires, data wires and the identity chip.</p>
 <p>
   Each port card has a <strong>headline</strong> at the top. This is the quick answer to "what's plugged in here and is it working well?" Here's what each headline means:
 </p>
@@ -355,7 +356,7 @@ extraHead: |
 <div class="docs-faq">
   <h3>It says "Basic cable" with no details</h3>
   <p>
-    This is normal for most everyday USB-C cables. Only higher-rated cables (Thunderbolt, USB4, or cables rated for 100W+) are required to have the chip that reports detailed info. Your cable still works fine, there's just nothing extra to report.
+    This is normal for most everyday USB-C cables. Some basic USB 2.0 cables have no identity chip. Full-featured cables and cables carrying more than 3 A require one, but your Mac may not have read it yet. Missing detail alone does not tell you whether the cable is working correctly.
   </p>
 </div>
 </section>
@@ -367,12 +368,12 @@ extraHead: |
 </p>
 <ul>
   <li><strong>"Charging well at 96W"</strong> - the cable, charger, and Mac are all matched. You're getting the best charge rate this setup can deliver.</li>
-  <li><strong>"Cable is limiting charging speed"</strong> - the cable can't carry the full power your charger offers. For example, a lower-rated cable on a 100W charger will cap you at 60W. Swapping the cable fixes this.</li>
+  <li><strong>"Cable is limiting charging speed"</strong> - the cable can't carry the full power your charger offers. For example, a lower-rated cable on a 100W charger will cap you at 60W. A suitably rated cable can remove that limit, if the Mac supports the higher power.</li>
   <li><strong>"Charging at 30W (charger can do up to 96W)"</strong> - the Mac is choosing to draw less. This is normal when the battery is nearly full, the Mac is asleep, or macOS is managing battery health.</li>
-  <li><strong>"Battery full, not charging"</strong> - the Mac is plugged in but the battery is at 100%, so macOS has stopped drawing power to reduce wear. This is by design.</li>
+  <li><strong>"Battery full, not charging"</strong> - the Mac is plugged in but the battery is at 100%, so macOS has stopped charging the battery; the Mac may still use power from the charger. This is by design.</li>
 </ul>
 <p>
-  Below the charging line, you'll see the charger's power levels: every wattage the charger can supply (e.g. 5V, 9V, 15V, 20V), with the active one highlighted. This is useful for confirming whether a charger actually supports what it says on the box.
+  Below the charging line, you'll see the charger's power levels: the voltage and current options the charger offers (for example, 5 V, 9 V, 15 V or 20 V at specified current levels), with the active one highlighted. This is useful for confirming whether a charger actually supports what it says on the box.
 </p>
 </section>
 
@@ -381,15 +382,7 @@ extraHead: |
 <p>
   WhatCable checks a cable's reported data against the official USB specification. When something looks unusual, an orange banner appears with the details. This is not proof that a cable is fake or dangerous. It means something in the reported data doesn't match expectations.
 </p>
-<p>Things that trigger a warning:</p>
-<ul>
-  <li>The cable's manufacturer ID isn't on the official USB industry list. This is common on budget cables.</li>
-  <li>The speed or power ratings fall outside the ranges allowed by the spec.</li>
-  <li>Certain data fields are blank or set to placeholder values.</li>
-</ul>
-<p>
-  If a cable triggers a warning, it might still work perfectly well. Some budget cables use generic chips with placeholder data. The warning is there so you can make an informed decision, not to alarm you.
-</p>
+<p>Read missing information and contradictory information differently:</p><ul><li><strong>Missing manufacturer or certificate:</strong> a gap in the report does not by itself mean the cable is faulty or fake.</li><li><strong>Invalid or contradictory values:</strong> speed, power or other fields that cannot be interpreted consistently deserve closer investigation.</li><li><strong>A speed different from the label:</strong> the port or device may set a lower limit. A compatible passive cable can also work faster with newer signalling than its older identity suggests.</li></ul><details class="plain-detail"><summary>Technical detail</summary><p>VID identifies a vendor, PID identifies a product, and XID is the certification identifier in the identity response. WhatCable considers the fields together. An informational note is different from a warning about malformed or contradictory data.</p></details>
 </section>
 
 <section class="doc-card">
@@ -477,9 +470,8 @@ extraHead: |
 <p class="pro-group-label" id="pro-diagnostics">Diagnostics</p>
 
 <h3>Negotiation Diagnostics <span class="pro-badge">Pro</span></h3>
-<p>
-  The free app gives a one-line summary of what's limiting a connection. Pro shows the full picture: what the Mac port, the cable, and the device each support, side by side with what was actually agreed, with the weak link highlighted. It also cross-checks the cable against the Thunderbolt controller to catch cables that under-report their capabilities. Each screen can pop out into its own window so you can keep it open while you swap cables.
-</p>
+<p>Find out which part of the connection is holding it back: your Mac’s port, the cable or the connected device.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>“Negotiated” means the speed or power the connected devices have agreed to use. WhatCable compares this with the reported capabilities of each part, and identifies a limit when the available evidence supports it.</p></details>
 
 <figure>
   <img src="/screenshot-negotiation-diagnostics.webp" alt="Negotiation Diagnostics screen showing per-port power and data-speed breakdowns with the bottleneck highlighted" loading="lazy" width="480">
@@ -487,9 +479,8 @@ extraHead: |
 </figure>
 
 <h3>Display Diagnostics <span class="pro-badge">Pro</span></h3>
-<p>
-  The same weak-link idea, applied to video. WhatCable reads your monitor's capability and its live on-screen mode straight from macOS and compares them against what the DisplayPort link is actually carrying, so a screen stuck below its top resolution or refresh has an explanation you can act on. It shows the monitor's native and top modes, what the link is delivering, the lanes in use against those available, and the link rate. Because it reads the live mode, the resolution is right even on 5K and 6K displays, and when a screen reaches its top mode using compression (DSC) it confirms you're at full quality instead of guessing. If a USB-C to HDMI or DisplayPort adapter is in the chain, it names what the adapter reports itself as, which is often the real cap. It only says "not the cable" when the evidence shows it (a Thunderbolt tunnel, or every lane already in use), and otherwise points at the likely cause without crying wolf, since a shortfall can also just be the mode you have selected.
-</p>
+<p>Find out why your screen is not as sharp or smooth as expected. Compare its picture settings with what the screen and its connection can support.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>Resolution describes picture detail; refresh rate is how often the picture updates. Display Diagnostics compares these with the monitor’s reported modes and the DisplayPort connection’s lanes and rate. It accounts for Display Stream Compression (DSC), which fits the picture into less bandwidth, and adapter information when available. A lower link rate can be appropriate for the selected picture setting.</p></details>
 
 <figure>
   <img src="/screenshot-display-diagnostics.webp" alt="Display Diagnostics screen showing a monitor's top mode against what the DisplayPort link is carrying, with the adapter named and the shortfall highlighted" loading="lazy" width="480">
@@ -497,9 +488,8 @@ extraHead: |
 </figure>
 
 <h3>DP Alt Mode details <span class="pro-badge">Pro</span></h3>
-<p>
-  When a monitor is connected over USB-C, see the lane count, link speed, and full display info (model, manufacturer, year). Shows whether the display signal is tunneled through Thunderbolt or running natively.
-</p>
+<p>See how the picture travels from your Mac to the screen, along with the display information your Mac can read.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>DisplayPort Alt Mode carries DisplayPort video through USB-C. The details include lane count (the signal paths in use), link rate (their speed), and whether video travels directly or through a Thunderbolt tunnel. EDID is the monitor’s identity and capabilities data, which can include its model, manufacturer and year.</p></details>
 
 <figure>
   <img src="/screenshot-dp-altmode.webp" alt="Pro diagnostics screen for a USB-C port driving a display, showing the device identity and a pin diagram with the DP four-lane routing" loading="lazy">
@@ -533,19 +523,16 @@ extraHead: |
 <p class="pro-group-label" id="pro-power">Power &amp; charging</p>
 
 <h3>Live power metering <span class="pro-badge">Pro</span></h3>
-<p>
-  Real-time watts, amps, and voltage per port, updated every two seconds. See exactly what your cable is delivering right now, not just what was agreed on paper.
-</p>
+<p>See how much power your Mac reports through each port, with readings updated every two seconds.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>Watts (W) measure power, amps (A) measure current and volts (V) measure voltage. Where live per-port readings are unavailable, WhatCable shows the agreed maximum instead. That limit is not the same as the power being used at that moment.</p></details>
 
 <h3>PD contract inspector <span class="pro-badge">Pro</span></h3>
-<p>
-  See the full power delivery contract your Mac and charger agreed on: the active voltage and current, all available power profiles decoded, and any mismatches flagged.
-</p>
+<p>See which charging options your charger offers and which one your Mac is using. This helps explain why a powerful charger may be charging at a lower rate.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>USB Power Delivery (PD) is how compatible devices agree charging power. The agreement is called a power contract. Power Data Objects (PDOs) describe the available charging profiles. The inspector shows voltage, current and available profiles, and flags capability mismatches.</p></details>
 
 <h3>Power monitor window <span class="pro-badge">Pro</span></h3>
-<p>
-  A dedicated window with live charts showing watts and voltage over time. Pin it while you test a charger or cable under load and watch the numbers in real time.
-</p>
+<p>Watch a chart of power and voltage over time while you try a charger or cable. Keep the window open beside your work.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>The chart shows the available per-port readings. Where the Mac does not provide live power draw, the displayed negotiated maximum is the agreed limit, not measured consumption.</p></details>
 
 <figure>
   <img src="/screenshot-power-monitor.webp" alt="Power Monitor window showing USB-C port 1 drawing 5.9W on a live chart of watts, volts, and amps, with the System Power Input panel below" loading="lazy">
@@ -553,23 +540,20 @@ extraHead: |
 </figure>
 
 <h3>PD event trace <span class="pro-badge">Pro</span></h3>
-<p>
-  A timeline of what happened when a cable was plugged in: the negotiation steps, any resets, and the final agreement. Useful for diagnosing flaky connections.
-</p>
+<p>Follow what happened when you connected a cable: the charging setup, any interruptions and the final agreement.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>The USB Power Delivery event trace shows the protocol messages and events reported for a port, including attachment, contract negotiation and hard resets that restart power negotiation.</p></details>
 
 <h3>Cable resistance estimation <span class="pro-badge">Pro</span></h3>
-<p>
-  Estimates the electrical resistance of your cable in milliohms using real power samples. Useful for spotting worn or marginal cables before they cause problems.
-</p>
+<p>Estimate how much the cable resists the flow of electricity. This can help you investigate power loss while testing a cable.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>The estimate uses multiple power samples and is shown in milliohms (mΩ), a unit of electrical resistance. It is an estimate, not a direct measurement or proof that a cable is worn.</p></details>
 </section>
 
 <section class="doc-card">
 <p class="pro-group-label" id="pro-health">Cable &amp; port health</p>
 
 <h3>Port health counters <span class="pro-badge">Pro</span></h3>
-<p>
-  Lifetime stats per port: how many times things have been plugged and unplugged, resets, electrical faults, and other wear indicators. See how a port has been treated over its lifetime.
-</p>
+<p>Look for repeated disconnects, restarts and electrical errors reported by a port. Changes over time can help you investigate an unreliable connection.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>Counters can include attach/detach events, hard resets, power-role swaps and internal communication or switching errors. A power-role swap changes which device supplies power. These are reported events, not a complete lifetime wear record or proof that the cable caused a fault.</p></details>
 
 <figure>
   <img src="/screenshot-diagnostics.webp" alt="Pro diagnostics screen showing port health counters, liquid detection status, and the negotiated power contract for one port" loading="lazy">
@@ -577,19 +561,16 @@ extraHead: |
 </figure>
 
 <h3>Liquid detection <span class="pro-badge">Pro</span></h3>
-<p>
-  Shows whether the moisture sensor inside a USB-C port has been triggered. Useful for diagnosing intermittent charging faults, especially after a spill.
-</p>
+<p>Check the liquid-detection state reported for a USB-C port when investigating an intermittent connection.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>WhatCable displays the available liquid-detection controller state, also called LDCM. This is a report from the Mac’s hardware, not a physical inspection of the port.</p></details>
 
 <h3>CC advertisement level <span class="pro-badge">Pro</span></h3>
-<p>
-  Shows what current level the port is advertising to connected devices. A deep diagnostic for power delivery debugging.
-</p>
+<p>See how much current the port tells a connected device it can supply.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>CC is the Configuration Channel, a USB-C control connection. Its advertised current level is a setup signal; it is separate from a later USB Power Delivery charging contract.</p></details>
 
 <h3>Raw cable identity <span class="pro-badge">Pro</span></h3>
-<p>
-  The full data that the cable's chip reported, beyond the summary the free app shows. For developers and hardware engineers who need the exact fields.
-</p>
+<p>Read the exact information reported by the cable’s identity chip, alongside WhatCable’s explanation.</p>
+<details class="plain-detail"><summary>Technical detail</summary><p>The chip is called an e-marker. Its structured identity fields include Vendor Defined Objects (VDOs). These are useful when investigating a report or sharing diagnostic details with a developer.</p></details>
 </section>
 
 <section class="doc-card">

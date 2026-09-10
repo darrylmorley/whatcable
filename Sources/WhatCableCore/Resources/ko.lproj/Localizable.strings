@@ -607,3 +607,14 @@
 "Argument %@" = "인수 %@";
 "Arguments %@" = "인수 %@ (여러 개)";
 "Source ready (result unknown)" = "소스 준비됨 (결과 불명)";
+
+/* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
+"USB Type-A plug (deprecated)" = "USB Type-A 플러그(사용 중단됨)";
+"USB Type-B plug (deprecated)" = "USB Type-B 플러그(사용 중단됨)";
+"USB Type-C plug" = "USB Type-C 플러그";
+"Captive cable (built into the device)" = "일체형 케이블(기기에 내장됨)";
+
+/* Cable type source: the port controller's own ActiveCable reading, and the
+   e-marker silicon vendor hint. */
+"E-marker reports passive, but the port controller detects an active cable" = "E-marker는 패시브로 보고하지만 포트 컨트롤러는 액티브 케이블을 감지했습니다";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker에 칩 제조사의 기본 벤더 ID(%@)가 들어 있습니다. 케이블 브랜드는 기록되어 있지 않습니다";

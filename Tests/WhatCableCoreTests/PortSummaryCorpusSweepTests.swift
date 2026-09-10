@@ -36,6 +36,13 @@ import Testing
 /// tree from probe 29 is a separate, much larger parser this file doesn't
 /// attempt). Both default to empty, which only weakens the Thunderbolt-fabric
 /// and device-listing bullets, not the core status/headline logic under test.
+///
+/// The sweep also feeds the port controller's own `ActiveCable` flag through
+/// from probe 01, so `CableClassification.resolve` is exercised against real
+/// hardware rather than a hardcoded nil. It asserts the exact set of corpus
+/// ports the flag promotes from passive to active, that no port is ever
+/// demoted the other way, that a VCONN-Powered Device is never promoted, and
+/// that every other classifiable port keeps the e-marker's own verdict.
 @Suite("PortSummary: corpus sweep")
 struct PortSummaryCorpusSweepTests {
 
@@ -83,6 +90,9 @@ struct PortSummaryCorpusSweepTests {
         let transportsSupported: [String]
         let transportsActive: [String]
         let connectionActive: Bool
+        /// The port controller's own `ActiveCable` verdict, nil when this
+        /// probe never published the key for the port.
+        let activeCable: Bool?
 
         var asAppleHPMInterface: AppleHPMInterface {
             AppleHPMInterface(
@@ -93,7 +103,7 @@ struct PortSummaryCorpusSweepTests {
                 portTypeDescription: portTypeDescription,
                 portNumber: portNumber,
                 connectionActive: connectionActive,
-                activeCable: nil,
+                activeCable: activeCable,
                 opticalCable: nil,
                 usbActive: nil,
                 superSpeedActive: nil,
@@ -141,6 +151,7 @@ struct PortSummaryCorpusSweepTests {
             let supp = parseList(body, key: "TransportsSupported")
             let act = parseList(body, key: "TransportsActive")
             let conn = body.contains("ConnectionActive = true")
+            let active = parseBool(body, key: "ActiveCable")
 
             ports.append(ProbePort(
                 serviceName: serviceName,
@@ -148,7 +159,8 @@ struct PortSummaryCorpusSweepTests {
                 portNumber: portNumber,
                 transportsSupported: supp,
                 transportsActive: act,
-                connectionActive: conn
+                connectionActive: conn,
+                activeCable: active
             ))
         }
         return ports
@@ -173,6 +185,21 @@ struct PortSummaryCorpusSweepTests {
                 let after = line.dropFirst(prefix.count)
                 let digits = after.prefix { $0.isNumber }
                 return Int(digits)
+            }
+        }
+        return nil
+    }
+
+    /// nil when the key is absent, so a probe that never published it stays
+    /// unknown rather than becoming false.
+    private static func parseBool(_ block: String, key: String) -> Bool? {
+        let prefix = "    \(key) = "
+        for line in block.split(separator: "\n", omittingEmptySubsequences: false) {
+            if line.hasPrefix(prefix) {
+                let after = line.dropFirst(prefix.count)
+                if after.hasPrefix("true") { return true }
+                if after.hasPrefix("false") { return false }
+                return nil
             }
         }
         return nil
@@ -388,6 +415,85 @@ struct PortSummaryCorpusSweepTests {
         return result
     }
 
+    // MARK: - Cable classification helpers
+    //
+    // Mirrors `PortSummary.init`'s own `cableEmarker` selection exactly:
+    // prefer an SOP'/SOP'' identity that carries VDOs, fall back to one that
+    // responded with none. `CableClassification.resolve` is then handed that
+    // identity together with the port it belongs to, as every production
+    // caller does.
+
+    private static func cableEmarker(_ c: Case) -> USBPDSOP? {
+        c.identities.first(where: {
+            ($0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime) && !$0.vdos.isEmpty
+        }) ?? c.identities.first(where: {
+            $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime
+        })
+    }
+
+    private static func resolution(_ c: Case) -> CableClassification.Resolution? {
+        cableEmarker(c).flatMap { CableClassification.resolve(identity: $0, port: c.port) }
+    }
+
+    // MARK: - Expected classification outcomes
+    //
+    // Measured by this sweep against the corpus snapshot these assertions
+    // were written against: of 1776 connected USB-C port cases, 764 carry a
+    // cable e-marker with VDO[3] and so classify at all. Of those, 12 are
+    // promoted to active by the port controller's `ActiveCable` flag, 1 by
+    // the active-cable layout contradiction, and the remaining 751 are the
+    // e-marker's own word.
+    //
+    // Held as exact sets rather than counts on purpose: a count alone passes
+    // when one port drops out and a different one appears.
+
+    /// "folder port N", one entry per case.
+    private static func key(_ c: Case) -> String {
+        "\(c.folder) port \(c.port.portNumber ?? -1)"
+    }
+
+    private static let expectedPortControllerPromotions: Set<String> = [
+        "m1_macos15.7.7_c port 2",      // VID 0x20C2, VDO[3] 0x45082043
+        "m1_macos26.6.2_c port 1",      // VID 0x0522, VDO[3] 0x110A2644
+        "m1_macos26.6.2_c port 2",      // VID 0x20C2, VDO[3] 0x45082043
+        "m2max_macos26.3.1_c port 2",   // VID 0x2B1D, VDO[3] 0x3208485A
+        "m2max_macos26.6.1 port 3",     // VID 0x2B1D, VDO[3] 0x3208485A
+        "m2max_macos27.0_b port 2",     // VID 0x2B1D, VDO[3] 0x3208485A
+        "m2ultra_macos27.0_b port 3",   // VID 0x2B1D, VDO[3] 0x3208485A
+        "m3_macos26.5.2_c port 1",      // VID 0x2B1D, VDO[3] 0x32084842
+        "m3_macos26.5.2_e port 2",      // VID 0x20C2, VDO[3] 0x350A4E42
+        "m4_macos26.5.2_s port 2",      // VID 0x2B1D, VDO[3] 0x32084842
+        "m4_macos26.6.2_f port 4",      // VID 0x2B1D, VDO[3] 0x32084842
+        "m5pro_macos26.5.1_c port 3"    // VID 0x2B1D, VDO[3] 0x32084842
+    ]
+
+    /// VID 0x0138, VDO[3] 0x0008404A. The controller flag is false here, so
+    /// this case is the proof that the contradiction path still runs after
+    /// the port controller was given precedence over it.
+    private static let expectedLayoutContradiction = "m1_macos26.2 port 1"
+
+    /// VCONN-Powered Devices (ID Header product type 6) sitting on a port
+    /// whose controller reports `ActiveCable = true`. They must not be
+    /// promoted: the e-marker reported a VPD, not a passive cable, so
+    /// "e-marker reports passive" would be false of them.
+    private static let expectedVPDCases: Set<String> = [
+        "m3_macos26.5.2_f port 1",      // VID 0x05AC, VDO[3] 0x11000000
+        "m4pro_macos27.0_d port 3"      // VID 0x05AC, VDO[3] 0x11000000
+    ]
+
+    // MARK: - Classifiable-case floor
+    //
+    // Measured 764 by this sweep against the corpus snapshot it was written
+    // against: cases whose cable e-marker carries VDO[3], so
+    // `CableClassification.resolve` returns non-nil. Floor = 85% of 764
+    // rounded down (649.4 -> 649), taken to 650, matching the `coverageFloor`
+    // convention above.
+    //
+    // Every classification assertion below filters this same set. Without a
+    // floor on it, a broken `loadPorts` or a broken identity join would empty
+    // the set and turn all of them into vacuous passes.
+    private static let classifiableFloor = 650
+
     // MARK: - Coverage floor
     //
     // Measured directly from this Swift parser against the corpus snapshot at
@@ -526,6 +632,144 @@ struct PortSummaryCorpusSweepTests {
             "only \(reachedTheBranch) of \(examined) ports reached the FedDetails branch; expected 300+, so this sweep is no longer testing the guard")
         #expect(violations.isEmpty,
             "\(violations.count) real port(s) claimed power while on battery: \(violations.prefix(5))")
+    }
+
+    @Test("Coverage: enough corpus cases classify for the cable-type assertions to mean anything")
+    func classifiableCaseFloorHolds() {
+        let classifiable = Self.cases.filter { Self.resolution($0) != nil }.count
+        #expect(classifiable >= Self.classifiableFloor,
+            "Only \(classifiable) of \(Self.cases.count) cases produced a cable classification; expected at least \(Self.classifiableFloor) (85% of the 764 counted when these assertions were written). Below this floor every cable-type assertion in this file is passing over an empty or near-empty set, so treat it as a parsing or join regression first.")
+    }
+
+    @Test("Exactly these corpus ports are promoted to active by the port controller")
+    func portControllerPromotionsAreExactlySet() {
+        let found = Set(Self.cases.filter { Self.resolution($0)?.source == .portController }.map(Self.key))
+        let missing = Self.expectedPortControllerPromotions.subtracting(found).sorted()
+        let unexpected = found.subtracting(Self.expectedPortControllerPromotions).sorted()
+        #expect(missing.isEmpty && unexpected.isEmpty,
+            """
+            Port-controller promotions do not match the recorded set.
+            Missing (recorded, not found now): \(missing)
+            Unexpected (found now, not recorded): \(unexpected)
+            The most likely cause is a corpus ingest since these figures were derived, in which case the figures need re-deriving rather than the code needing a fix. Check the corpus for new folders first, and only then suspect the classifier.
+            """)
+    }
+
+    @Test("Invariant: a cable that self-reports active is never demoted to passive")
+    func activeSelfReportIsNeverDemoted() {
+        var demotions: [String] = []
+        for c in Self.cases {
+            guard let em = Self.cableEmarker(c), let cv = em.cableVDO, cv.cableType == .active else { continue }
+            if Self.resolution(c)?.type == .passive { demotions.append(Self.key(c)) }
+        }
+        #expect(demotions.isEmpty,
+            "\(demotions.count) case(s) had an e-marker self-reporting active and were resolved passive: \(demotions.prefix(5)). The whole design rests on a self-report of active never being demoted: a port disagreeing in that direction is the port being wrong, not the cable.")
+    }
+
+    @Test("Every other corpus port keeps the e-marker's own verdict")
+    func unpromotedPortsKeepTheEmarkerVerdict() {
+        var examined = 0
+        var violations: [String] = []
+        for c in Self.cases {
+            let key = Self.key(c)
+            guard !Self.expectedPortControllerPromotions.contains(key), key != Self.expectedLayoutContradiction else { continue }
+            guard let em = Self.cableEmarker(c), let cv = em.cableVDO, let r = Self.resolution(c) else { continue }
+            examined += 1
+            if r.type != cv.cableType || r.source != .emarker {
+                violations.append("\(key): resolved \(r.type)/\(r.source), e-marker said \(cv.cableType)")
+            }
+        }
+        #expect(examined >= Self.classifiableFloor - Self.expectedPortControllerPromotions.count - 1,
+            "only \(examined) unpromoted classifiable cases; the set this assertion covers has shrunk, so it is no longer testing what it claims")
+        #expect(violations.isEmpty,
+            "\(violations.count) case(s) outside the 12 port-controller promotions and the 1 layout contradiction did not simply keep the e-marker's own verdict: \(violations.prefix(5))")
+    }
+
+    @Test("The layout-contradiction branch still fires on the one corpus port that carries it")
+    func layoutContradictionStillFires() {
+        let parts = Self.expectedLayoutContradiction.split(separator: " ")
+        let folder = String(parts[0])
+        let portNumber = Int(parts[2])
+        guard let c = Self.cases.first(where: { $0.folder == folder && $0.port.portNumber == portNumber }) else {
+            Issue.record("\(Self.expectedLayoutContradiction) is no longer a connected USB-C case in the corpus; the contradiction path is untested by this sweep")
+            return
+        }
+        let r = Self.resolution(c)
+        #expect(r?.type == .active && r?.source == .layoutContradiction,
+            "\(Self.expectedLayoutContradiction) resolved \(String(describing: r)); expected active/layoutContradiction. Its port controller reports ActiveCable false, so this is the case that proves giving the port controller precedence did not swallow the contradiction path.")
+    }
+
+    @Test("Captive plugs: the corpus carries enough of them, and one renders its line")
+    func captivePlugsAreDecodedAndRendered() {
+        // Measured 37 across 35 folders. The floor is deliberately below that:
+        // a captive plug is a property of whatever was plugged in on the day,
+        // so the exact number moves with the corpus.
+        var captive: [String] = []
+        for c in Self.cases {
+            guard let cv = Self.cableEmarker(c)?.cableVDO else { continue }
+            if cv.plugType == .captive { captive.append(Self.key(c)) }
+        }
+        #expect(captive.count >= 30,
+            "only \(captive.count) corpus cases decoded a captive plug; expected at least 30 (37 measured when this was written)")
+
+        // m1_macos26.5.1_d port 1: VID 0x413C, VDO[3] 0x110C2042.
+        guard let named = Self.cases.first(where: { $0.folder == "m1_macos26.5.1_d" && $0.port.portNumber == 1 }) else {
+            Issue.record("m1_macos26.5.1_d port 1 is no longer a connected USB-C case in the corpus; the captive rendering is untested by this sweep")
+            return
+        }
+        let summary = PortSummary(port: named.port, sources: named.sources, identities: named.identities, cioCapability: named.cio)
+        let lines = summary.group(.emarker)?.lines ?? []
+        #expect(lines.contains(PDVDO.PlugType.captive.label),
+            "m1_macos26.5.1_d port 1 decodes a captive plug but its rendered e-marker group has no captive line: \(lines)")
+    }
+
+    @Test("E-marker silicon: the corpus carries enough of it, and one renders its line")
+    func chipVendorIsRecognisedAndRendered() {
+        // Measured 72 across 65 folders, all five silicon makers between them.
+        var chipVendor: [String] = []
+        for c in Self.cases {
+            guard let em = Self.cableEmarker(c), em.cableVDO != nil else { continue }
+            if EmarkerSilicon.shortName(for: em.vendorID) != nil { chipVendor.append(Self.key(c)) }
+        }
+        #expect(chipVendor.count >= 60,
+            "only \(chipVendor.count) corpus cases carried an e-marker silicon vendor ID; expected at least 60 (72 measured when this was written)")
+
+        // m1_macos26.5.2_i port 1: VID 0x315C, so the short name is CPS.
+        guard let named = Self.cases.first(where: { $0.folder == "m1_macos26.5.2_i" && $0.port.portNumber == 1 }) else {
+            Issue.record("m1_macos26.5.2_i port 1 is no longer a connected USB-C case in the corpus; the chip-vendor rendering is untested by this sweep")
+            return
+        }
+        let summary = PortSummary(port: named.port, sources: named.sources, identities: named.identities, cioCapability: named.cio)
+        let lines = summary.group(.database)?.lines ?? []
+        #expect(lines.contains(where: { $0.contains("chip maker's default vendor ID (CPS)") }),
+            "m1_macos26.5.2_i port 1 carries VID 0x315C but its rendered database group has no chip-vendor line: \(lines)")
+    }
+
+    @Test("A VCONN-Powered Device is never promoted, whatever the port controller says")
+    func vpdCasesAreNotPromoted() {
+        var examined = 0
+        for key in Self.expectedVPDCases.sorted() {
+            let parts = key.split(separator: " ")
+            let folder = String(parts[0])
+            let portNumber = Int(parts[2])
+            guard let c = Self.cases.first(where: { $0.folder == folder && $0.port.portNumber == portNumber }) else {
+                Issue.record("\(key) is no longer a connected USB-C case in the corpus; the VPD gate is untested by this sweep")
+                continue
+            }
+            examined += 1
+            #expect(c.port.activeCable == true,
+                "\(key) no longer has ActiveCable true on its port, so it no longer tests the gate: without the flag, nothing would promote it anyway")
+            let r = Self.resolution(c)
+            #expect(r?.type == .passive && r?.source == .emarker,
+                "\(key) carries a VCONN-Powered Device, not a passive cable, so it must keep the e-marker's own verdict; resolved \(String(describing: r))")
+
+            let summary = PortSummary(port: c.port, sources: c.sources, identities: c.identities, cioCapability: c.cio)
+            let lines = summary.group(.emarker)?.lines ?? []
+            #expect(!lines.contains(where: { $0.contains("the port controller detects an active cable") }),
+                "\(key) rendered the port-controller line, which tells the user the e-marker reported passive. It reported a VPD: \(lines)")
+        }
+        #expect(examined == Self.expectedVPDCases.count,
+            "expected \(Self.expectedVPDCases.count) VPD cases in the corpus, found \(examined)")
     }
 
     @Test("Invariant: an e-marker response always produces an e-marker group")

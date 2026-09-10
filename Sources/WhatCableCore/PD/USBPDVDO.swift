@@ -115,7 +115,13 @@ public enum PDVDO {
         case usb20 = 0
         case usb32Gen1 = 1   // 5 Gbps
         case usb32Gen2 = 2   // 10 Gbps
-        case usb4Gen3 = 3    // 20 Gbps (PD 3.0) / 40 Gbps (PD 3.1)
+        // 40 Gbps. The spec encoding is ambiguous (20 Gbps under PD 3.0,
+        // 40 Gbps under PD 3.1) and the SOP Specification Revision field
+        // only ever reads 2 or 3, so it cannot separate the two. The
+        // research corpus supports 40 Gbps but does not settle it: most
+        // joined readings are confounded by a host-side link cap, so the
+        // informative sample is small.
+        case usb4Gen3 = 3
         case usb4Gen4 = 4    // 80 Gbps
 
         public var label: String {
@@ -186,6 +192,37 @@ public enum PDVDO {
         }
     }
 
+    /// Plug type carried by Passive and Active Cable VDO bits 19..18
+    /// (Table 6.42 / 6.43). Type-A and Type-B are deprecated by the spec and
+    /// are near-absent in practice: across 764 SOP' readings carrying VDO[3]
+    /// the corpus holds 719 Type-C, 37 captive, 8 Type-A and no Type-B.
+    public enum PlugType: Int {
+        case typeA = 0
+        case typeB = 1
+        case typeC = 2
+        case captive = 3
+
+        public var label: String {
+            switch self {
+            case .typeA: return String(localized: "USB Type-A plug (deprecated)", bundle: _coreLocalizedBundle)
+            case .typeB: return String(localized: "USB Type-B plug (deprecated)", bundle: _coreLocalizedBundle)
+            case .typeC: return String(localized: "USB Type-C plug", bundle: _coreLocalizedBundle)
+            case .captive: return String(localized: "Captive cable (built into the device)", bundle: _coreLocalizedBundle)
+            }
+        }
+
+        /// Stable, non-localized value for reports and generated data.
+        /// Keep `label` for localized UI presentation.
+        public var reportLabel: String {
+            switch self {
+            case .typeA: return "Type-A"
+            case .typeB: return "Type-B"
+            case .typeC: return "Type-C"
+            case .captive: return "captive"
+            }
+        }
+    }
+
     public enum CableType: Int {
         case passive = 0
         case active = 1
@@ -226,6 +263,9 @@ public enum PDVDO {
         /// would report 250W when USB-PD tops out at 240W.
         public let maxWatts: Int
         public let cableType: CableType
+        /// Plug type from bits 19..18. The field is two bits wide, so every
+        /// encoding is defined and no decode warning is possible.
+        public let plugType: PlugType
         public let vbusThroughCable: Bool
         /// Encoded "Maximum VBUS Voltage" field (bits 10..9).
         /// Per USB PD R3.2 Table 6.42: 00=20V, 01..10=Deprecated (treat as 20V), 11=50V.
@@ -315,6 +355,7 @@ public enum PDVDO {
         // be zero. Extracting it here unconditionally lets callers detect when
         // a passive-reporting cable uses a bit that only exists in the active layout.
         let sopDoubleControllerPresent = (vdo >> 3) & 1 == 1
+        let plugType = PlugType(rawValue: Int((vdo >> 18) & 0b11)) ?? .typeC
         var warnings: [DecodeWarning] = []
         if decodedSpeed == nil {
             warnings.append(.reservedSpeedEncoding(speedBits))
@@ -407,6 +448,7 @@ public enum PDVDO {
             current: current,
             maxWatts: watts,
             cableType: cableType,
+            plugType: plugType,
             vbusThroughCable: vbusThrough,
             maxVoltageEncoded: maxV,
             cableLatencyEncoded: latencyBits,

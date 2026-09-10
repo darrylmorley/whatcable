@@ -137,7 +137,16 @@ struct PowerSourceSynthesisProbeSweepTests {
     /// `PortControllerInfo =` marker line, and each item's own properties sit
     /// 4 spaces deeper again. Detecting the marker's own indent and working
     /// relative to it handles both depths without hardcoding either.
-    private static func firstPortControllerEntries(text32: String) -> [ContractEntry] {
+    /// One parsed entry: the `ContractEntry` production consumes, plus the
+    /// raw `PortControllerPDst` beside it. Port state 5 is "explicit contract
+    /// in place", which is what makes an entry a LIVE contract, and it is not
+    /// part of `ContractEntry` because synthesis does not gate on it.
+    private struct ParsedEntry {
+        let entry: ContractEntry
+        let pdState: Int
+    }
+
+    private static func firstPortControllerEntries(text32: String) -> [ParsedEntry] {
         let lines = text32.components(separatedBy: "\n")
         guard let markerIdx = lines.firstIndex(where: { $0.contains("PortControllerInfo =") }) else { return [] }
         let markerIndent = lines[markerIdx].prefix { $0 == " " }.count
@@ -164,12 +173,13 @@ struct PowerSourceSynthesisProbeSweepTests {
         }
         guard !itemStarts.isEmpty else { return [] }
 
-        var entries: [ContractEntry] = []
+        var entries: [ParsedEntry] = []
         for (idx, start) in itemStarts.enumerated() {
             let end = idx + 1 < itemStarts.count ? itemStarts[idx + 1] : lines.count
             var maxPower = 0
             var activeRdo: UInt32 = 0
             var npdos = 0
+            var pdState = 0
             var rawPDOs: [UInt32] = []
             var j = start + 1
             while j < end {
@@ -188,6 +198,8 @@ struct PowerSourceSynthesisProbeSweepTests {
                         if let v = ProbeCorpus.matchInt(valStr) { activeRdo = UInt32(truncatingIfNeeded: v) }
                     case "PortControllerNPDOs":
                         npdos = ProbeCorpus.matchInt(valStr) ?? 0
+                    case "PortControllerPDst":
+                        pdState = ProbeCorpus.matchInt(valStr) ?? 0
                     case "PortControllerPortPDO":
                         var k = j + 1
                         while k < end {
@@ -208,8 +220,15 @@ struct PowerSourceSynthesisProbeSweepTests {
                 }
                 j += 1
             }
-            let trimmed = Array(rawPDOs.prefix(npdos > 0 ? npdos : rawPDOs.count))
-            entries.append(ContractEntry(index: idx, rawPDOs: trimmed, activeRdo: activeRdo, maxPowerMW: maxPower))
+            // Untrimmed on purpose. `PortControllerNPDOs` counts only the SPR
+            // offers, so cutting the array to it hides every PPS, AVS and EPR
+            // offer and leaves the RDO's object position 8 indexing past the
+            // end. `npdos` is parsed only so this comment can point at it.
+            _ = npdos
+            entries.append(ParsedEntry(
+                entry: ContractEntry(index: idx, rawPDOs: rawPDOs, activeRdo: activeRdo, maxPowerMW: maxPower),
+                pdState: pdState
+            ))
         }
         return entries
     }
@@ -346,7 +365,7 @@ struct PowerSourceSynthesisProbeSweepTests {
             machinesChecked += 1
 
             let realSources = Self.realPowerSources(text17: text17)
-            let entries = Self.firstPortControllerEntries(text32: text32)
+            let entries = Self.firstPortControllerEntries(text32: text32).map(\.entry)
             let probePorts = Self.loadPorts(folder: folder)
             let ports = probePorts.map { $0.asAppleHPMInterface }
             // Positional keys: the same HPM traversal order assumption
@@ -438,5 +457,64 @@ struct PowerSourceSynthesisProbeSweepTests {
         guard machinesChecked > 20 else { return }
         #expect(machinesSynthesized >= 5,
             "Expected at least 5 machines to synthesize (the known M1 Pro/Max/Ultra USB-C-charging cases); got \(machinesSynthesized). A count of 0 would mean this sweep isn't exercising the synthesis path at all.")
+    }
+    // MARK: - Live contracts: the winning option must be the negotiated one
+
+    /// For every corpus entry that is a LIVE contract (`PortControllerPDst`
+    /// 5, RDO valid bit set), the option the RDO names must be the wattage
+    /// the controller reports in `PortControllerMaxPower`. All 32 such
+    /// entries in the corpus select object position 8, which is the first EPR
+    /// slot, and every one of them sits past `PortControllerNPDOs`.
+    ///
+    /// This cannot go through `synthesizedSource`: gate 1 there returns nil
+    /// for any machine that already publishes a real
+    /// `IOPortFeaturePowerSource` node, and 31 of the 32 folders do. So the
+    /// test drives the option and winning-option path directly. No production
+    /// gate is weakened to make it pass.
+    @Test("Sweep: every live PD contract's winning option carries PortControllerMaxPower")
+    func liveContractsWinAtTheirReportedWattage() {
+        guard Self.hasBothProbes() else { return }
+
+        var foldersScanned = 0
+        var liveContracts = 0
+
+        for folder in Self.allFolders() {
+            guard let text32 = ProbeCorpus.loadText(folder: folder, probe: "32_smart_battery_full_keys") else { continue }
+            let parsed = Self.firstPortControllerEntries(text32: text32)
+            guard !parsed.isEmpty else { continue }
+            foldersScanned += 1
+
+            for item in parsed {
+                // Port state 5 plus the RDO's valid bit: an explicit contract
+                // is in place and the RDO is meaningful.
+                guard item.pdState == 5, item.entry.activeRdo & 0x8000_0000 != 0 else { continue }
+                liveContracts += 1
+
+                let positionalOptions = item.entry.rawPDOs
+                    .map(PDO.decode(rawValue:))
+                    .map(PowerSourceSynthesis.option(for:))
+                let sortedOptions = positionalOptions.compactMap { $0 }
+                    .sorted { $0.maxPowerMW > $1.maxPowerMW }
+                let winning = PowerSourceSynthesis.winningOption(
+                    entry: item.entry,
+                    positionalOptions: positionalOptions,
+                    sortedOptions: sortedOptions
+                )
+
+                let position = PDContract.objectPosition(of: item.entry.activeRdo)
+                #expect(winning != nil,
+                    "\(folder) entry[\(item.entry.index)]: live contract, RDO object position \(position), but no winning option was derived from \(item.entry.rawPDOs.count) PDO slots")
+                #expect(winning?.maxPowerMW == item.entry.maxPowerMW,
+                    "\(folder) entry[\(item.entry.index)]: winning option is \(winning?.maxPowerMW ?? -1) mW, PortControllerMaxPower is \(item.entry.maxPowerMW) mW")
+            }
+        }
+
+        print("PowerSourceSynthesis live-contract sweep: \(foldersScanned) folders, \(liveContracts) live contracts")
+
+        // Same skip-not-fail gate the sweep above uses: a partial corpus
+        // skips the floor rather than failing it.
+        guard foldersScanned > 20 else { return }
+        #expect(liveContracts >= 30,
+            "Expected at least 30 live PD contracts across the corpus (32 measured); got \(liveContracts)")
     }
 }

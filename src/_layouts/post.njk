@@ -64,7 +64,7 @@ extraHead: |
     .article-page .related-section { padding: 64px 0 72px; border-top: 1px solid var(--line); background: var(--panel); }
     .article-page .related-label { display: block; margin-bottom: 12px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
     .article-page .related-section h2 { margin: 0 0 28px; font-size: 30px; }
-    .article-page .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .article-page .related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .article-page .related-card { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
     .article-page .related-card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
     .article-page .related-copy { padding: 20px; }
@@ -84,16 +84,62 @@ extraHead: |
       .article-page .article-cta { grid-template-columns: 1fr; margin: 36px 20px 52px; padding: 26px 24px; }
       .article-page .related-grid { grid-template-columns: 1fr; }
     }
+
+    /* Reading layout: compact introduction, stable imagery and clear focus. */
+    .article-page { --accent: #08768b; --muted: #596675; }
+    .article-page .article-hero { padding: 42px 0 36px; }
+    .article-page .article-head-inner { max-width: 820px; }
+    .article-page .back-link { margin-bottom: 22px; min-height: 28px; }
+    .article-page .article-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; line-height: 1.6; }
+    .article-page .article-hero h1 { font-size: clamp(32px, 4.5vw, 54px); line-height: 1.12; text-wrap: balance; }
+    .article-page .article-deck { font-size: 19px; max-width: 65ch; }
+    .article-page .cover-wrap { max-width: 960px; padding: 28px 24px 0; }
+    .article-page .cover-image { aspect-ratio: 16 / 9; min-height: 0; max-height: none; object-fit: cover; box-shadow: none; }
+    .article-page .article-content { max-width: 760px; padding-top: 32px; }
+    .article-page .post-body { line-height: 1.8; overflow-wrap: anywhere; }
+    .article-page .post-body h2 { font-size: clamp(24px, 3vw, 30px); line-height: 1.25; scroll-margin-top: 90px; }
+    .article-page .post-body p { margin-bottom: 22px; }
+    .article-page .post-body li { margin-bottom: 10px; }
+    .article-page .post-body a, .article-page .article-footer-note a { text-decoration: underline; text-underline-offset: 3px; }
+    .article-page .article-toc { margin: 0 0 36px; padding: 20px 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .article-page .article-toc summary { font-weight: 700; cursor: pointer; padding: 4px 0; }
+    .article-page .article-toc ol { margin: 14px 0 0; padding-left: 22px; }
+    .article-page .article-toc li { padding: 4px 0; font-size: 15px; line-height: 1.5; }
+    .article-page .article-toc a { text-decoration: underline; text-underline-offset: 3px; }
+    .article-page .post-body .table-wrap { border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+    .article-page .post-body table { width: 100%; margin: 0; font-size: 15px; line-height: 1.55; }
+    .article-page .post-body th { background: #edf3f5; color: var(--ink); text-align: left; }
+    .article-page .post-body th, .article-page .post-body td { padding: 15px 18px; vertical-align: top; white-space: normal; }
+    .article-page .post-body tbody tr:nth-child(even) { background: #f3f6f8; }
+    .article-page .table-hint { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+    .article-page .article-cta { margin-top: 32px; box-shadow: none; }
+    .article-page .related-section { padding: 40px 0; }
+    .article-page .related-copy a { display: inline-block; font-size: 18px; line-height: 1.45; }
+    .article-page .article-footer-note { padding: 28px 24px 40px; line-height: 1.7; }
+    .article-page :is(a,summary,[tabindex]):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+    @media(max-width:760px) {
+      .article-page .article-hero { padding: 28px 0; }
+      .article-page .article-deck { font-size: 17px; }
+      .article-page .cover-wrap { padding: 20px 20px 0; }
+      .article-page .article-content { padding-top: 24px; }
+      .article-page .article-toc { padding: 16px 18px; }
+      .article-page .post-body table { min-width: 560px; }
+      .article-page .article-cta { gap: 20px; }
+      .article-page .article-cta .cta-actions { flex-direction: column; }
+      .article-page .article-cta .cta-button { justify-content: center; white-space: normal; }
+      .article-page .related-grid { gap: 16px; }
+    }
   </style>
 ---
 <main class="article-page">
   <header class="article-hero">
     <div class="wrap-wide article-head-inner">
       <a class="back-link" href="/blog">← Back to Field Notes</a>
-      <p class="article-meta">
-        {% if category %}<span class="category">{{ category }}</span> &nbsp;·&nbsp;{% endif %}
-        <time datetime="{{ page.date | isoDate }}">{{ page.date | readableDate }}</time>
-      </p>
+      <div class="article-meta">
+        {% if category %}<span class="category">{{ category }}</span>{% endif %}
+        <span>Published <time datetime="{{ page.date | isoDate }}">{{ page.date | readableDate }}</time></span>
+        {% if updated %}<span>Updated <time datetime="{{ updated | isoDate }}">{{ updated | readableDate }}</time></span>{% endif %}
+      </div>
       <h1>{{ title }}</h1>
       {% if summary %}<p class="article-deck">{{ summary }}</p>{% endif %}
     </div>
@@ -106,6 +152,7 @@ extraHead: |
   {% endif %}
 
   <div class="wrap article-content">
+    <details class="article-toc" hidden><summary>In this article</summary><nav aria-label="Article contents"><ol></ol></nav></details>
     <article class="post-body">
       {{ content | safe }}
     </article>
@@ -164,9 +211,9 @@ extraHead: |
       <h2>More from Field Notes</h2>
       <div class="related-grid">
         {% for post in collections.posts %}
-          {% if post.url != page.url and post.data.coverImage %}
+          {% if post.url != page.url %}
             <article class="related-card">
-              <a href="{{ post.url | cleanUrl }}" aria-label="Read {{ post.data.title }}"><img src="{{ post.data.coverImage }}" alt="{{ post.data.coverAlt }}" loading="lazy"></a>
+              {% if post.data.coverImage %}<a href="{{ post.url | cleanUrl }}" aria-label="Read {{ post.data.title }}"><img src="{{ post.data.coverImage }}" alt="{{ post.data.coverAlt }}" loading="lazy" decoding="async"></a>{% endif %}
               <div class="related-copy">
                 <span>{{ post.data.category }}</span>
                 <a href="{{ post.url | cleanUrl }}">{{ post.data.title }}</a>
@@ -192,8 +239,8 @@ extraHead: |
   "description": {{ (summary or "") | dump | safe }},
   "url": "{{ site.url }}{{ page.url | cleanUrl }}",
   "datePublished": {{ page.date | isoDate | dump | safe }},
-  "dateModified": {{ page.date | isoDate | dump | safe }},
-  {% if coverImage %}"image": {{ coverImage | dump | safe }},{% endif %}
+  "dateModified": {{ (updated or page.date) | isoDate | dump | safe }},
+  {% if coverImage %}"image": {{ ((site.url + coverImage) if coverImage.startsWith("/") else coverImage) | dump | safe }},{% endif %}
   "author": {
     "@type": "Person",
     "name": {{ site.author.name | dump | safe }},
@@ -210,4 +257,32 @@ extraHead: |
     "@id": "{{ site.url }}{{ page.url | cleanUrl }}"
   }
 }
+</script>
+
+<script>
+(() => {
+  const body = document.querySelector('.post-body');
+  const toc = document.querySelector('.article-toc');
+  const headings = [...body.querySelectorAll('h2')];
+  if (headings.length > 2) {
+    headings.forEach((heading, index) => {
+      if (!heading.id) heading.id = `article-section-${index + 1}`;
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = `#${heading.id}`; link.textContent = heading.textContent;
+      item.append(link); toc.querySelector('ol').append(item);
+    });
+    toc.hidden = false;
+  }
+  body.querySelectorAll('table').forEach((table, index) => {
+    const wrapper = table.closest('.table-wrap') || table.parentElement;
+    wrapper.tabIndex = 0; wrapper.setAttribute('role', 'region');
+    wrapper.setAttribute('aria-label', `Comparison table ${index + 1}`);
+    const hint = document.createElement('p'); hint.className = 'table-hint';
+    hint.textContent = 'Scroll sideways to see all columns. With a keyboard, focus the table and use the arrow keys.';
+    wrapper.after(hint);
+    const update = () => { hint.hidden = wrapper.scrollWidth <= wrapper.clientWidth + 1; };
+    update(); new ResizeObserver(update).observe(wrapper);
+  });
+})();
 </script>

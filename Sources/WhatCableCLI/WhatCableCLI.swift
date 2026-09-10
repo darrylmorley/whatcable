@@ -154,7 +154,7 @@ struct WhatCableCLI {
             let snapshot = try await provider.snapshot()
 
             if report {
-                printCableReports(identities: snapshot.identities, cioCapabilities: snapshot.cioCapabilities)
+                printCableReports(identities: snapshot.identities, cioCapabilities: snapshot.cioCapabilities, ports: snapshot.ports)
                 return
             }
 
@@ -435,7 +435,7 @@ private func launchApp(menuBarMode: Bool) {
     }
 }
 
-private func printCableReports(identities: [USBPDSOP], cioCapabilities: [CIOCableCapability]) {
+private func printCableReports(identities: [USBPDSOP], cioCapabilities: [CIOCableCapability], ports: [AppleHPMInterface]) {
     // Issue #573: MagSafe filtered out here too, same reasoning as the
     // ContentView "Report this cable" button -- the cable DB keys on
     // VID+PID+Cable VDO, and MagSafe never publishes a Cable VDO. Falling
@@ -459,11 +459,16 @@ private func printCableReports(identities: [USBPDSOP], cioCapabilities: [CIOCabl
         }
         // Match by canonicalJoinKey: UUID-keyed on M3+, portKey fallback on M1/M2.
         let cio = cioCapabilities.first { $0.canonicalJoinKey == identity.canonicalJoinKey }
+        // The port this cable is plugged into, joined the same way: UUID-keyed
+        // on M3+, portKey fallback on M1/M2. The classifier reads the port's
+        // ActiveCable flag, so it must be this identity's own port.
+        let port = identity.matchingPort(in: ports)
         guard let payload = CableReport.payload(
             for: identity,
             includeSystemInfo: true,
             macModel: macModel,
-            cioCapability: cio
+            cioCapability: cio,
+            port: port
         ) else { continue }
         print(payload.markdown)
         print("")

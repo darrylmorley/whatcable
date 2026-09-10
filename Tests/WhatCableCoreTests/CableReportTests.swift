@@ -462,4 +462,65 @@ struct CableReportTests {
         #expect(CableReport.vdoRoleLabel(at: 6) == "Other")
         #expect(CableReport.vdoRoleLabel(at: 99) == "Other")
     }
+
+    // MARK: - Type source
+
+    /// The CalDigit 2M Thunderbolt 4 cable from issue #111: passive ID
+    /// Header, VDO[3] bit 3 set, which is the layout contradiction.
+    private func caldigitBitThreeSet() -> USBPDSOP {
+        USBPDSOP(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [0x1C002B1D, 0x00000000, 0x19010097, 0x3208485A],
+            specRevision: 3
+        )
+    }
+
+    private func port(activeCable: Bool?) -> USBCPort {
+        USBCPort(
+            id: 1, serviceName: "Port-USB-C@1", className: "AppleHPMInterfaceType10",
+            portDescription: "Port-USB-C@1", portTypeDescription: "USB-C",
+            portNumber: 1, connectionActive: true, activeCable: activeCable, opticalCable: nil,
+            usbActive: nil, superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC", "CIO"], transportsActive: ["CIO"],
+            transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil, rawProperties: [:]
+        )
+    }
+
+    @Test("Layout contradiction files as active, sourced to the contradiction")
+    func layoutContradictionFilesAsActive() {
+        let payload = CableReport.payload(for: caldigitBitThreeSet())!
+        #expect(payload.cable.type == "active")
+        #expect(payload.cable.typeSource == "layoutContradiction")
+    }
+
+    @Test("A port reporting an active cable sources the type to the controller")
+    func portControllerSourcesTheType() {
+        let payload = CableReport.payload(for: caldigitBitThreeSet(), port: port(activeCable: true))!
+        #expect(payload.cable.type == "active")
+        #expect(payload.cable.typeSource == "portController")
+    }
+
+    @Test("Markdown keeps the Type cell verbatim and adds a Type source row")
+    func markdownAddsTypeSourceRow() {
+        let markdown = CableReport.payload(for: caldigitBitThreeSet())!.markdown
+        // sync-cable-reports.swift reads this cell verbatim, so it must not move.
+        #expect(markdown.contains("| Type | active |"))
+        #expect(markdown.contains("| Type source | e-marker layout contradiction |"))
+
+        let viaPort = CableReport.payload(for: caldigitBitThreeSet(), port: port(activeCable: true))!.markdown
+        #expect(viaPort.contains("| Type source | port controller |"))
+    }
+
+    @Test("An ordinary passive cable gets no Type source row")
+    func ordinaryPassiveCableHasNoTypeSourceRow() {
+        let payload = CableReport.payload(for: cableIdentity())!
+        #expect(payload.cable.typeSource == "emarker")
+        #expect(payload.markdown.contains("| Type | passive |"))
+        #expect(!payload.markdown.contains("| Type source |"))
+    }
 }

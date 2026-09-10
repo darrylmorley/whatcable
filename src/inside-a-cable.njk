@@ -1,0 +1,165 @@
+---
+permalink: /inside-a-cable.html
+layout: base.njk
+documentTitle: "Inside a USB-C cable: Interactive 3D Comparison | WhatCable"
+description: "Explore inside a USB-C cable in 3D. Compare basic USB 2.0 wiring with Thunderbolt 4 and Thunderbolt 5 cables and learn what each component does."
+extraHead: |
+  <link rel="stylesheet" href="/assets/cable-explorer/explorer.css">
+  <script type="importmap">{"imports":{"three":"/assets/cable-explorer/vendor/three.module.js"}}</script>
+---
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebPage",
+        "LearningResource"
+      ],
+      "@id": "https://www.whatcable.uk/inside-a-cable#webpage",
+      "url": "https://www.whatcable.uk/inside-a-cable",
+      "name": "Inside a USB-C cable: interactive 3D comparison",
+      "description": "Explore basic USB-C, Thunderbolt 4 and Thunderbolt 5 cable examples, with everyday explanations and technical details about charging, data and video.",
+      "inLanguage": "en-GB",
+      "isAccessibleForFree": true,
+      "learningResourceType": "Interactive cable diagram",
+      "educationalUse": "Exploration",
+      "teaches": [
+        "How USB-C cable components carry power, data and video",
+        "How basic USB-C, Thunderbolt 4 and Thunderbolt 5 examples differ",
+        "How cable identity relates to the actual connection"
+      ],
+      "isPartOf": {
+        "@id": "https://www.whatcable.uk/#website"
+      },
+      "publisher": {
+        "@id": "https://www.whatcable.uk/#publisher"
+      },
+      "breadcrumb": {
+        "@id": "https://www.whatcable.uk/inside-a-cable#breadcrumb"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.whatcable.uk/inside-a-cable#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.whatcable.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cables",
+          "item": "https://www.whatcable.uk/cables"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Inside a cable",
+          "item": "https://www.whatcable.uk/inside-a-cable"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<main class="explorer-page wrap-wide">
+  <header class="explorer-heading">
+    <nav aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/cables">Cables</a> / <span>Inside a cable</span></nav>
+    <h1>Same plug. What’s inside?</h1>
+    <p>Open a cable. Explore its parts. See what changes when you switch.</p>
+  </header>
+  <noscript><p>The interactive model needs JavaScript. You can still read the component guide and connection table below.</p><style>.guided-explore,.cable-picker,.model-stage,.model-controls,.part-panel,.selection-status{display:none}</style></noscript>
+  <section class="guided-explore" aria-label="Guided questions">
+    <div class="question-buttons">{% for question in explorer.questions %}<button type="button" data-question="{{ question.id }}" aria-pressed="false">{{ question.title }}</button>{% endfor %}</div>
+    <div id="question-answer" hidden aria-live="polite"><h2 id="question-title"></h2><p id="question-text"></p><button type="button" id="end-guide">Return to free exploration</button></div>
+  </section>
+  <p class="reference-label"><strong>Three example cables</strong> · See what the wires do, what changes between cables and how that affects charging, file transfers and screens. The exact construction varies by manufacturer.</p>
+  <div class="cable-picker" role="group" aria-label="Choose a cable">
+    {% for id, cable in explorer.cables %}<button type="button" data-cable="{{ id }}" aria-pressed="{{ 'true' if id == 'thunderbolt' else 'false' }}"><strong>{{ cable.name }}</strong><span>{{ cable.subtitle }}</span></button>{% endfor %}
+  </div>
+  <section class="explorer" aria-label="Interactive cable explorer">
+    <div class="model-column">
+      <div class="model-stage" id="model-stage">
+        <div class="stage-top"><span id="model-name">Thunderbolt 4</span><span>Reference wiring</span></div>
+        <div id="scene" role="region" aria-label="Interactive cable model. Use the component buttons to explore with a keyboard."></div>
+        <button type="button" id="marker-callout" hidden aria-label="Reveal and select the e-marker chip">E-marker <span>chip inside the plug</span></button>
+        <div id="selection-callout" hidden aria-hidden="true"><svg><line id="selection-leader"/><circle id="selection-dot" r="4"/></svg><div id="selection-label"><strong id="selection-label-name"></strong><span id="selection-label-contact"></span></div></div>
+        <p id="scene-status" role="status">Loading the 3D cable… Component descriptions are available below.</p>
+        <div class="stage-bottom"><span>Drag to rotate · Scroll or pinch to zoom</span><div class="view-buttons"><button id="clear-selection" type="button" disabled>Clear selection</button><button id="connector-view" type="button" aria-pressed="false">Connector close-up</button><button id="reset-view" type="button">Reset view</button></div></div>
+      </div>
+      <p id="selection-status" class="selection-status" aria-live="polite">Select a component to trace its role.</p>
+      <div class="model-controls">
+        <label for="cutaway">Open cable <output id="cutaway-value" for="cutaway">75%</output></label>
+        <input id="cutaway" type="range" min="0" max="100" value="75">
+        <label class="difference-control"><input id="differences" type="checkbox"> Highlight differences</label>
+      </div>
+      <dl class="capabilities" aria-live="polite"><div><dt>Data</dt><dd id="cap-data">40 Gbps in TB4 operation</dd></div><div><dt>Power</dt><dd id="cap-power">Up to 100 W</dd></div><div><dt>Video</dt><dd id="cap-video">Supports video</dd></div></dl>
+
+      <section class="plug-views" aria-labelledby="plug-view-heading">
+        <h2 id="plug-view-heading">Where does the wire connect?</h2>
+        <p>These are enlarged views looking straight into the open end of each cable plug, with its cable pointing away from you. A and B name the two rows of metal contacts; the numbers identify their positions.</p>
+        <p id="plug-view-status" aria-live="polite">Choose a wire to see the contacts it joins highlighted in blue.</p>
+        <button type="button" id="plug-example">Show a fast data wire</button>
+        <div class="plug-view-grid"><figure><figcaption>Plug shown in the 3D model</figcaption><svg id="plug-from" viewBox="0 0 460 168" role="img" aria-label="Contact layout of the plug shown in the model"></svg><p id="plug-from-caption">No wire selected</p></figure><figure><figcaption>Plug at the other end</figcaption><svg id="plug-to" viewBox="0 0 460 168" role="img" aria-label="Contact layout of the other plug"></svg><p id="plug-to-caption">No wire selected</p></figure></div>
+        <p class="plug-view-key"><strong>Blue + dot:</strong> selected connection · <strong>Gold:</strong> other contacts · Gaps: no contact in this example.</p>
+        <details><summary>Technical detail: reading the plug views</summary><p>Both drawings use the same fixed front-view orientation, independent of the 3D camera. Top row: A12 to A1 from left to right. Bottom row: B1 to B12. These are cable plugs, not the sockets on your devices. B6 and B7 are absent. In the Thunderbolt examples, B5 supplies the local e-marker through VCONN rather than running to the other plug. The basic example shows only its connected contacts.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019_0.pdf#page=31">USB-IF plug front-view reference, Figure 2-2</a></p></details>
+      </section>
+
+      <section id="tb5-bandwidth" class="tb5-bandwidth" hidden aria-label="Thunderbolt 5 bandwidth modes">
+        <h2>More room for your screens.</h2>
+        <div class="bandwidth-buttons" role="group" aria-label="Illustrate a bandwidth mode"><button type="button" data-bandwidth="normal" aria-pressed="true">Normal · 80/80</button><button type="button" data-bandwidth="boost" aria-pressed="false">Bandwidth Boost · 120/40</button></div>
+        <div aria-live="polite"><div class="bandwidth-flow"><strong id="bandwidth-out">80 Gbps →</strong><strong id="bandwidth-back">← 80 Gbps</strong></div><p id="bandwidth-lanes">2 lanes each way</p><p id="bandwidth-explanation">Information can travel both ways at once, with 80 Gbps of capacity in each direction.</p></div>
+        <p class="model-note">Think of the four wire pairs as four lanes for information. These buttons show how they can be shared between directions. Your connected devices choose the real mode automatically; the wires stay the same.</p>
+      </section>
+    </div>
+    <aside class="part-panel" aria-label="Cable components">
+      <div id="component-explanation" class="part-description" aria-live="polite"><a class="back-to-model" href="#model-stage">Back to model ↑</a><h2 id="part-name">Explore a component</h2><p id="part-summary">Select a part of the cable or choose a component from the list to learn how it works.</p><details id="part-details" hidden><summary>A little more detail &amp; sources</summary><p id="part-detail">{{ explorer.parts[0].detail }}</p><p id="part-whatcable-detail">{{ explorer.parts[0].whatcableDetail }}</p><a id="part-source" href="#reference-sources">Reference specification</a></details><div id="part-whatcable" class="whatcable-context" hidden><h3>How WhatCable helps</h3><p id="part-whatcable-text"></p><a id="part-pro-link" hidden href="/pro#features">Explore this in WhatCable Pro →</a></div></div>
+      <div class="panel-heading"><span>EXPLORE THE PARTS</span><span id="parts-count">12 groups</span></div>
+      <div id="part-buttons">{% for part in explorer.parts %}<button type="button" data-part="{{ part.id }}" aria-pressed="false"><span class="part-dot" style="--part-color:{{ part.color }}"></span>{{ part.name }}{% if part.extra %}<span class="part-extra">Extra</span>{% endif %}</button>{% endfor %}</div>
+      <div class="wire-picker">
+        <label for="wire-select"><strong>Follow a connection</strong></label>
+        <p id="wire-help">Choose a wire to highlight it in blue and see which contacts it joins. The enlarged plug views below the model show the contacts at both ends.</p>
+        <select id="wire-select" aria-describedby="wire-help"><option value="">Choose a connection…</option>{% for connection in explorer.connections %}<option value="{{ connection.from }}" data-basic="{{ 'true' if connection.basic else 'false' }}">{{ connection.label }} · {{ connection.signal }} ({{ connection.from }})</option>{% endfor %}</select>
+        <div class="wire-navigation"><button type="button" id="wire-previous">← Previous</button><button type="button" id="wire-next">Next →</button></div>
+        <div id="wire-description" class="wire-route" hidden aria-live="polite">
+          <strong id="wire-title"></strong>
+          <dl><div><dt>Plug shown in 3D</dt><dd id="wire-from"></dd></div><div><dt>Plug at the other end</dt><dd id="wire-to"></dd></div></dl>
+          <p id="wire-purpose"></p>
+          <p class="wire-pin-help">A and B identify the two rows of contacts; the number identifies a contact in that row.</p>
+          <a href="#plug-view-heading">See the highlighted plug contacts ↑</a><br><a href="#connection-table">See the matching table row ↓</a>
+        </div>
+      </div>
+    </aside>
+    <div class="explorer-body">
+  <section id="comparison-key" hidden class="comparison-note" aria-live="polite"><h2>What the Thunderbolt examples add</h2><p>Orange identifies parts added to the basic USB 2.0 example; shared parts stay in place. Electric blue identifies your selection. Switch between cables to compare the same view.</p><dl class="comparison-facts"><div><dt>Basic USB-C</dt><dd>Everyday USB 2.0 data · up to 60 W · no direct video</dd></div><div><dt>Thunderbolt 4 reference</dt><dd>Four fast data pairs · 40 Gbps with TB4 devices · up to 100 W in this example</dd></div><div><dt>Thunderbolt 5 reference</dt><dd>The same four pairs · 80 Gbps each way or 120/40 Gbps · up to 240 W in this example</dd></div></dl><p>Both Thunderbolt examples have the same number of fast data wires. Thunderbolt 5 uses them to carry more information. Orange marks additions compared with the basic cable, not differences between TB4 and TB5.</p><p>The Thunderbolt examples also have an identity chip, its power supply and a small power-smoothing component. Other USB-C cables can have these too. A cable that carries more charging power is not necessarily faster at transferring files.</p></section>
+  <section class="comparison-note" aria-live="polite"><h2 id="comparison-title">Inside the Thunderbolt 4 example</h2><p id="comparison-description">{{ explorer.cables.thunderbolt.description }}</p><p id="difference-note" hidden>The blue pairs, purple sideband paths and identity chip are additions to this particular basic USB 2.0 example. E-markers are also used in other USB-C cables. Shielding and other construction details can also differ.</p></section>
+  <section class="comparison-note"><h2>A cable’s label is not always its physical limit</h2><p>A Thunderbolt 4 connection runs at up to 40 Gbps. Some compatible passive cables sold for that speed can also carry faster Thunderbolt 5 signals. Both connected devices must support the faster connection. Passive means the cable has no electronics that boost or rebuild the data signals; active cables do, so the same rule does not apply to every cable.</p><p>So a cable’s chip may report an older 40 Gbps rating while your Mac reports an 80 Gbps connection. That alone does not mean the cable’s label is false. <a href="https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2023-09/thunderbolt-5-technology-brief.pdf">Intel explains compatibility with existing passive cables in its Thunderbolt 5 technical brief.</a></p></section>
+  <section class="comparison-note chain-explanation">
+    <h2>A cable is one part of the connection</h2><p>Want to check your own setup? <a href="/instructions#what-it-shows">See what the free app tells you</a>, or <a href="/pro#features">explore WhatCable Pro’s deeper charging and display checks</a>.</p>
+    <p>WhatCable checks what your Mac can tell it about the port, cable and device or charger at the other end. It compares what each can support with the connection they are actually using. If you have a dock, it uses the available information to separate the Mac-to-dock connection from the accessories plugged into it.</p>
+    <p><strong>For example:</strong> an 80 Gbps port connected to a Thunderbolt 4 device is limited to 40 Gbps by that device, even if the passive cable can carry faster signalling. Replacing only the cable will not make that device run faster. WhatCable’s diagnostic accounts for that rather than blaming the cable.</p>
+    <p><strong>For displays:</strong> WhatCable Pro’s Display Diagnostics checks how much detail your screen shows, how often the picture updates and what the display connection can carry. It also accounts for picture compression and adapters when that information is available. That helps explain why a screen is not running as sharply or smoothly as expected.</p>
+  </section>
+  <section class="comparison-note"><h2>What do the numbers mean?</h2><p><strong>Mbps and Gbps describe data capacity.</strong> One Gbps is 1,000 Mbps. More capacity can help with large files and demanding screens, but the devices at both ends matter too. File-copy speeds are often shown in megabytes per second (MB/s), a different unit, and will also be affected by the work needed to organise the transfer.</p><p><strong>Watts (W) describe power.</strong> A 240 W cable can carry more charging power than a 60 W cable, but your charger must supply it and your device must support it. More watts do not mean faster file transfers.</p></section>
+  <section class="connection-guide" id="connection-table">
+    <h2>Follow the connections</h2>
+    <p>The metal contacts inside a plug are the points where its wires connect to a device. This table follows each connection from the plug shown in 3D to the plug at the other end. A and B name the two rows of contacts. TX means transmit; RX means receive. These labels name the contacts, not a fixed direction for every connection mode.</p>
+    <table><thead><tr><th scope="col">Signal</th><th scope="col">Plug 1</th><th scope="col">Plug 2</th></tr></thead><tbody>
+    {% for connection in explorer.connections %}<tr data-connection="{{ connection.part }}" data-from="{{ connection.from }}" data-basic="{{ 'true' if connection.basic else 'false' }}"><th scope="row">{{ connection.signal }}</th><td>{{ connection.from }}</td><td>{{ connection.to }}</td></tr>{% endfor %}
+    <tr><th scope="row">Outer shield</th><td>Shell + ground</td><td>Shell + ground</td></tr>
+    <tr data-basic="false"><th scope="row">Coaxial shields</th><td>Ground bus</td><td>Ground bus</td></tr>
+    <tr data-basic="false"><th scope="row">VCONN (local)</th><td>B5 → local e-marker / Ra</td><td>B5 → local e-marker / Ra</td></tr>
+    </tbody></table>
+  </section>
+  <details class="text-guide"><summary>Technical notes about this model</summary><p class="model-note">Base wiring reference: USB-C Release 2.0, Tables 3-10 / 3-11 and Figure 4-42. The Thunderbolt 5 example extends this with PAM-3 signalling and EPR power requirements. The full-featured plug has 22 contacts; B6 and B7 are absent. The USB 2.0 example includes only its connected contacts. The cable uses coaxial shielding rather than separate drain wires. Opening the view separates layers and routes for inspection. Colours identify functions; distances, component blocks and PCB trace positions are not manufacturing dimensions. Power ratings require a compatible charger and device. Wiring alone does not establish Thunderbolt certification or signal-integrity compliance.</p></details>
+  <details class="text-guide"><summary>Read the component guide without 3D</summary>{% for part in explorer.parts %}<h2>{{ part.name }}</h2><p>{{ part.summary }} {{ part.detail }}</p><p><a href="{{ part.sourceUrl }}">{{ part.sourceLabel }}</a></p>{% if part.whatcable %}<p><strong>How WhatCable helps:</strong> {{ part.whatcable }}</p>{% endif %}{% if part.whatcableDetail %}<p>{{ part.whatcableDetail }}</p>{% endif %}{% endfor %}<h2>Thunderbolt 5: what changes</h2><p>{{ explorer.cables.thunderbolt5.description }}</p>{% for id, part in explorer.cables.thunderbolt5.partOverrides %}<h3>{{ id | capitalize }}</h3><p>{{ part.summary }} {{ part.detail }}</p><p><a href="{{ part.sourceUrl }}">{{ part.sourceLabel }}</a></p>{% endfor %}</details>
+  <section id="reference-sources" class="reference-sources"><h2>How to read this reference model</h2><p>The electrical connections follow USB-C Release 2.0: §3.4 and Tables 3-10 / 3-11 define the cable wiring; §4.9 and Figure 4-42 describe the two-e-marker arrangement. Coaxial construction and that e-marker arrangement are permitted choices, not the only ways to build a cable. Colours, spacing and component blocks support inspection and are not manufacturing dimensions. Thunderbolt performance also requires its own compliance testing.</p><p>Thunderbolt 5 signalling follows Intel’s technology brief; its EPR power example uses the higher voltage and marking requirements described by UL Solutions. This does not mean every Thunderbolt 4 cable is certified for Thunderbolt 5. Each component’s expanded details link to the relevant specification section. The table above names both ends of each electrical connection.</p></section>
+  <p class="explorer-sources">Learn more: <a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf">USB-IF cable specification</a> · <a href="https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/overview.html">Intel’s Thunderbolt guide</a> · <a href="https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2023-09/thunderbolt-5-technology-brief.pdf">Thunderbolt 5 technical brief</a> · <a href="https://www.ul.com/insights/240w-usb-c-cable-performance-testing-and-safety-considerations">EPR cable requirements</a></p>
+    </div>
+  </section>
+</main>
+<script type="module" src="/assets/cable-explorer/explorer.js"></script>

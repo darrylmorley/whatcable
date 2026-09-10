@@ -34,6 +34,10 @@ public enum CableReport {
         public let maxVolts: Int?
         public let maxWatts: Int?
         public let type: String?
+        /// Which reading settled `type`: "emarker", "portController" or
+        /// "layoutContradiction". Nil exactly when `type` is nil. Same
+        /// spellings as the `--json` key, so both are read the same way.
+        public let typeSource: String?
         public let hasEmarker: Bool
         /// Raw 32-bit VDOs as the cable returned them. Included in reports
         /// so we can later distinguish "macOS dropped the field" from "the
@@ -45,7 +49,7 @@ public enum CableReport {
         /// information; many reputable cables ship without certification.
         public let usbifCertID: UInt32?
 
-        public init(identity: USBPDSOP) {
+        public init(identity: USBPDSOP, port: AppleHPMInterface? = nil) {
             self.vendorID = identity.vendorID
             self.productID = identity.productID
             self.vendorIDHex = String(format: "0x%04X", identity.vendorID)
@@ -85,7 +89,16 @@ public enum CableReport {
                 self.currentRating = cv.current.reportLabel
                 self.maxVolts = cv.maxVolts
                 self.maxWatts = cv.maxWatts
-                self.type = cv.cableType == .active ? "active" : "passive"
+                // The verdict is the classifier's: a cable the port controller
+                // calls active is filed as active even when its own e-marker
+                // says otherwise (issue #111 was filed as passive).
+                let resolution = CableClassification.resolve(identity: identity, port: port)
+                self.type = (resolution?.type ?? cv.cableType) == .active ? "active" : "passive"
+                switch resolution?.source {
+                case .emarker, nil: self.typeSource = "emarker"
+                case .portController: self.typeSource = "portController"
+                case .layoutContradiction: self.typeSource = "layoutContradiction"
+                }
                 self.hasEmarker = true
             } else {
                 self.speed = nil
@@ -93,6 +106,7 @@ public enum CableReport {
                 self.maxVolts = nil
                 self.maxWatts = nil
                 self.type = nil
+                self.typeSource = nil
                 self.hasEmarker = (identity.endpoint == .sopPrime || identity.endpoint == .sopDoublePrime)
             }
         }
@@ -130,12 +144,13 @@ public enum CableReport {
         includeSystemInfo: Bool = false,
         macModel: String = "unknown",
         appVersion: String = AppInfo.version,
-        cioCapability: CIOCableCapability? = nil
+        cioCapability: CIOCableCapability? = nil,
+        port: AppleHPMInterface? = nil
     ) -> Payload? {
         let isCable = identity.endpoint == .sopPrime || identity.endpoint == .sopDoublePrime
         guard isCable else { return nil }
         return Payload(
-            cable: CableFingerprint(identity: identity),
+            cable: CableFingerprint(identity: identity, port: port),
             system: includeSystemInfo ? SystemInfo.current(macModel: macModel) : nil,
             appVersion: appVersion,
             cioCapability: cioCapability
@@ -144,6 +159,16 @@ public enum CableReport {
 
     /// Issue endpoint the report is filed against.
     public static let issueBaseURL = URL(string: "https://github.com/darrylmorley/whatcable/issues/new")!
+
+    /// Plain-English label for a `typeSource` value. The report markdown is
+    /// machine-read and not localised, exactly like the rows around it.
+    static func typeSourceLabel(_ source: String) -> String {
+        switch source {
+        case "portController": return "port controller"
+        case "layoutContradiction": return "e-marker layout contradiction"
+        default: return source
+        }
+    }
 
     /// Map a VDO array index to its role per the USB-PD spec layout for a
     /// passive / active cable Discover Identity response. Anything past the
@@ -189,7 +214,12 @@ extension CableReport.Payload {
             lines.append("| Current rating | \(cur) at up to \(v)V (~\(w)W) |")
         }
         if let t = cable.type {
+            // Value stays exactly "active" or "passive": sync-cable-reports.swift
+            // reads this cell verbatim into the database's type column.
             lines.append("| Type | \(t) |")
+            if let source = cable.typeSource, source != "emarker" {
+                lines.append("| Type source | \(CableReport.typeSourceLabel(source)) |")
+            }
         }
         lines.append("| Has e-marker | \(cable.hasEmarker ? "Yes" : "No") |")
         if cable.hasEmarker {

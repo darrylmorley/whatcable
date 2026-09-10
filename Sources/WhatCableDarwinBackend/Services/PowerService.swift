@@ -584,13 +584,13 @@ public final class PowerService: ObservableObject {
     }
 
     // Classifies the PDO type that an RDO selects, for safe field extraction.
-    // The object position is bits 30:28 of the RDO; position 0 means no active
+    // The object position is bits 31:28 of the RDO; position 0 means no active
     // contract. Returns .fixedOrVariable when the position is out of range or
     // the PDO list is empty, since Fixed is the only type seen in captured data
     // and the Fixed path is always safe as a fallback.
     enum SelectedPdoType { case fixedOrVariable, battery, apdo }
     nonisolated static func rdoSelectedPdoType(rdo: UInt32, pdoList: Any?) -> SelectedPdoType {
-        let position = Int((rdo >> 28) & 0x7)
+        let position = PDContract.objectPosition(of: rdo)
         let idx = position - 1
         let pdos = wcArray(pdoList)
         guard idx >= 0, idx < pdos.count else { return .fixedOrVariable }

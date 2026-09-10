@@ -102,8 +102,10 @@
         "endpoint" : "SOP''",
         "maxVolts" : 20,
         "maxWatts" : 100,
+        "plugType" : "Type-A",
         "speed" : "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)",
         "type" : "active",
+        "typeSource" : "emarker",
         "vendorID" : 1452,
         "vendorName" : "Apple"
       },

@@ -293,6 +293,38 @@ public final class PowerSourceWatcher: ObservableObject {
         return false
     }
 
+    /// The entries synthesis consumes, built from the reader's parsed
+    /// `PortControllerInfo`.
+    ///
+    /// Internal and lifted out of `synthesizedSource` rather than left inline,
+    /// so the corpus sweep drives this production code rather than a copy of
+    /// it. Same seam `contract(from:)` and `portKeyMap` use in
+    /// `PortDiagnosticsWatcher`.
+    ///
+    /// The PDO array is passed through WHOLE. `PortControllerNPDOs` is not the
+    /// array length: it counts only the SPR offers, and augmented PDOs sit
+    /// AFTER that count, so truncating to it reproduces a false "zero
+    /// augmented" and leaves the RDO's object position indexing past the end.
+    /// Slot position is what that field names, so the padding zeros stay too;
+    /// synthesis turns them into no option at all.
+    ///
+    /// - Parameter entries: `PortControllerInfo` as
+    ///   `AppleSmartBatteryReader.parsePortControllerInfo` parsed it, one per
+    ///   port controller, in array order. The order is kept: it is the
+    ///   positional attribution rung's only input.
+    nonisolated static func contractEntries(
+        from entries: [PortControllerEntry]
+    ) -> [PowerSourceSynthesis.ContractEntry] {
+        entries.enumerated().map { offset, entry in
+            PowerSourceSynthesis.ContractEntry(
+                index: offset,
+                rawPDOs: entry.portPDOs,
+                activeRdo: entry.activeContractRdo,
+                maxPowerMW: entry.maxPower
+            )
+        }
+    }
+
     /// The synthesis gate chain, shared by the watcher and `PowerService`.
     ///
     /// It lives here as a static because two callers need it and only one of
@@ -397,21 +429,7 @@ public final class PowerSourceWatcher: ObservableObject {
         // Parsed through the shared entry reader rather than hand-read here.
         // `PortControllerInfo` used to be pulled apart in four places; this was
         // one of them, and it is the one the M1 Pro synthesis path depends on.
-        let entries = AppleSmartBatteryReader.parsePortControllerInfo(dict["PortControllerInfo"])
-            .enumerated()
-            .map { offset, entry in
-                // The PDO array is zero-padded to a fixed length, so trim it to
-                // the count the controller reported. Only synthesis cares:
-                // the RDO's PDO-position field indexes into the untrimmed list,
-                // and a trailing zero would otherwise look like an offered PDO.
-                let count = entry.numberOfPDOs > 0 ? entry.numberOfPDOs : entry.portPDOs.count
-                return PowerSourceSynthesis.ContractEntry(
-                    index: offset,
-                    rawPDOs: Array(entry.portPDOs.prefix(count)),
-                    activeRdo: entry.activeContractRdo,
-                    maxPowerMW: entry.maxPower
-                )
-            }
+        let entries = contractEntries(from: AppleSmartBatteryReader.parsePortControllerInfo(dict["PortControllerInfo"]))
 
         return PowerSourceSynthesis.synthesizedSource(
             realSources: realSources,

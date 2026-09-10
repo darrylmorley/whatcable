@@ -15,7 +15,7 @@ import Testing
 // hardcoded list of its own, so asking it "which classes exist?" only ever
 // returns the two it was told to look for. Checking the app's list against it
 // would be a check that reads the same source as the thing it checks, which
-// this project has been burned by before and which CLAUDE.md calls out by name.
+// this project has been burned by before and which the house rules call out by name.
 // The difference is not academic: probe 17 shows two classes, probe 04 shows
 // five, and the three it adds (`AppleTCControllerType10` on 325 machines,
 // `AppleTCControllerType11` on 199, `AppleHPMInterfaceType18` on 5) are exactly

@@ -613,3 +613,14 @@
 "Argument %@" = "Argomento %@";
 "Arguments %@" = "Argomenti %@";
 "Source ready (result unknown)" = "Sorgente pronta (esito sconosciuto)";
+
+/* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
+"USB Type-A plug (deprecated)" = "Connettore USB Type-A (obsoleto)";
+"USB Type-B plug (deprecated)" = "Connettore USB Type-B (obsoleto)";
+"USB Type-C plug" = "Connettore USB Type-C";
+"Captive cable (built into the device)" = "Cavo fisso (integrato nel dispositivo)";
+
+/* Cable type source: the port controller's own ActiveCable reading, and the
+   e-marker silicon vendor hint. */
+"E-marker reports passive, but the port controller detects an active cable" = "L'e-marker riporta passivo, ma il controller della porta rileva un cavo attivo";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "L'e-marker riporta l'ID fornitore predefinito del produttore del chip (%@); la marca del cavo non è registrata";

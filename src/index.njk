@@ -614,18 +614,31 @@ extraHead: |
       .home .family { padding: 48px 0; }
       .home .family-grid { grid-template-columns: 1fr; gap: 28px; }
     }
+
+    .tier-intro { font-size: 15px; color: var(--ink-soft); line-height: 1.7; margin: 20px 0; max-width: 65ch; }
+    .tier-intro span { display: block; }
+    .tier-intro a, .learn-link a { text-decoration: underline; text-underline-offset: 3px; }
+    .skip-link { position: fixed; left: 16px; top: 8px; z-index: 100; padding: 12px 18px; background: white; color: #075d6e; border: 2px solid #075d6e; border-radius: 8px; transform: translateY(-160%); }
+    .skip-link:focus { transform: none; }
+    main:focus { outline: none; }
+
+    main.home { padding: 0; }
+    .home .hero .homebrew-link { display: inline-block; align-self: center; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; padding: 10px 0; }
+    .home .hero .actions { align-items: center; }
+    .home .terminal .term-title, .home .terminal .dim { color: #91a0b1; }
   </style>
 ---
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  "@id": "https://www.whatcable.uk/#software",
   "name": "WhatCable",
   "operatingSystem": "macOS 14+",
   "applicationCategory": "UtilitiesApplication",
   "offers": [
-    { "@type": "Offer", "price": "0", "priceCurrency": "GBP", "name": "Free" },
-    { "@type": "Offer", "price": "9.99", "priceCurrency": "GBP", "name": "Pro" }
+    { "@type": "Offer", "price": "0", "priceCurrency": "GBP", "name": "Free", "url": "https://www.whatcable.uk/#download" },
+    { "@type": "Offer", "price": "9.99", "priceCurrency": "GBP", "name": "Pro", "url": "https://www.whatcable.uk/pro#pricing" }
   ],
   "description": "Why is my MacBook charging slowly? WhatCable shows USB-C cable speed, charging power, and e-marker data in plain English. Free Mac app for Apple Silicon.",
   "url": "https://www.whatcable.uk",
@@ -636,7 +649,7 @@ extraHead: |
     "@type": "Organization",
     "name": "Bitmoor",
     "url": "https://www.bitmoor.co.uk",
-    "founder": { "@type": "Person", "name": "Darryl Morley" }
+    "founder": { "@type": "Person", "name": "Darryl" }
   },
   "license": "https://opensource.org/licenses/MIT",
   "keywords": [
@@ -653,7 +666,8 @@ extraHead: |
   ]
 }
 </script>
-<div class="home">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<main class="home" id="main-content" tabindex="-1">
 
 <header class="hero">
   <div class="wrap-wide hero-grid">
@@ -665,19 +679,17 @@ extraHead: |
       </span>
       <h1>Know what your USB-C cable <span class="accent">can really do.</span></h1>
       <p class="lede">
-        Plug in a cable. WhatCable shows its speed, power capability, display
-        path, and the weak link in your connection, using what macOS reports,
-        not what the packaging promises.
+        Connect a device or charger. See your cable’s reported speed and charging capability, understand your display connection, and find what may be limiting the setup.
       </p>
       <div class="actions">
         <a class="button primary" href="{{ site.downloadUrl }}" download>
           Download WhatCable for free
           <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
-        <a class="button secondary" href="#install">Install with Homebrew</a>
+        <a class="homebrew-link" href="#install">Prefer Homebrew? Install instructions</a>
       </div>
       <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px;">
-        Need deeper diagnostics? <a href="/pro" style="color: var(--accent); font-weight: 500;">Explore WhatCable Pro<svg style="display:inline;vertical-align:middle;margin-left:3px;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+        <strong>Free:</strong> understand the current connection.<br><strong>Pro:</strong> inspect the evidence, watch measurements and investigate changes over time. <a href="/pro" style="color: var(--accent); font-weight: 500;">Explore WhatCable Pro<svg style="display:inline;vertical-align:middle;margin-left:3px;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
       </p>
       <div class="meta-row">
         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Open source, Pro optional</span>
@@ -731,7 +743,8 @@ extraHead: |
         <div class="story-copy">
           <span class="story-kicker">Cable identity</span>
           <h3>What kind of cable is this?</h3>
-          <p>Read the cable's e-marker identity, advertised speed, power rating and active transports. Turn on technical details when you need the underlying values from macOS.</p>
+          <p>See the cable’s reported identity, speed and charging rating, plus the kind of connection it is using. Open the technical details when you want to see the original readings.</p>
+          <p class="learn-link"><a href="/inside-a-cable">See what the wires and identity chip do in our interactive cable diagram →</a></p>
           <div class="story-result">USB4 Gen 4 at 80 Gbps. Rated for up to 240W.</div>
         </div>
       </article>
@@ -805,7 +818,7 @@ extraHead: |
         <ul class="plan-list">
           <li>Cable history and performance timeline</li>
           <li>Negotiation and display diagnostics</li>
-          <li>Live power, PD contracts and port health</li>
+          <li>Power readings, charging agreements and port health</li>
           <li>Terminal dashboard and raw evidence</li>
         </ul>
         <a class="button secondary" href="/pro">Explore WhatCable Pro</a>
@@ -847,7 +860,7 @@ extraHead: |
       <article class="feature"><div class="icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3>Display bottlenecks</h3><p>When a monitor is connected, see whether the link is carrying its full resolution and refresh, or falling short, and whether an adapter, the cable, or the selected mode is the limit.</p></article>
       <article class="feature"><div class="icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7V5M17 7V5M7 17v2M17 17v2"/></svg></div><h3>Cable e-marker data</h3><p>Decode cable speed, current rating, vendor identity, and USB PD capability flags from marked USB-C cables, including USB-IF certification read straight off the cable.</p></article>
       <article class="feature"><div class="icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div><h3>Active transports</h3><p>Identify USB 2, USB 3, USB4, Thunderbolt, and DisplayPort paths under the physical port where they are connected.</p></article>
-      <article class="feature"><div class="icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><h3>Engineer mode</h3><p>Option-click or enable raw details to reveal the underlying IOKit properties when you need the registry-level facts.</p></article>
+      <article class="feature"><div class="icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><h3>Engineer mode</h3><p>Option-click or enable technical details to see the original information macOS reports about the connection.</p></article>
       <article class="feature"><div class="icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/></svg></div><h3>Connected devices</h3><p>Every device sits inside the thing it is actually plugged into, not a flat pile. Hubs are hidden by default, and each device says how many it is sitting behind.</p></article>
       <article class="feature"><div class="icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3>Built for macOS</h3><p>A focused menu bar app on Apple Silicon Macs. No helper daemon, no private API, no background uploads.</p></article>
     </div>
@@ -868,7 +881,7 @@ extraHead: |
       <div>
         <span class="section-tag">Free, with optional Pro</span>
         <h2>See what your cables are doing right now.</h2>
-        <p>The free app tells you what your cable can do and, in plain English, where the bottleneck is. Pro shows you the full picture: live power flowing through each port, real-time PD contracts, the full negotiation breakdown of every connection, port health over time, and the raw VDO fingerprints behind every cable.</p>
+        <p>The free app tells you what your cable can do and, in plain English, where the bottleneck is. Pro lets you look closer: watch power readings, see what charging power was agreed, compare each part of the connection and inspect the original identity data behind the explanation.</p>
         <p>16 advanced features, £9.99 one-time, works on up to 2 Macs.</p>
         <a href="/pro" class="button primary" style="margin-top: 20px;">
           Unlock Pro
@@ -986,6 +999,7 @@ extraHead: |
 </section>
 
 <section class="faq-section" id="faq">
+  <div class="wrap-wide"><p><a href="/inside-a-cable">Same plug, different insides: explore our 3D cable diagram</a> to compare basic USB-C, Thunderbolt 4 and Thunderbolt 5.</p></div>
   <div class="wrap-wide">
     <div class="section-head">
       <span class="section-tag">FAQ</span>
@@ -994,11 +1008,11 @@ extraHead: |
     <div class="faq-list">
       <details class="faq-item"><summary>Does it work on Intel Macs?</summary><p>No. WhatCable needs Apple Silicon (M1 or later). This is measured, not assumed: every Intel Mac in our community diagnostic data reports its USB-C port controllers as empty, so the USB-PD state and cable e-marker data WhatCable is built on never appear on those machines at all. Thunderbolt link data is still there on Intel, but the port-controller layer WhatCable reads is not.</p></details>
       <details class="faq-item"><summary>Is it really free?</summary><p>Yes. The WhatCable app is free and open source under the MIT licence. No ads, no tracking. WhatCable Pro (£9.99, optional) adds advanced diagnostics for power users. <a href="/pro" style="color: var(--accent);">See what's included.</a></p></details>
-      <details class="faq-item"><summary>What does WhatCable Pro add?</summary><p>Pro unlocks 16 advanced features including cable history (named cables with a recorded timeline), live power metering, Negotiation and Display Diagnostics, port health counters, PD contract inspection, and raw VDO identity. One-time £9.99, no subscription, works on up to 2 Macs. <a href="/pro" style="color: var(--accent);">See full features and comparison.</a></p></details>
+      <details class="faq-item"><summary>What does WhatCable Pro add?</summary><p>Pro helps you investigate further: keep a cable history, watch power readings, understand a slow connection and check why a screen is not performing as expected. It is a one-time £9.99 purchase for up to two Macs, with no subscription. <a href="/pro">See the features and comparison.</a></p><p><strong>Technical detail:</strong> The tools include Negotiation and Display Diagnostics, port health counters, the USB Power Delivery contract inspector and raw cable identity fields. Each gives more context behind the main explanation.</p></details>
       <details class="faq-item"><summary>Does it phone home or collect data?</summary><p>No analytics, no telemetry, and nothing about you or your cables ever leaves your Mac. In the free app the one routine network call is a version check against the public GitHub Releases API, roughly every 6 hours. WhatCable Pro adds one more: a licence check when you activate your key, then once each time the app launches. That call sends only the key and your Mac's hardware UUID, which is how the two-Mac limit is enforced. Diagnostic data only goes anywhere if you explicitly choose to contribute it. Check the source on GitHub if you want to verify.</p></details>
-      <details class="faq-item"><summary>Does WhatCable just read the e-marker?</summary><p>Not only. On a plain USB connection the cable's e-marker chip is all macOS exposes, so that is what WhatCable shows. But on a Thunderbolt or USB4 connection it goes further: it reads the speed the Mac's controller actually negotiated with the cable and shows it next to the e-marker's claim, so a cable that under-reports itself is caught. The measured speed is a floor, meaning at least this fast, so a genuine 10 Gbps cable that never forms a Thunderbolt link really is 10 Gbps.</p></details>
-      <details class="faq-item"><summary>Why does my cable show no e-marker data?</summary><p>Two reasons. Either the cable has no e-marker chip (cheap USB 2.0 cables and many cables rated at 3A or below don't have one), or it has a chip but macOS hasn't read it. macOS asks a cable to identify itself when the connection needs it: a charge drawing more than 3A (a 5A cable on a high-wattage charger), or a Thunderbolt / USB4 link. It can also read it at other times, and some chargers and docks may block the read entirely. Plug a marked cable into a low-power charger or a plain data connection and macOS may never query it, so there's nothing for WhatCable to show. To force the read, connect the cable to a high-wattage charger or a Thunderbolt device.</p></details>
-      <details class="faq-item"><summary>Can it tell me if a cable is fake?</summary><p>Not definitively. The trust signals feature flags values that look unusual against the USB-PD spec, like a zero vendor ID or reserved bit patterns. A flag means "worth checking," not "definitely counterfeit."</p></details>
+      <details class="faq-item"><summary>Does WhatCable just read the e-marker?</summary><p>No. The e-marker is the cable’s digital label, but WhatCable also uses the connection information your Mac provides. It compares the port, cable and connected device, and checks display links too. This helps explain why the connection is working at a particular speed or charging rate.</p><p><strong>Technical detail:</strong> On Thunderbolt and USB4 connections, controller reports can show the negotiated link speed. That confirms the speed reached in that connection, not the cable’s absolute maximum. A compatible passive cable with an older 40 Gbps identity may legitimately carry newer 80 Gbps signalling. Missing faster-link evidence does not prove a lower physical limit.</p></details>
+      <details class="faq-item"><summary>Why does my cable show no e-marker data?</summary><p>The cable may have no identity chip, or your Mac may not have read it yet. Try connecting a charger, dock or device at the far end, then check again. Missing information alone does not mean the cable is broken.</p><p><strong>Technical detail:</strong> Some basic USB 2.0 cables do not require an e-marker. Full-featured cables and cables carrying more than 3 A do. Whether macOS exposes the identity also depends on the port and connected equipment; connecting another device can help trigger a read but does not guarantee one.</p></details>
+      <details class="faq-item"><summary>Can it tell me if a cable is fake?</summary><p>Not definitively. WhatCable helps you investigate inconsistent reports and connection problems. A missing manufacturer or certificate alone does not prove a cable is counterfeit.</p><p><strong>Technical detail:</strong> The trust checks examine identity and capability fields against USB Power Delivery rules. Malformed or contradictory fields are different from missing information. The app cannot inspect the physical wiring or authenticate every product label.</p></details>
       <details class="faq-item"><summary>What languages is WhatCable available in?</summary><p>19, and the diagnostic verdicts are translated too, not just the menus: Armenian, Brazilian Portuguese, Dutch, English, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Polish, Russian, Simplified Chinese, Spanish, Traditional Chinese, Turkish, and Ukrainian. WhatCable follows your Mac's language by default, or you can pick one in Settings. Translations are community-refinable, so if something reads oddly in your language, <a href="https://github.com/darrylmorley/whatcable/issues" style="color: var(--accent);">open an issue</a> and we'll fix it.</p></details>
     </div>
   </div>
@@ -1056,15 +1070,15 @@ extraHead: |
     <div class="family-grid">
       <div class="section-head">
         <span class="section-tag">The rest of the answer</span>
-        <h2>WhatCable stops at the cable. The questions don't.</h2>
-        <p>Knowing a charger only negotiated 60W raises the next question, and it is usually about the battery or the port it is plugged into. Two more Mac utilities from the same developer, built the same way: read what the Mac already knows, then say it in plain English.</p>
+        <h2>More ways to understand your Mac.</h2>
+        <p>WhatCable explains the connected setup. These companion apps add a closer look at battery health and a dedicated overview of your Mac’s ports.</p>
       </div>
       <div class="family-apps">
         <a class="family-app" href="https://www.whatbattery.app" rel="noopener">
           <img class="family-icon" src="/whatbattery-icon.png" alt="" width="48" height="48" loading="lazy">
           <div>
             <h3>WhatBattery</h3>
-            <p>So the cable delivers 60W. What is that doing to the battery? Unrounded health, live charge and discharge in watts, per-cell readings from the pack, and where the charge went overnight.</p>
+            <p>Take a closer look at the battery itself: Unrounded health, live charge and discharge in watts, per-cell readings from the pack, and where the charge went overnight.</p>
             <span class="family-go">Visit whatbattery.app →</span>
           </div>
         </a>
@@ -1072,7 +1086,7 @@ extraHead: |
           <img class="family-icon" src="/whatport-icon.png" alt="" width="48" height="48" loading="lazy">
           <div>
             <h3>WhatPort</h3>
-            <p>WhatCable looks closely at one port. WhatPort shows all of them at once: protocol, speed, lane status and live power draw for every port on your Mac.</p>
+            <p>A dedicated overview of your Mac’s ports: connection types, speeds, signal paths and available live power readings in one place.</p>
             <span class="family-go">Visit whatport.app →</span>
           </div>
         </a>
@@ -1081,7 +1095,7 @@ extraHead: |
   </div>
 </section>
 
-</div>
+</main>
 
 {% raw %}
 <script>

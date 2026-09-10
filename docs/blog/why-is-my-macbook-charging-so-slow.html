@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>WhatCable: Why is my MacBook charging so slow? A real diagnosis.</title>
-<meta name="description" content="macOS now tells you when your charger is slow. It doesn&#39;t tell you why. Here&#39;s how to actually work out what&#39;s holding back your MacBook charging.">
+<meta name="description" content="Check the charger, cable, charging agreement and battery state to understand slow MacBook charging before replacing anything.">
 
 <link rel="canonical" href="https://www.whatcable.uk/blog/why-is-my-macbook-charging-so-slow">
 <link rel="icon" href="/icon.png" type="image/png">
@@ -12,16 +12,16 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://www.whatcable.uk/blog/why-is-my-macbook-charging-so-slow">
 <meta property="og:title" content="WhatCable: Why is my MacBook charging so slow? A real diagnosis.">
-<meta property="og:description" content="macOS now tells you when your charger is slow. It doesn&#39;t tell you why. Here&#39;s how to actually work out what&#39;s holding back your MacBook charging.">
+<meta property="og:description" content="Check the charger, cable, charging agreement and battery state to understand slow MacBook charging before replacing anything.">
 <meta property="og:image" content="https://www.whatcable.uk/screenshot.webp">
 
 <meta property="article:published_time" content="2026-05-21T00:00:00.000Z">
-<meta property="article:author" content="Darryl Morley">
+<meta property="article:author" content="Darryl">
 
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="WhatCable: Why is my MacBook charging so slow? A real diagnosis.">
-<meta name="twitter:description" content="macOS now tells you when your charger is slow. It doesn&#39;t tell you why. Here&#39;s how to actually work out what&#39;s holding back your MacBook charging.">
+<meta name="twitter:description" content="Check the charger, cable, charging agreement and battery state to understand slow MacBook charging before replacing anything.">
 <meta name="twitter:image" content="https://www.whatcable.uk/screenshot.webp">
 
 
@@ -40,11 +40,11 @@
     --line-soft: #eef2f7;
     --bg: #fafbfc;
     --panel: #ffffff;
-    --accent: #0c8ca6;
+    --accent: #08768b;
     --accent-strong: #0a7188;
     --accent-soft: #e6f4f7;
-    --good: #0b8a5a;
-    --warn: #b67100;
+    --good: #087348;
+    --warn: #8a5700;
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
     --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
     --shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.18);
@@ -339,15 +339,60 @@
   footer .footer-links { display: flex; flex-wrap: wrap; gap: 6px 14px; }
   footer .footer-links .sep { color: rgba(255, 255, 255, 0.3); }
 
+  .mobile-nav { display: none; }
+  .mobile-menu summary { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid #bac5cf; border-radius: 8px; background: white; color: var(--ink); cursor: pointer; font-size: 14px; font-weight: 600; list-style: none; }
+  .mobile-menu summary::-webkit-details-marker { display: none; }
+  .mobile-menu[open] summary { background: #eaf3f5; border-color: #08768b; }
+  .mobile-nav-panel { position: absolute; top: 100%; left: 0; right: 0; padding: 12px 20px 20px; background: #fafbfc; border-bottom: 1px solid var(--line); box-shadow: 0 12px 20px #0c12191a; max-height: calc(100dvh - 64px); overflow-y: auto; overscroll-behavior: contain; }
+  .mobile-nav-panel a { display: flex; align-items: center; min-height: 48px; padding: 10px 14px; border-radius: 7px; color: var(--ink); font-size: 16px; text-decoration: none; }
+  .mobile-nav-panel a:hover { background: #edf2f5; }
+  .mobile-nav-panel a[aria-current="page"] { background: #e3f0f3; color: #075d6e; font-weight: 700; border-left: 3px solid #08768b; }
+  .nav :is(a,summary):focus-visible { outline: 3px solid #08768b; outline-offset: 3px; }
   @media (max-width: 720px) {
-    .nav-links a:not(.button):not([data-keep-mobile]) { display: none; }
+    .mobile-nav { display: flex; align-items: center; gap: 10px; }
+    .nav-inner { gap: 10px; }
+    .mobile-nav .button.accent { min-height: 44px; background: #08768b; }
+
+    .nav .desktop-nav { display: none; }
     .nav-links { gap: 12px; }
     .nav .button { padding: 8px 12px; font-size: 13px; }
     h1 { font-size: 28px; }
     h2 { font-size: 20px; }
     footer .wrap-wide { flex-direction: column; align-items: flex-start; }
   }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  footer .wrap-wide > span:first-child a, .price-note a, .pricing-note a, .pricing a, .answer a { text-decoration: underline; text-underline-offset: 3px; }
+  :is(a,button,summary):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+  @media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } }
 </style>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.whatcable.uk/#website",
+      "url": "https://www.whatcable.uk/",
+      "name": "WhatCable",
+      "publisher": {
+        "@id": "https://www.whatcable.uk/#publisher"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.whatcable.uk/#publisher",
+      "name": "Bitmoor",
+      "url": "https://www.bitmoor.co.uk",
+      "founder": {
+        "@type": "Person",
+        "name": "Darryl"
+      }
+    }
+  ]
+}
+</script>
 
 
     <style>
@@ -412,7 +457,7 @@
   .article-page .related-section { padding: 64px 0 72px; border-top: 1px solid var(--line); background: var(--panel); }
   .article-page .related-label { display: block; margin-bottom: 12px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
   .article-page .related-section h2 { margin: 0 0 28px; font-size: 30px; }
-  .article-page .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .article-page .related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .article-page .related-card { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
   .article-page .related-card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
   .article-page .related-copy { padding: 20px; }
@@ -432,6 +477,51 @@
     .article-page .article-cta { grid-template-columns: 1fr; margin: 36px 20px 52px; padding: 26px 24px; }
     .article-page .related-grid { grid-template-columns: 1fr; }
   }
+
+  /* Reading layout: compact introduction, stable imagery and clear focus. */
+  .article-page { --accent: #08768b; --muted: #596675; }
+  .article-page .article-hero { padding: 42px 0 36px; }
+  .article-page .article-head-inner { max-width: 820px; }
+  .article-page .back-link { margin-bottom: 22px; min-height: 28px; }
+  .article-page .article-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; line-height: 1.6; }
+  .article-page .article-hero h1 { font-size: clamp(32px, 4.5vw, 54px); line-height: 1.12; text-wrap: balance; }
+  .article-page .article-deck { font-size: 19px; max-width: 65ch; }
+  .article-page .cover-wrap { max-width: 960px; padding: 28px 24px 0; }
+  .article-page .cover-image { aspect-ratio: 16 / 9; min-height: 0; max-height: none; object-fit: cover; box-shadow: none; }
+  .article-page .article-content { max-width: 760px; padding-top: 32px; }
+  .article-page .post-body { line-height: 1.8; overflow-wrap: anywhere; }
+  .article-page .post-body h2 { font-size: clamp(24px, 3vw, 30px); line-height: 1.25; scroll-margin-top: 90px; }
+  .article-page .post-body p { margin-bottom: 22px; }
+  .article-page .post-body li { margin-bottom: 10px; }
+  .article-page .post-body a, .article-page .article-footer-note a { text-decoration: underline; text-underline-offset: 3px; }
+  .article-page .article-toc { margin: 0 0 36px; padding: 20px 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+  .article-page .article-toc summary { font-weight: 700; cursor: pointer; padding: 4px 0; }
+  .article-page .article-toc ol { margin: 14px 0 0; padding-left: 22px; }
+  .article-page .article-toc li { padding: 4px 0; font-size: 15px; line-height: 1.5; }
+  .article-page .article-toc a { text-decoration: underline; text-underline-offset: 3px; }
+  .article-page .post-body .table-wrap { border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+  .article-page .post-body table { width: 100%; margin: 0; font-size: 15px; line-height: 1.55; }
+  .article-page .post-body th { background: #edf3f5; color: var(--ink); text-align: left; }
+  .article-page .post-body th, .article-page .post-body td { padding: 15px 18px; vertical-align: top; white-space: normal; }
+  .article-page .post-body tbody tr:nth-child(even) { background: #f3f6f8; }
+  .article-page .table-hint { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+  .article-page .article-cta { margin-top: 32px; box-shadow: none; }
+  .article-page .related-section { padding: 40px 0; }
+  .article-page .related-copy a { display: inline-block; font-size: 18px; line-height: 1.45; }
+  .article-page .article-footer-note { padding: 28px 24px 40px; line-height: 1.7; }
+  .article-page :is(a,summary,[tabindex]):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+  @media(max-width:760px) {
+    .article-page .article-hero { padding: 28px 0; }
+    .article-page .article-deck { font-size: 17px; }
+    .article-page .cover-wrap { padding: 20px 20px 0; }
+    .article-page .article-content { padding-top: 24px; }
+    .article-page .article-toc { padding: 16px 18px; }
+    .article-page .post-body table { min-width: 560px; }
+    .article-page .article-cta { gap: 20px; }
+    .article-page .article-cta .cta-actions { flex-direction: column; }
+    .article-page .article-cta .cta-button { justify-content: center; white-space: normal; }
+    .article-page .related-grid { gap: 16px; }
+  }
 </style>
 
   </head>
@@ -442,7 +532,7 @@
       <img class="mark" src="/icon.png" alt="" aria-hidden="true" width="28" height="28">
       <span>WhatCable</span>
     </a>
-    <div class="nav-links">
+    <div class="nav-links desktop-nav">
       
         <a href="/instructions" data-keep-mobile>Docs</a>
       
@@ -458,19 +548,58 @@
         <a class="button accent" href="/pro">Get Pro</a>
       
     </div>
+    <div class="mobile-nav">
+      <a class="button accent" href="/pro">Get Pro</a>
+      <details class="mobile-menu">
+        <summary aria-controls="mobile-nav-links"><span>Menu</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary>
+        <div id="mobile-nav-links" class="mobile-nav-panel">
+          
+            <a href="/instructions">Docs</a>
+          
+            <a href="/cli">CLI</a>
+          
+            <a href="/cables">Cables</a>
+          
+            <a href="/blog">Blog</a>
+          
+          <a href="/inside-a-cable">Inside a cable</a>
+          <a href="/pro">WhatCable Pro</a>
+          <a href="/support">Support</a>
+          <a href="https://github.com/darrylmorley/whatcable">GitHub</a>
+        </div>
+      </details>
+    </div>
   </div>
 </nav>
+<script>
+(() => {
+  const menu = document.querySelector('.mobile-menu');
+  const trigger = menu.querySelector('summary');
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu.open) {
+      menu.open = false; trigger.focus();
+    }
+  });
+  document.addEventListener('click', event => {
+    if (menu.open && !menu.contains(event.target)) menu.open = false;
+  });
+  menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+  const desktop = matchMedia('(min-width: 721px)');
+  desktop.addEventListener('change', event => { if (event.matches) menu.open = false; });
+})();
+</script>
 
     <main class="article-page">
   <header class="article-hero">
     <div class="wrap-wide article-head-inner">
       <a class="back-link" href="/blog">← Back to Field Notes</a>
-      <p class="article-meta">
-        <span class="category">Guides</span> &nbsp;·&nbsp;
-        <time datetime="2026-05-21T00:00:00.000Z">21 May 2026</time>
-      </p>
+      <div class="article-meta">
+        <span class="category">Guides</span>
+        <span>Published <time datetime="2026-05-21T00:00:00.000Z">21 May 2026</time></span>
+        <span>Updated <time datetime="2026-09-09T00:00:00.000Z">9 September 2026</time></span>
+      </div>
       <h1>Why is my MacBook charging so slow? A real diagnosis.</h1>
-      <p class="article-deck">macOS now tells you when your charger is slow. It doesn&#39;t tell you why. Here&#39;s how to actually work out what&#39;s holding back your MacBook charging.</p>
+      <p class="article-deck">Check the charger, cable, charging agreement and battery state to understand slow MacBook charging before replacing anything.</p>
     </div>
   </header>
 
@@ -481,54 +610,40 @@
   
 
   <div class="wrap article-content">
+    <details class="article-toc" hidden><summary>In this article</summary><nav aria-label="Article contents"><ol></ol></nav></details>
     <article class="post-body">
-      <p>In macOS Tahoe 26.4, Apple added a &quot;Slow Charger&quot; label. Plug in a charger that can't deliver full power and the menu bar tells you so.</p>
-<p>What it doesn't tell you is why.</p>
-<p>That's the gap. The OS confirms what you already suspected (yes, it's charging slowly) and then leaves you to guess whether the problem is the adapter, the cable, the port, the battery, or the laptop itself. Most of the time it's one of two things, and both are easy to confirm if you know where to look.</p>
-<h2>The actual causes, in order of how often they happen</h2>
-<h3>1. The adapter doesn't have enough watts for your Mac</h3>
-<p>This is the most common cause by a long way. Apple publishes minimum wattage figures for each MacBook and they're not suggestions, they're the floor for full-speed charging. Anything below the minimum and the Mac throttles down to whatever it can pull.</p>
-<p>The rough numbers, from <a href="https://support.apple.com/en-us/109509">Apple's adapter guide</a>:</p>
+      <p>Slow charging can come from the charger, cable, an intervening dock or the Mac's current needs. Start by checking those parts rather than assuming the cable needs replacing.</p>
+<p>In macOS Tahoe 26.4 or later, a <strong>Slow Charger</strong> message can flag a limited charging source. <a href="https://support.apple.com/en-gb/102397">Apple's charging guide</a> explains the indicator. It is a useful prompt to investigate, not a diagnosis of a particular faulty component.</p>
+<h2>1. Check the charger for your exact Mac</h2>
+<p>Compare the adapter with <a href="https://support.apple.com/en-gb/109509">Apple's recommended charging equipment</a>. Supplied adapter wattage, fast-charge requirements and the minimum power needed to gain charge under a particular workload are different things.</p>
+<p>A lower-power adapter may charge the Mac while it is idle yet struggle to keep up during demanding work. On a multi-port charger, plugging in a second device can change the power available. A dock may also provide less power to the laptop than the dock's own supply rating suggests.</p>
+<p>For fast charging, use <a href="https://support.apple.com/en-gb/102378">Apple's model-specific combinations</a>. The charging path matters: for example, Apple lists a 140 W adapter and MagSafe 3 for 16-inch MacBook Pro fast charging, with USB-C fast charging using a 240 W cable supported on November 2023 and later 16-inch models. Do not apply one model's requirements to every MacBook.</p>
+<h2>2. Check whether the cable supports the required power</h2>
+<p>The cable needs to support the intended charging mode. In standard USB-C Power Delivery, a 3 A cable is limited to 60 W at 20 V. A compliant setup must not negotiate 5 A through it.</p>
+<p>Higher-current cables require an e-marker, the chip that reports their rating. Basic USB 2.0, 3 A cables need not have one. Missing identity data in an app does not prove the chip is absent; macOS may not expose it for that connection.</p>
+<p><strong>Technical detail:</strong> current and voltage both matter. Extended Power Range (EPR) enables higher-voltage charging with compatible equipment. A 240 W cable rating means support for that class of charging; it does not mean the charger or Mac will use 240 W.</p>
+<p><a href="/inside-a-cable">Explore the power wires and identity chip</a> to see their different jobs. High charging power and fast data remain separate capabilities.</p>
+<h2>3. Check battery state before treating low power as a fault</h2>
+<p>Charging normally changes as the battery fills. Optimised Battery Charging or a configured charge limit can also pause charging. Read the status shown in the battery menu or Battery settings rather than treating any particular percentage as proof of a fault.</p>
+<p>If macOS offers <strong>Charge to Full Now</strong>, use it when you need a full battery for an upcoming trip. Otherwise an intentional pause may be doing exactly what you want.</p>
+<h2>4. Compare the charging agreement with actual use</h2>
+<p><strong>USB Power Delivery is an agreement about available power.</strong> The source advertises supported options and the Mac requests an option within the setup's capabilities. The cable constrains which options are permitted.</p>
+<p>A 20 V, 5 A agreement allows up to 100 W. It does not mean 100 W is continuously entering the battery. Some power runs the computer, conversion has losses, and battery charging can taper or pause.</p>
+<p>This distinction matters when the Mac is busy. It can consume much of the available power, leaving less for the battery. Compare behaviour during a lighter workload before assuming the charger or cable is failing.</p>
+<h2>5. Isolate a persistent problem</h2>
+<p>Try a known-good compatible cable, then a suitable charger or another supported port, changing one thing at a time. If a dock is involved, try a direct connection. These comparisons help narrow the cause; a single successful swap is useful evidence rather than a complete hardware diagnosis.</p>
+<p>If the connector is damaged, charging repeatedly disconnects or the Mac will not charge, follow <a href="https://support.apple.com/en-gb/102397">Apple's charging troubleshooting guidance</a>. Avoid scraping inside a port or attempting to repair a damaged cable.</p>
+<h2>How WhatCable helps</h2>
+<p><a href="/">WhatCable</a> reads the information your Mac exposes about the port, cable, charger and connection. Where available, it shows the cable rating and negotiated power agreement alongside the system's power state.</p>
+<p>That helps answer different questions:</p>
 <ul>
-<li><strong>MacBook Air (M-series):</strong> 30W minimum</li>
-<li><strong>MacBook Pro 14&quot;:</strong> 70W for the base chip, 96W for Pro/Max</li>
-<li><strong>MacBook Pro 16&quot;:</strong> 140W</li>
+<li><strong>What is available?</strong> The charger's reported capabilities and any dock limits.</li>
+<li><strong>What is permitted?</strong> The cable's declared current and voltage rating.</li>
+<li><strong>What was agreed?</strong> The active charging agreement.</li>
+<li><strong>What is happening now?</strong> Available power readings and battery or charging status.</li>
 </ul>
-<p>A 30W adapter charging a 16&quot; MBP will work, but it'll feel like it's not charging at all under load. Sometimes the battery still drains because the Mac is using more than the adapter can supply.</p>
-<p>How to confirm: check the wattage printed on the adapter itself. If it's below the minimum, that's your answer.</p>
-<h3>2. The cable is rated below the adapter</h3>
-<p>This one trips up a lot of people because the adapter and the Mac are both capable, but the cable in the middle is the bottleneck.</p>
-<p>USB-C cables carry an e-marker chip that declares what they can handle. A cable rated for 60W (3A at 20V) physically cannot pass 96W (4.7A at 20V) no matter what the adapter or the laptop ask for. The PD negotiation drops to whatever the weakest link supports.</p>
-<p>The giveaway: you bought a 96W or 140W charger, the Mac is the right model, and charging is still slow. Nine times out of ten it's the cable. Especially if it's the cable that came in the box with something else, or a generic spare from a drawer.</p>
-<p>How to confirm: this is where it gets fiddly without help. The cable's rating is usually not printed on the cable. You can't see the e-marker contents from the Finder or from System Information. We'll come back to this.</p>
-<h3>3. Optimised Battery Charging is holding at 80%</h3>
-<p>macOS learns your routine and parks the battery at 80% if it thinks you're about to leave it plugged in for hours. From its perspective this is a feature, since holding at 80% is much kinder to long-term battery health than sitting at 100% all day.</p>
-<p>From your perspective it looks like the charger isn't doing its job.</p>
-<p>How to confirm: System Settings → Battery → Battery Health → check the charging schedule. If Optimised Charging is on and the battery is sitting at exactly 80%, that's the cause. Click &quot;Charge to Full Now&quot; if you actually need it now.</p>
-<h3>4. The workload is outpacing the supply</h3>
-<p>If you're rendering video, compiling a large project, or running a sustained GPU load on a 14&quot; or 16&quot; MBP, you can genuinely draw more than the adapter delivers. The battery makes up the difference and the percentage creeps down despite being plugged in.</p>
-<p>How to confirm: open Activity Monitor → Energy tab → look at Energy Impact. If you're maxing out CPU or GPU, you're not going to charge while doing it on a 30W or 70W adapter.</p>
-<h3>5. Dirty port, damaged cable, hardware fault</h3>
-<p>The boring causes, but they happen. A USB-C port full of pocket lint won't seat the connector properly and the contacts won't make. A cable that's been kinked too many times near the connector can lose one of its conductors and drop from 96W to 60W (or worse) without looking obviously broken.</p>
-<p>How to confirm: try a different port on the same Mac. Try the same charger and cable on a different Mac if you can. If you get fast charging on a different port but not the original, the port's the problem. If you can't see anything obvious in the port, a wooden toothpick (never metal) is the safe tool for clearing lint.</p>
-<p>If you're on an Intel Mac and you've exhausted everything else, an SMC reset is the next step. On Apple Silicon there's nothing to reset, it's all handled differently.</p>
-<h2>How to actually check what's happening</h2>
-<p>The diagnostic question that matters: what is the cable, adapter, and Mac actually negotiating right now?</p>
-<p>USB Power Delivery is a conversation. The adapter says &quot;I can offer 5V/3A, 9V/3A, 15V/3A, 20V/4.7A.&quot; The Mac picks the highest its battery can accept. The cable's e-marker sets the ceiling on current. They agree on a contract, and that contract is what determines your charging speed.</p>
-<p>macOS knows all of this. It reads the e-marker, it tracks the active PD contract, it knows what each port can do. It just doesn't surface any of it.</p>
-<p>This is what <a href="/">WhatCable</a> was built for. It sits in the menu bar and reads what macOS already has, then tells you in English:</p>
-<ul>
-<li>The cable's e-marker rating (max watts, max current, max data speed)</li>
-<li>The active PD contract (volts and amps being negotiated right now)</li>
-<li>What the port itself can do</li>
-<li>Where the bottleneck is, if there is one</li>
-</ul>
-<p><img src="https://images.whatcable.uk/1779373950977-screenshot-2026-05-19-at-22-02-19.webp" alt="WhatCable showing the active PD contract at 20V and 2.99A (60W), alongside the cable's e-marker rating, confirming the cable is not the bottleneck" title="WhatCable reading the active power contract and cable e-marker"></p>
-<p>A healthy reading on a 16&quot; MBP with a 140W adapter and a 240W USB4 cable: 28V at 5A, cable rated for 240W, port rated for 140W. Everything matches.</p>
-<p>A throttled reading on the same setup but with a wrong cable: 20V at 3A, cable rated for 60W, port still rated for 140W. The cable is the bottleneck and you can see it.</p>
-<p>That's the answer to &quot;why is it slow.&quot; You can stop guessing.</p>
-<hr>
-<p>If you want to see exactly what your own setup is negotiating, <a href="/">WhatCable</a> reads the PD contract and the cable e-marker and shows it in the menu bar. The Slow Charger Indicator tells you there's a problem. WhatCable tells you which link in the chain caused it.</p>
+<p>For example, a 60 W agreement with a higher-rated charger warrants a closer look at the cable, charger profiles, port and device request. It does not prove the cable is the limit by itself. Equally, low actual draw beneath a larger agreement can be normal when the battery is nearly full.</p>
+<p><a href="/pro#charging-agreement">Pro's charging diagnostics</a> helps compare the available figures. The purpose is to explain the connection and identify a useful next check, rather than replace a cable on the strength of one number.</p>
 
     </article>
   </div>
@@ -552,20 +667,20 @@
       <h2 id="faq-heading">Frequently asked questions</h2>
       
       <details class="faq-item">
-        <summary>Why is my MacBook Air charging so slow?</summary>
-        <div class="faq-answer"><p>The MBA minimum is 30W. If you're using a 20W iPhone adapter (very common pattern, since they look identical), you'll charge but it'll be slow under any real load. Swap to a 30W or higher adapter and a cable that's at least 60W rated, and you should see normal speeds.</p>
+        <summary>Why is my MacBook Air charging slowly?</summary>
+        <div class="faq-answer"><p>Check the adapter and cable recommended for your exact model, then battery state and workload. A lower-power supply can charge more slowly, but a pause near full charge can be intentional.</p>
 </div>
       </details>
       
       <details class="faq-item">
         <summary>How do I make my MacBook charge faster?</summary>
-        <div class="faq-answer"><p>Match all three links in the chain. Adapter at or above Apple's minimum for your model. Cable rated for at least the adapter's wattage. A clean port that seats the connector firmly. Close anything heavy that's pulling power. If Optimised Charging is parking you at 80%, override it.</p>
+        <div class="faq-answer"><p>Use a compatible charger and cable for your model, check any dock or shared charger power limits, and review battery settings. A higher cable rating alone does not increase charging speed.</p>
 </div>
       </details>
       
       <details class="faq-item">
-        <summary>How long should it take to charge a MacBook Pro?</summary>
-        <div class="faq-answer"><p>With a properly matched adapter and cable, roughly 0 to 50% in half an hour on the 14&quot; and 16&quot; models, and full charge in around 2 hours. Significantly longer than that and something in the chain isn't delivering full capability.</p>
+        <summary>How long should a MacBook take to charge?</summary>
+        <div class="faq-answer"><p>Apple describes around 50% in 30 minutes for supported fast-charging models with suitable equipment. This is not a universal charge-time guarantee; battery state, settings and conditions affect the result.</p>
 </div>
       </details>
       
@@ -578,10 +693,10 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Why is my MacBook Air charging so slow?",
+      "name": "Why is my MacBook Air charging slowly?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>The MBA minimum is 30W. If you're using a 20W iPhone adapter (very common pattern, since they look identical), you'll charge but it'll be slow under any real load. Swap to a 30W or higher adapter and a cable that's at least 60W rated, and you should see normal speeds.</p>\n"
+        "text": "<p>Check the adapter and cable recommended for your exact model, then battery state and workload. A lower-power supply can charge more slowly, but a pause near full charge can be intentional.</p>\n"
       }
     },
     {
@@ -589,15 +704,15 @@
       "name": "How do I make my MacBook charge faster?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>Match all three links in the chain. Adapter at or above Apple's minimum for your model. Cable rated for at least the adapter's wattage. A clean port that seats the connector firmly. Close anything heavy that's pulling power. If Optimised Charging is parking you at 80%, override it.</p>\n"
+        "text": "<p>Use a compatible charger and cable for your model, check any dock or shared charger power limits, and review battery settings. A higher cable rating alone does not increase charging speed.</p>\n"
       }
     },
     {
       "@type": "Question",
-      "name": "How long should it take to charge a MacBook Pro?",
+      "name": "How long should a MacBook take to charge?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>With a properly matched adapter and cable, roughly 0 to 50% in half an hour on the 14&quot; and 16&quot; models, and full charge in around 2 hours. Significantly longer than that and something in the chain isn't delivering full capability.</p>\n"
+        "text": "<p>Apple describes around 50% in 30 minutes for supported fast-charging models with suitable equipment. This is not a universal charge-time guarantee; battery state, settings and conditions affect the result.</p>\n"
       }
     }
   ]
@@ -612,10 +727,18 @@
       <div class="related-grid">
         
           
+            <article class="related-card">
+              
+              <div class="related-copy">
+                <span>Guides</span>
+                <a href="/blog/is-my-usb-c-cable-thunderbolt">How to tell if a USB-C cable is Thunderbolt</a>
+              </div>
+            </article>
+          
         
           
             <article class="related-card">
-              <a href="/blog/why-whatcable-checks-the-whole-chain" aria-label="Read WhatCable doesn&#39;t just take the cable&#39;s word for it"><img src="https://images.whatcable.uk/1784302843898-0x0-jpg.webp" alt="A Thunderbolt cable connecting a MacBook to a dock" loading="lazy"></a>
+              <a href="/blog/why-whatcable-checks-the-whole-chain" aria-label="Read WhatCable doesn&#39;t just take the cable&#39;s word for it"><img src="https://images.whatcable.uk/1784302843898-0x0-jpg.webp" alt="A Thunderbolt cable connecting a MacBook to a dock" loading="lazy" decoding="async"></a>
               <div class="related-copy">
                 <span>Deep dives</span>
                 <a href="/blog/why-whatcable-checks-the-whole-chain">WhatCable doesn&#39;t just take the cable&#39;s word for it</a>
@@ -625,7 +748,7 @@
         
           
             <article class="related-card">
-              <a href="/blog/thunderbolt-vs-usb-c" aria-label="Read Thunderbolt vs USB-C: what the connector hides"><img src="https://images.whatcable.uk/1779375024963-usb-c-cable-emarker-cutaway.webp" alt="Cutaway illustration of a USB-C cable showing the e-marker and the protocols hidden inside the connector" loading="lazy"></a>
+              <a href="/blog/thunderbolt-vs-usb-c" aria-label="Read Thunderbolt vs USB-C: what the connector hides"><img src="https://images.whatcable.uk/1779375024963-usb-c-cable-emarker-cutaway.webp" alt="Cutaway illustration of a USB-C cable showing the e-marker and the protocols hidden inside the connector" loading="lazy" decoding="async"></a>
               <div class="related-copy">
                 <span>Deep dives</span>
                 <a href="/blog/thunderbolt-vs-usb-c">Thunderbolt vs USB-C: what the connector hides</a>
@@ -635,6 +758,14 @@
         
           
         
+          
+            <article class="related-card">
+              
+              <div class="related-copy">
+                <span>Notes</span>
+                <a href="/blog/hello-world">Hello, world</a>
+              </div>
+            </article>
           
         
       </div>
@@ -652,14 +783,14 @@
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   "headline": "Why is my MacBook charging so slow? A real diagnosis.",
-  "description": "macOS now tells you when your charger is slow. It doesn't tell you why. Here's how to actually work out what's holding back your MacBook charging.",
+  "description": "Check the charger, cable, charging agreement and battery state to understand slow MacBook charging before replacing anything.",
   "url": "https://www.whatcable.uk/blog/why-is-my-macbook-charging-so-slow",
   "datePublished": "2026-05-21T00:00:00.000Z",
-  "dateModified": "2026-05-21T00:00:00.000Z",
+  "dateModified": "2026-09-09T00:00:00.000Z",
   "image": "https://images.whatcable.uk/1779372798303-macbook-magsafe.jpg",
   "author": {
     "@type": "Person",
-    "name": "Darryl Morley",
+    "name": "Darryl",
     "url": "https://github.com/darrylmorley"
   },
   "publisher": {
@@ -675,9 +806,37 @@
 }
 </script>
 
+<script>
+(() => {
+  const body = document.querySelector('.post-body');
+  const toc = document.querySelector('.article-toc');
+  const headings = [...body.querySelectorAll('h2')];
+  if (headings.length > 2) {
+    headings.forEach((heading, index) => {
+      if (!heading.id) heading.id = `article-section-${index + 1}`;
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = `#${heading.id}`; link.textContent = heading.textContent;
+      item.append(link); toc.querySelector('ol').append(item);
+    });
+    toc.hidden = false;
+  }
+  body.querySelectorAll('table').forEach((table, index) => {
+    const wrapper = table.closest('.table-wrap') || table.parentElement;
+    wrapper.tabIndex = 0; wrapper.setAttribute('role', 'region');
+    wrapper.setAttribute('aria-label', `Comparison table ${index + 1}`);
+    const hint = document.createElement('p'); hint.className = 'table-hint';
+    hint.textContent = 'Scroll sideways to see all columns. With a keyboard, focus the table and use the arrow keys.';
+    wrapper.after(hint);
+    const update = () => { hint.hidden = wrapper.scrollWidth <= wrapper.clientWidth + 1; };
+    update(); new ResizeObserver(update).observe(wrapper);
+  });
+})();
+</script>
+
     <footer>
   <div class="wrap-wide">
-    <span>A <a href="https://www.bitmoor.co.uk">Bitmoor</a> product. Founded by <a href="https://github.com/darrylmorley">Darryl Morley</a>. MIT licensed.</span>
+    <span>A <a href="https://www.bitmoor.co.uk">Bitmoor</a> product. Founded by <a href="https://github.com/darrylmorley">Darryl</a>. MIT licensed.</span>
     <span class="footer-links">
       
         <a href="/instructions">Docs</a>
@@ -689,6 +848,9 @@
         <a href="/cables">Cables</a>
         <span class="sep">·</span>
       
+        <a href="/inside-a-cable">Inside a cable</a>
+        <span class="sep">·</span>
+      
         <a href="/blog">Blog</a>
         <span class="sep">·</span>
       
@@ -696,6 +858,9 @@
         <span class="sep">·</span>
       
         <a href="/support">Support</a>
+        <span class="sep">·</span>
+      
+        <a href="https://www.bitmoor.co.uk/business.html">Business enquiries</a>
         <span class="sep">·</span>
       
         <a href="/press">Press</a>

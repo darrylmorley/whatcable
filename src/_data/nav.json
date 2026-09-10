@@ -1,9 +1,21 @@
 {
   "primary": [
-    { "label": "Docs", "href": "/instructions" },
-    { "label": "CLI", "href": "/cli" },
-    { "label": "Cables", "href": "/cables" },
-    { "label": "Blog", "href": "/blog" }
+    {
+      "label": "Docs",
+      "href": "/instructions"
+    },
+    {
+      "label": "CLI",
+      "href": "/cli"
+    },
+    {
+      "label": "Cables",
+      "href": "/cables"
+    },
+    {
+      "label": "Blog",
+      "href": "/blog"
+    }
   ],
   "buttons": [
     {
@@ -11,18 +23,57 @@
       "href": "https://github.com/darrylmorley/whatcable",
       "style": "secondary"
     },
-    { "label": "Get Pro", "href": "/pro", "style": "accent" }
+    {
+      "label": "Get Pro",
+      "href": "/pro",
+      "style": "accent"
+    }
   ],
   "footer": [
-    { "label": "Docs", "href": "/instructions" },
-    { "label": "CLI", "href": "/cli" },
-    { "label": "Cables", "href": "/cables" },
-    { "label": "Blog", "href": "/blog" },
-    { "label": "Pro", "href": "/pro" },
-    { "label": "Support", "href": "/support" },
-    { "label": "Press", "href": "/press" },
-    { "label": "Privacy", "href": "/privacy" },
-    { "label": "Terms", "href": "/terms" },
+    {
+      "label": "Docs",
+      "href": "/instructions"
+    },
+    {
+      "label": "CLI",
+      "href": "/cli"
+    },
+    {
+      "label": "Cables",
+      "href": "/cables"
+    },
+    {
+      "label": "Inside a cable",
+      "href": "/inside-a-cable"
+    },
+    {
+      "label": "Blog",
+      "href": "/blog"
+    },
+    {
+      "label": "Pro",
+      "href": "/pro"
+    },
+    {
+      "label": "Support",
+      "href": "/support"
+    },
+    {
+      "label": "Business enquiries",
+      "href": "https://www.bitmoor.co.uk/business.html"
+    },
+    {
+      "label": "Press",
+      "href": "/press"
+    },
+    {
+      "label": "Privacy",
+      "href": "/privacy"
+    },
+    {
+      "label": "Terms",
+      "href": "/terms"
+    },
     {
       "label": "View source on GitHub",
       "href": "https://github.com/darrylmorley/whatcable"

@@ -10,11 +10,13 @@ import WhatCableCore
 // SEAM NOTE: `PortDiagnosticsWatcher.refresh()` reads live IOKit
 // (`AppleSmartBatteryReader.properties()` and
 // `PowerSourceWatcher.readAllPowerSources()`), so it is unreachable from a
-// test. Its three per-entry builders -- `contract(from:)`,
-// `healthCounters(from:)`, `eventTrace(from:)` -- are `private static func`,
-// so they too cannot be called directly, even via `@testable import` (Swift's
-// `private` stays file-scoped regardless of the import). What IS fully
-// reachable, and is where the interesting logic actually lives, is
+// test. Two of its three per-entry builders, `healthCounters(from:)` and
+// `eventTrace(from:)`, are `private static func`, so they cannot be called
+// directly even via `@testable import` (Swift's `private` stays file-scoped
+// regardless of the import). The third, `contract(from:)`, was opened to
+// internal so the PDO slot sweep below drives production rather
+// than a copy of it. Also fully reachable, and where the port-attribution
+// logic actually lives, is
 // `portKeyMap(entries:portKeys:sources:)`: a `nonisolated static func` with no
 // IOKit dependency at all, taking plain `[String: Any]` / `[PowerSource]`
 // values. This is the function the task brief is really about: it is the
@@ -25,18 +27,14 @@ import WhatCableCore
 // watts signal). This file sweeps it against real probe-32 /
 // probe-17 data.
 //
-// The three private builders are trivial one-line mappings from a dict to a
-// public model (`PDContract`, `PortHealthCounters`, `PDEventTrace`) using
-// public helpers (`wcInt`, `wcUInt32`, `wcBool`, `wcUInt8`, `PDO.decode`).
 // `PDO.decode` itself already has dedicated corpus coverage in
 // `Tests/WhatCableCoreTests/PDODecodeCorpusSweepTests.swift`; this file does
-// not duplicate that. The `contract`/`healthCounters` re-assembly below,
-// duplicated from the current source with a comment, exists only to prove
-// the overall shape (a full `PDContract` from a real corpus entry) survives
-// end-to-end without crashing -- it is NOT independent evidence that the
-// private glue itself is correct, since a bug in the real private function
-// that this duplicate faithfully copies would not be caught here. That
-// residual gap is real and is called out again below.
+// not duplicate that. Nothing here re-assembles a copy of a production
+// builder any more: the PDO sweep below calls `contract(from:)` and
+// `PowerSourceWatcher.contractEntries(from:)` themselves, on the same probe
+// dicts, so a bug in either is caught rather than faithfully reproduced.
+// `healthCounters(from:)` and `eventTrace(from:)` stay private and stay
+// uncovered here; that residual gap is real.
 @Suite("PortDiagnosticsWatcher corpus sweep - portKeyMap (probes 17 + 32)")
 struct PortDiagnosticsWatcherCorpusSweepTests {
 
@@ -107,19 +105,42 @@ struct PortDiagnosticsWatcherCorpusSweepTests {
         return nil
     }
 
+    /// Parses one `PortControllerInfo` item into the same `[String: Any]`
+    /// shape IOKit hands the production code, INCLUDING the
+    /// `PortControllerPortPDO` array, which this parser previously did not
+    /// read at all.
+    ///
+    /// TRAP: probe 32 prints each PDO word as a SIGNED decimal followed by a
+    /// sign-extended 64-bit hex, e.g. `-2138272628 (0xffffffff808c8c8c)`. A
+    /// PDO's type is bits 31:30 and every non-Fixed class sets bit 31, so
+    /// every PPS, AVS, Variable and Battery word prints negative. A parser
+    /// that accepts only digits reads zero non-Fixed PDOs and looks like a
+    /// clean pass. `parseFirstInt` takes the sign, and `wcUInt32` in
+    /// production truncates it back to the real 32-bit word.
     private static func extractPortControllerInfoItems(_ text: String) -> [[String: Any]] {
         guard let after = findArraySection(text, key: "PortControllerInfo") else { return [] }
         var items: [[String: Any]] = []
         var current: [String: Any] = [:]
+        var pdoSlots: [NSNumber] = []
         var inItem = false
+        var inPDOArray = false
+
+        func finishItem() {
+            current["PortControllerPortPDO"] = pdoSlots as NSArray
+            items.append(current)
+        }
 
         for line in after.components(separatedBy: "\n") {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if trimmed.hasPrefix("[") && trimmed.contains("Dict[") {
-                if inItem { items.append(current) }
+                if inItem { finishItem() }
                 current = [:]
+                pdoSlots = []
+                inPDOArray = false
                 inItem = true
             } else if inItem && trimmed.hasPrefix("PortController") {
+                // Any other PortController key ends the PDO array.
+                inPDOArray = trimmed.hasPrefix("PortControllerPortPDO")
                 if let eqRange = trimmed.range(of: " = ") {
                     let key = String(trimmed[..<eqRange.lowerBound])
                     let valStr = String(trimmed[eqRange.upperBound...]).drop(while: { $0 == " " })
@@ -127,11 +148,21 @@ struct PortDiagnosticsWatcherCorpusSweepTests {
                         current[key] = NSNumber(value: n)
                     }
                 }
+            } else if inItem, inPDOArray, trimmed.hasPrefix("["),
+                      let closeBracket = trimmed.firstIndex(of: "]") {
+                // `[7]                 574451 (0x8c3f3)`: slot index, then the
+                // word. Kept positionally, zeros included, because the raw
+                // array is a fixed 13-slot layout and slot position is what
+                // the RDO's object position indexes into.
+                let rest = String(trimmed[trimmed.index(after: closeBracket)...])
+                if let n = parseFirstInt(from: rest) {
+                    pdoSlots.append(NSNumber(value: n))
+                }
             } else if inItem && !trimmed.hasPrefix(" ") && !trimmed.isEmpty && !trimmed.hasPrefix("[") {
                 break
             }
         }
-        if inItem { items.append(current) }
+        if inItem { finishItem() }
         return items
     }
 
@@ -359,6 +390,167 @@ struct PortDiagnosticsWatcherCorpusSweepTests {
             #expect(wattsMatchedTotal >= 1,
                 "Expected at least one watts-matched portKeyMap resolution across the corpus")
         }
+    }
+
+    // MARK: - Corpus sweep: the PDO slot array
+    //
+    // macOS lays `PortControllerPortPDO` out as a fixed 13-slot array, 7 SPR
+    // slots then 6 EPR slots. `PortControllerNPDOs` counts only the SPR
+    // offers, so every PPS, AVS and EPR offer sits AFTER that count. Trimming
+    // the array to `NPDOs` therefore threw away 536 of the corpus's 540
+    // non-Fixed offers, and left the RDO's object position 8 indexing past
+    // the end of the list. These assertions drive the production factory,
+    // `PortDiagnosticsWatcher.contract(from:)`, not a copy of it.
+
+    private static func isNonFixed(_ pdo: PDO) -> Bool {
+        if case .fixed = pdo { return false }
+        return true
+    }
+
+    @Test("Probe 32 sweep: contract(from:) keeps the PPS/AVS/EPR offers that sit past PortControllerNPDOs, and no RDO reads object position 0")
+    func pdoSlotSweep() {
+        var foldersScanned = 0
+        var entriesTotal = 0
+        var contractsWithNonFixed = 0
+        var nonFixedPDOs = 0
+        var nonZeroRDOs = 0
+        var zeroPositionRDOs = 0
+
+        for folder in Self.allProbeFolders() {
+            guard let probe32 = Self.loadProbeText(folder: folder, fileName: "32_smart_battery_full_keys.json") else { continue }
+            let items = Self.extractPortControllerInfoItems(probe32)
+            guard !items.isEmpty else { continue }
+            foldersScanned += 1
+
+            // Both producers, driven together on the same dicts. They must
+            // agree that the slot array is passed through whole: the RDO's
+            // object position names a slot number in it, so one of them
+            // trimming and the other not means the two disagree about which
+            // PDO the Mac is actually drawing from.
+            let readerEntries = AppleSmartBatteryReader.parsePortControllerInfo(items)
+            let synthesisEntries = PowerSourceWatcher.contractEntries(from: readerEntries)
+
+            // Asserted before the loop so the per-entry checks below can index
+            // unconditionally. A count check guarded by the count it is
+            // checking goes dark instead of failing: dropping an entry removes
+            // a whole physical port from power synthesis, with its offers and
+            // its RDO, and a conditional index would simply stop running for
+            // the missing tail.
+            #expect(readerEntries.count == items.count,
+                "\(folder): the reader returned \(readerEntries.count) entries for \(items.count) PortControllerInfo items")
+            #expect(synthesisEntries.count == items.count,
+                "\(folder): contractEntries returned \(synthesisEntries.count) entries for \(items.count) PortControllerInfo items")
+            guard synthesisEntries.count == items.count else { continue }
+
+            for (offset, dict) in items.enumerated() {
+                entriesTotal += 1
+                let rawSlotCount = wcArray(dict["PortControllerPortPDO"]).count
+                let contract = PortDiagnosticsWatcher.contract(from: dict)
+
+                // Exact, not a floor. A floor is a lower bound and a lower
+                // bound cannot see a PARTIAL re-trim: cutting to NPDOs+4
+                // still leaves 520 contracts carrying a non-Fixed PDO and
+                // sails through the 500 floor below. This kills every trim,
+                // partial or whole, on both producers.
+                #expect(contract.pdoSlots.count == rawSlotCount,
+                    "\(folder) entry[\(offset)]: contract(from:) kept \(contract.pdoSlots.count) of \(rawSlotCount) raw PDO slots")
+                #expect(synthesisEntries[offset].rawPDOs.count == rawSlotCount,
+                    "\(folder) entry[\(offset)]: PowerSourceWatcher.contractEntries kept \(synthesisEntries[offset].rawPDOs.count) of \(rawSlotCount) raw PDO slots")
+                let nonFixed = contract.pdoList.filter(Self.isNonFixed)
+                nonFixedPDOs += nonFixed.count
+                if !nonFixed.isEmpty { contractsWithNonFixed += 1 }
+
+                if contract.activeRdo != 0 {
+                    nonZeroRDOs += 1
+                    let position = PDContract.objectPosition(of: contract.activeRdo)
+                    if position == 0 { zeroPositionRDOs += 1 }
+                }
+            }
+        }
+
+        print("[PortDiagnosticsWatcherSweep/PDO] \(foldersScanned) folders, \(entriesTotal) entries, "
+            + "\(contractsWithNonFixed) contracts carrying a non-Fixed PDO, \(nonFixedPDOs) non-Fixed PDOs, "
+            + "\(nonZeroRDOs) non-zero RDOs, \(zeroPositionRDOs) of them at object position 0")
+
+        // Structural ceiling, not a floor. Rule 5 of
+        // `research/corpus-parser-traps.md`: a floor is blind to double
+        // counting, so bound the other side too. Every probe-32 file that
+        // carries the key prints `PortControllerInfo` TWICE, and only the
+        // 2-space top-level form is matched, which is why the entry count is
+        // right today; loosen that prefix and both the 500 floor below and
+        // the 240 entry floor in the sweep above still pass at 7784 entries.
+        // Max entries per folder is 4, measured across the whole corpus (665
+        // folders at 4, 294 at 3, 175 at 2), so even an all-4-port corpus
+        // reaches only 4 per folder and 5 leaves a port's worth of headroom.
+        //
+        // 5 rather than 8 because 8 does not do the job: watched against a
+        // simulated whole-corpus duplication, 7784 entries over 1134 folders
+        // is 6.9 each and passes an 8. At 5 the same duplication fails, which
+        // is the case this ceiling exists for.
+        #expect(entriesTotal <= foldersScanned * 5,
+            "\(entriesTotal) entries across \(foldersScanned) folders is more than 5 per folder; PortControllerInfo is probably being counted twice")
+
+        // Object position is bits 31:28, four bits since PD 3.1. A 3-bit read
+        // masks position 8 down to 0, which is the "no contract" value, so a
+        // live EPR contract reads as no contract at all. Measured on this
+        // corpus: 45 entries did that under the old 3-bit mask, 0 do now.
+        // Unconditional: it is a property of every entry, not a corpus floor.
+        #expect(zeroPositionRDOs == 0,
+            "\(zeroPositionRDOs) of \(nonZeroRDOs) non-zero RDOs decoded to object position 0")
+
+        // Corpus floor, gated the same skip-not-fail way as the sweep above:
+        // a fresh clone without the raw corpus hard-linked in skips rather
+        // than fails. Measured untrimmed: 534 contracts carry a non-Fixed
+        // PDO, 529 once the implausible filler words are dropped (five words,
+        // not four: the four `0x808c8c8c` fillers and `0xc00c30f5` on
+        // m4_macos26.6_i). The trimmed reading found 4.
+        //
+        // What this floor guards, precisely: a FULL re-trim to NPDOs, which
+        // drops it to 4. It does not catch a partial one. Measured
+        // sensitivity: trimming to NPDOs+1, +2 or +3 still leaves 520
+        // contracts and sails through, and NPDOs+5 leaves 530. The assertion
+        // that closes NPDOs+1 to NPDOs+3 is `replayM5MaxEPRSelection`, where
+        // NPDOs is 4 and slot 8 has to survive. Only a contrived NPDOs+4 trim
+        // gets past the whole suite.
+        if foldersScanned >= 50 {
+            #expect(contractsWithNonFixed >= 500,
+                "Expected at least 500 contracts carrying a non-Fixed PDO; got \(contractsWithNonFixed). A count near 4 means the PDO array is being trimmed to PortControllerNPDOs again.")
+        }
+    }
+
+    @Test("Replay m1pro_macos26.5_y: entry 3 offers an SPR PPS supply at slot 6, past its NPDOs of 5")
+    func replayM1ProPPSOffer() {
+        guard let probe32 = Self.loadProbeText(folder: "m1pro_macos26.5_y", fileName: "32_smart_battery_full_keys.json") else { return }
+        let items = Self.extractPortControllerInfoItems(probe32)
+        guard items.count > 3 else {
+            Issue.record("m1pro_macos26.5_y: expected at least 4 PortControllerInfo entries, got \(items.count)")
+            return
+        }
+        let contract = PortDiagnosticsWatcher.contract(from: items[3])
+        let hasPPS = contract.pdoList.contains { pdo in
+            if case .pps = pdo { return true }
+            return false
+        }
+        #expect(hasPPS, "expected a PPS offer in entry 3's PDO list, got \(contract.pdoList)")
+    }
+
+    @Test("Replay m5max_macos26.5.2_f: entry 3's RDO selects the 28 V EPR Fixed PDO at slot 8")
+    func replayM5MaxEPRSelection() {
+        guard let probe32 = Self.loadProbeText(folder: "m5max_macos26.5.2_f", fileName: "32_smart_battery_full_keys.json") else { return }
+        let items = Self.extractPortControllerInfoItems(probe32)
+        guard items.count > 3 else {
+            Issue.record("m5max_macos26.5.2_f: expected at least 4 PortControllerInfo entries, got \(items.count)")
+            return
+        }
+        let contract = PortDiagnosticsWatcher.contract(from: items[3])
+        #expect(contract.activeRdo == 0x81c759d6)
+        let position = PDContract.objectPosition(of: contract.activeRdo)
+        let selected = contract.selectedPDO(for: contract.activeRdo)
+        #expect(selected == .fixed(voltage: 28_000, maxCurrent: 4_990),
+            "expected the 28 V / 4.99 A EPR Fixed PDO at object position \(position), got \(String(describing: selected))")
+        // 28 000 mV * 4990 mA = 139 720 mW, which is what the controller
+        // reports as the negotiated maximum.
+        #expect(contract.maxPower == 139_720)
     }
 
     // MARK: - Fixture: idle-port positional fallback vs watts-matched entry

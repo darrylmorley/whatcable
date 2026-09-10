@@ -53,8 +53,10 @@
         "endpoint" : "SOP''",
         "maxVolts" : 50,
         "maxWatts" : 240,
+        "plugType" : "Type-C",
         "speed" : "USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)",
         "type" : "passive",
+        "typeSource" : "emarker",
         "vendorID" : 1452,
         "vendorName" : "Apple"
       },

@@ -359,7 +359,7 @@ struct HPMPortUUIDMapCorpusSweepTests {
 
     // MARK: - MagSafe / USB-C same-@N collision fixture
     //
-    // CLAUDE.md flags this explicitly: the `@N` socket suffix on a power-only
+    // research/issue-195-investigation.md covers this: the `@N` socket suffix on a power-only
     // (MagSafe) port can collide with the first USB-C port on the same HPM
     // controller (issue #195). HPMPortUUIDMap must keep them apart because
     // MagSafe and USB-C use different rawType prefixes (17 vs 2) even when N

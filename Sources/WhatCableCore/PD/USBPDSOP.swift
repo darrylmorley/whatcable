@@ -90,6 +90,11 @@ public struct USBPDSOP: Identifiable, Hashable {
     }
 
     /// The Cable VDO is at index 3 (VDO[3] in 1-indexed PD spec terms).
+    ///
+    /// Decoded under the cable's **self-reported** layout on purpose (the note
+    /// on `activeCableVDO2` explains why). Whether the cable is actually
+    /// active is settled by `CableClassification.resolve`, which reads the
+    /// port controller as well as this self-report.
     public var cableVDO: PDVDO.CableVDO? {
         guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
               vdos.count > 3 else { return nil }
@@ -110,9 +115,23 @@ public struct USBPDSOP: Identifiable, Hashable {
     /// than leaving it undecoded. The VDO[3] decode is intentionally kept
     /// as-is (passive layout) to avoid raising false trust flags.
     public var activeCableVDO2: PDVDO.ActiveCableVDO2? {
+        activeCableVDO2(classifiedAs: nil)
+    }
+
+    /// `activeCableVDO2` with a third gate: a cable the classifier resolved as
+    /// active gets VDO[4] decoded even when neither the ID Header nor the
+    /// layout contradiction says so, which covers a cable the port controller
+    /// alone promotes.
+    ///
+    /// Every corpus port the controller promotes today carries exactly 4 VDOs,
+    /// so this gate cannot fire on any current capture. It is here for
+    /// hardware that carries 5.
+    public func activeCableVDO2(classifiedAs classification: CableClassification.Resolution?) -> PDVDO.ActiveCableVDO2? {
         guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
               vdos.count > 4 else { return nil }
-        guard idHeader?.ufpProductType == .activeCable || hasActiveLayoutContradiction else {
+        guard idHeader?.ufpProductType == .activeCable
+                || hasActiveLayoutContradiction
+                || classification?.type == .active else {
             return nil
         }
         return PDVDO.decodeActiveCableVDO2(vdos[4])
@@ -152,6 +171,17 @@ public struct USBPDSOP: Identifiable, Hashable {
             if sn.count == 32 && pn.count == 32 { return sn == pn }
         }
         return self.portKey == portKey
+    }
+
+    /// The port this identity belongs to, out of `ports`, or nil when none
+    /// of them is it. Same join as `canonicallyMatches(port:)`: UUID-keyed on
+    /// M3+, portKey fallback on M1/M2.
+    ///
+    /// Exists so a caller that holds a flat port list (the CLI's `--report`
+    /// path) writes the join once, in a place a test can reach, rather than
+    /// inline.
+    public func matchingPort(in ports: [AppleHPMInterface]) -> AppleHPMInterface? {
+        ports.first { canonicallyMatches(port: $0) }
     }
 
     /// Human-readable PD spec revision (e.g. "PD 3.0"). The raw value is the

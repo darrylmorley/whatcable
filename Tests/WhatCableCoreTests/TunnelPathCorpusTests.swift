@@ -231,7 +231,7 @@ struct TunnelPathCorpusTests {
             probe29FilesSeen += 1
 
             // Known data-quality issue (same 64 KB pipe cap documented for
-            // probe 17 in the project CLAUDE.md): 12 of the 134 probe-29
+            // probe 17 in research/cio-value-mappings.md): 12 of the 134 probe-29
             // files are truncated at exactly 65536 bytes. Found by hand
             // when this test's cross-check first fired on
             // m2max_macos27.0_b: production=34 vs independent=35, traced

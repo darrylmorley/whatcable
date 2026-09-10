@@ -586,7 +586,7 @@ struct USB3CorroborationCorpusSweepTests {
     // verified fact rather than the discarded 36, per house rule
     // ("re-derive any corpus figure with a second, independent parser").
     //
-    // This matches the pattern CLAUDE.md already documents for
+    // This matches the pattern research/iokit-data-sources.md records for
     // m2pro_macos26.4.1 (TRM-restricted USB3 ports there show up in
     // TransportsActive as USB2, not USB3): when a SuperSpeed link is
     // TRM-restricted, the port controller apparently does not report

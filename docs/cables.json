@@ -1268,7 +1268,7 @@
     "power" : "5 A \/ 20 V (100 W)",
     "registered" : true,
     "speed" : "USB 3.2 Gen 2 (10 Gbps)",
-    "type" : "passive",
+    "type" : "active",
     "vendor" : "Lintes Technology Co., Ltd.",
     "vid" : "0x2B1D",
     "xid" : "none"

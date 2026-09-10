@@ -304,14 +304,25 @@ public final class PortDiagnosticsWatcher: ObservableObject {
         return result
     }
 
-    private static func contract(from dict: [String: Any]) -> PDContract {
-        let rawPDOs = wcArray(dict["PortControllerPortPDO"]).map(wcUInt32)
-        let pdoCount = wcInt(dict["PortControllerNPDOs"])
-        let decoded = rawPDOs.prefix(pdoCount > 0 ? pdoCount : rawPDOs.count).map(PDO.decode(rawValue:))
+    /// Internal, not private, and `nonisolated`, so the corpus sweep in
+    /// `PortDiagnosticsWatcherCorpusSweepTests` drives production rather than
+    /// a copy of it. Same reasoning as `portKeyMap` above.
+    nonisolated static func contract(from dict: [String: Any]) -> PDContract {
+        // The raw array is a fixed 13-slot layout, 7 SPR slots then 6 EPR
+        // slots, and `PortControllerNPDOs` counts only the SPR offers. Every
+        // PPS, AVS and EPR offer sits AFTER that count, so the array is kept
+        // whole and only the zero words are turned into empty slots. Trimming
+        // it to NPDOs hid 536 of the corpus's 540 non-Fixed offers and left
+        // the RDO's object position 8 indexing past the end of the list.
+        let slots = wcArray(dict["PortControllerPortPDO"]).map { raw -> PDO? in
+            let word = wcUInt32(raw)
+            return word == 0 ? nil : PDO.decode(rawValue: word)
+        }
         return PDContract(
             activeRdo: wcUInt32(dict["PortControllerActiveContractRdo"]),
-            pdoList: decoded,
-            pdoCount: pdoCount,
+            pdoSlots: slots,
+            pdoCount: wcInt(dict["PortControllerNPDOs"]),
+            eprPdoCount: wcInt(dict["PortControllerNEprPDOs"]),
             maxPower: wcInt(dict["PortControllerMaxPower"]),
             capMismatch: wcBool(dict["PortControllerCapMismatch"]),
             srcTypes: wcInt(dict["PortControllerSrcTypes"])

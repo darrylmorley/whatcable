@@ -607,3 +607,14 @@
 "Argument %@" = "Argüman %@";
 "Arguments %@" = "Argümanlar %@";
 "Source ready (result unknown)" = "Kaynak hazır (sonuç bilinmiyor)";
+
+/* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
+"USB Type-A plug (deprecated)" = "USB Type-A fişi (kullanımdan kaldırıldı)";
+"USB Type-B plug (deprecated)" = "USB Type-B fişi (kullanımdan kaldırıldı)";
+"USB Type-C plug" = "USB Type-C fişi";
+"Captive cable (built into the device)" = "Sabit kablo (cihaza gömülü)";
+
+/* Cable type source: the port controller's own ActiveCable reading, and the
+   e-marker silicon vendor hint. */
+"E-marker reports passive, but the port controller detects an active cable" = "E-marker pasif bildiriyor ancak bağlantı noktası denetleyicisi etkin bir kablo algılıyor";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker, yonga üreticisinin varsayılan satıcı kimliğini (%@) taşıyor; kablonun markası kayıtlı değil";

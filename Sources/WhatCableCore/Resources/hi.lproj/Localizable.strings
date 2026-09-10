@@ -607,3 +607,14 @@
 "Argument %@" = "आर्ग्युमेंट %@";
 "Arguments %@" = "आर्ग्युमेंट %@";
 "Source ready (result unknown)" = "सोर्स तैयार (परिणाम अज्ञात)";
+
+/* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
+"USB Type-A plug (deprecated)" = "USB टाइप-A प्लग (अप्रचलित)";
+"USB Type-B plug (deprecated)" = "USB टाइप-B प्लग (अप्रचलित)";
+"USB Type-C plug" = "USB टाइप-C प्लग";
+"Captive cable (built into the device)" = "स्थायी केबल (डिवाइस में लगी हुई)";
+
+/* Cable type source: the port controller's own ActiveCable reading, and the
+   e-marker silicon vendor hint. */
+"E-marker reports passive, but the port controller detects an active cable" = "E-marker पैसिव बताता है, लेकिन पोर्ट कंट्रोलर सक्रिय केबल का पता लगाता है";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker अपने चिप निर्माता की डिफ़ॉल्ट वेंडर ID (%@) रखता है; केबल का ब्रांड दर्ज नहीं है";

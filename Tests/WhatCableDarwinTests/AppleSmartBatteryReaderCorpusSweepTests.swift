@@ -488,4 +488,35 @@ struct AppleSmartBatteryReaderCorpusSweepTests {
             #expect(checked >= 1)
         }
     }
+
+    // MARK: - Fixture: a non-numeric PDO element keeps its slot
+
+    /// The PDO array is zero-filled, never compacted.
+    ///
+    /// `PortControllerPortPDO` is a fixed 13-slot layout and the RDO's object
+    /// position names a slot number in it, so dropping one unreadable element
+    /// shifts every later slot down and the position lookup then selects the
+    /// wrong PDO. Corpus replay cannot reach this: probe dumps are text and
+    /// every element parses, so the compacting and zero-filling forms are
+    /// identical on all 3892 real entries. It needs a synthetic element.
+    @Test("Fixture: a non-numeric PDO element is zero-filled, not dropped, so later slots keep their positions")
+    func nonNumericPDOElementKeepsItsSlot() {
+        let entries = AppleSmartBatteryReader.parsePortControllerInfo([
+            [
+                "PortControllerNPDOs": NSNumber(value: 2),
+                "PortControllerPortPDO": [
+                    NSNumber(value: 0x0881_9128),   // slot 1:  5 V
+                    "not a number",                 // slot 2:  unreadable
+                    NSNumber(value: 0x0002_d12a),   // slot 3:  9 V
+                    NSNumber(value: 0x0008_c1f3),   // slot 4: 28 V
+                ] as NSArray,
+            ] as [String: Any],
+        ])
+
+        #expect(entries.count == 1)
+        guard let pdos = entries.first?.portPDOs else { return }
+        #expect(pdos.count == 4, "the unreadable element was dropped instead of zero-filled: \(pdos.count) slots")
+        #expect(pdos == [0x0881_9128, 0, 0x0002_d12a, 0x0008_c1f3],
+            "slots shifted: \(pdos.map { String($0, radix: 16) })")
+    }
 }

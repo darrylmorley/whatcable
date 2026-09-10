@@ -517,9 +517,9 @@ struct PowerTelemetryParsingTests {
 
     // MARK: - rdoSelectedPdoType fixture tests
 
-    /// Encode a minimal RDO with the given object position (bits 30:28).
+    /// Encode a minimal RDO with the given object position (bits 31:28).
     private func rdoWith(objectPosition: Int) -> UInt32 {
-        UInt32(objectPosition & 0x7) << 28
+        UInt32(objectPosition & 0xF) << 28
     }
 
     @Test("rdoSelectedPdoType: fixed PDO (bits 31:30 == 00) returns fixedOrVariable")

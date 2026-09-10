@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>WhatCable: WhatCable doesn&#39;t just take the cable&#39;s word for it</title>
-<meta name="description" content="The reviews are right that some cables lie. What they miss is that WhatCable checks the cable&#39;s claim against what the connection actually did, and against a second, independent hardware measurement. It diagnoses the whole chain, not the cable&#39;s own boast.">
+<meta name="description" content="WhatCable compares available reports from the port, cable, charger, device and display link to help explain the connection you actually have.">
 
 <link rel="canonical" href="https://www.whatcable.uk/blog/why-whatcable-checks-the-whole-chain">
 <link rel="icon" href="/icon.png" type="image/png">
@@ -12,16 +12,16 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://www.whatcable.uk/blog/why-whatcable-checks-the-whole-chain">
 <meta property="og:title" content="WhatCable: WhatCable doesn&#39;t just take the cable&#39;s word for it">
-<meta property="og:description" content="The reviews are right that some cables lie. What they miss is that WhatCable checks the cable&#39;s claim against what the connection actually did, and against a second, independent hardware measurement. It diagnoses the whole chain, not the cable&#39;s own boast.">
+<meta property="og:description" content="WhatCable compares available reports from the port, cable, charger, device and display link to help explain the connection you actually have.">
 <meta property="og:image" content="https://www.whatcable.uk/screenshot.webp">
 
 <meta property="article:published_time" content="2026-07-17T00:00:00.000Z">
-<meta property="article:author" content="Darryl Morley">
+<meta property="article:author" content="Darryl">
 
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="WhatCable: WhatCable doesn&#39;t just take the cable&#39;s word for it">
-<meta name="twitter:description" content="The reviews are right that some cables lie. What they miss is that WhatCable checks the cable&#39;s claim against what the connection actually did, and against a second, independent hardware measurement. It diagnoses the whole chain, not the cable&#39;s own boast.">
+<meta name="twitter:description" content="WhatCable compares available reports from the port, cable, charger, device and display link to help explain the connection you actually have.">
 <meta name="twitter:image" content="https://www.whatcable.uk/screenshot.webp">
 
 
@@ -40,11 +40,11 @@
     --line-soft: #eef2f7;
     --bg: #fafbfc;
     --panel: #ffffff;
-    --accent: #0c8ca6;
+    --accent: #08768b;
     --accent-strong: #0a7188;
     --accent-soft: #e6f4f7;
-    --good: #0b8a5a;
-    --warn: #b67100;
+    --good: #087348;
+    --warn: #8a5700;
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
     --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
     --shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.18);
@@ -339,15 +339,60 @@
   footer .footer-links { display: flex; flex-wrap: wrap; gap: 6px 14px; }
   footer .footer-links .sep { color: rgba(255, 255, 255, 0.3); }
 
+  .mobile-nav { display: none; }
+  .mobile-menu summary { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid #bac5cf; border-radius: 8px; background: white; color: var(--ink); cursor: pointer; font-size: 14px; font-weight: 600; list-style: none; }
+  .mobile-menu summary::-webkit-details-marker { display: none; }
+  .mobile-menu[open] summary { background: #eaf3f5; border-color: #08768b; }
+  .mobile-nav-panel { position: absolute; top: 100%; left: 0; right: 0; padding: 12px 20px 20px; background: #fafbfc; border-bottom: 1px solid var(--line); box-shadow: 0 12px 20px #0c12191a; max-height: calc(100dvh - 64px); overflow-y: auto; overscroll-behavior: contain; }
+  .mobile-nav-panel a { display: flex; align-items: center; min-height: 48px; padding: 10px 14px; border-radius: 7px; color: var(--ink); font-size: 16px; text-decoration: none; }
+  .mobile-nav-panel a:hover { background: #edf2f5; }
+  .mobile-nav-panel a[aria-current="page"] { background: #e3f0f3; color: #075d6e; font-weight: 700; border-left: 3px solid #08768b; }
+  .nav :is(a,summary):focus-visible { outline: 3px solid #08768b; outline-offset: 3px; }
   @media (max-width: 720px) {
-    .nav-links a:not(.button):not([data-keep-mobile]) { display: none; }
+    .mobile-nav { display: flex; align-items: center; gap: 10px; }
+    .nav-inner { gap: 10px; }
+    .mobile-nav .button.accent { min-height: 44px; background: #08768b; }
+
+    .nav .desktop-nav { display: none; }
     .nav-links { gap: 12px; }
     .nav .button { padding: 8px 12px; font-size: 13px; }
     h1 { font-size: 28px; }
     h2 { font-size: 20px; }
     footer .wrap-wide { flex-direction: column; align-items: flex-start; }
   }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  footer .wrap-wide > span:first-child a, .price-note a, .pricing-note a, .pricing a, .answer a { text-decoration: underline; text-underline-offset: 3px; }
+  :is(a,button,summary):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+  @media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } }
 </style>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.whatcable.uk/#website",
+      "url": "https://www.whatcable.uk/",
+      "name": "WhatCable",
+      "publisher": {
+        "@id": "https://www.whatcable.uk/#publisher"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.whatcable.uk/#publisher",
+      "name": "Bitmoor",
+      "url": "https://www.bitmoor.co.uk",
+      "founder": {
+        "@type": "Person",
+        "name": "Darryl"
+      }
+    }
+  ]
+}
+</script>
 
 
     <style>
@@ -412,7 +457,7 @@
   .article-page .related-section { padding: 64px 0 72px; border-top: 1px solid var(--line); background: var(--panel); }
   .article-page .related-label { display: block; margin-bottom: 12px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
   .article-page .related-section h2 { margin: 0 0 28px; font-size: 30px; }
-  .article-page .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .article-page .related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .article-page .related-card { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
   .article-page .related-card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
   .article-page .related-copy { padding: 20px; }
@@ -432,6 +477,51 @@
     .article-page .article-cta { grid-template-columns: 1fr; margin: 36px 20px 52px; padding: 26px 24px; }
     .article-page .related-grid { grid-template-columns: 1fr; }
   }
+
+  /* Reading layout: compact introduction, stable imagery and clear focus. */
+  .article-page { --accent: #08768b; --muted: #596675; }
+  .article-page .article-hero { padding: 42px 0 36px; }
+  .article-page .article-head-inner { max-width: 820px; }
+  .article-page .back-link { margin-bottom: 22px; min-height: 28px; }
+  .article-page .article-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; line-height: 1.6; }
+  .article-page .article-hero h1 { font-size: clamp(32px, 4.5vw, 54px); line-height: 1.12; text-wrap: balance; }
+  .article-page .article-deck { font-size: 19px; max-width: 65ch; }
+  .article-page .cover-wrap { max-width: 960px; padding: 28px 24px 0; }
+  .article-page .cover-image { aspect-ratio: 16 / 9; min-height: 0; max-height: none; object-fit: cover; box-shadow: none; }
+  .article-page .article-content { max-width: 760px; padding-top: 32px; }
+  .article-page .post-body { line-height: 1.8; overflow-wrap: anywhere; }
+  .article-page .post-body h2 { font-size: clamp(24px, 3vw, 30px); line-height: 1.25; scroll-margin-top: 90px; }
+  .article-page .post-body p { margin-bottom: 22px; }
+  .article-page .post-body li { margin-bottom: 10px; }
+  .article-page .post-body a, .article-page .article-footer-note a { text-decoration: underline; text-underline-offset: 3px; }
+  .article-page .article-toc { margin: 0 0 36px; padding: 20px 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+  .article-page .article-toc summary { font-weight: 700; cursor: pointer; padding: 4px 0; }
+  .article-page .article-toc ol { margin: 14px 0 0; padding-left: 22px; }
+  .article-page .article-toc li { padding: 4px 0; font-size: 15px; line-height: 1.5; }
+  .article-page .article-toc a { text-decoration: underline; text-underline-offset: 3px; }
+  .article-page .post-body .table-wrap { border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+  .article-page .post-body table { width: 100%; margin: 0; font-size: 15px; line-height: 1.55; }
+  .article-page .post-body th { background: #edf3f5; color: var(--ink); text-align: left; }
+  .article-page .post-body th, .article-page .post-body td { padding: 15px 18px; vertical-align: top; white-space: normal; }
+  .article-page .post-body tbody tr:nth-child(even) { background: #f3f6f8; }
+  .article-page .table-hint { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+  .article-page .article-cta { margin-top: 32px; box-shadow: none; }
+  .article-page .related-section { padding: 40px 0; }
+  .article-page .related-copy a { display: inline-block; font-size: 18px; line-height: 1.45; }
+  .article-page .article-footer-note { padding: 28px 24px 40px; line-height: 1.7; }
+  .article-page :is(a,summary,[tabindex]):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+  @media(max-width:760px) {
+    .article-page .article-hero { padding: 28px 0; }
+    .article-page .article-deck { font-size: 17px; }
+    .article-page .cover-wrap { padding: 20px 20px 0; }
+    .article-page .article-content { padding-top: 24px; }
+    .article-page .article-toc { padding: 16px 18px; }
+    .article-page .post-body table { min-width: 560px; }
+    .article-page .article-cta { gap: 20px; }
+    .article-page .article-cta .cta-actions { flex-direction: column; }
+    .article-page .article-cta .cta-button { justify-content: center; white-space: normal; }
+    .article-page .related-grid { gap: 16px; }
+  }
 </style>
 
   </head>
@@ -442,7 +532,7 @@
       <img class="mark" src="/icon.png" alt="" aria-hidden="true" width="28" height="28">
       <span>WhatCable</span>
     </a>
-    <div class="nav-links">
+    <div class="nav-links desktop-nav">
       
         <a href="/instructions" data-keep-mobile>Docs</a>
       
@@ -458,19 +548,58 @@
         <a class="button accent" href="/pro">Get Pro</a>
       
     </div>
+    <div class="mobile-nav">
+      <a class="button accent" href="/pro">Get Pro</a>
+      <details class="mobile-menu">
+        <summary aria-controls="mobile-nav-links"><span>Menu</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary>
+        <div id="mobile-nav-links" class="mobile-nav-panel">
+          
+            <a href="/instructions">Docs</a>
+          
+            <a href="/cli">CLI</a>
+          
+            <a href="/cables">Cables</a>
+          
+            <a href="/blog">Blog</a>
+          
+          <a href="/inside-a-cable">Inside a cable</a>
+          <a href="/pro">WhatCable Pro</a>
+          <a href="/support">Support</a>
+          <a href="https://github.com/darrylmorley/whatcable">GitHub</a>
+        </div>
+      </details>
+    </div>
   </div>
 </nav>
+<script>
+(() => {
+  const menu = document.querySelector('.mobile-menu');
+  const trigger = menu.querySelector('summary');
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu.open) {
+      menu.open = false; trigger.focus();
+    }
+  });
+  document.addEventListener('click', event => {
+    if (menu.open && !menu.contains(event.target)) menu.open = false;
+  });
+  menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+  const desktop = matchMedia('(min-width: 721px)');
+  desktop.addEventListener('change', event => { if (event.matches) menu.open = false; });
+})();
+</script>
 
     <main class="article-page">
   <header class="article-hero">
     <div class="wrap-wide article-head-inner">
       <a class="back-link" href="/blog">← Back to Field Notes</a>
-      <p class="article-meta">
-        <span class="category">Deep dives</span> &nbsp;·&nbsp;
-        <time datetime="2026-07-17T00:00:00.000Z">17 July 2026</time>
-      </p>
+      <div class="article-meta">
+        <span class="category">Deep dives</span>
+        <span>Published <time datetime="2026-07-17T00:00:00.000Z">17 July 2026</time></span>
+        <span>Updated <time datetime="2026-09-09T00:00:00.000Z">9 September 2026</time></span>
+      </div>
       <h1>WhatCable doesn&#39;t just take the cable&#39;s word for it</h1>
-      <p class="article-deck">The reviews are right that some cables lie. What they miss is that WhatCable checks the cable&#39;s claim against what the connection actually did, and against a second, independent hardware measurement. It diagnoses the whole chain, not the cable&#39;s own boast.</p>
+      <p class="article-deck">WhatCable compares available reports from the port, cable, charger, device and display link to help explain the connection you actually have.</p>
     </div>
   </header>
 
@@ -481,41 +610,35 @@
   
 
   <div class="wrap article-content">
+    <details class="article-toc" hidden><summary>In this article</summary><nav aria-label="Article contents"><ol></ol></nav></details>
     <article class="post-body">
-      <p>Every review of WhatCable lands on the same caveat. Some cables lie about what they can do, so an app that reads a cable can be fooled. That's true. It's also half the story, and the other half is the part that makes WhatCable worth having.</p>
-<p>Here's the distinction.</p>
-<h2>What a cable claims vs what the link actually does</h2>
-<p>A USB-C cable with an e-marker chip carries a small block of self-description. Rated speed, current, voltage, vendor ID, active or passive. When you plug it in, your Mac asks the chip &quot;what are you?&quot; and the chip answers. That answer is a claim. Nothing more. A cheap cable can claim 240W and 40 Gbps and be wired for neither.</p>
-<p>If all WhatCable did was print that claim back to you, the worry would be fair. A liar with a nice font is still a liar.</p>
-<p>But the claim is one input, not the answer.</p>
-<h2>It reads the whole chain, then checks it against itself</h2>
-<p>Every connection has more than a cable in it. There's the port on your Mac, the cable, and the thing on the other end: a charger, a dock, a drive, a display. Each part reports what it can do, and the two ends negotiate a result they can both live with.</p>
-<p>WhatCable reads all of it. The Mac port's own capability. The cable's e-marker. The device or charger's identity. Then it does the part that matters. It compares what each part claims against what the link actually negotiated, and it names the weakest link.</p>
-<p>So when a cable claims 40 Gbps but the connection came up at 10, you don't just see the cable's boast. You see the boast, the reality, and where they diverge. And WhatCable is careful about who it blames. It ranks the suspects, device first, then the Mac port, then the cable, so it won't tell you to buy a new cable when the thing actually holding you back is the drive you plugged in. Replacing the cable there would change nothing, and saying so would be worse than saying nothing.</p>
-<p>That's a diagnosis of the connection. Not a recital of what the cable says about itself.</p>
-<h2>The Thunderbolt cross-check: a second, independent witness</h2>
-<p>This is the part the &quot;cables can lie&quot; caveat doesn't account for.</p>
-<p>On a Thunderbolt or USB4 link, WhatCable doesn't only ask the cable how fast it is. It also reads Apple's own Thunderbolt controller, which measures the speed the link actually trained to, in hardware, with no reference to the e-marker at all. Two separate sources: what the cable says, and what the controller measured.</p>
-<p>When they agree, fine. When they disagree, that's the interesting case, and it usually runs the opposite way to what you'd expect.</p>
-<p>Some active Thunderbolt 4 cables under-sell themselves in their e-marker. The chip reports &quot;passive&quot; or a low speed, while the cable is quietly carrying a full 40 Gbps. Read the e-marker alone and you'd under-rate a perfectly good cable. WhatCable sees the controller measuring more than the chip claims, trusts the hardware measurement over the self-report, and tells you the cable is doing 40. The cable lied, and WhatCable corrected it upward from an independent reading. That's the exact opposite of being fooled.</p>
-<p>It also refuses to make the mistake in reverse. A genuine 80 Gbps cable run between two 40 Gbps ports will negotiate 40, because 40 is all the endpoints can do. The controller's measurement is a floor on what the cable can carry, never a ceiling. So WhatCable treats &quot;the link ran at 40&quot; as proof the cable does at least 40, not as evidence the cable's 80 Gbps claim is a lie. A cable rated above what its endpoints can use is completely normal, and calling it suspicious would be a false alarm.</p>
-<h2>Charging: which of the three parts is the reason</h2>
-<p>Same idea, different signal. When you ask &quot;why is my MacBook charging slowly&quot;, there are three numbers in play: what the charger can output, what the cable is rated to carry, and what the connection actually negotiated. WhatCable reads all three and tells you which one is the bottleneck.</p>
-<p>If the cable is rated below the charger, it says so plainly, replace the cable. But it's just as careful about the times the cable is fine. Charging at 30W off a 96W charger is usually not a fault at all. It's your Mac asking for less because the battery is nearly full, or because a charge limit is active, or because macOS draws from one charger at a time and this port is on standby while another does the work. WhatCable names each of those states rather than leaving a healthy cable under suspicion. The goal is a correct answer, not an alarming one.</p>
-<h2>Displays: it clears the cable, it won't frame it</h2>
-<p>Video is the one dimension where WhatCable is deliberately more cautious, and the caution is the point.</p>
-<p>It reads the display's EDID, the block the monitor uses to describe its resolutions and refresh rates, works out the bandwidth the monitor's best mode needs, and compares that against the bandwidth the link is currently carrying. If the link already covers the top mode, it says so with confidence.</p>
-<p>If it doesn't, WhatCable will not automatically blame the cable, because from this kind of passive reading it genuinely can't tell a cable that's maxed out from a resolution you simply haven't selected yet. A DisplayPort link trains itself down to whatever's on screen to save power, so a &quot;slow&quot; link is often just an unused one. What WhatCable can do is clear the cable when the evidence allows, for instance when the video is tunnelled over Thunderbolt (so the cable is carrying far more than any picture needs) or when every DisplayPort lane the Mac provides is already in use. It can also spot when your display is using compression (DSC) to fit a big mode like 4K120 through the link, and say the picture is fine rather than cry shortfall. It exonerates the cable on evidence. It never convicts it on a guess.</p>
-<h2>Where the caveat is still fair</h2>
-<p>Software can't see inside the jacket. If a cable's e-marker claims 240W and the copper can't carry it, and you never draw enough power to expose the gap, WhatCable will show you the claim with nothing to contradict it. At that point the chip is lying and there's nothing in the data to catch it out.</p>
-<p>No pretending otherwise. WhatCable does flag a handful of internal tells that tend to travel with dodgy cables: reserved bit patterns the spec doesn't allow, a vendor ID that resolves to no known maker, an e-marker that claims high-voltage charging while reporting a voltage that can't support it. Ten checks in all. But it's deliberately restrained about them. A blank vendor ID on its own doesn't trip a warning, because plenty of genuine cables ship without one, Apple's included. WhatCable only leans on that signal when the rest of the e-marker is inconsistent too. The flags are a reason to look closer, not a verdict. The only thing that proves what's physically inside a cable is a hardware tester, and WhatCable has never claimed to be one.</p>
-<h2>Trust is earned by delivering, not by claiming</h2>
-<p>That restraint is the whole design of WhatCable's trust rating, and it's worth spelling out because it's the direct answer to &quot;an app that reads a cable can be fooled&quot;.</p>
-<p>WhatCable does not hand a cable a clean bill of health for having a tidy e-marker. We tried scoring cables on their e-marker bits and it failed against real hardware: the &quot;suspicious&quot; flags fired on genuine cables, Apple's own among them. So a cable earns a green rating one way only, by being watched to deliver its claim. The link actually carried its rated speed, or a charge actually pulled its full rated power. A registered vendor ID isn't enough. A confident-looking e-marker isn't enough. Pedigree is not proof. Delivery is.</p>
-<p>Until then a cable sits at &quot;unverified&quot;, which is not an accusation, just an honest &quot;nothing demanding has been connected yet, so there's nothing to confirm&quot;. And a cable can lose trust too: if the connection repeatedly drops or degrades under load over a session, that observed failure outranks any earlier claim.</p>
-<h2>The point</h2>
-<p>When something's slower than it should be, &quot;is this cable any good&quot; is really &quot;why is this slow, and is the cable the reason&quot;. Answering that means reading the whole chain, not the cable's boast, and on Thunderbolt, checking that boast against what the hardware actually measured.</p>
-<p>WhatCable does that. The cable's own claim is one witness, and not always an honest one. It's never the only one in the room.</p>
+      <p>A cable is one part of a connection. The Mac port, charger, dock, drive or display also affects the result. WhatCable brings the available information together so that a slow connection does not automatically become a recommendation to buy a new cable.</p>
+<h2>Start with two different kinds of information</h2>
+<p>An <strong>e-marker</strong> is the cable's digital label. It declares properties such as current rating, data capability and active/passive construction. A <strong>negotiated connection</strong> is the operating mode established by the connected equipment.</p>
+<p>These readings answer different questions. A 40 Gbps cable connected to a 10 Gbps drive can reasonably produce a 10 Gbps connection. The drive's capability explains the result without contradicting the cable's rating.</p>
+<p>WhatCable reads what macOS exposes. Availability varies by hardware, connection and system reporting; not every setup exposes every field.</p>
+<h2>Follow the path through a dock</h2>
+<p>The cable from the Mac to a dock is not necessarily operating in the same mode as the cable from the dock to a drive. Multiple devices may also share the upstream connection.</p>
+<p>WhatCable uses available hub and Thunderbolt topology to help distinguish those links. Its diagnostics compares reported capabilities and negotiated results to help identify the part that explains a limit.</p>
+<p><a href="/pro#connection-diagnostics">Pro's connection diagnostics</a> exposes the per-party figures behind the explanation. That makes it easier to understand why changing a cable might help, or why it would leave the same device limit in place.</p>
+<h2>Cross-check cable identity against the controller report</h2>
+<p>On supported Thunderbolt or USB4 connections, the Mac's controller can provide a negotiated link rate in addition to cable identity. WhatCable can compare those sources rather than relying on the label alone.</p>
+<p>The reported link rate is evidence of the mode the connection established. It is not a sustained file-transfer benchmark, a physical inspection or a guarantee that the link will remain stable under every workload.</p>
+<p>A lower rate does not by itself disprove a cable's higher rating. Nor is a higher rate automatically evidence that the cable's label was dishonest. <a href="https://www.usb.org/sites/default/files/2022-10/USB-IF%20USB%2080Gbps%20Announcement_FINAL_v2.pdf">USB-IF describes newer 80 Gbps operation over existing 40 Gbps passive cables</a>. The interpretation needs to account for the connection generation and cable type.</p>
+<h2>Charging: distinguish rating, agreement and draw</h2>
+<p>The charger advertises power options. The cable constrains the permitted current and voltage. The Mac requests a supported operating point. Actual power use can then vary beneath that agreement.</p>
+<p>A low reading may reflect the battery approaching full charge, an intentional charging pause, a light demand, or a limitation elsewhere in the setup. It is not always a cable fault.</p>
+<p>WhatCable compares available charging information and system state to help explain these cases. <a href="/pro#charging-agreement">Pro's charging view</a> gives the technical figures, while the <a href="/blog/why-is-my-macbook-charging-so-slow">charging guide</a> walks through practical checks.</p>
+<h2>Displays: check the picture and the path</h2>
+<p>WhatCable also examines available monitor and display-link reports. These can include the current resolution and refresh rate, monitor capabilities, DisplayPort lane count and rate, and whether the display path goes through Thunderbolt or an adapter.</p>
+<p><strong>EDID</strong> is the monitor's description of its capabilities. It is one source of information; WhatCable also uses available macOS mode information. <strong>DSC</strong>, or Display Stream Compression, can allow a demanding display mode to fit within less link bandwidth than an uncompressed calculation suggests.</p>
+<p>A lower DisplayPort link rate alone does not establish a poor cable. The selected display mode, Mac capabilities, adapter and compression can all affect the interpretation. A Thunderbolt tunnel is useful context, but it is not a universal promise that every monitor mode will fit.</p>
+<p><a href="/pro#display-diagnostics">Pro's display diagnostics</a> helps compare the reported picture and link instead of treating a single bandwidth figure as the answer.</p>
+<h2>What a report can establish</h2>
+<p>Inconsistent identity fields or repeated connection drops can be reasons to investigate. They are not, on their own, proof of counterfeit hardware. A missing or unrecognised manufacturer identifier alone does not make a cable faulty.</p>
+<p>Likewise, a successful connection is evidence about that setup. It does not inspect conductor thickness, certify safe operation at every claimed power level or authenticate the product. Physical construction and electrical performance require appropriate hardware inspection and testing.</p>
+<p>The useful outcome is a supported explanation and a sensible next step: change the selected display mode, investigate a dock, compare another port, or try a suitable cable when the evidence points there.</p>
+<p>For a visual explanation of what the cable contributes, <a href="/inside-a-cable">look inside the cable diagram</a>. To compare community identity reports, visit the <a href="/cables">cable library</a>.</p>
 
     </article>
   </div>
@@ -539,20 +662,20 @@
       <h2 id="faq-heading">Frequently asked questions</h2>
       
       <details class="faq-item">
-        <summary>Does WhatCable just read the cable&#39;s e-marker chip?</summary>
-        <div class="faq-answer"><p>No. The e-marker is one input. WhatCable also reads the Mac port, the device or charger on the other end, and, on a Thunderbolt link, the controller's own independent measurement of the negotiated speed. It then compares the claims against what the link actually did and names the weakest part.</p>
+        <summary>Does WhatCable just read the e-marker?</summary>
+        <div class="faq-answer"><p>No. It combines available cable identity with information about the Mac port, connected equipment and negotiated connection. Display diagnostics also examines available monitor and display-link information.</p>
 </div>
       </details>
       
       <details class="faq-item">
         <summary>Can WhatCable prove a cable is counterfeit?</summary>
-        <div class="faq-answer"><p>No, and it never claims to. Software can't see inside the jacket. What it can do is catch a cable that fails to deliver what it claimed, flag e-marker data that looks off, and, on Thunderbolt, cross-check the cable's claim against a separate hardware reading. Proving what copper is physically inside a cable needs a hardware tester.</p>
+        <div class="faq-answer"><p>No. It can identify inconsistent reports and connection behaviour that warrants investigation, but software readings alone cannot authenticate a cable or inspect its physical construction.</p>
 </div>
       </details>
       
       <details class="faq-item">
-        <summary>A cable&#39;s e-marker claims 40 Gbps but WhatCable shows the link at 10. Which is right?</summary>
-        <div class="faq-answer"><p>Both, usually. The e-marker says what the cable can do. 10 Gbps is what this particular connection negotiated, which is capped by the slowest of the port, cable, and device. WhatCable shows you the claim, the real speed, and which part set the limit.</p>
+        <summary>Why can a 40 Gbps cable show a 10 Gbps connection?</summary>
+        <div class="faq-answer"><p>The cable rating and the negotiated connection describe different things. A 10 Gbps device or another part of the path may set the limit. A lower negotiated rate alone does not show that the cable rating is wrong.</p>
 </div>
       </details>
       
@@ -565,10 +688,10 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Does WhatCable just read the cable's e-marker chip?",
+      "name": "Does WhatCable just read the e-marker?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>No. The e-marker is one input. WhatCable also reads the Mac port, the device or charger on the other end, and, on a Thunderbolt link, the controller's own independent measurement of the negotiated speed. It then compares the claims against what the link actually did and names the weakest part.</p>\n"
+        "text": "<p>No. It combines available cable identity with information about the Mac port, connected equipment and negotiated connection. Display diagnostics also examines available monitor and display-link information.</p>\n"
       }
     },
     {
@@ -576,15 +699,15 @@
       "name": "Can WhatCable prove a cable is counterfeit?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>No, and it never claims to. Software can't see inside the jacket. What it can do is catch a cable that fails to deliver what it claimed, flag e-marker data that looks off, and, on Thunderbolt, cross-check the cable's claim against a separate hardware reading. Proving what copper is physically inside a cable needs a hardware tester.</p>\n"
+        "text": "<p>No. It can identify inconsistent reports and connection behaviour that warrants investigation, but software readings alone cannot authenticate a cable or inspect its physical construction.</p>\n"
       }
     },
     {
       "@type": "Question",
-      "name": "A cable's e-marker claims 40 Gbps but WhatCable shows the link at 10. Which is right?",
+      "name": "Why can a 40 Gbps cable show a 10 Gbps connection?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>Both, usually. The e-marker says what the cable can do. 10 Gbps is what this particular connection negotiated, which is capped by the slowest of the port, cable, and device. WhatCable shows you the claim, the real speed, and which part set the limit.</p>\n"
+        "text": "<p>The cable rating and the negotiated connection describe different things. A 10 Gbps device or another part of the path may set the limit. A lower negotiated rate alone does not show that the cable rating is wrong.</p>\n"
       }
     }
   ]
@@ -599,12 +722,20 @@
       <div class="related-grid">
         
           
+            <article class="related-card">
+              
+              <div class="related-copy">
+                <span>Guides</span>
+                <a href="/blog/is-my-usb-c-cable-thunderbolt">How to tell if a USB-C cable is Thunderbolt</a>
+              </div>
+            </article>
+          
         
           
         
           
             <article class="related-card">
-              <a href="/blog/thunderbolt-vs-usb-c" aria-label="Read Thunderbolt vs USB-C: what the connector hides"><img src="https://images.whatcable.uk/1779375024963-usb-c-cable-emarker-cutaway.webp" alt="Cutaway illustration of a USB-C cable showing the e-marker and the protocols hidden inside the connector" loading="lazy"></a>
+              <a href="/blog/thunderbolt-vs-usb-c" aria-label="Read Thunderbolt vs USB-C: what the connector hides"><img src="https://images.whatcable.uk/1779375024963-usb-c-cable-emarker-cutaway.webp" alt="Cutaway illustration of a USB-C cable showing the e-marker and the protocols hidden inside the connector" loading="lazy" decoding="async"></a>
               <div class="related-copy">
                 <span>Deep dives</span>
                 <a href="/blog/thunderbolt-vs-usb-c">Thunderbolt vs USB-C: what the connector hides</a>
@@ -614,7 +745,7 @@
         
           
             <article class="related-card">
-              <a href="/blog/why-is-my-macbook-charging-so-slow" aria-label="Read Why is my MacBook charging so slow? A real diagnosis."><img src="https://images.whatcable.uk/1779372798303-macbook-magsafe.jpg" alt="A MacBook connected to power with a MagSafe cable" loading="lazy"></a>
+              <a href="/blog/why-is-my-macbook-charging-so-slow" aria-label="Read Why is my MacBook charging so slow? A real diagnosis."><img src="https://images.whatcable.uk/1779372798303-macbook-magsafe.jpg" alt="A MacBook connected to power with a MagSafe cable" loading="lazy" decoding="async"></a>
               <div class="related-copy">
                 <span>Guides</span>
                 <a href="/blog/why-is-my-macbook-charging-so-slow">Why is my MacBook charging so slow? A real diagnosis.</a>
@@ -622,6 +753,14 @@
             </article>
           
         
+          
+            <article class="related-card">
+              
+              <div class="related-copy">
+                <span>Notes</span>
+                <a href="/blog/hello-world">Hello, world</a>
+              </div>
+            </article>
           
         
       </div>
@@ -639,14 +778,14 @@
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   "headline": "WhatCable doesn't just take the cable's word for it",
-  "description": "The reviews are right that some cables lie. What they miss is that WhatCable checks the cable's claim against what the connection actually did, and against a second, independent hardware measurement. It diagnoses the whole chain, not the cable's own boast.",
+  "description": "WhatCable compares available reports from the port, cable, charger, device and display link to help explain the connection you actually have.",
   "url": "https://www.whatcable.uk/blog/why-whatcable-checks-the-whole-chain",
   "datePublished": "2026-07-17T00:00:00.000Z",
-  "dateModified": "2026-07-17T00:00:00.000Z",
+  "dateModified": "2026-09-09T00:00:00.000Z",
   "image": "https://images.whatcable.uk/1784302843898-0x0-jpg.webp",
   "author": {
     "@type": "Person",
-    "name": "Darryl Morley",
+    "name": "Darryl",
     "url": "https://github.com/darrylmorley"
   },
   "publisher": {
@@ -662,9 +801,37 @@
 }
 </script>
 
+<script>
+(() => {
+  const body = document.querySelector('.post-body');
+  const toc = document.querySelector('.article-toc');
+  const headings = [...body.querySelectorAll('h2')];
+  if (headings.length > 2) {
+    headings.forEach((heading, index) => {
+      if (!heading.id) heading.id = `article-section-${index + 1}`;
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = `#${heading.id}`; link.textContent = heading.textContent;
+      item.append(link); toc.querySelector('ol').append(item);
+    });
+    toc.hidden = false;
+  }
+  body.querySelectorAll('table').forEach((table, index) => {
+    const wrapper = table.closest('.table-wrap') || table.parentElement;
+    wrapper.tabIndex = 0; wrapper.setAttribute('role', 'region');
+    wrapper.setAttribute('aria-label', `Comparison table ${index + 1}`);
+    const hint = document.createElement('p'); hint.className = 'table-hint';
+    hint.textContent = 'Scroll sideways to see all columns. With a keyboard, focus the table and use the arrow keys.';
+    wrapper.after(hint);
+    const update = () => { hint.hidden = wrapper.scrollWidth <= wrapper.clientWidth + 1; };
+    update(); new ResizeObserver(update).observe(wrapper);
+  });
+})();
+</script>
+
     <footer>
   <div class="wrap-wide">
-    <span>A <a href="https://www.bitmoor.co.uk">Bitmoor</a> product. Founded by <a href="https://github.com/darrylmorley">Darryl Morley</a>. MIT licensed.</span>
+    <span>A <a href="https://www.bitmoor.co.uk">Bitmoor</a> product. Founded by <a href="https://github.com/darrylmorley">Darryl</a>. MIT licensed.</span>
     <span class="footer-links">
       
         <a href="/instructions">Docs</a>
@@ -676,6 +843,9 @@
         <a href="/cables">Cables</a>
         <span class="sep">·</span>
       
+        <a href="/inside-a-cable">Inside a cable</a>
+        <span class="sep">·</span>
+      
         <a href="/blog">Blog</a>
         <span class="sep">·</span>
       
@@ -683,6 +853,9 @@
         <span class="sep">·</span>
       
         <a href="/support">Support</a>
+        <span class="sep">·</span>
+      
+        <a href="https://www.bitmoor.co.uk/business.html">Business enquiries</a>
         <span class="sep">·</span>
       
         <a href="/press">Press</a>

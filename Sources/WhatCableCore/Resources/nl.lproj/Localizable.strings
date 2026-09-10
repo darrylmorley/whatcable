@@ -607,3 +607,14 @@
 "Argument %@" = "Argumentbyte %@";
 "Arguments %@" = "Argumentbytes %@";
 "Source ready (result unknown)" = "Bron gereed (uitkomst onbekend)";
+
+/* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
+"USB Type-A plug (deprecated)" = "USB Type-A-stekker (verouderd)";
+"USB Type-B plug (deprecated)" = "USB Type-B-stekker (verouderd)";
+"USB Type-C plug" = "USB Type-C-stekker";
+"Captive cable (built into the device)" = "Vaste kabel (ingebouwd in het apparaat)";
+
+/* Cable type source: the port controller's own ActiveCable reading, and the
+   e-marker silicon vendor hint. */
+"E-marker reports passive, but the port controller detects an active cable" = "De e-marker meldt passief, maar de poortcontroller detecteert een actieve kabel";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "De e-marker draagt de standaard leveranciers-ID van de chipfabrikant (%@); het kabelmerk is niet vastgelegd";

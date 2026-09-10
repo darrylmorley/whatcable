@@ -325,14 +325,24 @@ public enum AppleSmartBatteryReader {
     /// shape the cast would have rejected wholesale now yields entries instead
     /// of silently nothing.
     ///
-    /// The ELEMENT handling is unchanged: a non-numeric PDO entry is still
-    /// dropped, not zero-filled. See `optionalUInt32` for why that distinction
-    /// is not cosmetic.
+    /// The PDO array is zero-filled, not compacted: a non-numeric element
+    /// keeps its slot. `PortControllerPortPDO` is a fixed 13-slot layout and
+    /// the RDO's object position names a slot number in it, so dropping one
+    /// element shifts every later slot down one and the position lookup then
+    /// selects the wrong PDO, on exactly the M1 Pro/Max machines synthesis
+    /// exists for. Dropping was defensible while this array was cut to
+    /// `PortControllerNPDOs` and the position lookup mostly fell out of range
+    /// anyway; now that the array is passed through whole and indexed by
+    /// position, it is not defensible. `contract(from:)` in
+    /// `PortDiagnosticsWatcher` keeps the slot the same way, via `wcUInt32`,
+    /// and the two producers must not disagree about position. Every OTHER
+    /// `compactMap` in this function is unchanged: see `optionalUInt32` for
+    /// why dropping is still right where position carries no meaning.
     static func parsePortControllerInfo(_ value: Any?) -> [PortControllerEntry] {
         let arr = wcArray(value).map(wcDictionary)
         guard !arr.isEmpty else { return [] }
         return arr.enumerated().map { offset, d in
-            let pdos = wcArray(d["PortControllerPortPDO"]).compactMap(optionalUInt32)
+            let pdos = wcArray(d["PortControllerPortPDO"]).map { optionalUInt32($0) ?? 0 }
             return PortControllerEntry(
                 portIndex: offset + 1,
                 firmwareVersion: intVal(d["PortControllerFwVersion"]),

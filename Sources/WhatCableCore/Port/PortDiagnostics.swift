@@ -61,30 +61,138 @@ public enum PDO: Codable, Sendable, Equatable {
             }
         }
     }
+
+    /// False for a word that describes no supply, and true for everything
+    /// else. Two defects, both measured in the corpus, both in every class
+    /// that carries a voltage:
+    ///
+    /// - a minimum voltage above the maximum, which no source can offer;
+    /// - a maximum voltage of zero, which names no supply at all.
+    ///
+    /// The line this draws: drop a word that carries no information, keep a
+    /// word whose information is merely partial. A PPS word advertising 0 A
+    /// over a real 3.2 V to 21 V range stays, because that range is what the
+    /// source said; it simply never becomes a power option.
+    ///
+    /// It is deliberately NOT a USB-PD conformance checker. There are no
+    /// voltage bounds and no slot-aware SPR/EPR legality rules here: those
+    /// would start rejecting real offers.
+    ///
+    /// The inverted-range words in the corpus:
+    ///
+    /// - `0x808c8c8c`, filler macOS leaves in slot 13 of
+    ///   `PortControllerPortPDO` on four machines (m5max_macos26.5.2_f,
+    ///   m5pro_macos26.5.2_k, m5pro_macos27.0_d, m5pro_macos27.0_g). Its type
+    ///   bits say Variable and it decodes to a minimum of 40150 mV above a
+    ///   maximum of 400 mV, so without this check it surfaces as a bogus
+    ///   560 mW offer.
+    /// - `0xc00c30f5`, m4_macos26.6_i entry 1 slot 6: the same defect in an
+    ///   SPR PPS word, 4800 mV minimum above a 600 mV maximum.
+    ///
+    /// The zero-voltage words: `0x7`, `0xa` and `0xf`, six of them across five
+    /// folders (m5pro_macos27.0_d and m5pro_macos27.0_g among them), all Fixed
+    /// and all in slot 13, the same filler slot `0x808c8c8c` sits in. Two are
+    /// newly visible.
+    ///
+    /// `.battery` gets both checks, like the other ranged classes: its third
+    /// field is a power rather than a current, which changes nothing about
+    /// whether its voltage range describes a supply. `.sprAvs` is the only
+    /// class left out of both, because it has no voltage field at all: its two
+    /// currents are quoted at two fixed voltages.
+    public var isPlausible: Bool {
+        switch self {
+        case .fixed(let voltage, _):
+            return voltage > 0
+        case .variable(let minVoltage, let maxVoltage, _),
+             .battery(let minVoltage, let maxVoltage, _),
+             .pps(let minVoltage, let maxVoltage, _),
+             .eprAvs(let minVoltage, let maxVoltage, _):
+            return maxVoltage > 0 && minVoltage <= maxVoltage
+        case .sprAvs:
+            return true
+        }
+    }
 }
 
 public struct PDContract: Codable, Sendable, Equatable {
     public let activeRdo: UInt32
-    public let pdoList: [PDO]
+    /// `PortControllerPortPDO` positionally: one element per slot, nil where
+    /// the raw word was zero.
+    ///
+    /// macOS lays that property out as a fixed 13-slot array, 7 SPR slots
+    /// then 6 EPR slots, and `pdoCount` counts only the SPR offers. Every
+    /// PPS, AVS and EPR offer therefore sits AFTER that count, and the RDO's
+    /// object position indexes slot numbers, not list positions. So the array
+    /// is kept whole and never compacted: trimming it to `pdoCount` hid 536
+    /// of the corpus's 540 non-Fixed offers and left object position 8
+    /// pointing past the end of the list.
+    public let pdoSlots: [PDO?]
+    /// `PortControllerNPDOs`, the number of SPR offers the source made. It is
+    /// NOT the length of `pdoSlots`.
     public let pdoCount: Int
+    /// `PortControllerNEprPDOs`, the number of EPR offers the source made.
+    /// Carried for completeness; nothing displays it yet.
+    public let eprPdoCount: Int
     public let maxPower: Int
     public let capMismatch: Bool
     public let srcTypes: Int
 
     public init(
         activeRdo: UInt32,
-        pdoList: [PDO],
+        pdoSlots: [PDO?],
         pdoCount: Int,
+        eprPdoCount: Int,
         maxPower: Int,
         capMismatch: Bool,
         srcTypes: Int
     ) {
         self.activeRdo = activeRdo
-        self.pdoList = pdoList
+        self.pdoSlots = pdoSlots
         self.pdoCount = pdoCount
+        self.eprPdoCount = eprPdoCount
         self.maxPower = maxPower
         self.capMismatch = capMismatch
         self.srcTypes = srcTypes
+    }
+
+    /// Every offer the source actually made, in slot order: the occupied,
+    /// plausible slots with the empty ones dropped. This is what every reader
+    /// that wants a plain list of offers should use.
+    public var pdoList: [PDO] {
+        pdoSlots.compactMap { $0 }.filter(\.isPlausible)
+    }
+
+    /// The 1-based slot position of every occupied, plausible slot, paired
+    /// with its PDO. Slot position is what the RDO names, so a view that
+    /// labels its rows uses this rather than the index into `pdoList`.
+    public var displayedSlots: [(position: Int, pdo: PDO)] {
+        pdoSlots.enumerated().compactMap { index, pdo in
+            guard let pdo, pdo.isPlausible else { return nil }
+            return (position: index + 1, pdo: pdo)
+        }
+    }
+
+    /// The PDO an RDO selects, by its object position. Nil when the position
+    /// is 0 (no active contract), past the end of the slot array, names an
+    /// empty slot, or names a slot holding a word `isPlausible` rejects.
+    ///
+    /// That last case is a guard rather than a live bug: no corpus RDO names
+    /// a filler slot today. Without it, though, an RDO that did would steer
+    /// the RDO decode off a word `pdoList` and `displayedSlots` both refuse
+    /// to show, which is the one way the two could disagree.
+    public func selectedPDO(for rdo: UInt32) -> PDO? {
+        let index = Self.objectPosition(of: rdo) - 1
+        guard index >= 0, index < pdoSlots.count else { return nil }
+        guard let pdo = pdoSlots[index], pdo.isPlausible else { return nil }
+        return pdo
+    }
+
+    /// USB PD R3.2 RDO Object Position, bits 31:28. 1-based; 0 means no
+    /// active contract. PD 3.1 widened this field from 3 bits to 4 so EPR
+    /// contracts can select positions 8 to 13, which every Apple 140 W
+    /// brick in the corpus does.
+    public static func objectPosition(of rdo: UInt32) -> Int {
+        Int((rdo >> 28) & 0xF)
     }
 }
 

@@ -30,10 +30,13 @@ public enum PowerSourceSynthesis {
         /// only for the positional attribution rung and to build the
         /// synthesized source's stable id.
         public let index: Int
-        /// `PortControllerPortPDO`, already trimmed to `PortControllerNPDOs`
-        /// entries (no trailing zero padding). Order matches the order the
-        /// port controller transmitted the PDOs in, which is what the RDO's
-        /// PDO-position field indexes into.
+        /// `PortControllerPortPDO` whole, exactly as the controller laid it
+        /// out: a fixed 13-slot array, 7 SPR slots then 6 EPR slots, with
+        /// zero words in the unused slots. It is NOT trimmed to
+        /// `PortControllerNPDOs`, which counts only the SPR offers, because
+        /// PPS, AVS and EPR offers sit after that count and the RDO's object
+        /// position names a slot number. A zero word yields no option, so the
+        /// padding costs nothing.
         public let rawPDOs: [UInt32]
         /// `PortControllerActiveContractRdo`. Corpus-verified to read 0 on
         /// M1 Pro/Max/Ultra even while genuinely charging, so this is not a
@@ -137,9 +140,11 @@ public enum PowerSourceSynthesis {
         // and a winning contract from.
         guard !liveEntry.rawPDOs.isEmpty else { return nil }
 
-        // Decode every raw PDO in its original transmitted order. This order
-        // must be preserved (not sorted) because the RDO's PDO-position field
-        // (bits 30..28) indexes into it.
+        // Decode every slot in its original order. That order must be
+        // preserved (not sorted, not compacted) because the RDO's object
+        // position field (bits 31:28) names a slot number in it. Empty slots
+        // and implausible filler words both convert to no option, so they
+        // hold their place without producing an offer.
         let decodedInOrder = liveEntry.rawPDOs.map(PDO.decode(rawValue:))
         let positionalOptions = decodedInOrder.map(option(for:))
         let options = positionalOptions.compactMap { $0 }
@@ -261,22 +266,39 @@ public enum PowerSourceSynthesis {
     /// be expressed as a voltage/current pair, and SPR AVS has no voltage
     /// field at all (only currents at two fixed voltages); those are
     /// skipped rather than guessed.
-    private static func option(for pdo: PDO) -> PowerOption? {
+    ///
+    /// Both halves of the pair have to be usable, so a zero max current is
+    /// rejected the same way a zero voltage is: an option you can draw
+    /// nothing from is not an option. 127 corpus entries carry a newly
+    /// visible PPS word advertising 0 A, `0xc1a42000` on m1max_macos26.3.1_b
+    /// among them. The word itself is kept everywhere it is reported, in
+    /// `pdoList` and `displayedSlots`, because it is what the source
+    /// advertised; it just never becomes a 0 mW option.
+    /// Internal, not private: the corpus sweep drives this and
+    /// `winningOption` directly, because gate 1 in `synthesizedSource`
+    /// returns nil for the 31 of 32 live-contract machines that already have
+    /// a real `IOPortFeaturePowerSource` node, so the sweep cannot reach the
+    /// option path through the public entry point at all.
+    static func option(for pdo: PDO) -> PowerOption? {
+        // A word that describes no supply is not an offer. Two defect
+        // classes, eleven real corpus words: a minimum voltage above the
+        // maximum, and a maximum voltage of zero. See `PDO.isPlausible`.
+        guard pdo.isPlausible else { return nil }
         switch pdo {
         case .fixed(let voltage, let maxCurrent):
-            guard voltage > 0 else { return nil }
+            guard voltage > 0, maxCurrent > 0 else { return nil }
             return PowerOption(
                 voltageMV: voltage, maxCurrentMA: maxCurrent, maxPowerMW: voltage * maxCurrent / 1000,
                 supplyKind: .fixed
             )
         case .variable(_, let maxVoltage, let maxCurrent):
-            guard maxVoltage > 0 else { return nil }
+            guard maxVoltage > 0, maxCurrent > 0 else { return nil }
             return PowerOption(
                 voltageMV: maxVoltage, maxCurrentMA: maxCurrent, maxPowerMW: maxVoltage * maxCurrent / 1000,
                 supplyKind: .nonFixed
             )
         case .pps(_, let maxVoltage, let maxCurrent):
-            guard maxVoltage > 0 else { return nil }
+            guard maxVoltage > 0, maxCurrent > 0 else { return nil }
             // A PPS option converted at its MAXIMUM voltage is exactly the
             // case the phase-1 tier proxy could not see: a 20 V-max PPS
             // supply produced a 20 000 mV option and sailed through. The kind
@@ -294,7 +316,7 @@ public enum PowerSourceSynthesis {
 
     /// Pick the option that represents the currently negotiated contract.
     ///
-    /// When the RDO is non-zero, it names its PDO by position (bits 30..28,
+    /// When the RDO is non-zero, it names its PDO by position (bits 31:28,
     /// 1-based) into the PDO list as transmitted, so that lookup must use
     /// `positionalOptions` (original order), never the wattage-sorted
     /// `sortedOptions` used for display.
@@ -304,13 +326,13 @@ public enum PowerSourceSynthesis {
     /// `maxPowerMW > 0` is itself the live-contract signal, so the winning
     /// option is whichever option's wattage matches it, or failing an exact
     /// match, the largest option that doesn't exceed it.
-    private static func winningOption(
+    static func winningOption(
         entry: ContractEntry,
         positionalOptions: [PowerOption?],
         sortedOptions: [PowerOption]
     ) -> PowerOption? {
         if entry.activeRdo != 0 {
-            let position = Int((entry.activeRdo >> 28) & 0x7)
+            let position = PDContract.objectPosition(of: entry.activeRdo)
             let idx = position - 1
             guard idx >= 0, idx < positionalOptions.count else { return nil }
             return positionalOptions[idx]

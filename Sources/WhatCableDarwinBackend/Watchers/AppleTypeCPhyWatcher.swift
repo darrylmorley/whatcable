@@ -146,6 +146,9 @@ public final class AppleTypeCPhyWatcher: ObservableObject {
             IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue()
         }
 
+        // The PHY's own device-tree node index (`atc-phyN`, 55 of 55), never a
+        // port index: PHY count differs from USB-C port count on 735 of 1254
+        // folders, and M1/M2 Ultra repeat PhyIDs across their two dies.
         let phyID = (read("AppleTypeCPhyID") as? NSNumber)?.intValue ?? -1
         guard phyID >= 0 else { return nil }
 

@@ -259,4 +259,48 @@ struct CanonicalJoinKeyTests {
             rawProperties: ["PortType": portType == "USB-C" ? "2" : "17"]
         )
     }
+
+    // MARK: - USBPDSOP.matchingPort(in:)
+
+    /// The join the CLI's `--report` path uses to find the port a cable is
+    /// plugged into. It feeds `CableClassification`, so picking the wrong
+    /// port files a passive cable as active into `data/known-cables.md`.
+    private func cableIdentity(portNumber: Int, uuid: String?) -> USBPDSOP {
+        USBPDSOP(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: portNumber,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0,
+            vdos: [0x1C002B1D, 0x00000000, 0x19010097, 0x32084842],
+            specRevision: 3,
+            hpmControllerUUID: uuid
+        )
+    }
+
+    @Test("matchingPort picks the identity's own port, not the first one")
+    func matchingPortPicksItsOwnPort() {
+        let first = makePort(portNumber: 1, portType: "USB-C", uuid: nil)
+        let own = makePort(portNumber: 3, portType: "USB-C", uuid: nil)
+        let identity = cableIdentity(portNumber: 3, uuid: nil)
+        #expect(identity.matchingPort(in: [first, own])?.serviceName == own.serviceName)
+    }
+
+    @Test("matchingPort is UUID-keyed when both sides carry a UUID")
+    func matchingPortIsUUIDKeyed() {
+        // MagSafe@1 and USB-C@1 share a port number and differ only by UUID
+        // (issue #195). The identity must land on its own controller.
+        let uuidA = "7C30AF2D-CC71-7D20-5287-C77DB8476817"
+        let uuidB = "1D9F3C88-0000-0000-0000-0000000000B2"
+        let magsafe = makePort(portNumber: 1, portType: "MagSafe 3", uuid: uuidA)
+        let usbc = makePort(portNumber: 1, portType: "USB-C", uuid: uuidB)
+        let identity = cableIdentity(portNumber: 1, uuid: uuidB)
+        #expect(identity.matchingPort(in: [magsafe, usbc])?.serviceName == usbc.serviceName)
+    }
+
+    @Test("matchingPort returns nil when the identity's port is absent")
+    func matchingPortReturnsNilWhenAbsent() {
+        let other = makePort(portNumber: 2, portType: "USB-C", uuid: nil)
+        let identity = cableIdentity(portNumber: 4, uuid: nil)
+        #expect(identity.matchingPort(in: [other]) == nil)
+        #expect(identity.matchingPort(in: []) == nil)
+    }
 }

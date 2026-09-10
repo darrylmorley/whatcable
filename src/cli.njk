@@ -130,8 +130,10 @@ extraHead: |
 </p>
 <pre><code><span class="prompt">$</span> whatcable --watch --json</code></pre>
 
+<p><strong>Reading charging output:</strong> PDO means Power Data Object: a charging option offered by the charger. The agreed option sets a power limit; actual consumption may be lower.</p>
+<p>For a visual explanation of the cable fields, <a href="/inside-a-cable">explore the wires and identity chip in our cable diagram</a>.</p>
 <h3>Raw IOKit properties</h3>
-<p>Use <code>--raw</code> to include the underlying IOKit properties alongside the summary. Useful for debugging or filing bug reports.</p>
+<p>Use <code>--raw</code> to include the underlying IOKit properties alongside the summary. IOKit is the macOS system that exposes this hardware information. Useful for debugging or filing bug reports.</p>
 <pre><code><span class="prompt">$</span> whatcable --raw</code></pre>
 
 <h3>Cable report</h3>
@@ -141,10 +143,11 @@ extraHead: |
 </p>
 <pre><code><span class="prompt">$</span> whatcable --report</code></pre>
 <p>
-  If no e-marker data is available, the command tells you so. Two reasons that can happen:
-  either the cable genuinely doesn't have an e-marker chip (USB-PD doesn't require one below 3A),
-  or macOS hasn't asked for it yet (it only does that when negotiating above 3A,
-  so a 20W charger is unlikely to trigger the read). Try a higher-wattage charger if you're not sure.
+  If no e-marker data is available, the command tells you so. The cable may have no identity
+  chip, or macOS may not have read it. Some basic USB 2.0 cables do not require one;
+  full-featured cables and cables carrying more than 3 A do. Try connecting a charger,
+  dock or device at the far end and check again. Whether the identity is available also
+  depends on the Mac, port and connected equipment.
 </p>
 
 <h2>Pro from the command line</h2>

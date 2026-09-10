@@ -463,7 +463,7 @@ struct PowerSourceSynthesisTests {
             fixedPDORaw(voltsMV: 12000, currentMA: 3000),  // 36W, position 3
         ]
         let ports = [port(number: 1, active: true)]
-        // Bits 30..28 = 3 (position 3, 1-based).
+        // Bits 31:28 = 3 (position 3, 1-based).
         let rdo: UInt32 = 3 << 28
         let entries = [ContractEntry(index: 0, rawPDOs: pdos, activeRdo: rdo, maxPowerMW: 36000)]
 

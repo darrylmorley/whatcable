@@ -11,12 +11,17 @@ import WhatCableDarwinBackend
 struct CableReportSheet: View {
     let cableIdentity: USBPDSOP
     let cioCapability: CIOCableCapability?
+    /// The port this cable is plugged into, so the report can carry the port
+    /// controller's own reading of the cable. See `CableClassification`.
+    let port: AppleHPMInterface?
     let dismiss: () -> Void
     @Environment(\.fontScale) private var fontScale
 
     @State private var includeSystemInfo: Bool = false
 
-    private var payload: CableReport.Payload? {
+    /// Internal rather than private: the app test target reads it to pin the
+    /// port wiring, which a SwiftUI body cannot be asserted on.
+    var payload: CableReport.Payload? {
         // Only fetch the Mac model when the toggle is on, matching the old
         // behavior where the sysctl call inside SystemInfo.current() only
         // ran if includeSystemInfo was true.
@@ -25,7 +30,8 @@ struct CableReportSheet: View {
             for: cableIdentity,
             includeSystemInfo: includeSystemInfo,
             macModel: macModel,
-            cioCapability: cioCapability
+            cioCapability: cioCapability,
+            port: port
         )
     }
 

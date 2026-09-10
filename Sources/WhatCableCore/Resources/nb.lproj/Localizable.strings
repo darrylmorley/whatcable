@@ -608,3 +608,14 @@
 "Argument %@" = "Argumentbyte %@";
 "Arguments %@" = "Argumentbyte %@ (flere)";
 "Source ready (result unknown)" = "Kilde klar (ukjent utfall)";
+
+/* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
+"USB Type-A plug (deprecated)" = "USB Type-A-plugg (utgått)";
+"USB Type-B plug (deprecated)" = "USB Type-B-plugg (utgått)";
+"USB Type-C plug" = "USB Type-C-plugg";
+"Captive cable (built into the device)" = "Fast kabel (innebygd i enheten)";
+
+/* Cable type source: the port controller's own ActiveCable reading, and the
+   e-marker silicon vendor hint. */
+"E-marker reports passive, but the port controller detects an active cable" = "E-markeren rapporterer passiv, men portkontrolleren registrerer en aktiv kabel";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-markeren har standard leverandør-ID-en til brikkeprodusenten (%@); kabelmerket er ikke registrert";

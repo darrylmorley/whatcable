@@ -1,0 +1,334 @@
+{
+  "parts": [
+    {
+      "id": "jacket",
+      "name": "Outer cover · jacket",
+      "color": "#465465",
+      "summary": "The flexible outer cover protects the wires from everyday wear and keeps the cable together.",
+      "detail": "Manufacturers use different materials and thicknesses for this cover, also called the jacket. A thicker cable is not automatically faster.",
+      "whatcableDetail": "WhatCable checks reported capabilities and connection behaviour; it cannot inspect the physical wiring inside the cable.",
+      "sourceLabel": "§3.4 · Table 3-10 notes · cable shielding",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75"
+    },
+    {
+      "id": "shield",
+      "name": "Protection from interference",
+      "color": "#8797a7",
+      "summary": "A layer of metal foil or woven wire helps keep unwanted electrical noise away from the signals inside.",
+      "detail": "This layer is called shielding. It surrounds the wires and connects to the metal shell of each plug. The shell is also connected to ground, the circuit’s common reference. In this model, each fast data wire has its own shield too.",
+      "whatcable": "WhatCable watches the error counts reported by your Mac’s port. Changes can help you spot a recurring connection problem.",
+      "whatcableDetail": "An error count does not identify a damaged shield. Repeated connection events can also come from movement or unplugging. WhatCable highlights the pattern so you can investigate.",
+      "sourceLabel": "§3.4 · Table 3-10 notes · cable shielding",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75"
+    },
+    {
+      "id": "power",
+      "name": "Charging wires · VBUS",
+      "color": "#dc5058",
+      "summary": "These wires carry the electricity that charges your laptop, phone or other device.",
+      "detail": "The technical name for this power connection is VBUS. With USB Power Delivery, the charger and device agree how much power the connection can provide, taking the cable’s rating into account. They exchange those messages over the separate CC control wire. The red route groups the power wiring together; it does not show an exact wire count.",
+      "whatcable": "Slow charging does not always mean the cable is at fault. WhatCable compares what the charger can supply, what the cable is rated to carry and the charging power your Mac and charger have agreed to use. It also checks whether the battery is full or charging is on hold.",
+      "sourceLabel": "Tables 3-10 / 3-11 · plug-to-plug wiring",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75",
+      "whatcableDetail": "The agreed power is a limit, not a measurement of what the Mac is using every moment. WhatCable can also identify a second charger on standby.",
+      "proUrl": "/pro#charging-agreement",
+      "proLabel": "See Pro’s charging checks →"
+    },
+    {
+      "id": "ground",
+      "name": "Return wires · ground",
+      "color": "#526278",
+      "summary": "These wires complete the electrical circuit, giving the charging current a path back to its source.",
+      "detail": "Ground, labelled GND, also gives the electronics a common voltage reference. Several metal contacts in the plug share this connection, so the number of contacts is not the number of separate wires.",
+      "sourceLabel": "Tables 3-10 / 3-11 · plug-to-plug wiring",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75"
+    },
+    {
+      "id": "usb2",
+      "name": "Everyday data · USB 2.0",
+      "color": "#2d9a74",
+      "summary": "Two wires carry data for USB 2.0 devices. They can transfer files, but are much slower than the extra data wires in a Thunderbolt connection.",
+      "detail": "The wires are labelled D+ and D−. They work as a pair and support signalling up to 480 Mbps. Both Thunderbolt examples retain them for USB 2.0 devices; faster traffic uses separate pairs.",
+      "whatcable": "A mouse plugged into a fast dock does not need a fast connection. WhatCable separates the Mac-to-dock connection from the devices attached to the dock, so a slower accessory is not automatically treated as evidence of a slow cable.",
+      "sourceLabel": "Tables 3-10 / 3-11 · plug-to-plug wiring",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75"
+    },
+    {
+      "id": "cc",
+      "name": "Connection setup · CC",
+      "color": "#dc981b",
+      "summary": "This control wire helps the devices recognise the connection and agree how charging should work. It also lets them talk to the cable’s identity chip, when one is fitted.",
+      "detail": "CC means Configuration Channel. It carries setup and power messages, not your files. The USB-C connection uses it to detect attachment and plug orientation, negotiate USB Power Delivery and read cable identity.",
+      "whatcable": "WhatCable brings together information about the cable, the device at the other end and the connection they have made. This helps explain what is limiting the connection.",
+      "sourceLabel": "Tables 3-10 / 3-11 · plug-to-plug wiring",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75",
+      "whatcableDetail": "It also checks that the connection is still active, so old charging information left behind after unplugging is not mistaken for a current connection."
+    },
+    {
+      "id": "highspeed",
+      "name": "Fast data & video wires",
+      "color": "#327dd1",
+      "summary": "Eight wires, working in four pairs, carry fast data and video. These are the extra paths missing from our basic USB 2.0 cable.",
+      "detail": "Each pair carries one signal using the difference between its two wires; this is called differential signalling. Each wire has its own surrounding shield in this model. TX and RX in the table mean transmit and receive. They name the contacts, while the connection mode determines how the paths are used. Compatible passive cables can carry newer PAM-3 signalling with faster devices; that does not make a Thunderbolt 4 port faster.",
+      "extra": true,
+      "whatcable": "WhatCable checks the Mac’s port, cable and connected device together to help explain a slow connection. If you use a dock or a chain of Thunderbolt devices, it uses the connection information your Mac provides to work out where a limit may come from.",
+      "whatcableDetail": "When enough information is available, it follows a Thunderbolt chain with no branches through to its last device. It can also identify when macOS is blocking an accessory. For screens, WhatCable Pro’s Display Diagnostics checks picture resolution, refresh rate (how often the picture updates) and the capacity of the display connection. It accounts for Display Stream Compression, or DSC, which lets a picture fit into less connection bandwidth. If macOS does not expose enough information, WhatCable does not guess.",
+      "sourceLabel": "Tables 3-10 / 3-11 · plug-to-plug wiring",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75",
+      "proUrl": "/pro#connection-diagnostics",
+      "proLabel": "See Pro’s connection diagnostics →"
+    },
+    {
+      "id": "sideband",
+      "name": "Extra control wires · SBU",
+      "color": "#9461c4",
+      "summary": "These two wires carry small control messages for certain connection types. For example, they help a DisplayPort connection manage the screen; the picture itself uses the fast data wires.",
+      "detail": "SBU means Sideband Use. What these wires do depends on the connection mode. DisplayPort Alt Mode, which carries DisplayPort through USB-C, uses them for its AUX (auxiliary) control channel.",
+      "extra": true,
+      "whatcable": "Screen not as sharp or smooth as expected? WhatCable Pro checks its resolution, how often the picture updates and the display connection. It also uses adapter information when available, including USB-C-to-HDMI connections.",
+      "whatcableDetail": "The display connection may run at a lower speed because that is enough for the picture setting you chose. Choosing a more demanding setting may cause it to use a faster connection. WhatCable reads the reported settings; it does not electrically test these individual wires.",
+      "sourceLabel": "Tables 3-10 / 3-11 · plug-to-plug wiring",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75",
+      "proUrl": "/pro#display-diagnostics",
+      "proLabel": "See Pro’s display diagnostics →"
+    },
+    {
+      "id": "marker",
+      "name": "E-marker · cable identity",
+      "color": "#c28634",
+      "summary": "A tiny chip inside the plug acts like the cable’s digital label. It tells connected devices what the cable says it can support, including its data and charging capabilities.",
+      "detail": "This chip is called an e-marker. Our example has one in each plug. It talks over the CC control connection, gets power through VCONN and connects to ground. A resistor called Ra tells the connected device that the chip needs power. Full-featured cables require e-markers, as do USB 2.0 cables carrying more than 3 A of current. Having an identity chip does not make a cable “active”: that term refers to electronics that process its data signals.",
+      "extra": true,
+      "whatcable": "WhatCable compares the cable’s digital label with the connection your Mac reports. A difference is a reason to look closer, not automatic proof that the cable is faulty or falsely labelled.",
+      "whatcableDetail": "For example, a compatible passive cable with an older 40 Gbps identity can work at 80 Gbps with newer signalling. A slower connection can instead be limited by the port or device. WhatCable Pro’s Negotiation Diagnostics shows the figures for each part of the connection. A missing manufacturer ID alone does not prove a cable is fake; WhatCable considers the other identity fields too.",
+      "sourceLabel": "§4.9 · Figure 4-42 · e-marker at each end",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=232",
+      "proUrl": "/pro#connection-diagnostics",
+      "proLabel": "Compare cable and connection reports in Pro →"
+    },
+    {
+      "id": "coax",
+      "name": "Shields around the data wires",
+      "color": "#8e9faa",
+      "summary": "Each fast data wire has its own metal shield wrapped around it. This helps protect the signal from electrical noise.",
+      "detail": "This arrangement is called coaxial construction: the signal wire runs through the centre of its shield. The shields connect to ground in both plugs. Other cables use shielded twisted pairs and separate drain wires to connect the shielding. Those are different construction choices; this model uses the coaxial option in USB-C Table 3-10.",
+      "extra": true,
+      "sourceLabel": "§3.4 · Table 3-10 notes · cable shielding",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75"
+    },
+    {
+      "id": "vconn",
+      "name": "Power for the chip · VCONN",
+      "color": "#c179b9",
+      "summary": "The identity chip needs a little power of its own. This connection supplies it separately from the wires that charge your device.",
+      "detail": "VCONN is the name for this chip supply. In our example, contact B5 powers the chip in its own plug; no VCONN wire runs all the way through the cable. Each chip also connects to CC and ground. A resistor called Ra between B5 and ground signals that chip power is needed.",
+      "extra": true,
+      "whatcable": "If WhatCable cannot show the cable’s identity chip, try connecting a charger, dock or device at the far end. Some Macs wait for that connection before reading the chip. Missing information does not automatically mean the chip is absent or broken.",
+      "sourceLabel": "§4.9 · Figure 4-42 · e-marker at each end",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=232"
+    },
+    {
+      "id": "capacitor",
+      "name": "Power smoothing · capacitor",
+      "color": "#ad885b",
+      "summary": "This small part briefly stores and releases electrical charge, helping smooth rapid changes on the power connection inside the plug.",
+      "detail": "It is called a bypass capacitor. In our Thunderbolt 4 example, a 10 nF capacitor connects between VBUS (power) and ground in each plug, close to the power contacts. The unit nF describes how much charge a capacitor can store for a given voltage. The reference specifies at least a 30 V voltage rating. This example uses Standard Power Range (SPR), up to 100 W. The higher-voltage Thunderbolt 5 example needs a different voltage rating.",
+      "extra": true,
+      "sourceLabel": "Tables 3-10 / 3-11 · plug-to-plug wiring",
+      "sourceUrl": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75"
+    }
+  ],
+  "cables": {
+    "basic": {
+      "name": "Basic USB-C",
+      "subtitle": "USB 2.0 charging & data cable",
+      "data": "Up to 480 Mbps",
+      "power": "Up to 60 W · 3 A",
+      "video": "No direct video connection",
+      "description": "This example can charge a device and transfer files using USB 2.0. It lacks the extra wires needed for fast data and a direct video connection. It carries up to 60 W and has no identity chip. Other USB 2.0 cables can have that chip and a higher charging rating without being faster at file transfers."
+    },
+    "thunderbolt": {
+      "name": "Thunderbolt 4",
+      "subtitle": "40 Gbps with Thunderbolt 4 devices",
+      "data": "40 Gbps in TB4 operation",
+      "power": "Up to 100 W",
+      "video": "Supports video",
+      "description": "This example adds four pairs of fast data wires, extra control wires and an identity chip in each plug. It supports data and video at up to 40 Gbps in a Thunderbolt 4 connection. It is a passive cable: it has no electronics that boost or rebuild the data signals. Compatible passive cables can also carry faster Thunderbolt 5 signals when the devices at both ends support them."
+    },
+    "thunderbolt5": {
+      "name": "Thunderbolt 5",
+      "subtitle": "80 Gbps · extra capacity for screens",
+      "data": "80 Gbps · 120 Gbps boost",
+      "power": "Up to 240 W",
+      "video": "Supports video · DisplayPort 2.1",
+      "description": "Thunderbolt 5 sends more information through the same four pairs of fast data wires. It can carry 80 Gbps each way, or give demanding screens more capacity in one direction. This example also supports charging up to 240 W, with suitable power components and an identity chip in each plug. These are example designs; manufacturers can build the inside differently.",
+      "partOverrides": {
+        "highspeed": {
+          "summary": "Thunderbolt 5 carries more information through the same eight fast data wires. It uses three electrical signal levels instead of two; this is called PAM-3.",
+          "detail": "The four wire pairs act as four data lanes. Normally, two lanes send and two receive, giving 80 Gbps each way. Bandwidth Boost changes that to three lanes towards demanding screens and one back: 120 Gbps one way and 40 Gbps the other. These are connection capacities, not promised file-copy speeds. The devices and the messages needed to organise transfers also affect performance.",
+          "sourceLabel": "Intel · Thunderbolt 5 signalling and bandwidth",
+          "sourceUrl": "https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2023-09/thunderbolt-5-technology-brief.pdf"
+        },
+        "power": {
+          "summary": "These wires can carry up to 240 W in this example, if both the charger and device support it. A higher cable rating does not make a device take more power than it needs.",
+          "detail": "This uses Extended Power Range (EPR), the USB charging range above 100 W. It needs suitable insulation, plugs, components and an EPR-capable identity chip. The maximum charging contract is 48 V at 5 A: 240 W. Volts (V) describe voltage, amps (A) describe current, and watts (W) describe power. Thunderbolt 4 cables can also support EPR; 100 W is the rating chosen for our TB4 example, not a universal TB4 limit.",
+          "sourceLabel": "UL Solutions · 240 W EPR cable requirements",
+          "sourceUrl": "https://www.ul.com/insights/240w-usb-c-cable-performance-testing-and-safety-considerations"
+        },
+        "marker": {
+          "detail": "Each plug in this example has its own identity chip, powered through VCONN. The chip reports support for the cable’s data signalling and Extended Power Range (EPR) charging. That allows a suitable charger and device to agree up to 48 V at 5 A, or 240 W. The chip reports what the cable supports; it does not make the data signals faster.",
+          "sourceLabel": "UL Solutions · EPR cable marking",
+          "sourceUrl": "https://www.ul.com/insights/240w-usb-c-cable-performance-testing-and-safety-considerations"
+        },
+        "capacitor": {
+          "summary": "This small part helps smooth rapid changes on the power connection. Here it must also cope with the higher charging voltage used for up to 240 W.",
+          "detail": "Our Thunderbolt 5 example uses a 10 nF bypass capacitor rated for at least 63 V. That higher voltage rating is needed for Extended Power Range charging. The 30 V minimum used for the older power range would not be enough. The capacitor connects between power and ground; charging current does not pass through it on its way to your device.",
+          "sourceLabel": "UL Solutions · EPR bypass capacitor rating",
+          "sourceUrl": "https://www.ul.com/insights/240w-usb-c-cable-performance-testing-and-safety-considerations"
+        }
+      }
+    }
+  },
+  "connections": [
+    {
+      "part": "ground",
+      "signal": "Ground bus",
+      "from": "A1, A12, B1, B12",
+      "to": "A1, A12, B1, B12",
+      "basic": true,
+      "label": "Ground return"
+    },
+    {
+      "part": "power",
+      "signal": "VBUS bus",
+      "from": "A4, A9, B4, B9",
+      "to": "A4, A9, B4, B9",
+      "basic": true,
+      "label": "Charging power"
+    },
+    {
+      "part": "cc",
+      "signal": "CC",
+      "from": "A5",
+      "to": "A5",
+      "basic": true,
+      "label": "Connection setup"
+    },
+    {
+      "part": "usb2",
+      "signal": "D+",
+      "from": "A6",
+      "to": "A6",
+      "basic": true,
+      "label": "USB 2.0 data"
+    },
+    {
+      "part": "usb2",
+      "signal": "D−",
+      "from": "A7",
+      "to": "A7",
+      "basic": true,
+      "label": "USB 2.0 data"
+    },
+    {
+      "part": "highspeed",
+      "signal": "TX1+ → RX1+",
+      "from": "A2",
+      "to": "B11",
+      "label": "Fast data"
+    },
+    {
+      "part": "highspeed",
+      "signal": "TX1− → RX1−",
+      "from": "A3",
+      "to": "B10",
+      "label": "Fast data"
+    },
+    {
+      "part": "highspeed",
+      "signal": "RX1+ ← TX1+",
+      "from": "B11",
+      "to": "A2",
+      "label": "Fast data"
+    },
+    {
+      "part": "highspeed",
+      "signal": "RX1− ← TX1−",
+      "from": "B10",
+      "to": "A3",
+      "label": "Fast data"
+    },
+    {
+      "part": "highspeed",
+      "signal": "TX2+ → RX2+",
+      "from": "B2",
+      "to": "A11",
+      "label": "Fast data"
+    },
+    {
+      "part": "highspeed",
+      "signal": "TX2− → RX2−",
+      "from": "B3",
+      "to": "A10",
+      "label": "Fast data"
+    },
+    {
+      "part": "highspeed",
+      "signal": "RX2+ ← TX2+",
+      "from": "A11",
+      "to": "B2",
+      "label": "Fast data"
+    },
+    {
+      "part": "highspeed",
+      "signal": "RX2− ← TX2−",
+      "from": "A10",
+      "to": "B3",
+      "label": "Fast data"
+    },
+    {
+      "part": "sideband",
+      "signal": "SBU1 → SBU2",
+      "from": "A8",
+      "to": "B8",
+      "label": "Display support"
+    },
+    {
+      "part": "sideband",
+      "signal": "SBU2 → SBU1",
+      "from": "B8",
+      "to": "A8",
+      "label": "Display support"
+    }
+  ],
+  "questions": [
+    {
+      "id": "slow",
+      "title": "Why does it charge but transfer slowly?",
+      "cable": "basic",
+      "part": "usb2",
+      "text": "Charging and file transfers use different wires. This basic cable has charging wires and a slower USB 2.0 data pair, but no extra fast data pairs. WhatCable checks the port, cable and device together to help explain the speed. Switch cables to see which wires are added."
+    },
+    {
+      "id": "display",
+      "title": "Why isn’t my screen sharp or smooth?",
+      "cable": "thunderbolt",
+      "part": "highspeed",
+      "text": "A screen needs enough connection capacity for its resolution (picture detail) and refresh rate (how often the picture updates). WhatCable Pro checks those settings, the screen’s reported capabilities and the display connection, including adapters when information is available. Start with the picture settings: a lower connection speed alone does not prove a cable fault."
+    },
+    {
+      "id": "identity",
+      "title": "What does the chip inside the plug do?",
+      "cable": "thunderbolt",
+      "part": "marker",
+      "text": "The e-marker is the cable’s digital label. WhatCable compares that label with the connection your Mac reports. A cable may work faster with newer devices than its older label suggests, or slower because a device sets the limit. Neither difference automatically means the label is false. The close-up shows the chip and its connections."
+    },
+    {
+      "id": "tb5",
+      "title": "How is Thunderbolt 5 faster?",
+      "cable": "thunderbolt5",
+      "part": "highspeed",
+      "text": "It sends more information through the same four pairs of fast data wires. Normally, it has 80 Gbps of capacity each way. When demanding screens need more, Bandwidth Boost can provide 120 Gbps towards them and 40 Gbps back. Try the buttons below the model to compare."
+    }
+  ]
+}

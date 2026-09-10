@@ -2542,4 +2542,152 @@ struct PortSummaryTests {
         #expect(!summary.bullets.contains { $0.contains("Cable identified as") })
         #expect(!summary.bullets.contains { $0.contains("This e-marker is used in:") })
     }
+
+    // MARK: - Cable classification wiring
+
+    /// The CalDigit 2M Thunderbolt 4 cable from issue #111, second capture:
+    /// passive ID Header, VDO[3] bit 3 CLEAR, so nothing structural to infer
+    /// from. Only the port controller can promote this one.
+    private func caldigitBitThreeClear() -> USBPDSOP {
+        USBPDSOP(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [0x1C002B1D, 0x00000000, 0x19010097, 0x32084842],
+            specRevision: 3
+        )
+    }
+
+    /// The same cable's other capture, VDO[3] bit 3 SET, which is the layout
+    /// contradiction on its own.
+    private func caldigitBitThreeSet() -> USBPDSOP {
+        USBPDSOP(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [0x1C002B1D, 0x00000000, 0x19010097, 0x3208485A],
+            specRevision: 3
+        )
+    }
+
+    private static let portControllerLine =
+        "E-marker reports passive, but the port controller detects an active cable"
+    private static let contradictionLine = "carries active-cable structure"
+    private static let passiveLine = "Passive (no signal-conditioning electronics)"
+
+    private func emarkerLines(_ summary: PortSummary) -> [String] {
+        summary.groups.first { $0.kind == .emarker }?.lines ?? []
+    }
+
+    @Test("Port controller promotion gets its own hedged wording")
+    func portControllerPromotionGetsItsOwnWording() {
+        let port = makePort(active: ["CIO", "USB3"], supported: ["CC", "CIO", "USB3"], emarker: true)
+        let summary = PortSummary(port: port, identities: [caldigitBitThreeClear()])
+        let lines = emarkerLines(summary)
+        #expect(lines.contains { $0.contains(Self.portControllerLine) },
+                "expected the port-controller line, got: \(lines)")
+        #expect(!lines.contains { $0.contains(Self.passiveLine) },
+                "a promoted cable must not also read as passive, got: \(lines)")
+    }
+
+    @Test("Port controller saying not active leaves the passive wording alone")
+    func portControllerFalseKeepsPassiveWording() {
+        let port = makePort(active: ["CIO", "USB3"], supported: ["CC", "CIO", "USB3"], emarker: false)
+        let summary = PortSummary(port: port, identities: [caldigitBitThreeClear()])
+        let lines = emarkerLines(summary)
+        #expect(lines.contains { $0.contains(Self.passiveLine) },
+                "expected the passive line, got: \(lines)")
+        #expect(!lines.contains { $0.contains(Self.portControllerLine) })
+        #expect(!lines.contains { $0.contains(Self.contradictionLine) })
+    }
+
+    @Test("Port controller takes precedence over the layout contradiction")
+    func portControllerBeatsLayoutContradiction() {
+        // A controller measurement beats a structural inference, so the four
+        // corpus ports that set both move to the port-controller wording.
+        let port = makePort(active: ["CIO", "USB3"], supported: ["CC", "CIO", "USB3"], emarker: true)
+        let summary = PortSummary(port: port, identities: [caldigitBitThreeSet()])
+        let lines = emarkerLines(summary)
+        #expect(lines.contains { $0.contains(Self.portControllerLine) },
+                "expected the port-controller line, got: \(lines)")
+        #expect(!lines.contains { $0.contains(Self.contradictionLine) },
+                "the contradiction wording must not fire as well, got: \(lines)")
+    }
+
+    @Test("A port-promoted cable carrying VDO[4] renders its medium and element")
+    func portPromotedCableRendersMediumAndElement() {
+        // Synthetic, and it has to be: all 12 corpus ports the controller
+        // promotes carry exactly 4 VDOs, so no capture can exercise VDO[4]
+        // on this path.
+        let passiveIDHeader: UInt32 = (3 << 27) | UInt32(0x2B1D)
+        let passiveVDO3: UInt32 = 0b011 | UInt32(2 << 5) | UInt32(1 << 13)
+        let identity = USBPDSOP(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [passiveIDHeader, 0, 0x19010097, passiveVDO3, 0x11082041],
+            specRevision: 3
+        )
+        let port = makePort(active: ["CIO", "USB3"], supported: ["CC", "CIO", "USB3"], emarker: true)
+        let lines = emarkerLines(PortSummary(port: port, identities: [identity]))
+        #expect(lines.contains { $0.hasPrefix("Active ") && $0.contains(" cable, ") },
+                "expected the medium/element line, got: \(lines)")
+    }
+
+    // MARK: - Captive plug line
+
+    private func plugTypeCable(bits: UInt32) -> USBPDSOP {
+        // Cable VDO: USB4 Gen3, 5A, ~1m latency, plug type in bits 19:18.
+        let vdo3: UInt32 = 0b011 | UInt32(2 << 5) | UInt32(1 << 13) | (bits << 18)
+        return USBPDSOP(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0x1234, bcdDevice: 0,
+            vdos: [(3 << 27) | UInt32(0x05AC), 0, 0, vdo3],
+            specRevision: 3
+        )
+    }
+
+    @Test("Captive plug adds a line, a Type-C plug adds none")
+    func captivePlugLineOnlyWhenCaptive() {
+        let port = makePort()
+        let captive = emarkerLines(PortSummary(port: port, identities: [plugTypeCable(bits: 0b11)]))
+        #expect(captive.contains { $0.contains("Captive cable") },
+                "expected the captive line, got: \(captive)")
+        let typeC = emarkerLines(PortSummary(port: port, identities: [plugTypeCable(bits: 0b10)]))
+        #expect(!typeC.contains { $0.contains("plug") || $0.contains("Captive") },
+                "a Type-C plug on a USB-C cable is not information, got: \(typeC)")
+    }
+
+    // MARK: - Chip-vendor hint
+
+    private func vendorCable(vendorID: Int, productID: Int) -> USBPDSOP {
+        USBPDSOP(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: vendorID, productID: productID, bcdDevice: 0,
+            vdos: [(3 << 27) | UInt32(vendorID), 0, 0, 0b011 | UInt32(2 << 5) | UInt32(1 << 13)],
+            specRevision: 3
+        )
+    }
+
+    private func databaseLines(_ summary: PortSummary) -> [String] {
+        summary.groups.first { $0.kind == .database }?.lines ?? []
+    }
+
+    @Test("Chip-vendor hint appears only for e-marker silicon vendor IDs")
+    func chipVendorHintOnlyForSiliconVendorIDs() {
+        let port = makePort()
+        let cps = databaseLines(PortSummary(port: port, identities: [vendorCable(vendorID: 0x315C, productID: 0)]))
+        #expect(cps.contains { $0.contains("chip maker's default vendor ID (CPS)") },
+                "expected the chip-vendor hint, got: \(cps)")
+        #expect(cps.contains { $0.contains("Made by") },
+                "the vendor name is honest and stays, got: \(cps)")
+
+        let apple = databaseLines(PortSummary(port: port, identities: [vendorCable(vendorID: 0x05AC, productID: 0x1234)]))
+        #expect(!apple.contains { $0.contains("chip maker's default vendor ID") },
+                "a cable brand's own VID gets no hint, got: \(apple)")
+        #expect(apple.contains { $0.contains("Made by") },
+                "expected the vendor line, got: \(apple)")
+    }
 }

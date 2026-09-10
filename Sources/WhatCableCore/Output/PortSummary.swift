@@ -431,6 +431,15 @@ extension PortSummary {
         })
         let emarkerRead = cableEmarker.map { !$0.vdos.isEmpty } ?? false
 
+        // One classification for the whole card, read once here: the
+        // e-marker's self-report together with the port controller's own
+        // ActiveCable measurement. `port` is the port this identity belongs
+        // to: every caller filters `identities` with
+        // `USBPDSOP.canonicallyMatches(port:)` before handing them over.
+        let cableClassification = cableEmarker.flatMap {
+            CableClassification.resolve(identity: $0, port: port)
+        }
+
         // Read state is the state of the e-marker group, so it becomes the
         // group's subtitle rather than a bullet sitting among the cable's own
         // claims. This is what kills the old contradiction where the card
@@ -492,38 +501,69 @@ extension PortSummary {
             } else {
                 emarkerLines.append(String(localized: "Cable rated for \(currentLabel) at up to \(maxVolts)V (~\(maxWatts)W)", bundle: _coreLocalizedBundle))
             }
-            if cv.cableType == .active {
-                if let v2 = cable.activeCableVDO2 {
-                    let medium = v2.physicalConnection.label.lowercased()
-                    let element = v2.activeElement.label.lowercased()
-                    emarkerLines.append(String(localized: "Active \(medium) cable, \(element)", bundle: _coreLocalizedBundle))
-                    if v2.physicalConnection == .optical {
-                        if v2.opticallyIsolated {
-                            emarkerLines.append(String(localized: "Optical fibres are electrically isolated end-to-end", bundle: _coreLocalizedBundle))
-                        } else {
-                            emarkerLines.append(String(localized: "Optical cable, not electrically isolated (carries copper alongside the fibres)", bundle: _coreLocalizedBundle))
+            // Only a captive plug earns a line: a Type-C plug on a USB-C
+            // cable is not information, and the two deprecated types cannot
+            // reach a USB-C port.
+            if cv.plugType == .captive {
+                emarkerLines.append(cv.plugType.label)
+            }
+            // The active / passive verdict is the classifier's, not the
+            // e-marker's alone: a mis-programmed e-marker no longer decides
+            // it by itself (issue #111). Which reading settled it picks the
+            // wording.
+            if let resolution = cableClassification, resolution.type == .active {
+                switch resolution.source {
+                case .emarker:
+                    if let v2 = cable.activeCableVDO2 {
+                        let medium = v2.physicalConnection.label.lowercased()
+                        let element = v2.activeElement.label.lowercased()
+                        emarkerLines.append(String(localized: "Active \(medium) cable, \(element)", bundle: _coreLocalizedBundle))
+                        if v2.physicalConnection == .optical {
+                            if v2.opticallyIsolated {
+                                emarkerLines.append(String(localized: "Optical fibres are electrically isolated end-to-end", bundle: _coreLocalizedBundle))
+                            } else {
+                                emarkerLines.append(String(localized: "Optical cable, not electrically isolated (carries copper alongside the fibres)", bundle: _coreLocalizedBundle))
+                            }
                         }
+                    } else {
+                        emarkerLines.append(String(localized: "Active cable (contains signal-conditioning electronics)", bundle: _coreLocalizedBundle))
                     }
-                } else {
-                    emarkerLines.append(String(localized: "Active cable (contains signal-conditioning electronics)", bundle: _coreLocalizedBundle))
+                case .portController:
+                    // The port controller measured an active cable while the
+                    // e-marker declared itself passive. A measurement beats a
+                    // structural inference, so this wording wins over the
+                    // contradiction wording below on the four corpus ports
+                    // that set both.
+                    emarkerLines.append(String(localized: "E-marker reports passive, but the port controller detects an active cable", bundle: _coreLocalizedBundle))
+                    if let v2 = cable.activeCableVDO2(classifiedAs: resolution) {
+                        let medium = v2.physicalConnection.label.lowercased()
+                        let element = v2.activeElement.label.lowercased()
+                        // Reuses the same key as the normal active-cable VDO2 line
+                        // so no new localisation key is needed for the medium/element.
+                        emarkerLines.append(String(localized: "Active \(medium) cable, \(element)", bundle: _coreLocalizedBundle))
+                    }
+                case .layoutContradiction:
+                    // The cable's ID Header says passive, but VDO[3] has the
+                    // "SOP'' Controller Present" bit set, a field that only exists
+                    // in the active-cable layout. That structural contradiction
+                    // suggests this is really an active cable with a mis-programmed
+                    // e-marker (confirmed real case: CalDigit 2M Thunderbolt 4).
+                    // Surface the note with hedged wording; VDO[3] is kept decoded
+                    // under the passive layout to avoid raising false trust flags.
+                    //
+                    // Still reached when the controller flag is false: m1_macos26.2
+                    // port 1 in the corpus carries the contradiction with
+                    // ActiveCable false.
+                    emarkerLines.append(String(localized: "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)", bundle: _coreLocalizedBundle))
+                    if let v2 = cable.activeCableVDO2 {
+                        let medium = v2.physicalConnection.label.lowercased()
+                        let element = v2.activeElement.label.lowercased()
+                        // Reuses the same key as the normal active-cable VDO2 line
+                        // so no new localisation key is needed for the medium/element.
+                        emarkerLines.append(String(localized: "Active \(medium) cable, \(element)", bundle: _coreLocalizedBundle))
+                    }
                 }
-            } else if cv.cableType == .passive && cable.hasActiveLayoutContradiction {
-                // The cable's ID Header says passive, but VDO[3] has the
-                // "SOP'' Controller Present" bit set, a field that only exists
-                // in the active-cable layout. That structural contradiction
-                // suggests this is really an active cable with a mis-programmed
-                // e-marker (confirmed real case: CalDigit 2M Thunderbolt 4).
-                // Surface the note with hedged wording; VDO[3] is kept decoded
-                // under the passive layout to avoid raising false trust flags.
-                emarkerLines.append(String(localized: "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)", bundle: _coreLocalizedBundle))
-                if let v2 = cable.activeCableVDO2 {
-                    let medium = v2.physicalConnection.label.lowercased()
-                    let element = v2.activeElement.label.lowercased()
-                    // Reuses the same key as the normal active-cable VDO2 line
-                    // so no new localisation key is needed for the medium/element.
-                    emarkerLines.append(String(localized: "Active \(medium) cable, \(element)", bundle: _coreLocalizedBundle))
-                }
-            } else if cv.cableType == .passive {
+            } else if cableClassification?.type == .passive {
                 // Plain statement of what the e-marker says, nothing more.
                 //
                 // This used to carry an explanation ("normal for Thunderbolt
@@ -534,8 +574,7 @@ extension PortSummary {
                 // passive at 40 Gbps is not physically possible. Applied
                 // universally it was simply false: a short passive TB5 cable
                 // has no active electronics at all. The mis-programmed-e-marker
-                // case is covered by the hasActiveLayoutContradiction branch
-                // above, which is the case the wording was written for.
+                // cases are covered by the two branches above.
                 emarkerLines.append(String(localized: "Passive (no signal-conditioning electronics)", bundle: _coreLocalizedBundle))
             }
 
@@ -605,6 +644,13 @@ extension PortSummary {
             let vendorHex = "0x" + String(format: "%04X", cable.vendorID)
             if let vendorName = VendorDB.name(for: cable.vendorID) {
                 databaseLines.append(String(localized: "Made by \(vendorName) (\(vendorHex)), per our bundled vendor list", bundle: _coreLocalizedBundle))
+                // The vendor name above is honest, so it stays. This says
+                // what it means: an e-marker that was never reprogrammed
+                // answers with its chip maker's default ID, so the name is
+                // the silicon supplier rather than the cable brand.
+                if let chip = EmarkerSilicon.shortName(for: cable.vendorID) {
+                    databaseLines.append(String(localized: "E-marker carries its chip maker's default vendor ID (\(chip)); the cable brand is not recorded", bundle: _coreLocalizedBundle))
+                }
             } else {
                 databaseLines.append(String(localized: "\(vendorHex) isn't in our bundled vendor list", bundle: _coreLocalizedBundle))
             }

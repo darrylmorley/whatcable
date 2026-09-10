@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Inside a USB-C cable: Interactive 3D Comparison | WhatCable</title>
+<meta name="description" content="Explore inside a USB-C cable in 3D. Compare basic USB 2.0 wiring with Thunderbolt 4 and Thunderbolt 5 cables and learn what each component does.">
+
+<link rel="canonical" href="https://www.whatcable.uk/inside-a-cable">
+<link rel="icon" href="/icon.png" type="image/png">
+<link rel="apple-touch-icon" href="/icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.whatcable.uk/inside-a-cable">
+<meta property="og:title" content="Inside a USB-C cable: Interactive 3D Comparison | WhatCable">
+<meta property="og:description" content="Explore inside a USB-C cable in 3D. Compare basic USB 2.0 wiring with Thunderbolt 4 and Thunderbolt 5 cables and learn what each component does.">
+<meta property="og:image" content="https://www.whatcable.uk/screenshot.webp">
+
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Inside a USB-C cable: Interactive 3D Comparison | WhatCable">
+<meta name="twitter:description" content="Explore inside a USB-C cable in 3D. Compare basic USB 2.0 wiring with Thunderbolt 4 and Thunderbolt 5 cables and learn what each component does.">
+<meta name="twitter:image" content="https://www.whatcable.uk/screenshot.webp">
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #0e1620;
+    --ink-soft: #364152;
+    --muted: #6a7585;
+    --line: #e3e8ef;
+    --line-soft: #eef2f7;
+    --bg: #fafbfc;
+    --panel: #ffffff;
+    --accent: #08768b;
+    --accent-strong: #0a7188;
+    --accent-soft: #e6f4f7;
+    --good: #087348;
+    --warn: #8a5700;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.18);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  main { flex: 1 0 auto; }
+  footer { flex-shrink: 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, pre { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; }
+  pre { background: var(--line-soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; }
+  code { background: var(--line-soft); padding: 1px 6px; border-radius: 5px; }
+  pre code { background: none; padding: 0; }
+
+  .wrap {
+    width: min(720px, calc(100% - 40px));
+    margin: 0 auto;
+  }
+  .wrap-wide {
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+  }
+
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(250, 251, 252, 0.85);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .brand:hover { text-decoration: none; }
+  .mark {
+    width: 28px;
+    height: 28px;
+    display: block;
+    border-radius: 7px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .nav-links a { color: inherit; text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav .button {
+    padding: 8px 14px;
+    min-height: 36px;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .nav .button.secondary { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .nav .button.secondary:hover { border-color: #c8d0db; }
+  .nav .button.accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .nav .button.accent:hover { background: var(--accent-strong); }
+
+  main {
+    padding: 48px 0 80px;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 32px;
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 32px 0 12px;
+    scroll-margin-top: 80px;
+  }
+  h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 24px 0 10px;
+    scroll-margin-top: 80px;
+  }
+  p {
+    margin: 0 0 14px;
+    color: var(--ink-soft);
+  }
+  ul, ol {
+    margin: 0 0 14px;
+    padding-left: 20px;
+    color: var(--ink-soft);
+  }
+  li { margin-bottom: 6px; }
+  blockquote {
+    margin: 18px 0;
+    padding: 12px 18px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--ink-soft);
+    border-radius: 0 8px 8px 0;
+  }
+  blockquote p:last-child { margin-bottom: 0; }
+  hr {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 32px 0;
+  }
+
+  /* Scrollable wrapper injected by the Eleventy wrapTables transform. */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 0 20px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .table-wrap table { margin: 0; border: none; border-radius: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+    margin: 0 0 20px;
+  }
+  thead tr {
+    background: var(--line-soft);
+    border-bottom: 2px solid var(--line);
+  }
+  th {
+    text-align: left;
+    padding: 9px 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--line-soft); }
+
+  /* Images in post body: markdown renders bare <img> not <figure>, so scope
+     the size constraint and chrome here rather than relying on figure img. */
+  .post-body img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    margin: 20px auto;
+  }
+
+  figure { margin: 20px 0; }
+  figure img {
+    display: block;
+    max-width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  }
+  figcaption {
+    margin-top: 8px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  .note {
+    padding: 16px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    margin-bottom: 14px;
+  }
+  .note strong { color: var(--ink); }
+
+  .pro-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  .faq-section {
+    margin-top: 40px;
+  }
+  .faq-section h2 {
+    margin-bottom: 16px;
+  }
+  .faq-item {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .faq-item > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 18px;
+    font-weight: 600;
+    color: var(--ink);
+    position: relative;
+    padding-right: 44px;
+  }
+  .faq-item > summary::-webkit-details-marker { display: none; }
+  .faq-item > summary::after {
+    content: "+";
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  .faq-item[open] > summary::after {
+    content: "−";
+  }
+  .faq-item > summary:hover {
+    background: var(--line-soft);
+  }
+  .faq-answer {
+    padding: 0 18px 14px;
+    color: var(--ink-soft);
+  }
+  .faq-answer > :last-child { margin-bottom: 0; }
+
+  footer {
+    padding: 32px 0;
+    background: #0c1219;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 13.5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  footer .wrap-wide {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  footer a { color: rgba(255, 255, 255, 0.85); }
+  footer a:hover { color: #fff; }
+  footer .footer-links { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  footer .footer-links .sep { color: rgba(255, 255, 255, 0.3); }
+
+  .mobile-nav { display: none; }
+  .mobile-menu summary { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid #bac5cf; border-radius: 8px; background: white; color: var(--ink); cursor: pointer; font-size: 14px; font-weight: 600; list-style: none; }
+  .mobile-menu summary::-webkit-details-marker { display: none; }
+  .mobile-menu[open] summary { background: #eaf3f5; border-color: #08768b; }
+  .mobile-nav-panel { position: absolute; top: 100%; left: 0; right: 0; padding: 12px 20px 20px; background: #fafbfc; border-bottom: 1px solid var(--line); box-shadow: 0 12px 20px #0c12191a; max-height: calc(100dvh - 64px); overflow-y: auto; overscroll-behavior: contain; }
+  .mobile-nav-panel a { display: flex; align-items: center; min-height: 48px; padding: 10px 14px; border-radius: 7px; color: var(--ink); font-size: 16px; text-decoration: none; }
+  .mobile-nav-panel a:hover { background: #edf2f5; }
+  .mobile-nav-panel a[aria-current="page"] { background: #e3f0f3; color: #075d6e; font-weight: 700; border-left: 3px solid #08768b; }
+  .nav :is(a,summary):focus-visible { outline: 3px solid #08768b; outline-offset: 3px; }
+  @media (max-width: 720px) {
+    .mobile-nav { display: flex; align-items: center; gap: 10px; }
+    .nav-inner { gap: 10px; }
+    .mobile-nav .button.accent { min-height: 44px; background: #08768b; }
+
+    .nav .desktop-nav { display: none; }
+    .nav-links { gap: 12px; }
+    .nav .button { padding: 8px 12px; font-size: 13px; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 20px; }
+    footer .wrap-wide { flex-direction: column; align-items: flex-start; }
+  }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  footer .wrap-wide > span:first-child a, .price-note a, .pricing-note a, .pricing a, .answer a { text-decoration: underline; text-underline-offset: 3px; }
+  :is(a,button,summary):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+  @media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } }
+</style>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.whatcable.uk/#website",
+      "url": "https://www.whatcable.uk/",
+      "name": "WhatCable",
+      "publisher": {
+        "@id": "https://www.whatcable.uk/#publisher"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.whatcable.uk/#publisher",
+      "name": "Bitmoor",
+      "url": "https://www.bitmoor.co.uk",
+      "founder": {
+        "@type": "Person",
+        "name": "Darryl"
+      }
+    }
+  ]
+}
+</script>
+
+
+    <link rel="stylesheet" href="/assets/cable-explorer/explorer.css?v=f3b4ceebb10b21f4">
+<script type="importmap">{"imports":{"three":"/assets/cable-explorer/vendor/three.module.js"}}</script>
+
+  </head>
+  <body>
+    <nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a class="brand" href="/">
+      <img class="mark" src="/icon.png" alt="" aria-hidden="true" width="28" height="28">
+      <span>WhatCable</span>
+    </a>
+    <div class="nav-links desktop-nav">
+      
+        <a href="/instructions" data-keep-mobile>Docs</a>
+      
+        <a href="/cli">CLI</a>
+      
+        <a href="/cables">Cables</a>
+      
+        <a href="/blog">Blog</a>
+      
+      
+        <a class="button secondary" href="https://github.com/darrylmorley/whatcable">GitHub</a>
+      
+        <a class="button accent" href="/pro">Get Pro</a>
+      
+    </div>
+    <div class="mobile-nav">
+      <a class="button accent" href="/pro">Get Pro</a>
+      <details class="mobile-menu">
+        <summary aria-controls="mobile-nav-links"><span>Menu</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary>
+        <div id="mobile-nav-links" class="mobile-nav-panel">
+          
+            <a href="/instructions">Docs</a>
+          
+            <a href="/cli">CLI</a>
+          
+            <a href="/cables">Cables</a>
+          
+            <a href="/blog">Blog</a>
+          
+          <a href="/inside-a-cable" aria-current="page">Inside a cable</a>
+          <a href="/pro">WhatCable Pro</a>
+          <a href="/support">Support</a>
+          <a href="https://github.com/darrylmorley/whatcable">GitHub</a>
+        </div>
+      </details>
+    </div>
+  </div>
+</nav>
+<script>
+(() => {
+  const menu = document.querySelector('.mobile-menu');
+  const trigger = menu.querySelector('summary');
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu.open) {
+      menu.open = false; trigger.focus();
+    }
+  });
+  document.addEventListener('click', event => {
+    if (menu.open && !menu.contains(event.target)) menu.open = false;
+  });
+  menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+  const desktop = matchMedia('(min-width: 721px)');
+  desktop.addEventListener('change', event => { if (event.matches) menu.open = false; });
+})();
+</script>
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebPage",
+        "LearningResource"
+      ],
+      "@id": "https://www.whatcable.uk/inside-a-cable#webpage",
+      "url": "https://www.whatcable.uk/inside-a-cable",
+      "name": "Inside a USB-C cable: interactive 3D comparison",
+      "description": "Explore basic USB-C, Thunderbolt 4 and Thunderbolt 5 cable examples, with everyday explanations and technical details about charging, data and video.",
+      "inLanguage": "en-GB",
+      "isAccessibleForFree": true,
+      "learningResourceType": "Interactive cable diagram",
+      "educationalUse": "Exploration",
+      "teaches": [
+        "How USB-C cable components carry power, data and video",
+        "How basic USB-C, Thunderbolt 4 and Thunderbolt 5 examples differ",
+        "How cable identity relates to the actual connection"
+      ],
+      "isPartOf": {
+        "@id": "https://www.whatcable.uk/#website"
+      },
+      "publisher": {
+        "@id": "https://www.whatcable.uk/#publisher"
+      },
+      "breadcrumb": {
+        "@id": "https://www.whatcable.uk/inside-a-cable#breadcrumb"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.whatcable.uk/inside-a-cable#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.whatcable.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cables",
+          "item": "https://www.whatcable.uk/cables"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Inside a cable",
+          "item": "https://www.whatcable.uk/inside-a-cable"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<main class="explorer-page wrap-wide">
+  <header class="explorer-heading">
+    <nav aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/cables">Cables</a> / <span>Inside a cable</span></nav>
+    <h1>Same plug. What’s inside?</h1>
+    <p>Open a cable. Explore its parts. See what changes when you switch.</p>
+  </header>
+  <noscript><p>The interactive model needs JavaScript. You can still read the component guide and connection table below.</p><style>.guided-explore,.cable-picker,.model-stage,.model-controls,.part-panel,.selection-status{display:none}</style></noscript>
+  <section class="guided-explore" aria-label="Guided questions">
+    <div class="question-buttons"><button type="button" data-question="slow" aria-pressed="false">Why does it charge but transfer slowly?</button><button type="button" data-question="display" aria-pressed="false">Why isn’t my screen sharp or smooth?</button><button type="button" data-question="identity" aria-pressed="false">What does the chip inside the plug do?</button><button type="button" data-question="tb5" aria-pressed="false">How is Thunderbolt 5 faster?</button></div>
+    <div id="question-answer" hidden aria-live="polite"><h2 id="question-title"></h2><p id="question-text"></p><button type="button" id="end-guide">Return to free exploration</button></div>
+  </section>
+  <p class="reference-label"><strong>Three example cables</strong> · See what the wires do, what changes between cables and how that affects charging, file transfers and screens. The exact construction varies by manufacturer.</p>
+  <div class="cable-picker" role="group" aria-label="Choose a cable">
+    <button type="button" data-cable="basic" aria-pressed="false"><strong>Basic USB-C</strong><span>USB 2.0 charging &amp; data cable</span></button><button type="button" data-cable="thunderbolt" aria-pressed="true"><strong>Thunderbolt 4</strong><span>40 Gbps with Thunderbolt 4 devices</span></button><button type="button" data-cable="thunderbolt5" aria-pressed="false"><strong>Thunderbolt 5</strong><span>80 Gbps · extra capacity for screens</span></button>
+  </div>
+  <section class="explorer" aria-label="Interactive cable explorer">
+    <div class="model-column">
+      <div class="model-stage" id="model-stage">
+        <div class="stage-top"><span id="model-name">Thunderbolt 4</span><span>Reference wiring</span></div>
+        <div id="scene" role="region" aria-label="Interactive cable model. Use the component buttons to explore with a keyboard."></div>
+        <button type="button" id="marker-callout" hidden aria-label="Reveal and select the e-marker chip">E-marker <span>chip inside the plug</span></button>
+        <div id="selection-callout" hidden aria-hidden="true"><svg><line id="selection-leader"/><circle id="selection-dot" r="4"/></svg><div id="selection-label"><strong id="selection-label-name"></strong><span id="selection-label-contact"></span></div></div>
+        <p id="scene-status" role="status">Loading the 3D cable… Component descriptions are available below.</p>
+        <div class="stage-bottom"><span>Drag to rotate · Scroll or pinch to zoom</span><div class="view-buttons"><button id="clear-selection" type="button" disabled>Clear selection</button><button id="connector-view" type="button" aria-pressed="false">Connector close-up</button><button id="reset-view" type="button">Reset view</button></div></div>
+      </div>
+      <p id="selection-status" class="selection-status" aria-live="polite">Select a component to trace its role.</p>
+      <div class="model-controls">
+        <label for="cutaway">Open cable <output id="cutaway-value" for="cutaway">75%</output></label>
+        <input id="cutaway" type="range" min="0" max="100" value="75">
+        <label class="difference-control"><input id="differences" type="checkbox"> Highlight differences</label>
+      </div>
+      <dl class="capabilities" aria-live="polite"><div><dt>Data</dt><dd id="cap-data">40 Gbps in TB4 operation</dd></div><div><dt>Power</dt><dd id="cap-power">Up to 100 W</dd></div><div><dt>Video</dt><dd id="cap-video">Supports video</dd></div></dl>
+
+      <section class="plug-views" aria-labelledby="plug-view-heading">
+        <h2 id="plug-view-heading">Where does the wire connect?</h2>
+        <p>These are enlarged views looking straight into the open end of each cable plug, with its cable pointing away from you. A and B name the two rows of metal contacts; the numbers identify their positions.</p>
+        <p id="plug-view-status" aria-live="polite">Choose a wire to see the contacts it joins highlighted in blue.</p>
+        <button type="button" id="plug-example">Show a fast data wire</button>
+        <div class="plug-view-grid"><figure><figcaption>Plug shown in the 3D model</figcaption><svg id="plug-from" viewBox="0 0 460 168" role="img" aria-label="Contact layout of the plug shown in the model"></svg><p id="plug-from-caption">No wire selected</p></figure><figure><figcaption>Plug at the other end</figcaption><svg id="plug-to" viewBox="0 0 460 168" role="img" aria-label="Contact layout of the other plug"></svg><p id="plug-to-caption">No wire selected</p></figure></div>
+        <p class="plug-view-key"><strong>Blue + dot:</strong> selected connection · <strong>Gold:</strong> other contacts · Gaps: no contact in this example.</p>
+        <details><summary>Technical detail: reading the plug views</summary><p>Both drawings use the same fixed front-view orientation, independent of the 3D camera. Top row: A12 to A1 from left to right. Bottom row: B1 to B12. These are cable plugs, not the sockets on your devices. B6 and B7 are absent. In the Thunderbolt examples, B5 supplies the local e-marker through VCONN rather than running to the other plug. The basic example shows only its connected contacts.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019_0.pdf#page=31">USB-IF plug front-view reference, Figure 2-2</a></p></details>
+      </section>
+
+      <section id="tb5-bandwidth" class="tb5-bandwidth" hidden aria-label="Thunderbolt 5 bandwidth modes">
+        <h2>More room for your screens.</h2>
+        <div class="bandwidth-buttons" role="group" aria-label="Illustrate a bandwidth mode"><button type="button" data-bandwidth="normal" aria-pressed="true">Normal · 80/80</button><button type="button" data-bandwidth="boost" aria-pressed="false">Bandwidth Boost · 120/40</button></div>
+        <div aria-live="polite"><div class="bandwidth-flow"><strong id="bandwidth-out">80 Gbps →</strong><strong id="bandwidth-back">← 80 Gbps</strong></div><p id="bandwidth-lanes">2 lanes each way</p><p id="bandwidth-explanation">Information can travel both ways at once, with 80 Gbps of capacity in each direction.</p></div>
+        <p class="model-note">Think of the four wire pairs as four lanes for information. These buttons show how they can be shared between directions. Your connected devices choose the real mode automatically; the wires stay the same.</p>
+      </section>
+    </div>
+    <aside class="part-panel" aria-label="Cable components">
+      <div id="component-explanation" class="part-description" aria-live="polite"><a class="back-to-model" href="#model-stage">Back to model ↑</a><h2 id="part-name">Explore a component</h2><p id="part-summary">Select a part of the cable or choose a component from the list to learn how it works.</p><details id="part-details" hidden><summary>A little more detail &amp; sources</summary><p id="part-detail">Manufacturers use different materials and thicknesses for this cover, also called the jacket. A thicker cable is not automatically faster.</p><p id="part-whatcable-detail">WhatCable checks reported capabilities and connection behaviour; it cannot inspect the physical wiring inside the cable.</p><a id="part-source" href="#reference-sources">Reference specification</a></details><div id="part-whatcable" class="whatcable-context" hidden><h3>How WhatCable helps</h3><p id="part-whatcable-text"></p><a id="part-pro-link" hidden href="/pro#features">Explore this in WhatCable Pro →</a></div></div>
+      <div class="panel-heading"><span>EXPLORE THE PARTS</span><span id="parts-count">12 groups</span></div>
+      <div id="part-buttons"><button type="button" data-part="jacket" aria-pressed="false"><span class="part-dot" style="--part-color:#465465"></span>Outer cover · jacket</button><button type="button" data-part="shield" aria-pressed="false"><span class="part-dot" style="--part-color:#8797a7"></span>Protection from interference</button><button type="button" data-part="power" aria-pressed="false"><span class="part-dot" style="--part-color:#dc5058"></span>Charging wires · VBUS</button><button type="button" data-part="ground" aria-pressed="false"><span class="part-dot" style="--part-color:#526278"></span>Return wires · ground</button><button type="button" data-part="usb2" aria-pressed="false"><span class="part-dot" style="--part-color:#2d9a74"></span>Everyday data · USB 2.0</button><button type="button" data-part="cc" aria-pressed="false"><span class="part-dot" style="--part-color:#dc981b"></span>Connection setup · CC</button><button type="button" data-part="highspeed" aria-pressed="false"><span class="part-dot" style="--part-color:#327dd1"></span>Fast data &amp; video wires<span class="part-extra">Extra</span></button><button type="button" data-part="sideband" aria-pressed="false"><span class="part-dot" style="--part-color:#9461c4"></span>Extra control wires · SBU<span class="part-extra">Extra</span></button><button type="button" data-part="marker" aria-pressed="false"><span class="part-dot" style="--part-color:#c28634"></span>E-marker · cable identity<span class="part-extra">Extra</span></button><button type="button" data-part="coax" aria-pressed="false"><span class="part-dot" style="--part-color:#8e9faa"></span>Shields around the data wires<span class="part-extra">Extra</span></button><button type="button" data-part="vconn" aria-pressed="false"><span class="part-dot" style="--part-color:#c179b9"></span>Power for the chip · VCONN<span class="part-extra">Extra</span></button><button type="button" data-part="capacitor" aria-pressed="false"><span class="part-dot" style="--part-color:#ad885b"></span>Power smoothing · capacitor<span class="part-extra">Extra</span></button></div>
+      <div class="wire-picker">
+        <label for="wire-select"><strong>Follow a connection</strong></label>
+        <p id="wire-help">Choose a wire to highlight it in blue and see which contacts it joins. The enlarged plug views below the model show the contacts at both ends.</p>
+        <select id="wire-select" aria-describedby="wire-help"><option value="">Choose a connection…</option><option value="A1, A12, B1, B12" data-basic="true">Ground return · Ground bus (A1, A12, B1, B12)</option><option value="A4, A9, B4, B9" data-basic="true">Charging power · VBUS bus (A4, A9, B4, B9)</option><option value="A5" data-basic="true">Connection setup · CC (A5)</option><option value="A6" data-basic="true">USB 2.0 data · D+ (A6)</option><option value="A7" data-basic="true">USB 2.0 data · D− (A7)</option><option value="A2" data-basic="false">Fast data · TX1+ → RX1+ (A2)</option><option value="A3" data-basic="false">Fast data · TX1− → RX1− (A3)</option><option value="B11" data-basic="false">Fast data · RX1+ ← TX1+ (B11)</option><option value="B10" data-basic="false">Fast data · RX1− ← TX1− (B10)</option><option value="B2" data-basic="false">Fast data · TX2+ → RX2+ (B2)</option><option value="B3" data-basic="false">Fast data · TX2− → RX2− (B3)</option><option value="A11" data-basic="false">Fast data · RX2+ ← TX2+ (A11)</option><option value="A10" data-basic="false">Fast data · RX2− ← TX2− (A10)</option><option value="A8" data-basic="false">Display support · SBU1 → SBU2 (A8)</option><option value="B8" data-basic="false">Display support · SBU2 → SBU1 (B8)</option></select>
+        <div class="wire-navigation"><button type="button" id="wire-previous">← Previous</button><button type="button" id="wire-next">Next →</button></div>
+        <div id="wire-description" class="wire-route" hidden aria-live="polite">
+          <strong id="wire-title"></strong>
+          <dl><div><dt>Plug shown in 3D</dt><dd id="wire-from"></dd></div><div><dt>Plug at the other end</dt><dd id="wire-to"></dd></div></dl>
+          <p id="wire-purpose"></p>
+          <p class="wire-pin-help">A and B identify the two rows of contacts; the number identifies a contact in that row.</p>
+          <a href="#plug-view-heading">See the highlighted plug contacts ↑</a><br><a href="#connection-table">See the matching table row ↓</a>
+        </div>
+      </div>
+    </aside>
+    <div class="explorer-body">
+  <section id="comparison-key" hidden class="comparison-note" aria-live="polite"><h2>What the Thunderbolt examples add</h2><p>Orange identifies parts added to the basic USB 2.0 example; shared parts stay in place. Electric blue identifies your selection. Switch between cables to compare the same view.</p><dl class="comparison-facts"><div><dt>Basic USB-C</dt><dd>Everyday USB 2.0 data · up to 60 W · no direct video</dd></div><div><dt>Thunderbolt 4 reference</dt><dd>Four fast data pairs · 40 Gbps with TB4 devices · up to 100 W in this example</dd></div><div><dt>Thunderbolt 5 reference</dt><dd>The same four pairs · 80 Gbps each way or 120/40 Gbps · up to 240 W in this example</dd></div></dl><p>Both Thunderbolt examples have the same number of fast data wires. Thunderbolt 5 uses them to carry more information. Orange marks additions compared with the basic cable, not differences between TB4 and TB5.</p><p>The Thunderbolt examples also have an identity chip, its power supply and a small power-smoothing component. Other USB-C cables can have these too. A cable that carries more charging power is not necessarily faster at transferring files.</p></section>
+  <section class="comparison-note" aria-live="polite"><h2 id="comparison-title">Inside the Thunderbolt 4 example</h2><p id="comparison-description">This example adds four pairs of fast data wires, extra control wires and an identity chip in each plug. It supports data and video at up to 40 Gbps in a Thunderbolt 4 connection. It is a passive cable: it has no electronics that boost or rebuild the data signals. Compatible passive cables can also carry faster Thunderbolt 5 signals when the devices at both ends support them.</p><p id="difference-note" hidden>The blue pairs, purple sideband paths and identity chip are additions to this particular basic USB 2.0 example. E-markers are also used in other USB-C cables. Shielding and other construction details can also differ.</p></section>
+  <section class="comparison-note"><h2>A cable’s label is not always its physical limit</h2><p>A Thunderbolt 4 connection runs at up to 40 Gbps. Some compatible passive cables sold for that speed can also carry faster Thunderbolt 5 signals. Both connected devices must support the faster connection. Passive means the cable has no electronics that boost or rebuild the data signals; active cables do, so the same rule does not apply to every cable.</p><p>So a cable’s chip may report an older 40 Gbps rating while your Mac reports an 80 Gbps connection. That alone does not mean the cable’s label is false. <a href="https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2023-09/thunderbolt-5-technology-brief.pdf">Intel explains compatibility with existing passive cables in its Thunderbolt 5 technical brief.</a></p></section>
+  <section class="comparison-note chain-explanation">
+    <h2>A cable is one part of the connection</h2><p>Want to check your own setup? <a href="/instructions#what-it-shows">See what the free app tells you</a>, or <a href="/pro#features">explore WhatCable Pro’s deeper charging and display checks</a>.</p>
+    <p>WhatCable checks what your Mac can tell it about the port, cable and device or charger at the other end. It compares what each can support with the connection they are actually using. If you have a dock, it uses the available information to separate the Mac-to-dock connection from the accessories plugged into it.</p>
+    <p><strong>For example:</strong> an 80 Gbps port connected to a Thunderbolt 4 device is limited to 40 Gbps by that device, even if the passive cable can carry faster signalling. Replacing only the cable will not make that device run faster. WhatCable’s diagnostic accounts for that rather than blaming the cable.</p>
+    <p><strong>For displays:</strong> WhatCable Pro’s Display Diagnostics checks how much detail your screen shows, how often the picture updates and what the display connection can carry. It also accounts for picture compression and adapters when that information is available. That helps explain why a screen is not running as sharply or smoothly as expected.</p>
+  </section>
+  <section class="comparison-note"><h2>What do the numbers mean?</h2><p><strong>Mbps and Gbps describe data capacity.</strong> One Gbps is 1,000 Mbps. More capacity can help with large files and demanding screens, but the devices at both ends matter too. File-copy speeds are often shown in megabytes per second (MB/s), a different unit, and will also be affected by the work needed to organise the transfer.</p><p><strong>Watts (W) describe power.</strong> A 240 W cable can carry more charging power than a 60 W cable, but your charger must supply it and your device must support it. More watts do not mean faster file transfers.</p></section>
+  <section class="connection-guide" id="connection-table">
+    <h2>Follow the connections</h2>
+    <p>The metal contacts inside a plug are the points where its wires connect to a device. This table follows each connection from the plug shown in 3D to the plug at the other end. A and B name the two rows of contacts. TX means transmit; RX means receive. These labels name the contacts, not a fixed direction for every connection mode.</p>
+    <div class="table-wrap"><table><thead><tr><th scope="col">Signal</th><th scope="col">Plug 1</th><th scope="col">Plug 2</th></tr></thead><tbody>
+    <tr data-connection="ground" data-from="A1, A12, B1, B12" data-basic="true"><th scope="row">Ground bus</th><td>A1, A12, B1, B12</td><td>A1, A12, B1, B12</td></tr><tr data-connection="power" data-from="A4, A9, B4, B9" data-basic="true"><th scope="row">VBUS bus</th><td>A4, A9, B4, B9</td><td>A4, A9, B4, B9</td></tr><tr data-connection="cc" data-from="A5" data-basic="true"><th scope="row">CC</th><td>A5</td><td>A5</td></tr><tr data-connection="usb2" data-from="A6" data-basic="true"><th scope="row">D+</th><td>A6</td><td>A6</td></tr><tr data-connection="usb2" data-from="A7" data-basic="true"><th scope="row">D−</th><td>A7</td><td>A7</td></tr><tr data-connection="highspeed" data-from="A2" data-basic="false"><th scope="row">TX1+ → RX1+</th><td>A2</td><td>B11</td></tr><tr data-connection="highspeed" data-from="A3" data-basic="false"><th scope="row">TX1− → RX1−</th><td>A3</td><td>B10</td></tr><tr data-connection="highspeed" data-from="B11" data-basic="false"><th scope="row">RX1+ ← TX1+</th><td>B11</td><td>A2</td></tr><tr data-connection="highspeed" data-from="B10" data-basic="false"><th scope="row">RX1− ← TX1−</th><td>B10</td><td>A3</td></tr><tr data-connection="highspeed" data-from="B2" data-basic="false"><th scope="row">TX2+ → RX2+</th><td>B2</td><td>A11</td></tr><tr data-connection="highspeed" data-from="B3" data-basic="false"><th scope="row">TX2− → RX2−</th><td>B3</td><td>A10</td></tr><tr data-connection="highspeed" data-from="A11" data-basic="false"><th scope="row">RX2+ ← TX2+</th><td>A11</td><td>B2</td></tr><tr data-connection="highspeed" data-from="A10" data-basic="false"><th scope="row">RX2− ← TX2−</th><td>A10</td><td>B3</td></tr><tr data-connection="sideband" data-from="A8" data-basic="false"><th scope="row">SBU1 → SBU2</th><td>A8</td><td>B8</td></tr><tr data-connection="sideband" data-from="B8" data-basic="false"><th scope="row">SBU2 → SBU1</th><td>B8</td><td>A8</td></tr>
+    <tr><th scope="row">Outer shield</th><td>Shell + ground</td><td>Shell + ground</td></tr>
+    <tr data-basic="false"><th scope="row">Coaxial shields</th><td>Ground bus</td><td>Ground bus</td></tr>
+    <tr data-basic="false"><th scope="row">VCONN (local)</th><td>B5 → local e-marker / Ra</td><td>B5 → local e-marker / Ra</td></tr>
+    </tbody></table></div>
+  </section>
+  <details class="text-guide"><summary>Technical notes about this model</summary><p class="model-note">Base wiring reference: USB-C Release 2.0, Tables 3-10 / 3-11 and Figure 4-42. The Thunderbolt 5 example extends this with PAM-3 signalling and EPR power requirements. The full-featured plug has 22 contacts; B6 and B7 are absent. The USB 2.0 example includes only its connected contacts. The cable uses coaxial shielding rather than separate drain wires. Opening the view separates layers and routes for inspection. Colours identify functions; distances, component blocks and PCB trace positions are not manufacturing dimensions. Power ratings require a compatible charger and device. Wiring alone does not establish Thunderbolt certification or signal-integrity compliance.</p></details>
+  <details class="text-guide"><summary>Read the component guide without 3D</summary><h2>Outer cover · jacket</h2><p>The flexible outer cover protects the wires from everyday wear and keeps the cable together. Manufacturers use different materials and thicknesses for this cover, also called the jacket. A thicker cable is not automatically faster.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">§3.4 · Table 3-10 notes · cable shielding</a></p><p>WhatCable checks reported capabilities and connection behaviour; it cannot inspect the physical wiring inside the cable.</p><h2>Protection from interference</h2><p>A layer of metal foil or woven wire helps keep unwanted electrical noise away from the signals inside. This layer is called shielding. It surrounds the wires and connects to the metal shell of each plug. The shell is also connected to ground, the circuit’s common reference. In this model, each fast data wire has its own shield too.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">§3.4 · Table 3-10 notes · cable shielding</a></p><p><strong>How WhatCable helps:</strong> WhatCable watches the error counts reported by your Mac’s port. Changes can help you spot a recurring connection problem.</p><p>An error count does not identify a damaged shield. Repeated connection events can also come from movement or unplugging. WhatCable highlights the pattern so you can investigate.</p><h2>Charging wires · VBUS</h2><p>These wires carry the electricity that charges your laptop, phone or other device. The technical name for this power connection is VBUS. With USB Power Delivery, the charger and device agree how much power the connection can provide, taking the cable’s rating into account. They exchange those messages over the separate CC control wire. The red route groups the power wiring together; it does not show an exact wire count.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">Tables 3-10 / 3-11 · plug-to-plug wiring</a></p><p><strong>How WhatCable helps:</strong> Slow charging does not always mean the cable is at fault. WhatCable compares what the charger can supply, what the cable is rated to carry and the charging power your Mac and charger have agreed to use. It also checks whether the battery is full or charging is on hold.</p><p>The agreed power is a limit, not a measurement of what the Mac is using every moment. WhatCable can also identify a second charger on standby.</p><h2>Return wires · ground</h2><p>These wires complete the electrical circuit, giving the charging current a path back to its source. Ground, labelled GND, also gives the electronics a common voltage reference. Several metal contacts in the plug share this connection, so the number of contacts is not the number of separate wires.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">Tables 3-10 / 3-11 · plug-to-plug wiring</a></p><h2>Everyday data · USB 2.0</h2><p>Two wires carry data for USB 2.0 devices. They can transfer files, but are much slower than the extra data wires in a Thunderbolt connection. The wires are labelled D+ and D−. They work as a pair and support signalling up to 480 Mbps. Both Thunderbolt examples retain them for USB 2.0 devices; faster traffic uses separate pairs.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">Tables 3-10 / 3-11 · plug-to-plug wiring</a></p><p><strong>How WhatCable helps:</strong> A mouse plugged into a fast dock does not need a fast connection. WhatCable separates the Mac-to-dock connection from the devices attached to the dock, so a slower accessory is not automatically treated as evidence of a slow cable.</p><h2>Connection setup · CC</h2><p>This control wire helps the devices recognise the connection and agree how charging should work. It also lets them talk to the cable’s identity chip, when one is fitted. CC means Configuration Channel. It carries setup and power messages, not your files. The USB-C connection uses it to detect attachment and plug orientation, negotiate USB Power Delivery and read cable identity.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">Tables 3-10 / 3-11 · plug-to-plug wiring</a></p><p><strong>How WhatCable helps:</strong> WhatCable brings together information about the cable, the device at the other end and the connection they have made. This helps explain what is limiting the connection.</p><p>It also checks that the connection is still active, so old charging information left behind after unplugging is not mistaken for a current connection.</p><h2>Fast data &amp; video wires</h2><p>Eight wires, working in four pairs, carry fast data and video. These are the extra paths missing from our basic USB 2.0 cable. Each pair carries one signal using the difference between its two wires; this is called differential signalling. Each wire has its own surrounding shield in this model. TX and RX in the table mean transmit and receive. They name the contacts, while the connection mode determines how the paths are used. Compatible passive cables can carry newer PAM-3 signalling with faster devices; that does not make a Thunderbolt 4 port faster.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">Tables 3-10 / 3-11 · plug-to-plug wiring</a></p><p><strong>How WhatCable helps:</strong> WhatCable checks the Mac’s port, cable and connected device together to help explain a slow connection. If you use a dock or a chain of Thunderbolt devices, it uses the connection information your Mac provides to work out where a limit may come from.</p><p>When enough information is available, it follows a Thunderbolt chain with no branches through to its last device. It can also identify when macOS is blocking an accessory. For screens, WhatCable Pro’s Display Diagnostics checks picture resolution, refresh rate (how often the picture updates) and the capacity of the display connection. It accounts for Display Stream Compression, or DSC, which lets a picture fit into less connection bandwidth. If macOS does not expose enough information, WhatCable does not guess.</p><h2>Extra control wires · SBU</h2><p>These two wires carry small control messages for certain connection types. For example, they help a DisplayPort connection manage the screen; the picture itself uses the fast data wires. SBU means Sideband Use. What these wires do depends on the connection mode. DisplayPort Alt Mode, which carries DisplayPort through USB-C, uses them for its AUX (auxiliary) control channel.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">Tables 3-10 / 3-11 · plug-to-plug wiring</a></p><p><strong>How WhatCable helps:</strong> Screen not as sharp or smooth as expected? WhatCable Pro checks its resolution, how often the picture updates and the display connection. It also uses adapter information when available, including USB-C-to-HDMI connections.</p><p>The display connection may run at a lower speed because that is enough for the picture setting you chose. Choosing a more demanding setting may cause it to use a faster connection. WhatCable reads the reported settings; it does not electrically test these individual wires.</p><h2>E-marker · cable identity</h2><p>A tiny chip inside the plug acts like the cable’s digital label. It tells connected devices what the cable says it can support, including its data and charging capabilities. This chip is called an e-marker. Our example has one in each plug. It talks over the CC control connection, gets power through VCONN and connects to ground. A resistor called Ra tells the connected device that the chip needs power. Full-featured cables require e-markers, as do USB 2.0 cables carrying more than 3 A of current. Having an identity chip does not make a cable “active”: that term refers to electronics that process its data signals.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=232">§4.9 · Figure 4-42 · e-marker at each end</a></p><p><strong>How WhatCable helps:</strong> WhatCable compares the cable’s digital label with the connection your Mac reports. A difference is a reason to look closer, not automatic proof that the cable is faulty or falsely labelled.</p><p>For example, a compatible passive cable with an older 40 Gbps identity can work at 80 Gbps with newer signalling. A slower connection can instead be limited by the port or device. WhatCable Pro’s Negotiation Diagnostics shows the figures for each part of the connection. A missing manufacturer ID alone does not prove a cable is fake; WhatCable considers the other identity fields too.</p><h2>Shields around the data wires</h2><p>Each fast data wire has its own metal shield wrapped around it. This helps protect the signal from electrical noise. This arrangement is called coaxial construction: the signal wire runs through the centre of its shield. The shields connect to ground in both plugs. Other cables use shielded twisted pairs and separate drain wires to connect the shielding. Those are different construction choices; this model uses the coaxial option in USB-C Table 3-10.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">§3.4 · Table 3-10 notes · cable shielding</a></p><h2>Power for the chip · VCONN</h2><p>The identity chip needs a little power of its own. This connection supplies it separately from the wires that charge your device. VCONN is the name for this chip supply. In our example, contact B5 powers the chip in its own plug; no VCONN wire runs all the way through the cable. Each chip also connects to CC and ground. A resistor called Ra between B5 and ground signals that chip power is needed.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=232">§4.9 · Figure 4-42 · e-marker at each end</a></p><p><strong>How WhatCable helps:</strong> If WhatCable cannot show the cable’s identity chip, try connecting a charger, dock or device at the far end. Some Macs wait for that connection before reading the chip. Missing information does not automatically mean the chip is absent or broken.</p><h2>Power smoothing · capacitor</h2><p>This small part briefly stores and releases electrical charge, helping smooth rapid changes on the power connection inside the plug. It is called a bypass capacitor. In our Thunderbolt 4 example, a 10 nF capacitor connects between VBUS (power) and ground in each plug, close to the power contacts. The unit nF describes how much charge a capacitor can store for a given voltage. The reference specifies at least a 30 V voltage rating. This example uses Standard Power Range (SPR), up to 100 W. The higher-voltage Thunderbolt 5 example needs a different voltage rating.</p><p><a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf#page=75">Tables 3-10 / 3-11 · plug-to-plug wiring</a></p><h2>Thunderbolt 5: what changes</h2><p>Thunderbolt 5 sends more information through the same four pairs of fast data wires. It can carry 80 Gbps each way, or give demanding screens more capacity in one direction. This example also supports charging up to 240 W, with suitable power components and an identity chip in each plug. These are example designs; manufacturers can build the inside differently.</p><h3>Highspeed</h3><p>Thunderbolt 5 carries more information through the same eight fast data wires. It uses three electrical signal levels instead of two; this is called PAM-3. The four wire pairs act as four data lanes. Normally, two lanes send and two receive, giving 80 Gbps each way. Bandwidth Boost changes that to three lanes towards demanding screens and one back: 120 Gbps one way and 40 Gbps the other. These are connection capacities, not promised file-copy speeds. The devices and the messages needed to organise transfers also affect performance.</p><p><a href="https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2023-09/thunderbolt-5-technology-brief.pdf">Intel · Thunderbolt 5 signalling and bandwidth</a></p><h3>Power</h3><p>These wires can carry up to 240 W in this example, if both the charger and device support it. A higher cable rating does not make a device take more power than it needs. This uses Extended Power Range (EPR), the USB charging range above 100 W. It needs suitable insulation, plugs, components and an EPR-capable identity chip. The maximum charging contract is 48 V at 5 A: 240 W. Volts (V) describe voltage, amps (A) describe current, and watts (W) describe power. Thunderbolt 4 cables can also support EPR; 100 W is the rating chosen for our TB4 example, not a universal TB4 limit.</p><p><a href="https://www.ul.com/insights/240w-usb-c-cable-performance-testing-and-safety-considerations">UL Solutions · 240 W EPR cable requirements</a></p><h3>Marker</h3><p> Each plug in this example has its own identity chip, powered through VCONN. The chip reports support for the cable’s data signalling and Extended Power Range (EPR) charging. That allows a suitable charger and device to agree up to 48 V at 5 A, or 240 W. The chip reports what the cable supports; it does not make the data signals faster.</p><p><a href="https://www.ul.com/insights/240w-usb-c-cable-performance-testing-and-safety-considerations">UL Solutions · EPR cable marking</a></p><h3>Capacitor</h3><p>This small part helps smooth rapid changes on the power connection. Here it must also cope with the higher charging voltage used for up to 240 W. Our Thunderbolt 5 example uses a 10 nF bypass capacitor rated for at least 63 V. That higher voltage rating is needed for Extended Power Range charging. The 30 V minimum used for the older power range would not be enough. The capacitor connects between power and ground; charging current does not pass through it on its way to your device.</p><p><a href="https://www.ul.com/insights/240w-usb-c-cable-performance-testing-and-safety-considerations">UL Solutions · EPR bypass capacitor rating</a></p></details>
+  <section id="reference-sources" class="reference-sources"><h2>How to read this reference model</h2><p>The electrical connections follow USB-C Release 2.0: §3.4 and Tables 3-10 / 3-11 define the cable wiring; §4.9 and Figure 4-42 describe the two-e-marker arrangement. Coaxial construction and that e-marker arrangement are permitted choices, not the only ways to build a cable. Colours, spacing and component blocks support inspection and are not manufacturing dimensions. Thunderbolt performance also requires its own compliance testing.</p><p>Thunderbolt 5 signalling follows Intel’s technology brief; its EPR power example uses the higher voltage and marking requirements described by UL Solutions. This does not mean every Thunderbolt 4 cable is certified for Thunderbolt 5. Each component’s expanded details link to the relevant specification section. The table above names both ends of each electrical connection.</p></section>
+  <p class="explorer-sources">Learn more: <a href="https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf">USB-IF cable specification</a> · <a href="https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/overview.html">Intel’s Thunderbolt guide</a> · <a href="https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2023-09/thunderbolt-5-technology-brief.pdf">Thunderbolt 5 technical brief</a> · <a href="https://www.ul.com/insights/240w-usb-c-cable-performance-testing-and-safety-considerations">EPR cable requirements</a></p>
+    </div>
+  </section>
+</main>
+<script type="module" src="/assets/cable-explorer/explorer.js?v=f3b4ceebb10b21f4"></script>
+
+    <footer>
+  <div class="wrap-wide">
+    <span>A <a href="https://www.bitmoor.co.uk">Bitmoor</a> product. Founded by <a href="https://github.com/darrylmorley">Darryl</a>. MIT licensed.</span>
+    <span class="footer-links">
+      
+        <a href="/instructions">Docs</a>
+        <span class="sep">·</span>
+      
+        <a href="/cli">CLI</a>
+        <span class="sep">·</span>
+      
+        <a href="/cables">Cables</a>
+        <span class="sep">·</span>
+      
+        <a href="/inside-a-cable">Inside a cable</a>
+        <span class="sep">·</span>
+      
+        <a href="/blog">Blog</a>
+        <span class="sep">·</span>
+      
+        <a href="/pro">Pro</a>
+        <span class="sep">·</span>
+      
+        <a href="/support">Support</a>
+        <span class="sep">·</span>
+      
+        <a href="https://www.bitmoor.co.uk/business.html">Business enquiries</a>
+        <span class="sep">·</span>
+      
+        <a href="/press">Press</a>
+        <span class="sep">·</span>
+      
+        <a href="/privacy">Privacy</a>
+        <span class="sep">·</span>
+      
+        <a href="/terms">Terms</a>
+        <span class="sep">·</span>
+      
+        <a href="https://github.com/darrylmorley/whatcable">View source on GitHub</a>
+        
+      
+    </span>
+  </div>
+</footer>
+
+  </body>
+</html>

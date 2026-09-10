@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>WhatCable: How to tell if a USB-C cable is Thunderbolt</title>
-<meta name="description" content="You can&#39;t tell by looking. Three ways to check whether the USB-C cable in your hand is actually Thunderbolt, on a Mac.">
+<meta name="description" content="Check markings, connection information and cable identity together to understand a USB-C cable, without mistaking missing data for a faulty cable.">
 
 <link rel="canonical" href="https://www.whatcable.uk/blog/is-my-usb-c-cable-thunderbolt">
 <link rel="icon" href="/icon.png" type="image/png">
@@ -12,16 +12,16 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://www.whatcable.uk/blog/is-my-usb-c-cable-thunderbolt">
 <meta property="og:title" content="WhatCable: How to tell if a USB-C cable is Thunderbolt">
-<meta property="og:description" content="You can&#39;t tell by looking. Three ways to check whether the USB-C cable in your hand is actually Thunderbolt, on a Mac.">
+<meta property="og:description" content="Check markings, connection information and cable identity together to understand a USB-C cable, without mistaking missing data for a faulty cable.">
 <meta property="og:image" content="https://www.whatcable.uk/screenshot.webp">
 
 <meta property="article:published_time" content="2026-07-30T00:00:00.000Z">
-<meta property="article:author" content="Darryl Morley">
+<meta property="article:author" content="Darryl">
 
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="WhatCable: How to tell if a USB-C cable is Thunderbolt">
-<meta name="twitter:description" content="You can&#39;t tell by looking. Three ways to check whether the USB-C cable in your hand is actually Thunderbolt, on a Mac.">
+<meta name="twitter:description" content="Check markings, connection information and cable identity together to understand a USB-C cable, without mistaking missing data for a faulty cable.">
 <meta name="twitter:image" content="https://www.whatcable.uk/screenshot.webp">
 
 
@@ -40,11 +40,11 @@
     --line-soft: #eef2f7;
     --bg: #fafbfc;
     --panel: #ffffff;
-    --accent: #0c8ca6;
+    --accent: #08768b;
     --accent-strong: #0a7188;
     --accent-soft: #e6f4f7;
-    --good: #0b8a5a;
-    --warn: #b67100;
+    --good: #087348;
+    --warn: #8a5700;
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
     --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
     --shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.18);
@@ -339,15 +339,60 @@
   footer .footer-links { display: flex; flex-wrap: wrap; gap: 6px 14px; }
   footer .footer-links .sep { color: rgba(255, 255, 255, 0.3); }
 
+  .mobile-nav { display: none; }
+  .mobile-menu summary { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid #bac5cf; border-radius: 8px; background: white; color: var(--ink); cursor: pointer; font-size: 14px; font-weight: 600; list-style: none; }
+  .mobile-menu summary::-webkit-details-marker { display: none; }
+  .mobile-menu[open] summary { background: #eaf3f5; border-color: #08768b; }
+  .mobile-nav-panel { position: absolute; top: 100%; left: 0; right: 0; padding: 12px 20px 20px; background: #fafbfc; border-bottom: 1px solid var(--line); box-shadow: 0 12px 20px #0c12191a; max-height: calc(100dvh - 64px); overflow-y: auto; overscroll-behavior: contain; }
+  .mobile-nav-panel a { display: flex; align-items: center; min-height: 48px; padding: 10px 14px; border-radius: 7px; color: var(--ink); font-size: 16px; text-decoration: none; }
+  .mobile-nav-panel a:hover { background: #edf2f5; }
+  .mobile-nav-panel a[aria-current="page"] { background: #e3f0f3; color: #075d6e; font-weight: 700; border-left: 3px solid #08768b; }
+  .nav :is(a,summary):focus-visible { outline: 3px solid #08768b; outline-offset: 3px; }
   @media (max-width: 720px) {
-    .nav-links a:not(.button):not([data-keep-mobile]) { display: none; }
+    .mobile-nav { display: flex; align-items: center; gap: 10px; }
+    .nav-inner { gap: 10px; }
+    .mobile-nav .button.accent { min-height: 44px; background: #08768b; }
+
+    .nav .desktop-nav { display: none; }
     .nav-links { gap: 12px; }
     .nav .button { padding: 8px 12px; font-size: 13px; }
     h1 { font-size: 28px; }
     h2 { font-size: 20px; }
     footer .wrap-wide { flex-direction: column; align-items: flex-start; }
   }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  footer .wrap-wide > span:first-child a, .price-note a, .pricing-note a, .pricing a, .answer a { text-decoration: underline; text-underline-offset: 3px; }
+  :is(a,button,summary):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+  @media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } }
 </style>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.whatcable.uk/#website",
+      "url": "https://www.whatcable.uk/",
+      "name": "WhatCable",
+      "publisher": {
+        "@id": "https://www.whatcable.uk/#publisher"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.whatcable.uk/#publisher",
+      "name": "Bitmoor",
+      "url": "https://www.bitmoor.co.uk",
+      "founder": {
+        "@type": "Person",
+        "name": "Darryl"
+      }
+    }
+  ]
+}
+</script>
 
 
     <style>
@@ -412,7 +457,7 @@
   .article-page .related-section { padding: 64px 0 72px; border-top: 1px solid var(--line); background: var(--panel); }
   .article-page .related-label { display: block; margin-bottom: 12px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
   .article-page .related-section h2 { margin: 0 0 28px; font-size: 30px; }
-  .article-page .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .article-page .related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .article-page .related-card { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
   .article-page .related-card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
   .article-page .related-copy { padding: 20px; }
@@ -432,6 +477,51 @@
     .article-page .article-cta { grid-template-columns: 1fr; margin: 36px 20px 52px; padding: 26px 24px; }
     .article-page .related-grid { grid-template-columns: 1fr; }
   }
+
+  /* Reading layout: compact introduction, stable imagery and clear focus. */
+  .article-page { --accent: #08768b; --muted: #596675; }
+  .article-page .article-hero { padding: 42px 0 36px; }
+  .article-page .article-head-inner { max-width: 820px; }
+  .article-page .back-link { margin-bottom: 22px; min-height: 28px; }
+  .article-page .article-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; line-height: 1.6; }
+  .article-page .article-hero h1 { font-size: clamp(32px, 4.5vw, 54px); line-height: 1.12; text-wrap: balance; }
+  .article-page .article-deck { font-size: 19px; max-width: 65ch; }
+  .article-page .cover-wrap { max-width: 960px; padding: 28px 24px 0; }
+  .article-page .cover-image { aspect-ratio: 16 / 9; min-height: 0; max-height: none; object-fit: cover; box-shadow: none; }
+  .article-page .article-content { max-width: 760px; padding-top: 32px; }
+  .article-page .post-body { line-height: 1.8; overflow-wrap: anywhere; }
+  .article-page .post-body h2 { font-size: clamp(24px, 3vw, 30px); line-height: 1.25; scroll-margin-top: 90px; }
+  .article-page .post-body p { margin-bottom: 22px; }
+  .article-page .post-body li { margin-bottom: 10px; }
+  .article-page .post-body a, .article-page .article-footer-note a { text-decoration: underline; text-underline-offset: 3px; }
+  .article-page .article-toc { margin: 0 0 36px; padding: 20px 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+  .article-page .article-toc summary { font-weight: 700; cursor: pointer; padding: 4px 0; }
+  .article-page .article-toc ol { margin: 14px 0 0; padding-left: 22px; }
+  .article-page .article-toc li { padding: 4px 0; font-size: 15px; line-height: 1.5; }
+  .article-page .article-toc a { text-decoration: underline; text-underline-offset: 3px; }
+  .article-page .post-body .table-wrap { border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+  .article-page .post-body table { width: 100%; margin: 0; font-size: 15px; line-height: 1.55; }
+  .article-page .post-body th { background: #edf3f5; color: var(--ink); text-align: left; }
+  .article-page .post-body th, .article-page .post-body td { padding: 15px 18px; vertical-align: top; white-space: normal; }
+  .article-page .post-body tbody tr:nth-child(even) { background: #f3f6f8; }
+  .article-page .table-hint { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+  .article-page .article-cta { margin-top: 32px; box-shadow: none; }
+  .article-page .related-section { padding: 40px 0; }
+  .article-page .related-copy a { display: inline-block; font-size: 18px; line-height: 1.45; }
+  .article-page .article-footer-note { padding: 28px 24px 40px; line-height: 1.7; }
+  .article-page :is(a,summary,[tabindex]):focus-visible { outline: 3px solid #08768b; outline-offset: 4px; }
+  @media(max-width:760px) {
+    .article-page .article-hero { padding: 28px 0; }
+    .article-page .article-deck { font-size: 17px; }
+    .article-page .cover-wrap { padding: 20px 20px 0; }
+    .article-page .article-content { padding-top: 24px; }
+    .article-page .article-toc { padding: 16px 18px; }
+    .article-page .post-body table { min-width: 560px; }
+    .article-page .article-cta { gap: 20px; }
+    .article-page .article-cta .cta-actions { flex-direction: column; }
+    .article-page .article-cta .cta-button { justify-content: center; white-space: normal; }
+    .article-page .related-grid { gap: 16px; }
+  }
 </style>
 
   </head>
@@ -442,7 +532,7 @@
       <img class="mark" src="/icon.png" alt="" aria-hidden="true" width="28" height="28">
       <span>WhatCable</span>
     </a>
-    <div class="nav-links">
+    <div class="nav-links desktop-nav">
       
         <a href="/instructions" data-keep-mobile>Docs</a>
       
@@ -458,129 +548,126 @@
         <a class="button accent" href="/pro">Get Pro</a>
       
     </div>
+    <div class="mobile-nav">
+      <a class="button accent" href="/pro">Get Pro</a>
+      <details class="mobile-menu">
+        <summary aria-controls="mobile-nav-links"><span>Menu</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary>
+        <div id="mobile-nav-links" class="mobile-nav-panel">
+          
+            <a href="/instructions">Docs</a>
+          
+            <a href="/cli">CLI</a>
+          
+            <a href="/cables">Cables</a>
+          
+            <a href="/blog">Blog</a>
+          
+          <a href="/inside-a-cable">Inside a cable</a>
+          <a href="/pro">WhatCable Pro</a>
+          <a href="/support">Support</a>
+          <a href="https://github.com/darrylmorley/whatcable">GitHub</a>
+        </div>
+      </details>
+    </div>
   </div>
 </nav>
+<script>
+(() => {
+  const menu = document.querySelector('.mobile-menu');
+  const trigger = menu.querySelector('summary');
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu.open) {
+      menu.open = false; trigger.focus();
+    }
+  });
+  document.addEventListener('click', event => {
+    if (menu.open && !menu.contains(event.target)) menu.open = false;
+  });
+  menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+  const desktop = matchMedia('(min-width: 721px)');
+  desktop.addEventListener('change', event => { if (event.matches) menu.open = false; });
+})();
+</script>
 
     <main class="article-page">
   <header class="article-hero">
     <div class="wrap-wide article-head-inner">
       <a class="back-link" href="/blog">← Back to Field Notes</a>
-      <p class="article-meta">
-        <span class="category">Guides</span> &nbsp;·&nbsp;
-        <time datetime="2026-07-30T00:00:00.000Z">30 July 2026</time>
-      </p>
+      <div class="article-meta">
+        <span class="category">Guides</span>
+        <span>Published <time datetime="2026-07-30T00:00:00.000Z">30 July 2026</time></span>
+        <span>Updated <time datetime="2026-09-09T00:00:00.000Z">9 September 2026</time></span>
+      </div>
       <h1>How to tell if a USB-C cable is Thunderbolt</h1>
-      <p class="article-deck">Every guide says look for the lightning bolt. Most cables don&#39;t have one. Three ways to find out what a USB-C cable really is, in order of how much they actually tell you.</p>
+      <p class="article-deck">Check markings, connection information and cable identity together to understand a USB-C cable, without mistaking missing data for a faulty cable.</p>
     </div>
   </header>
 
   
 
   <div class="wrap article-content">
+    <details class="article-toc" hidden><summary>In this article</summary><nav aria-label="Article contents"><ol></ol></nav></details>
     <article class="post-body">
-      <p><img src="https://images.whatcable.uk/1785420463960-tangled-usb-c-cables.jpg" alt="A tangle of unmarked USB-C cables, none of them visibly different from each other" title="Tangled USB Cables"></p>
-<h1>How to tell if a USB-C cable is Thunderbolt</h1>
-<p>You can't tell by looking. Not reliably.</p>
-<p>The cable knows what it is. There's a chip inside the connector called an e-marker that declares its capabilities, and your Mac can read that declaration. The trick is getting it back out in a form you can use.</p>
-<p>Three ways to do it, worst to best.</p>
-<h2>Method 1: look at the connector (mostly useless)</h2>
-<p><img src="https://images.whatcable.uk/1785420708124-thunderbolt-and-usbc-cables.jpg" alt="Two USB-C connectors side by side, one stamped with the Thunderbolt symbol and one unmarked" title="Two USB-C connectors side by side"></p>
-<p>Every guide on the internet tells you to look for a lightning bolt symbol. It's the first answer on every page, and it's the weakest one.</p>
-<p>Intel does require certification for the Thunderbolt mark. Computers, accessories and cables all have to pass their test suites before they can carry it. So when the symbol is there and genuine, it means something.</p>
-<p>The problem is everything else:</p>
-<ul>
-<li>Most cables in your drawer have no markings at all</li>
-<li>The bolt often appears on the port rather than the cable, which tells you what your Mac can do, not what the cable can do</li>
-<li>Counterfeit marks exist, and marketplaces are full of them</li>
-<li>A cable can be genuinely capable and completely unmarked, because plenty of manufacturers don't bother certifying</li>
-</ul>
-<p>If your cable has a bolt and a number stamped on the housing, you have your answer. If it doesn't, you've learned nothing. Which describes most cables.</p>
-<h2>Method 2: System Information</h2>
-<p>macOS does expose this. It's buried, but it's there.</p>
-<p>Apple menu &gt; About This Mac &gt; More Info &gt; System Report. Then look under Hardware for Thunderbolt or Thunderbolt/USB4, depending on your Mac.</p>
-<p>This works, with one significant catch: you need a Thunderbolt device plugged in at the other end. The pane reports on the link, and there's no Thunderbolt link without a Thunderbolt device. Plug in a phone or a basic hub and it tells you nothing useful about the cable.</p>
-<p>The second catch is subtler. What you're looking at is the negotiated result of three things: your Mac's port, the cable, and the device. If it comes back slower than expected, System Information won't tell you which of the three is responsible. You're left swapping components one at a time until the number changes.</p>
-<p>It's the free answer and it's better than guessing. It's just not a cable test.</p>
-<h2>Method 3: read the e-marker</h2>
-<p><img src="https://images.whatcable.uk/1785421681570-whatcable-screenshot.png" alt="WhatCable screenshot showing e-marker reading" title="WhatCable screenshot"></p>
-<p>This is the actual answer.</p>
-<p>An e-marker is a small chip in the cable's connector. It holds a description of what the cable can do: maximum current, data rate, whether the cable is active or passive, who made it. The USB-IF publishes the test methodology labs use to verify them.</p>
-<p>The specification requires an e-marker under two conditions:</p>
-<ol>
-<li><strong>Any cable carrying more than 3A.</strong> That's the 100W and 240W cables.</li>
-<li><strong>Any full-featured cable.</strong> Meaning anything doing USB 3.x signalling or faster, regardless of how much power it carries.</li>
-</ol>
-<p>Both conditions matter, and the second one is the useful one. Every Thunderbolt cable has an e-marker. So does every 10Gb/s cable, every USB4 cable, and every cable that charges above 60W.</p>
-<p>Which means a cable with no e-marker at all is telling you something quite specific. It's a basic charging cable: USB 2.0 data at 480Mb/s, 60W or less. Not Thunderbolt, and not close.</p>
-<p>And a cable with an e-marker is telling you exactly what it is, in its own words, regardless of what the packaging claimed or what the seller wrote in the listing.</p>
-<p>One practical note before you go looking. The e-marker isn't read the moment the plug goes in. It's read during power negotiation, which means something has to be connected at the other end to trigger it. A cable hanging out of a port with nothing on the far end tells you nothing.</p>
-<p>One more condition. macOS only reads the e-marker when the connection negotiates above 3A, or when the link is Thunderbolt. In practice: a charger above 60W will do it, and so will any Thunderbolt device. A low-power phone charger won't. Still an easier ask than the Thunderbolt pane in System Information, which wants an actual Thunderbolt device before it shows you anything at all.</p>
-<p>WhatCable reads the e-marker and puts it in plain English. Plug the cable into a charger above 60W, look at the menu bar. Speed, power rating, active or passive, and whether the thing is genuinely Thunderbolt or a USB-C cable sitting in a Thunderbolt port. No menu diving, and no need to dig out a Thunderbolt dock just to identify a lead.</p>
-<p><a href="/">Download WhatCable</a> free, open source, Apple Silicon.</p>
-<h2>What the answer actually means</h2>
-<p>Once you've read the e-marker you'll want to know what it's telling you. The generations differ more than the marketing suggests.</p>
+      <p>You cannot reliably identify a cable's capabilities from its USB-C plugs. Start with the product information, then compare it with what your Mac can report.</p>
+<p>There are three useful sources of evidence. Each answers a different question.</p>
+<h2>1. Check the markings and product specification</h2>
+<p>A genuine Thunderbolt mark indicates certification. A speed or wattage marking gives a useful starting point, but charging power and data speed are separate ratings.</p>
+<p>Look up the exact model and length, rather than assuming every cable from a brand is identical. Check data rate, charging rating, active or passive construction, and any compatibility restrictions.</p>
+<p>A missing mark does not prove a cable is incapable. A printed mark alone cannot authenticate the product either. Keep the packaging or purchase record if you need to identify the precise model.</p>
+<h2>2. Check the connection in System Information</h2>
+<p>On a Mac, open System Information and look under <strong>Thunderbolt/USB4</strong> and <strong>USB</strong>, as appropriate for the connected device. The names can vary with the Mac and macOS version.</p>
+<p>This helps answer: <strong>what connection has formed?</strong> A suitable device needs to be attached at the other end. A cable plugged into an empty port is not a speed test.</p>
+<p>The result depends on the port, cable and device together. A 10 Gbps drive connected through a faster cable can still report a 10 Gbps connection. That does not establish the cable's maximum capability.</p>
+<p><strong>Technical detail:</strong> a negotiated link rate is the signalling rate agreed by the connection. It is not the same as sustained file-copy throughput, which also depends on the drive and workload.</p>
+<h2>3. Read the cable identity with WhatCable</h2>
+<p>An <strong>e-marker</strong> is a chip in the plug that reports properties such as current rating, data capability and active/passive construction. Think of it as the cable's digital label.</p>
+<p>For standard USB-C to USB-C cable assemblies, full-featured high-speed cables and cables rated for more than 3 A require electronic marking. A basic USB 2.0, 3 A cable need not have it. These rules should not be generalised to every legacy adapter or cable with a USB-C plug at one end.</p>
+<p>The reading is only available to software when macOS exposes it. The connected equipment and negotiation can affect that. <strong>“No e-marker data” is not the same as “this cable has no e-marker”.</strong> Connecting appropriate equipment may expose more information, but a charger with a large number printed on it does not guarantee a particular reading.</p>
+<p><a href="/">WhatCable</a> brings together the available cable identity and connection information. It can help explain a mismatch without assuming that the cable is the cause.</p>
+<p><a href="/inside-a-cable">See the e-marker inside the cable diagram</a>, alongside the wires used for power and data.</p>
+<h2>Read speed, power and construction separately</h2>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Cable</th>
-<th>Max data</th>
-<th>Passive length at full speed</th>
-<th>Power</th>
+<th>What you want to know</th>
+<th>Useful evidence</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Plain USB-C (no e-marker)</td>
-<td>480Mb/s</td>
-<td>n/a</td>
-<td>60W</td>
+<td>Can it charge at the required power?</td>
+<td>Cable power rating, charger capabilities and the Mac's charging requirements.</td>
 </tr>
 <tr>
-<td>USB-C 5Gb/s</td>
-<td>5Gb/s</td>
-<td>2m</td>
-<td>60-100W</td>
+<td>Can it carry a fast data link?</td>
+<td>Cable specification plus compatible endpoints and the negotiated connection.</td>
 </tr>
 <tr>
-<td>USB-C 10/20Gb/s</td>
-<td>10-20Gb/s</td>
-<td>1m</td>
-<td>60-100W</td>
+<td>Is it Thunderbolt certified?</td>
+<td>The exact product's certification and manufacturer documentation.</td>
 </tr>
 <tr>
-<td>Thunderbolt 3</td>
-<td>40Gb/s</td>
-<td>0.5m</td>
-<td>100W</td>
+<td>Is it active or passive?</td>
+<td>The product specification and available identity report.</td>
 </tr>
 <tr>
-<td>Thunderbolt 4</td>
-<td>40Gb/s</td>
-<td>2m</td>
-<td>100W, 240W on EPR models</td>
-</tr>
-<tr>
-<td>Thunderbolt 5</td>
-<td>80Gb/s, 120Gb/s boost</td>
-<td>around 1m</td>
-<td>240W</td>
+<td>Is it working well in this setup?</td>
+<td>Connection behaviour over time, including unexpected drops or changes.</td>
 </tr>
 </tbody>
 </table></div>
-<p>A few things worth pulling out of that table.</p>
-<p><strong>Thunderbolt 3 passive cables fall off a cliff.</strong> A passive TB3 cable holds full 40Gb/s at half a metre. At two metres, the same passive cable drops to 20Gb/s. Half the bandwidth, no warning, no error message. If you want 40Gb/s over two metres on TB3 you need an active cable, which is why the long ones cost so much more.</p>
-<p><strong>Thunderbolt 4 fixed that.</strong> The TB4 specification requires certified passive cables to hold 40Gb/s all the way to two metres. If you're buying a long cable and you have the choice, this is the generation where the certification earns its money.</p>
-<p><strong>Thunderbolt 5 tightens it up again.</strong> TB5 runs at 80Gb/s bidirectional as standard, with a 120Gb/s Bandwidth Boost mode that reallocates lanes to push more in one direction. Higher frequencies mean less tolerance for signal loss, so the passive limit comes back down to roughly a metre. Beyond that you need retimer chips in the connectors.</p>
-<p><strong>Active cables aren't automatically better.</strong> An active cable regenerates the signal, which buys you length. It doesn't buy you speed the cable wasn't already rated for. A long active TB3 cable is still a 40Gb/s cable.</p>
-<p>For reference, Apple's own Thunderbolt 4 Pro Cable handles 40Gb/s and 100W. The Thunderbolt 5 Pro Cable handles 120Gb/s and 240W. Both are USB-C at both ends and look near enough identical in a drawer.</p>
-<h2>The mistakes worth avoiding</h2>
-<p><strong>A 240W cable is not necessarily a fast cable.</strong> EPR charging and high-speed data are separate capabilities. Plenty of 240W cables carry USB 2.0 data and nothing more. They'll charge a MacBook Pro at full tilt and make an external SSD crawl. If a cable is advertised only by wattage, assume the data side is basic.</p>
-<p><strong>An eight-pound &quot;Thunderbolt 5&quot; cable isn't one.</strong> TB5 signalling is unforgiving, so the cable has to be built to much tighter tolerances than a general-purpose USB-C lead. Anything past about a metre needs retimer silicon on top of that, and Intel certification costs money to obtain. Cheap plus TB5 means one of the two claims is false.</p>
-<p><strong>USB4 40Gb/s is not the same as Thunderbolt certified.</strong> They frequently behave identically. Thunderbolt 4 is built on top of USB4, but it makes mandatory a set of things USB4 leaves optional. An uncertified USB4 cable may do everything you need. It just hasn't been tested to prove it.</p>
-<p><strong>In a daisy chain, the weakest cable sets the ceiling.</strong> Chain a dock, a display and a drive together and every device downstream of your worst cable is limited by it. This is the failure mode that produces the most confused support requests, because the problem cable is often the one nowhere near the thing that's misbehaving.</p>
-<hr>
-<p><em>Still not sure what's in your drawer? <a href="/">WhatCable</a> reads the cable, the port, the charger and the connected device, then tells you which one is the bottleneck. Free on Apple Silicon.</em></p>
-<p><em>Related: <a href="/blog/thunderbolt-vs-usb-c">Thunderbolt vs USB-C: what the connector hides</a></em></p>
+<p>There is no universal length table that identifies every cable. Construction and supported modes vary between products. Passive Thunderbolt 5 cables are possible: <a href="https://newsroom.intel.com/client-computing/intel-introduces-thunderbolt-5-standard">Intel describes support up to one metre</a>. Longer cables may use active electronics.</p>
+<p>Nor is an older 40 Gbps passive cable necessarily restricted to 40 Gbps between newer endpoints. <a href="https://www.usb.org/sites/default/files/2022-10/USB-IF%20USB%2080Gbps%20Announcement_FINAL_v2.pdf">USB-IF describes support for existing passive cables with newer 80 Gbps signalling</a>. That is compatible operation, not a new certification for the cable.</p>
+<h2>Avoid these common misreadings</h2>
+<p><strong>More watts does not mean faster data.</strong> A 240 W cable may still carry only USB 2.0 data.</p>
+<p><strong>A lower connection speed does not automatically blame the cable.</strong> Check the device, Mac port and any intervening dock first.</p>
+<p><strong>Active does not automatically mean better.</strong> Active electronics can help with distance, but supported modes still depend on the product.</p>
+<p><strong>Price is not an authenticity test.</strong> Compare the specification and available evidence rather than declaring a product false because it is inexpensive.</p>
+<p><strong>A tidy identity report is not a physical inspection.</strong> It cannot establish conductor quality or authenticate the product on its own.</p>
+<h2>Follow the connection through a dock</h2>
+<p>If a drive sits behind a dock, the Mac-to-dock link and dock-to-drive link may use different rates. Devices can also share upstream bandwidth. A single headline cable speed does not describe the entire path.</p>
+<p><a href="/pro#connection-diagnostics">Pro's connection diagnostics</a> shows the available per-party figures, and WhatCable uses available hub and Thunderbolt topology to help distinguish parts of the chain. The <a href="/cables">cable library</a> provides community identity reports for comparison.</p>
+<p>For the broader background, read <a href="/blog/thunderbolt-vs-usb-c">Thunderbolt vs USB-C</a>.</p>
 
     </article>
   </div>
@@ -605,31 +692,19 @@
       
       <details class="faq-item">
         <summary>Is Thunderbolt 4 the same as USB-C?</summary>
-        <div class="faq-answer"><p>No. USB-C is the connector, the physical shape of the plug. Thunderbolt 4 is one of several protocols that can run through that shape. Every Thunderbolt 4 cable is a USB-C cable. Almost no USB-C cables are Thunderbolt 4.</p>
+        <div class="faq-answer"><p>USB-C describes the connector; Thunderbolt 4 describes a connection standard that uses it. Every Thunderbolt 4 cable has USB-C plugs, but many USB-C cables do not support Thunderbolt.</p>
 </div>
       </details>
       
       <details class="faq-item">
-        <summary>Are Thunderbolt and USB-C compatible?</summary>
-        <div class="faq-answer"><p>Yes, in both directions, but the results differ. A USB-C device in a Thunderbolt port works at USB speeds. A Thunderbolt device in a plain USB-C port works only if the device has a USB fallback mode, and then only at USB speeds.</p>
+        <summary>Does a missing e-marker reading mean my cable is basic?</summary>
+        <div class="faq-answer"><p>No. The chip may be absent, but macOS may also not expose its identity in the current setup. A missing software reading alone cannot distinguish those cases.</p>
 </div>
       </details>
       
       <details class="faq-item">
-        <summary>Can I plug a USB-C cable into a Thunderbolt 4 port?</summary>
-        <div class="faq-answer"><p>Yes. It will negotiate down to whatever the cable supports. The port doesn't upgrade the cable, which is the single most common misunderstanding in this whole subject.</p>
-</div>
-      </details>
-      
-      <details class="faq-item">
-        <summary>Is Thunderbolt 5 the same as USB-C?</summary>
-        <div class="faq-answer"><p>Same connector, different protocol, same relationship as every previous generation. A Thunderbolt 5 port accepts any USB-C cable. It only reaches Thunderbolt 5 speeds with a Thunderbolt 5 cable.</p>
-</div>
-      </details>
-      
-      <details class="faq-item">
-        <summary>Do I need a Thunderbolt cable?</summary>
-        <div class="faq-answer"><p>Only if you're driving something that needs the bandwidth. Docks, external SSDs, high-resolution displays, eGPU enclosures. For charging a phone, a basic USB-C cable is fine and you'd be wasting money on anything else.</p>
+        <summary>Can an older cable work at Thunderbolt 5 speeds?</summary>
+        <div class="faq-answer"><p>Some compatible passive cables originally rated for 40 Gbps can carry newer signalling between suitable endpoints. Check the actual connection and product specifications; this does not change the original certification.</p>
 </div>
       </details>
       
@@ -645,39 +720,23 @@
       "name": "Is Thunderbolt 4 the same as USB-C?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>No. USB-C is the connector, the physical shape of the plug. Thunderbolt 4 is one of several protocols that can run through that shape. Every Thunderbolt 4 cable is a USB-C cable. Almost no USB-C cables are Thunderbolt 4.</p>\n"
+        "text": "<p>USB-C describes the connector; Thunderbolt 4 describes a connection standard that uses it. Every Thunderbolt 4 cable has USB-C plugs, but many USB-C cables do not support Thunderbolt.</p>\n"
       }
     },
     {
       "@type": "Question",
-      "name": "Are Thunderbolt and USB-C compatible?",
+      "name": "Does a missing e-marker reading mean my cable is basic?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>Yes, in both directions, but the results differ. A USB-C device in a Thunderbolt port works at USB speeds. A Thunderbolt device in a plain USB-C port works only if the device has a USB fallback mode, and then only at USB speeds.</p>\n"
+        "text": "<p>No. The chip may be absent, but macOS may also not expose its identity in the current setup. A missing software reading alone cannot distinguish those cases.</p>\n"
       }
     },
     {
       "@type": "Question",
-      "name": "Can I plug a USB-C cable into a Thunderbolt 4 port?",
+      "name": "Can an older cable work at Thunderbolt 5 speeds?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "<p>Yes. It will negotiate down to whatever the cable supports. The port doesn't upgrade the cable, which is the single most common misunderstanding in this whole subject.</p>\n"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Is Thunderbolt 5 the same as USB-C?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "<p>Same connector, different protocol, same relationship as every previous generation. A Thunderbolt 5 port accepts any USB-C cable. It only reaches Thunderbolt 5 speeds with a Thunderbolt 5 cable.</p>\n"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Do I need a Thunderbolt cable?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "<p>Only if you're driving something that needs the bandwidth. Docks, external SSDs, high-resolution displays, eGPU enclosures. For charging a phone, a basic USB-C cable is fine and you'd be wasting money on anything else.</p>\n"
+        "text": "<p>Some compatible passive cables originally rated for 40 Gbps can carry newer signalling between suitable endpoints. Check the actual connection and product specifications; this does not change the original certification.</p>\n"
       }
     }
   ]
@@ -695,7 +754,7 @@
         
           
             <article class="related-card">
-              <a href="/blog/why-whatcable-checks-the-whole-chain" aria-label="Read WhatCable doesn&#39;t just take the cable&#39;s word for it"><img src="https://images.whatcable.uk/1784302843898-0x0-jpg.webp" alt="A Thunderbolt cable connecting a MacBook to a dock" loading="lazy"></a>
+              <a href="/blog/why-whatcable-checks-the-whole-chain" aria-label="Read WhatCable doesn&#39;t just take the cable&#39;s word for it"><img src="https://images.whatcable.uk/1784302843898-0x0-jpg.webp" alt="A Thunderbolt cable connecting a MacBook to a dock" loading="lazy" decoding="async"></a>
               <div class="related-copy">
                 <span>Deep dives</span>
                 <a href="/blog/why-whatcable-checks-the-whole-chain">WhatCable doesn&#39;t just take the cable&#39;s word for it</a>
@@ -705,7 +764,7 @@
         
           
             <article class="related-card">
-              <a href="/blog/thunderbolt-vs-usb-c" aria-label="Read Thunderbolt vs USB-C: what the connector hides"><img src="https://images.whatcable.uk/1779375024963-usb-c-cable-emarker-cutaway.webp" alt="Cutaway illustration of a USB-C cable showing the e-marker and the protocols hidden inside the connector" loading="lazy"></a>
+              <a href="/blog/thunderbolt-vs-usb-c" aria-label="Read Thunderbolt vs USB-C: what the connector hides"><img src="https://images.whatcable.uk/1779375024963-usb-c-cable-emarker-cutaway.webp" alt="Cutaway illustration of a USB-C cable showing the e-marker and the protocols hidden inside the connector" loading="lazy" decoding="async"></a>
               <div class="related-copy">
                 <span>Deep dives</span>
                 <a href="/blog/thunderbolt-vs-usb-c">Thunderbolt vs USB-C: what the connector hides</a>
@@ -715,7 +774,7 @@
         
           
             <article class="related-card">
-              <a href="/blog/why-is-my-macbook-charging-so-slow" aria-label="Read Why is my MacBook charging so slow? A real diagnosis."><img src="https://images.whatcable.uk/1779372798303-macbook-magsafe.jpg" alt="A MacBook connected to power with a MagSafe cable" loading="lazy"></a>
+              <a href="/blog/why-is-my-macbook-charging-so-slow" aria-label="Read Why is my MacBook charging so slow? A real diagnosis."><img src="https://images.whatcable.uk/1779372798303-macbook-magsafe.jpg" alt="A MacBook connected to power with a MagSafe cable" loading="lazy" decoding="async"></a>
               <div class="related-copy">
                 <span>Guides</span>
                 <a href="/blog/why-is-my-macbook-charging-so-slow">Why is my MacBook charging so slow? A real diagnosis.</a>
@@ -723,6 +782,14 @@
             </article>
           
         
+          
+            <article class="related-card">
+              
+              <div class="related-copy">
+                <span>Notes</span>
+                <a href="/blog/hello-world">Hello, world</a>
+              </div>
+            </article>
           
         
       </div>
@@ -740,14 +807,14 @@
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   "headline": "How to tell if a USB-C cable is Thunderbolt",
-  "description": "Every guide says look for the lightning bolt. Most cables don't have one. Three ways to find out what a USB-C cable really is, in order of how much they actually tell you.",
+  "description": "Check markings, connection information and cable identity together to understand a USB-C cable, without mistaking missing data for a faulty cable.",
   "url": "https://www.whatcable.uk/blog/is-my-usb-c-cable-thunderbolt",
   "datePublished": "2026-07-30T00:00:00.000Z",
-  "dateModified": "2026-07-30T00:00:00.000Z",
+  "dateModified": "2026-09-09T00:00:00.000Z",
   
   "author": {
     "@type": "Person",
-    "name": "Darryl Morley",
+    "name": "Darryl",
     "url": "https://github.com/darrylmorley"
   },
   "publisher": {
@@ -763,9 +830,37 @@
 }
 </script>
 
+<script>
+(() => {
+  const body = document.querySelector('.post-body');
+  const toc = document.querySelector('.article-toc');
+  const headings = [...body.querySelectorAll('h2')];
+  if (headings.length > 2) {
+    headings.forEach((heading, index) => {
+      if (!heading.id) heading.id = `article-section-${index + 1}`;
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = `#${heading.id}`; link.textContent = heading.textContent;
+      item.append(link); toc.querySelector('ol').append(item);
+    });
+    toc.hidden = false;
+  }
+  body.querySelectorAll('table').forEach((table, index) => {
+    const wrapper = table.closest('.table-wrap') || table.parentElement;
+    wrapper.tabIndex = 0; wrapper.setAttribute('role', 'region');
+    wrapper.setAttribute('aria-label', `Comparison table ${index + 1}`);
+    const hint = document.createElement('p'); hint.className = 'table-hint';
+    hint.textContent = 'Scroll sideways to see all columns. With a keyboard, focus the table and use the arrow keys.';
+    wrapper.after(hint);
+    const update = () => { hint.hidden = wrapper.scrollWidth <= wrapper.clientWidth + 1; };
+    update(); new ResizeObserver(update).observe(wrapper);
+  });
+})();
+</script>
+
     <footer>
   <div class="wrap-wide">
-    <span>A <a href="https://www.bitmoor.co.uk">Bitmoor</a> product. Founded by <a href="https://github.com/darrylmorley">Darryl Morley</a>. MIT licensed.</span>
+    <span>A <a href="https://www.bitmoor.co.uk">Bitmoor</a> product. Founded by <a href="https://github.com/darrylmorley">Darryl</a>. MIT licensed.</span>
     <span class="footer-links">
       
         <a href="/instructions">Docs</a>
@@ -777,6 +872,9 @@
         <a href="/cables">Cables</a>
         <span class="sep">·</span>
       
+        <a href="/inside-a-cable">Inside a cable</a>
+        <span class="sep">·</span>
+      
         <a href="/blog">Blog</a>
         <span class="sep">·</span>
       
@@ -784,6 +882,9 @@
         <span class="sep">·</span>
       
         <a href="/support">Support</a>
+        <span class="sep">·</span>
+      
+        <a href="https://www.bitmoor.co.uk/business.html">Business enquiries</a>
         <span class="sep">·</span>
       
         <a href="/press">Press</a>

@@ -1388,7 +1388,7 @@ struct PortCard: View {
             // DisplayPort node carries no unique id and two identical monitors
             // would otherwise collide.
             ForEach(Array(displayPorts.enumerated()), id: \.offset) { _, displayPort in
-                if let displayDiag = DisplayDiagnostic(dp: displayPort, cable: cableEmarker) {
+                if let displayDiag = DisplayDiagnostic(dp: displayPort, cable: cableEmarker, port: port) {
                     DisplayBanner(diagnostic: displayDiag)
                         .padding(.leading, 48)
                 }
@@ -1558,7 +1558,7 @@ struct PortCard: View {
             // (sheets are separate child windows, not covered by the parent's
             // ScaledHost).
             ScaledHost {
-                CableReportSheet(cableIdentity: cable, cioCapability: cioCapability) {
+                CableReportSheet(cableIdentity: cable, cioCapability: cioCapability, port: port) {
                     reportingCable = nil
                 }
             }

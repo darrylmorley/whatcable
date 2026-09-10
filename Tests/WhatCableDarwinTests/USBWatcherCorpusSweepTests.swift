@@ -429,7 +429,7 @@ struct USBWatcherCorpusSweepTests {
             #expect(devicesTotal >= 557,
                 "Expected at least 557 probe-38 device blocks across the corpus; got \(devicesTotal)")
             // The corpus has real Thunderbolt-dock topologies (CalDigit TS3+,
-            // confirmed in CLAUDE.md); the dock-controller branch must fire at
+            // confirmed in research/thunderbolt-fabric.md); the dock-controller branch must fire at
             // least once or `isThunderboltDockController` regressed silently.
             #expect(dockControllerCount >= 1,
                 "Expected at least one device reached via a Thunderbolt dock controller")
@@ -620,7 +620,7 @@ struct USBWatcherCorpusSweepTests {
     // Folder names are positional ingest labels; each fixture's identity is
     // pinned here by its `submitted_at` from corpus.jsonl so it stays
     // re-checkable if folders are ever renamed (see the corpus rules in
-    // CLAUDE.md).
+    // the whatcable-process-probe skill).
 
     private static func requireBlocks(_ folder: String) throws -> [DeviceBlock] {
         let text = try #require(
