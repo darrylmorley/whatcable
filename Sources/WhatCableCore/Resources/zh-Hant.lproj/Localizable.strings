@@ -84,7 +84,7 @@
 "Supports %@." = "支援 %@。";
 "The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other." = "線材的 e-marker 宣告支援 EPR，但 Max VBUS Voltage 回報為 20V。EPR 運作需要 48V 或 50V VBUS，因此這兩個欄位互相矛盾。";
 "The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "線材的 e-marker 回報 VDO 版本 %lld；對於此線材類型，該值由 USB-PD 規範保留或標示為無效。真正的 e-marker 晶片不應輸出無效的版本值。";
-"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "線材的 e-marker 回報線材端接 %lld；USB-PD 規範將其標示為此線材類型的無效值。刷寫錯誤的 e-marker 常會在這裡與線材實際物理接線不一致。";
+"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "線材的 e-marker 回報線材端接 %lld；USB-PD 規範將其標示為此線材類型的無效值。程式設定錯誤的 e-marker 在這個欄位常會與線材的實際物理接線不一致。";
 "The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報線材延遲值 %lld；對於此線材類型，該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報電流值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報速度值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
@@ -110,7 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "未知世代（原始速度代碼 0x2，推測為 TB5）";
 "Unspecified" = "未指定";
 "Up to %lld Gb/s %@" = "最高 %1$lld Gb/s %2$@";
-"Up to %lld Gb/s out, %lld Gb/s in" = "最高 %1$lld Gb/s 輸出，%2$lld Gb/s 輸入";
+"Up to %lld Gb/s out, %lld Gb/s in" = "傳送最高 %1$lld Gb/s，接收最高 %2$lld Gb/s";
 "VCONN-powered device" = "VCONN 供電裝置";
 "Vendor ID isn't in USB-IF's published list" = "Vendor ID 不在 USB-IF 已公布清單中";
 "What can this USB-C cable actually do?" = "這條 USB-C 線材到底能做什麼？";
@@ -550,7 +550,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "控制器確認為 Thunderbolt 線材 (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt 連線正以 %@ 運作";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有主機或裝置資料可供比對，因此無法判斷是否還有其它因素限制它。";
-"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有裝置資料可供比對，因此無法判斷是否還有其它因素限制它。";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有裝置資料可供比對，因此無法判斷是否還有其它限制因素。";
 
 "Shared controller port" = "共用控制器連接埠";
 
@@ -593,37 +593,37 @@
 /* PD event log: opcode-plus-argument decode of PortControllerEvtBuffer */
 "Plug attached" = "插頭已接上";
 "Plug detached" = "插頭已拔除";
-"Plug event" = "插頭事件";
-"Source capabilities received (%lld PDOs)" = "已收到 Source Capabilities (%lld 個 PDO)";
+"Plug event" = "插拔事件";
+"Source capabilities received (%lld PDOs)" = "已收到 Source Capabilities（%lld 個 PDO）";
 "Request sent" = "已送出請求";
-"Source ready" = "來源就緒";
-"Source ready rejected" = "來源就緒遭拒";
-"Partner identity received" = "已收到對端身分";
+"Source ready" = "電源就緒";
+"Source ready rejected" = "電源未就緒（請求遭拒）";
+"Partner identity received" = "已收到對端識別資訊";
 "Mac became power source" = "Mac 成為供電來源";
-"The Mac asked the source for one of the power levels it had offered." = "Mac 向來源要求其提供的其中一種電力等級。";
-"The source reported whether the requested power level is now in place." = "來源回報所要求的電力等級是否已生效。";
+"The Mac asked the source for one of the power levels it had offered." = "Mac 向電源請求其提供的其中一種供電等級。";
+"The source reported whether the requested power level is now in place." = "電源回報所請求的供電等級是否已生效。";
 "The Mac started supplying power to the device on this port." = "Mac 開始為此連接埠上的裝置供電。";
 "This event code has not been decoded yet." = "此事件代碼尚未解讀。";
-"The port's attach and detach counters move with this event, so it lines up with what Port Health shows." = "連接埠的接上與拔除計數會隨此事件變動，因此與連接埠健康狀況所顯示的一致。";
-"The source sent its list of power data objects. The argument byte is how many it offered." = "來源送出了它的 Power Data Objects 清單。參數位元組表示它提供了多少個。";
-"The Mac sent a request picking one of the advertised power levels. It always follows a source capabilities event." = "Mac 送出請求，選擇了已公布的其中一種電力等級。它一定接在來源能力事件之後。";
-"The outcome of the request. An argument of 0x81 means the source turned it down and the old power level stayed." = "請求的結果。參數為 0x81 表示來源拒絕了請求，維持原本的電力等級。";
+"The port's attach and detach counters move with this event, so it lines up with what Port Health shows." = "連接埠的連接次數與中斷連接次數會隨此事件變動，因此與連接埠健康狀況所顯示的一致。";
+"The source sent its list of power data objects. The argument byte is how many it offered." = "電源送出了 PDO 清單。參數位元組表示其中包含的 PDO 數量。";
+"The Mac sent a request picking one of the advertised power levels. It always follows a source capabilities event." = "Mac 送出請求，選擇了其中一種已宣告的供電等級。此事件一定接在 Source Capabilities 事件之後。";
+"The outcome of the request. An argument of 0x81 means the source turned it down and the old power level stayed." = "請求的結果。參數為 0x81 表示電源拒絕了請求，並維持原本的供電等級。";
 "The Mac switched to supplying power on this port, for example when it charges an attached device." = "Mac 在此連接埠改為供電，例如為已連接的裝置充電時。";
 "This code turns up in the buffer but we have not yet matched it to a behaviour." = "此代碼出現在緩衝區中，但我們尚未將它對應到任何行為。";
 "Argument %@" = "參數 %@";
-"Arguments %@" = "參數 %@ (多個)";
-"Source ready (result unknown)" = "來源就緒 (結果未知)";
+"Arguments %@" = "多個參數 %@";
+"Source ready (result unknown)" = "電源就緒（結果未知）";
 
 /* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
-"USB Type-A plug (deprecated)" = "USB Type-A 插頭（已淘汰）";
-"USB Type-B plug (deprecated)" = "USB Type-B 插頭（已淘汰）";
-"USB Type-C plug" = "USB Type-C 插頭";
-"Captive cable (built into the device)" = "固定式連接線（內建於裝置）";
+"USB Type-A plug (deprecated)" = "USB Type-A 接頭（已棄用）";
+"USB Type-B plug (deprecated)" = "USB Type-B 接頭（已棄用）";
+"USB Type-C plug" = "USB Type-C 接頭";
+"Captive cable (built into the device)" = "固定式線材（內建於裝置）";
 
 /* Cable type source: the port controller's own ActiveCable reading, and the
    e-marker silicon vendor hint. */
-"E-marker reports passive, but the port controller detects an active cable" = "E-marker 回報為被動式，但連接埠控制器偵測到主動式連接線";
-"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker 使用其晶片製造商的預設廠商 ID (%@)，連接線品牌未被記錄";
+"E-marker reports passive, but the port controller detects an active cable" = "E-marker 回報為被動式，但連接埠控制器偵測到主動式線材";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker 帶有其晶片製造商的預設 Vendor ID (%@)，未記錄線材品牌";
 "USB accessory (audio or adapter)" = "USB 配件（音訊或轉接器）";
-"This accessory has its own USB-C plug. It is not a cable and does not charge." = "此配件自帶 USB-C 插頭。它不是連接線，也不會充電。";
-"This plug is part of the accessory, not a cable, so there is no cable rating." = "此插頭是配件的一部分，不是連接線，因此沒有連接線規格。";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "此配件本身帶有 USB-C 接頭。它不是線材，也不會為 Mac 充電。";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "此接頭是配件的一部分，並非線材，因此沒有線材額定規格。";
