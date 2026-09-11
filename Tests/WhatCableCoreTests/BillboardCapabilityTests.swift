@@ -114,4 +114,112 @@ struct BillboardCapabilityTests {
         let decoded = try JSONDecoder().decode(BillboardCapability.self, from: data)
         #expect(decoded == original)
     }
+
+    // MARK: - Registry keys (macOS's own decode)
+
+    // The BOS control transfer is refused on every standalone Billboard node
+    // in the corpus, but macOS publishes the decoded modes as UsbBillboard*
+    // string properties on the same node. These cover that path.
+
+    @Test("Registry: live Mac mini dock strings build the full table")
+    func registryLiveDock() throws {
+        let cap = try #require(BillboardCapability.fromRegistry(
+            supportedModes: ["SVID 0xff00 VDO 0x2687e000", "Thunderbolt", "DisplayPort"],
+            currentMode: "SVID 0xff00 VDO 0x2687e000",
+            preferredMode: "SVID 0xff00 VDO 0x2687e000",
+            altModeFailed: false,
+            version: "1.22"))
+        #expect(cap.altModes.count == 3)
+        #expect(cap.altModes.map(\.svid) == [0xFF00, 0x8087, 0xFF01])
+        #expect(cap.altModes.map(\.state) == [.configured, .notAttempted, .notAttempted])
+        #expect(cap.preferredIndex == 0)
+        #expect(cap.namedProtocols == ["USB", "Thunderbolt", "DisplayPort"])
+        #expect(!cap.hasFailedAltMode)
+        #expect(cap.advertisesDisplayPort)
+    }
+
+    @Test("Registry: the common corpus shape, DisplayPort only")
+    func registryDisplayPortOnly() throws {
+        let cap = try #require(BillboardCapability.fromRegistry(
+            supportedModes: ["DisplayPort"],
+            currentMode: "DisplayPort",
+            preferredMode: "DisplayPort",
+            altModeFailed: false,
+            version: nil))
+        #expect(cap.altModes.count == 1)
+        #expect(cap.altModes[0].svid == 0xFF01)
+        #expect(cap.altModes[0].state == .configured)
+        #expect(cap.preferredIndex == 0)
+    }
+
+    @Test("Registry: AltModeFailed marks every mode as an error")
+    func registryAltModeFailed() throws {
+        let cap = try #require(BillboardCapability.fromRegistry(
+            supportedModes: ["DisplayPort", "SVID 0x8087 VDO 0x00000000"],
+            currentMode: nil,
+            preferredMode: "SVID 0x8087 VDO 0x00000000",
+            altModeFailed: true,
+            version: nil))
+        #expect(cap.altModes.map(\.state) == [.error, .error])
+        #expect(cap.hasFailedAltMode)
+        #expect(cap.preferredIndex == 1)
+    }
+
+    @Test("Registry: malformed entries are dropped, the rest survive")
+    func registryDropsMalformed() throws {
+        let cap = try #require(BillboardCapability.fromRegistry(
+            supportedModes: ["DisplayPort", "garbage", "SVID zz VDO 0x0", ""],
+            currentMode: nil,
+            preferredMode: nil,
+            altModeFailed: false,
+            version: nil))
+        #expect(cap.altModes.count == 1)
+        #expect(cap.altModes[0].svid == 0xFF01)
+    }
+
+    @Test("Registry: nothing parseable means no table")
+    func registryNothingParseable() {
+        #expect(BillboardCapability.fromRegistry(
+            supportedModes: ["garbage", ""],
+            currentMode: nil, preferredMode: nil, altModeFailed: false, version: nil) == nil)
+        #expect(BillboardCapability.fromRegistry(
+            supportedModes: [],
+            currentMode: nil, preferredMode: nil, altModeFailed: false, version: nil) == nil)
+    }
+
+    @Test("Registry: SVID 0x0000 is kept as an unnamed mode")
+    func registryKeepsZeroSVID() throws {
+        let cap = try #require(BillboardCapability.fromRegistry(
+            supportedModes: ["SVID 0x0000 VDO 0x00000000"],
+            currentMode: "SVID 0x0000 VDO 0x00000000",
+            preferredMode: nil,
+            altModeFailed: false,
+            version: nil))
+        #expect(cap.altModes.count == 1)
+        #expect(cap.altModes[0].svid == 0)
+        #expect(cap.altModes[0].state == .configured)
+        #expect(cap.altModes[0].protocolName == nil)
+    }
+
+    @Test("Registry: current or preferred mode outside the list matches nothing")
+    func registryUnlistedCurrentAndPreferred() throws {
+        let cap = try #require(BillboardCapability.fromRegistry(
+            supportedModes: ["DisplayPort", "Thunderbolt"],
+            currentMode: "USB",
+            preferredMode: "SVID 0xff00 VDO 0x0",
+            altModeFailed: false,
+            version: nil))
+        #expect(cap.altModes.map(\.state) == [.notAttempted, .notAttempted])
+        #expect(cap.preferredIndex == nil)
+    }
+
+    @Test("Registry: mode strings parse case-insensitively")
+    func registryModeStringCase() {
+        #expect(BillboardCapability.registryModeSVID("svid 0xFF01 vdo 0x0") == 0xFF01)
+        #expect(BillboardCapability.registryModeSVID("displayport") == 0xFF01)
+        #expect(BillboardCapability.registryModeSVID("SVID 0xff00 VDO 0x2687e000") == 0xFF00)
+        #expect(BillboardCapability.registryModeSVID("Thunderbolt") == 0x8087)
+        #expect(BillboardCapability.registryModeSVID("SVID zz VDO 0x0") == nil)
+        #expect(BillboardCapability.registryModeSVID("") == nil)
+    }
 }

@@ -442,6 +442,27 @@ extension DataLinkDiagnostic {
                 ?? Self.activeTBGbps(port: port, switches: thunderboltSwitches)
             deviceCapIsDirectPartner = true
         } else {
+            // A device that declares SuperSpeed in its BOS or bcdUSB but
+            // enumerated at 480 Mbps is not evidence against the cable.
+            // Across the customer-probe corpus (probe 25's declared-versus-
+            // negotiated speed joined to probe 38's wiring path, two parsers
+            // agreeing), 130 such rows on 68 machines sit with every hub
+            // above them at USB 2.0 (USB 2.0 companion hubs inside docks,
+            // and cameras such as a Logitech C920 behind one); rows where a
+            // faster hop sits above the device are 3 in 7815, each
+            // explained by a Gen 1 port or hop.
+            //
+            // So no cable-limit verdict is ever derived from BOS or
+            // declared-speed data here. Do not add one without an
+            // SS-capable hop above the device (a hub or port that itself
+            // enumerated at SuperSpeed), and even then the hub is the first
+            // suspect, not the cable.
+            //
+            // Reachability note: this arm only runs with no Thunderbolt
+            // partner, and `active` is nil unless a SuperSpeed device is in
+            // the native list or the transport is TRM-restricted, so the
+            // fastest device here is already SuperSpeed; a 480 Mbps device
+            // limit cannot be produced on this path in production.
             rawDeviceMaxGbps = usbDeviceGbps
             deviceCapIsDirectPartner = false
         }

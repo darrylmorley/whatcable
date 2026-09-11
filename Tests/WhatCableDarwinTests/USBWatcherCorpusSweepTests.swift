@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 @testable import WhatCableDarwinBackend
-import WhatCableCore
+@testable import WhatCableCore
 
 // MARK: - USBWatcherCorpusSweepTests
 //
@@ -32,6 +32,12 @@ import WhatCableCore
 // Probe 36 (`xhci_port_map`) is used more lightly: it gives a ground-truth
 // XHCI-port-locationID -> usb-c-port-number map, used to sanity-check
 // `busIndex(fromLocationID:)` against real device/port locationID pairs.
+//
+// Probe 25 (`usb_bos_descriptor`) replays the `UsbBillboard*` registry keys
+// recorded on every standalone Billboard node through
+// `USBWatcher.registryBillboard(from:)`. Watched failing on
+// 2026-09-11 with `registryBillboard` returning nil: 0 capabilities against a
+// floor of 350.
 @Suite("USBWatcher corpus sweep - hub nesting and tunnel classification")
 struct USBWatcherCorpusSweepTests {
 
@@ -1078,6 +1084,199 @@ struct USBWatcherCorpusSweepTests {
         if foldersScanned >= 50 {
             #expect(foldersScanned >= 135,
                 "Expected at least 135 folders with probe-36 XHCI port entries; got \(foldersScanned)")
+        }
+    }
+
+    // MARK: - Probe-25 parsing (Billboard registry keys)
+    //
+    // Probe 25's "=== Billboard devices ===" section is the last section of
+    // the file. Format (verified against the raw corpus, 2026-09-11):
+    //
+    //   --- Billboard[N] (AppleUSBHostBillboardDevice) ---
+    //     [MATCH] UsbBillboardCurrentMode =     SVID 0xff00 VDO 0x2687e000
+    //     [MATCH] UsbBillboardPreferredMode =     SVID 0xff00 VDO 0x2687e000
+    //     [MATCH] UsbBillboardSupportedModes =     Array[3]:
+    //         [0]         SVID 0xff00 VDO 0x2687e000
+    //         [1]         Thunderbolt
+    //         [2]         DisplayPort
+    //     [MATCH] UsbBillboardVersion =     1.22
+    //     [BOS] IOCreatePlugInInterfaceForService failed: 0xe00002c7
+    //     Found 1 billboard devices
+    //
+    // `UsbBillboardAltModeFailed =     true` appears on the nodes whose mode
+    // did not come up (always true, always with no CurrentMode). Values are
+    // trimmed of surrounding whitespace.
+
+    /// One Billboard block's recorded registry keys, rebuilt as the
+    /// `[String: Any]` property dictionary `makeDevice` would have handed to
+    /// `registryBillboard`: exactly the five `UsbBillboard*` keys, each present
+    /// only when the probe recorded it.
+    private struct BillboardBlock {
+        let dict: [String: Any]
+        let supportedModes: [String]
+        let hasCurrentMode: Bool
+        let altModeFailed: Bool
+    }
+
+    private static let billboardBlockHeader = "--- Billboard["
+    private static let billboardSectionHeader = "=== Billboard devices ==="
+    private static let billboardClassName = "AppleUSBHostBillboardDevice"
+
+    private static func parseBillboardBlocks(_ text: String) -> [BillboardBlock] {
+        let sections = text.components(separatedBy: billboardSectionHeader)
+        guard sections.count >= 2 else { return [] }
+        let body = sections[1...].joined(separator: billboardSectionHeader)
+
+        var blocks: [BillboardBlock] = []
+        var current: [String]? = nil
+        func flush() {
+            if let lines = current, let block = parseBillboardBlock(lines) { blocks.append(block) }
+            current = nil
+        }
+        for rawLine in body.components(separatedBy: "\n") {
+            let line = rawLine.trimmingCharacters(in: .whitespaces)
+            if line.hasPrefix(billboardBlockHeader) {
+                flush()
+                // Only the standalone Billboard class is a block; anything
+                // else would be a probe format change and is dropped loudly
+                // by the floor rather than parsed as if it were one.
+                current = line.contains("(\(billboardClassName))") ? [] : nil
+                continue
+            }
+            current?.append(rawLine)
+        }
+        flush()
+        return blocks
+    }
+
+    private static func parseBillboardBlock(_ lines: [String]) -> BillboardBlock? {
+        var dict: [String: Any] = [:]
+        var supported: [String] = []
+        var hasCurrent = false
+        var altFailed = false
+        var index = 0
+        while index < lines.count {
+            let line = lines[index].trimmingCharacters(in: .whitespaces)
+            index += 1
+            guard line.hasPrefix("[MATCH] UsbBillboard") else { continue }
+            let assignment = line.dropFirst("[MATCH] ".count)
+            guard let eq = assignment.range(of: " =") else { continue }
+            let key = String(assignment[..<eq.lowerBound])
+            let value = assignment[eq.upperBound...].trimmingCharacters(in: .whitespaces)
+
+            switch key {
+            case "UsbBillboardSupportedModes":
+                // "Array[N]:" then N lines of "[i]   <mode>".
+                while index < lines.count {
+                    let entry = lines[index].trimmingCharacters(in: .whitespaces)
+                    guard entry.hasPrefix("["), let close = entry.firstIndex(of: "]"),
+                          Int(entry[entry.index(after: entry.startIndex)..<close]) != nil
+                    else { break }
+                    supported.append(entry[entry.index(after: close)...].trimmingCharacters(in: .whitespaces))
+                    index += 1
+                }
+                dict[key] = supported
+            case "UsbBillboardCurrentMode":
+                hasCurrent = true
+                dict[key] = value
+            case "UsbBillboardPreferredMode", "UsbBillboardVersion":
+                dict[key] = value
+            case "UsbBillboardAltModeFailed":
+                altFailed = value.lowercased() == "true"
+                dict[key] = altFailed
+            default:
+                continue
+            }
+        }
+        return BillboardBlock(dict: dict, supportedModes: supported, hasCurrentMode: hasCurrent, altModeFailed: altFailed)
+    }
+
+    // MARK: - Corpus sweep: probe 25
+
+    @Test("Probe-25 sweep: every standalone Billboard node's registry keys replay through registryBillboard")
+    func probe25BillboardRegistryKeysReplay() {
+        var filesOnDisk = 0
+        var foldersScanned = 0
+        var foldersWithCapability: Set<String> = []
+        var blocksTotal = 0
+        var blocksWithModes = 0
+        var capabilities = 0
+        var withCurrentMode = 0
+        var altModeFailed = 0
+        var rawSupportedModeMentions = 0
+
+        for folder in Self.allProbeFolders() {
+            let fileURL = Self.probeRoot.appendingPathComponent(folder)
+                .appendingPathComponent("25_usb_bos_descriptor.json")
+            if FileManager.default.fileExists(atPath: fileURL.path) { filesOnDisk += 1 }
+            guard let text = Self.loadProbeText(folder: folder, fileName: "25_usb_bos_descriptor.json") else { continue }
+            let blocks = Self.parseBillboardBlocks(text)
+            guard !blocks.isEmpty else { continue }
+            foldersScanned += 1
+
+            // Independent cross-check input: a plain substring count over the
+            // raw text, not the structural parser. Each Billboard block carries
+            // the SupportedModes key at most once.
+            rawSupportedModeMentions += text.components(separatedBy: "UsbBillboardSupportedModes").count - 1
+
+            for block in blocks {
+                blocksTotal += 1
+                let capability = USBWatcher.registryBillboard(from: block.dict)
+
+                if !block.supportedModes.isEmpty {
+                    blocksWithModes += 1
+                    // Every mode string macOS ever wrote into this key parses.
+                    #expect(capability?.altModes.count == block.supportedModes.count,
+                        "\(folder): supported modes \(block.supportedModes) gave \(capability?.altModes.count ?? 0) alt modes")
+                }
+
+                guard let capability else { continue }
+                capabilities += 1
+                foldersWithCapability.insert(folder)
+
+                if block.altModeFailed {
+                    altModeFailed += 1
+                    #expect(capability.hasFailedAltMode, "\(folder): AltModeFailed node did not report a failed alt mode")
+                    #expect(!capability.altModes.contains { $0.state == .configured },
+                        "\(folder): AltModeFailed node has a configured mode")
+                } else if block.hasCurrentMode,
+                          let currentSVID = (block.dict["UsbBillboardCurrentMode"] as? String)
+                              .flatMap(BillboardCapability.registryModeSVID) {
+                    withCurrentMode += 1
+                    let configured = capability.altModes.filter { $0.state == .configured }
+                    #expect(configured.count == 1 && configured.first?.svid == currentSVID,
+                        "\(folder): current mode \(block.dict["UsbBillboardCurrentMode"] ?? "?") should be the one configured mode; got \(capability.altModes)")
+                    #expect(capability.altModes.filter { $0.state != .configured }.allSatisfy { $0.state == .notAttempted },
+                        "\(folder): non-current modes must be notAttempted; got \(capability.altModes)")
+                }
+            }
+        }
+
+        guard filesOnDisk > 0 else {
+            print("[USBWatcherSweep] SKIPPED probe25 billboard: no raw corpus")
+            return
+        }
+
+        print("[USBWatcherSweep] probe25 billboard: \(filesOnDisk) files, \(foldersScanned) folders with Billboard nodes, "
+            + "\(blocksTotal) nodes, \(blocksWithModes) with supported modes (\(rawSupportedModeMentions) raw key mentions), "
+            + "\(capabilities) capabilities on \(foldersWithCapability.count) folders, "
+            + "\(withCurrentMode) with a current mode, \(altModeFailed) alt-mode-failed")
+
+        // Independent cross-check: the structural parser and a plain substring
+        // count must agree on how many blocks carry SupportedModes.
+        #expect(blocksWithModes == rawSupportedModeMentions,
+            "Parser gave \(blocksWithModes) blocks a supported-modes array but the raw text mentions the key \(rawSupportedModeMentions) times")
+
+        // Coverage floor, gated on files physically present the same way
+        // probe 38 gates its floor. Measured 2026-09-11: 400 Billboard nodes on
+        // 1376 probe-25 files, 362 of them with supported modes, 362
+        // capabilities on 233 folders (two independent parsers agreeing). Floor
+        // at 350 per the ticket.
+        if filesOnDisk >= 20 {
+            #expect(capabilities >= 350,
+                "Expected at least 350 Billboard capabilities from registry keys across the corpus; got \(capabilities)")
+            #expect(withCurrentMode >= 1, "Expected at least one node with a current mode")
+            #expect(altModeFailed >= 1, "Expected at least one AltModeFailed node")
         }
     }
 }

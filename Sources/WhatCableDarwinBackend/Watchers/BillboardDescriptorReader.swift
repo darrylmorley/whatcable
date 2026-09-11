@@ -27,6 +27,18 @@ import WhatCableCore
 /// driver owns seizes it and freezes input devices (a 2.4 GHz mouse receiver in
 /// that report). That fallback is gone.
 ///
+/// Not every Billboard is read here. The Billboard nub
+/// (`AppleUSBHostBillboardDevice`, the node macOS creates under a device's
+/// Billboard interface) refuses the IOUSBLib plug-in:
+/// `IOCreatePlugInInterfaceForService` fails with kIOReturnUnsupported on all
+/// 400 such nubs in the customer-probe corpus (probe 25). The nub is not an
+/// `IOUSBHostDevice`, so it never reaches this reader anyway; its
+/// `UsbBillboard*` registry keys (macOS's own decode of the descriptor) are
+/// read off the nub by `USBWatcher.billboardNubPropertyDictionaries` and
+/// parsed by `USBWatcher.registryBillboard`. This reader still serves the 492
+/// host-device BOS blocks in that corpus (docks and devices that carry a
+/// Billboard capability inside their own BOS), which decode cleanly here.
+///
 /// All of this is one-shot and synchronous: call it once when a device appears,
 /// never on a poll. It is a free function (no actor state) so the watcher can
 /// call it off whatever context it likes.
