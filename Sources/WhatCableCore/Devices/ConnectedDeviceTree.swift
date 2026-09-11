@@ -545,9 +545,11 @@ public enum ConnectedDeviceTree {
     /// "Thunderbolt link active at 40 Gbps" for symmetric links (the common
     /// case). Reuses the exact localised key `PortSummary`'s bullet uses, so
     /// the tree and the bullet can never disagree in any language. Asymmetric
-    /// TB5 links (3 TX / 1 RX) have no single honest total, so they fall back
-    /// to `ThunderboltLabels.linkLabel`'s per-lane form
-    /// ("Up to 40 Gb/s (3 TX / 1 RX)"). `nil` when no lane is active.
+    /// TB5 links (3 TX / 1 RX) have no single symmetric total, so they fall
+    /// back to `ThunderboltLabels.linkLabel`'s per-direction form, written
+    /// from the Mac's side like the port line: "Up to 120 Gb/s out,
+    /// 40 Gb/s in" on the dock's 1 TX / 3 RX upstream lane. `nil` when no
+    /// lane is active.
     ///
     /// The lane is the switch's UPSTREAM lane (the leg toward the Mac) when
     /// it is active: the root row describes how the dock reaches this port,
@@ -570,7 +572,7 @@ public enum ConnectedDeviceTree {
               let width = lane.currentWidth,
               let perLane = gen.perLaneGbps,
               !(width.asymmetricTx || width.asymmetricRx)
-        else { return ThunderboltLabels.linkLabel(for: lane) }
+        else { return ThunderboltLabels.linkLabel(for: lane, on: sw) }
         let total = Double(perLane * max(width.txLanes, 1))
         return String(localized: "Thunderbolt link active at \(DataLinkDiagnostic.label(total))", bundle: _coreLocalizedBundle)
     }

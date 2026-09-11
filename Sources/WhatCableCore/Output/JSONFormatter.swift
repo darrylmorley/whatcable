@@ -811,6 +811,8 @@ private struct IOThunderboltPortDTO: Codable {
     let perLaneGbps: Int?
     let txLanes: Int?
     let rxLanes: Int?
+    let txGbps: Double?
+    let rxGbps: Double?
     let rawSpeedCode: Int?
     let rawWidthCode: Int?
     let rawTargetSpeed: Int?
@@ -829,6 +831,8 @@ private struct IOThunderboltPortDTO: Codable {
         self.perLaneGbps = port.perLaneGbps
         self.txLanes = port.txLanes
         self.rxLanes = port.rxLanes
+        self.txGbps = port.txGbps
+        self.rxGbps = port.rxGbps
         self.rawSpeedCode = port.currentSpeed.map { Self.rawSpeedCode($0) }
         self.rawWidthCode = port.currentWidth.map { Int($0.rawValue) }
         self.rawTargetSpeed = port.rawTargetSpeed.map { Int($0) }

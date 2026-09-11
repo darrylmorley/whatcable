@@ -85,19 +85,40 @@ public struct SupportedSpeedMask: Hashable {
         self.supportsTb5 = (rawValue & 0x2) != 0
     }
 
-    /// Maximum headline full-link Gbps this controller can negotiate, taking
-    /// the highest supported generation. Nil if the mask is empty or has only
-    /// unrecognised bits. TB3 alone tops out at 20 Gbps; TB4 / USB4 v1 at 40;
-    /// TB5 / USB4 v2 at 80. A mask carrying only the Gen 2 (TB3) bit is Gen 2
+    /// Per-lane Gb/s of the highest supported generation: TB5 / USB4 v2 = 40,
+    /// TB4 / USB4 v1 = 20, TB3 = 10. Nil if the mask is empty or has only
+    /// unrecognised bits. A mask carrying only the Gen 2 (TB3) bit is Gen 2
     /// silicon, not a 40 Gbps TB3 host: every 40 Gbps TB3 host also sets the
-    /// Gen 3 (TB4/USB4) bit, so it is caught by `supportsUsb4Tb4` above this
-    /// check. Asymmetric mode (TB5 120/40) is deliberately not modelled; the
-    /// symmetric headline is what the diagnostic compares against.
-    public var maxTotalGbps: Double? {
-        if supportsTb5 { return 80 }
-        if supportsUsb4Tb4 { return 40 }
-        if supportsTb3 { return 20 }
+    /// Gen 3 (TB4/USB4) bit, so it is caught by `supportsUsb4Tb4` above that
+    /// check.
+    public var maxPerLaneGbps: Int? {
+        if supportsTb5 { return 40 }
+        if supportsUsb4Tb4 { return 20 }
+        if supportsTb3 { return 10 }
         return nil
+    }
+
+    /// `maxPerLaneGbps` times a trained lane count. Nil when the mask is
+    /// unrecognised or `lanes` is not positive. Callers that know the width
+    /// (`LinkWidth.txLanes` / `rxLanes`) use this rather than the dual-lane
+    /// headline.
+    public func maxTotalGbps(lanes: Int) -> Double? {
+        guard let perLane = maxPerLaneGbps, lanes > 0 else { return nil }
+        return Double(perLane) * Double(lanes)
+    }
+
+    /// Symmetric dual-lane headline Gbps for the highest supported
+    /// generation: TB3 = 20, TB4 / USB4 v1 = 40, TB5 / USB4 v2 = 80. Nil if
+    /// the mask is empty or has only unrecognised bits. This is NOT a ceiling
+    /// on a live TB5 link: asymmetric mode trains 3 TX lanes at 40 Gb/s per
+    /// lane, so this reads 80 on a link carrying 120 out of the Mac
+    /// (research/customer-probes/m5max_macos26.5.1 host Socket 1 port 1:
+    /// Current Link Width 4, Supported Link Width 2, Link Bandwidth 400).
+    /// `Supported Link Width` reads 2 (dual) on both ends of that link, so
+    /// nothing in the registers advertises the 3-lane mode; callers that know
+    /// the trained width use `maxTotalGbps(lanes:)`.
+    public var maxTotalGbps: Double? {
+        maxTotalGbps(lanes: 2)
     }
 }
 
@@ -819,12 +840,31 @@ public struct IOThunderboltPort: Hashable {
     /// "no link". Uses TX lanes, so an asymmetric TX link reads as the 3
     /// lane figure (120 on Gen 4/TB5); on the two asymmetric corpus
     /// records, `Link Bandwidth` tracks the RX side instead, so the two do
-    /// not agree there.
+    /// not agree there. Always equal to `txGbps`.
     public var activeGbps: Double? {
-        guard let currentSpeed, let perLane = currentSpeed.perLaneGbps, let currentWidth else {
+        txGbps
+    }
+
+    /// Rate out of this port in Gb/s: `perLaneGbps` times the TX lane count.
+    /// Same nil rules as `activeGbps`. On a symmetric link this equals
+    /// `rxGbps`; on a TB5 asymmetric TX link (3 TX / 1 RX) it reads 120
+    /// against an `rxGbps` of 40.
+    public var txGbps: Double? {
+        gbps(lanes: currentWidth?.txLanes)
+    }
+
+    /// Rate into this port in Gb/s: `perLaneGbps` times the RX lane count.
+    /// Same nil rules as `activeGbps`.
+    public var rxGbps: Double? {
+        gbps(lanes: currentWidth?.rxLanes)
+    }
+
+    /// Shared arithmetic for the three rate properties, so the nil guards
+    /// cannot drift apart. `lanes` is nil when `currentWidth` is.
+    private func gbps(lanes: Int?) -> Double? {
+        guard let currentSpeed, let perLane = currentSpeed.perLaneGbps, let lanes else {
             return nil
         }
-        let lanes = currentWidth.txLanes
         guard lanes > 0 else { return nil }
         return Double(perLane) * Double(lanes)
     }

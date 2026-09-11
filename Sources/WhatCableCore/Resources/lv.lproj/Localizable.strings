@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Nezināma paaudze (neapstrādāts ātruma kods 0x2, secināts TB5)";
 "Unspecified" = "Nenorādīts";
 "Up to %lld Gb/s %@" = "Līdz %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "Līdz %1$lld Gb/s izejošs, %2$lld Gb/s ienākošs";
 "VCONN-powered device" = "Ar VCONN barota ierīce";
 "Vendor ID isn't in USB-IF's published list" = "Ražotāja ID nav USB-IF publicētajā sarakstā";
 "What can this USB-C cable actually do?" = "Ko šis USB-C kabelis patiesībā spēj?";

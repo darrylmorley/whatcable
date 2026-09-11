@@ -36,6 +36,11 @@ struct ThunderboltProbeSweepTests {
             .appendingPathComponent("research/customer-probes")
     }()
 
+    /// The two corpus pairs carrying an asymmetric TB5 lane, measured
+    /// 2026-09-11. Add a new pair here when one lands, so the asymmetric
+    /// sweep keeps requiring a real hit rather than passing on an empty set.
+    private static let knownAsymmetricFolders = ["m4max_macos26.5.2_f", "m5max_macos26.5.1"]
+
     // MARK: - Known link-speed codes (from IOThunderboltLink.swift)
 
     /// All speed codes the code can label. Any value outside this set
@@ -352,6 +357,96 @@ struct ThunderboltProbeSweepTests {
             "Expected at least 2 asymmetric lane records to compare; checked \(asymmetricChecked)")
     }
 
+    // MARK: - Asymmetric label sweep
+
+    @Test("Corpus sweep: every asymmetric lane renders one rate per direction on both ends")
+    func probe29SweepAsymmetricLabelIsDirectionAware() throws {
+        // Port-level only, deliberately not routed through ThunderboltTopology
+        // or the switch tree: m5max_macos26.5.1's probe 29 is truncated at
+        // 64 KB and carries no IOThunderboltSwitch section at all, so a
+        // switch-based check would silently skip the one live sample.
+        var records = 0
+        var txSideCount = 0   // 0x4: 3 TX / 1 RX
+        var rxSideCount = 0   // 0x8: 1 TX / 3 RX
+        var foldersWithProbe29 = 0
+        var perFolderCounts: [String: (tx: Int, rx: Int)] = [:]
+        var foldersTouched: Set<String> = []
+
+        for folder in try Self.allProbes() {
+            guard let text = try Self.loadProbe29(folder: folder) else { continue }
+            foldersWithProbe29 += 1
+
+            for (_, body) in Self.parseInstanceBlocks(text, className: "IOThunderboltPort") {
+                guard let port = IOThunderboltPort.from(read: Self.makeReadClosure(body: body)),
+                      port.adapterType.isLane,
+                      let speed = port.currentSpeed,
+                      let perLane = speed.perLaneGbps,
+                      let width = port.currentWidth,
+                      width.rawValue == 0x4 || width.rawValue == 0x8
+                else { continue }
+
+                records += 1
+                foldersTouched.insert(folder)
+                let tx = perLane * width.txLanes
+                let rx = perLane * width.rxLanes
+
+                #expect(port.txGbps == Double(tx),
+                    "Folder \(folder), port \(port.portNumber), width raw \(width.rawValue): txGbps \(String(describing: port.txGbps)) != \(tx)")
+                #expect(port.rxGbps == Double(rx),
+                    "Folder \(folder), port \(port.portNumber), width raw \(width.rawValue): rxGbps \(String(describing: port.rxGbps)) != \(rx)")
+                #expect(ThunderboltLabels.linkLabel(for: port) == "Up to \(tx) Gb/s out, \(rx) Gb/s in",
+                    "Folder \(folder), port \(port.portNumber), width raw \(width.rawValue): label is not one rate per direction")
+
+                var counts = perFolderCounts[folder] ?? (tx: 0, rx: 0)
+                if width.rawValue == 0x4 {
+                    counts.tx += 1
+                    txSideCount += 1
+                } else {
+                    counts.rx += 1
+                    rxSideCount += 1
+                }
+                perFolderCounts[folder] = counts
+            }
+        }
+
+        // Fresh clone, nothing to assert.
+        guard foldersWithProbe29 > 0 else { return }
+
+        print("""
+            Asymmetric label sweep: \(records) asymmetric lane records \
+            (\(txSideCount) at 3 TX / 1 RX, \(rxSideCount) at 1 TX / 3 RX) across \
+            \(foldersTouched.count) folders: \(foldersTouched.sorted().joined(separator: ", ")).
+            """)
+
+        // Both corpus pairs carry both ends; a folder with one end only is a
+        // parse regression or a new shape worth seeing. No minimum on the
+        // totals: the samples are rare and the sweep must pass on a corpus
+        // that has none.
+        for folder in foldersTouched.sorted() {
+            let counts = perFolderCounts[folder] ?? (tx: 0, rx: 0)
+            #expect(counts.tx > 0,
+                "Folder \(folder): expected at least one 3 TX / 1 RX (0x4) record; found \(counts.tx)")
+            #expect(counts.rx > 0,
+                "Folder \(folder): expected at least one 1 TX / 3 RX (0x8) record; found \(counts.rx)")
+        }
+
+        // The two corpus pairs measured on 2026-09-11. A folder existing but
+        // missing from foldersTouched means its probe failed to load or
+        // parsed to no asymmetric lane, which the "any probe29 exists"
+        // guard above does not catch on its own. Add a new pair here when
+        // one lands. A folder not present at all is a fresh clone or a
+        // corpus without that sample, not a failure.
+        for folder in Self.knownAsymmetricFolders {
+            let dir = Self.probeRoot.appendingPathComponent(folder)
+            var isDir: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: dir.path, isDirectory: &isDir), isDir.boolValue else {
+                continue
+            }
+            #expect(foldersTouched.contains(folder),
+                "Folder \(folder): known asymmetric corpus pair but its probe 29 parsed to no asymmetric lane")
+        }
+    }
+
     // MARK: - Parser regression: keys collapsed onto a shared line
 
     @Test("Collapsed line after an empty Hop Table still yields the key that follows it")
@@ -660,12 +755,11 @@ struct ThunderboltProbeSweepTests {
         #expect(label?.contains("40 Gb/s") == true)
     }
 
-    @Test("ThunderboltLabels link label: TB5 asymmetric shows TX/RX")
+    @Test("ThunderboltLabels link label: TB5 asymmetric TX side reads one rate per direction")
     func tb5AsymmetricLinkLabel() {
         let lane = IOThunderboltPort.from(read: { self.tb5AsymmetricTxPortDict[$0] })!
         let label = ThunderboltLabels.linkLabel(for: lane)
-        #expect(label?.contains("TX") == true)
-        #expect(label?.contains("RX") == true)
+        #expect(label == "Up to 120 Gb/s out, 40 Gb/s in")
     }
 
     @Test("ThunderboltLabels link label: idle port returns nil")

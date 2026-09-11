@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Անհայտ սերունդ (արագության կոդը՝ 0x2, հավանական TB5)";
 "Unspecified" = "Չճշտված";
 "Up to %lld Gb/s %@" = "Մինչև %1$lld Գբ/վ %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "Մինչև %1$lld Գբ/վ ելք, %2$lld Գբ/վ մուտք";
 "VCONN-powered device" = "VCONN սնուցմամբ սարք";
 "Vendor ID isn't in USB-IF's published list" = "Արտադրողի ID-ն USB-IF-ի հրապարակված ցանկում չկա";
 "What can this USB-C cable actually do?" = "Ինչի՞ է իրականում ընդունակ այս USB-C մալուխը:";

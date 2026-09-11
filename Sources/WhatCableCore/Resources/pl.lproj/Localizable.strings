@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Nieznana generacja (surowy kod prędkości 0x2, wywnioskowano TB5)";
 "Unspecified" = "Nieokreślone";
 "Up to %lld Gb/s %@" = "Do %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "Do %1$lld Gb/s wychodzące, %2$lld Gb/s przychodzące";
 "VCONN-powered device" = "Urządzenie zasilane przez VCONN";
 "Vendor ID isn't in USB-IF's published list" = "Vendor ID nie znajduje się na opublikowanej liście USB-IF";
 "What can this USB-C cable actually do?" = "Co właściwie potrafi ten kabel USB-C?";

@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "不明な世代（速度コード 0x2、TB5と推定）";
 "Unspecified" = "未指定";
 "Up to %lld Gb/s %@" = "最大%1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "最大%1$lld Gb/s 送信、%2$lld Gb/s 受信";
 "VCONN-powered device" = "VCONN給電デバイス";
 "Vendor ID isn't in USB-IF's published list" = "ベンダーIDがUSB-IFの公開リストにありません";
 "What can this USB-C cable actually do?" = "このUSB-Cケーブルで実際に何ができる？";

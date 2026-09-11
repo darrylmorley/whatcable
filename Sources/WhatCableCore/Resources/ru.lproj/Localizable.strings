@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Неизвестное поколение (код скорости 0x2, предположительно TB5)";
 "Unspecified" = "Не указано";
 "Up to %lld Gb/s %@" = "До %1$lld Гбит/с %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "До %1$lld Гбит/с исходящих, %2$lld Гбит/с входящих";
 "VCONN-powered device" = "Устройство с питанием VCONN";
 "Vendor ID isn't in USB-IF's published list" = "Vendor ID нет в опубликованном списке USB-IF";
 "What can this USB-C cable actually do?" = "Что на самом деле умеет этот кабель USB-C?";

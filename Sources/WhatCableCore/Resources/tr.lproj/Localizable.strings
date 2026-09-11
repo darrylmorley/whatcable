@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Bilinmeyen nesil (ham hız kodu 0x2, TB5 olarak çıkarıldı)";
 "Unspecified" = "Belirtilmemiş";
 "Up to %lld Gb/s %@" = "En fazla %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "En fazla %1$lld Gb/s giden, %2$lld Gb/s gelen";
 "VCONN-powered device" = "VCONN ile beslenen aygıt";
 "Vendor ID isn't in USB-IF's published list" = "Satıcı kimliği USB-IF yayınlanmış listesinde değil";
 "What can this USB-C cable actually do?" = "Bu USB-C kablo gerçekte ne yapabilir?";

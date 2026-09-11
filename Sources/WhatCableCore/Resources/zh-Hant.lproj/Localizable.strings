@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "未知世代（原始速度代碼 0x2，推測為 TB5）";
 "Unspecified" = "未指定";
 "Up to %lld Gb/s %@" = "最高 %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "最高 %1$lld Gb/s 輸出，%2$lld Gb/s 輸入";
 "VCONN-powered device" = "VCONN 供電裝置";
 "Vendor ID isn't in USB-IF's published list" = "Vendor ID 不在 USB-IF 已公布清單中";
 "What can this USB-C cable actually do?" = "這條 USB-C 線材到底能做什麼？";

@@ -896,6 +896,42 @@ struct JSONFormatterTests {
         #expect(port["generation"] as? String == "usb4Tb4")
         #expect(port["perLaneGbps"] as? Int == 20)
         #expect(port["txLanes"] as? Int == 2)
+        #expect(port["txGbps"] as? Double == 40)
+        #expect(port["rxGbps"] as? Double == 40)
+    }
+
+    @Test("Asymmetric TB5 port encodes separate txGbps and rxGbps")
+    func asymmetricTb5PortEncodesSeparateRates() throws {
+        let host = IOThunderboltSwitch(
+            id: 408750268121704800,
+            className: "IOIOThunderboltSwitchType5",
+            vendorID: 1452, vendorName: "Apple Inc.", modelName: "iOS",
+            routerID: 0, depth: 0, routeString: 0,
+            upstreamPortNumber: 7, maxPortNumber: 8,
+            supportedSpeed: SupportedSpeedMask(rawValue: 12),
+            ports: [
+                IOThunderboltPort(
+                    portNumber: 1, socketID: "1", adapterType: .lane,
+                    currentSpeed: .tb5,
+                    currentWidth: LinkWidth(rawValue: 0x4),
+                    targetWidth: .dual,
+                    rawTargetSpeed: 12,
+                    linkBandwidthRaw: 400
+                )
+            ],
+            parentSwitchUID: nil
+        )
+
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [], showRaw: false,
+            thunderboltSwitches: [host, attachedPartner(parent: host.id)]
+        )
+        let obj = parse(json)
+        let switches = obj["thunderboltSwitches"] as? [[String: Any]] ?? []
+        let port = (switches[0]["ports"] as? [[String: Any]] ?? []).first ?? [:]
+        #expect(port["linkLabel"] as? String == "Up to 120 Gb/s out, 40 Gb/s in")
+        #expect(port["txGbps"] as? Double == 120)
+        #expect(port["rxGbps"] as? Double == 40)
     }
 
     /// An idle host root still reports trained lanes, so the raw read would

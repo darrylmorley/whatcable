@@ -38,12 +38,20 @@ struct ThunderboltLabelsTests {
         #expect(ThunderboltLabels.linkLabel(for: port) == "Up to 40 Gb/s × 2")
     }
 
-    /// TB5 asymmetric 3 TX / 1 RX is the 120 Gb/s configuration reported
-    /// by `system_profiler` on the M5 Pro + UGreen dock sample.
+    /// TB5 asymmetric 3 TX / 1 RX is the 120 Gb/s out / 40 Gb/s in
+    /// configuration reported by `system_profiler` on the M5 Pro + UGreen
+    /// dock sample, labelled from the Mac side's own point of view.
     @Test("Label for TB5 asymmetric")
     func labelForTb5Asymmetric() {
         let port = makeLanePort(speed: .tb5, widthRaw: 0x4)
-        #expect(ThunderboltLabels.linkLabel(for: port) == "Up to 40 Gb/s (3 TX / 1 RX)")
+        #expect(ThunderboltLabels.linkLabel(for: port) == "Up to 120 Gb/s out, 40 Gb/s in")
+    }
+
+    /// The dock side of the same link: 1 TX / 3 RX, so the totals flip.
+    @Test("Label for TB5 asymmetric RX")
+    func labelForTb5AsymmetricRx() {
+        let port = makeLanePort(speed: .tb5, widthRaw: 0x8)
+        #expect(ThunderboltLabels.linkLabel(for: port) == "Up to 40 Gb/s out, 120 Gb/s in")
     }
 
     @Test("Label for unknown generation is hedged")
@@ -60,10 +68,39 @@ struct ThunderboltLabelsTests {
 
     @Test("Label for asymmetric link")
     func labelForAsymmetricLink() {
-        // 3 TX / 1 RX. We have no real TB5 sample, but the model must
-        // produce a sensible label if one ever lands.
+        // 3 TX / 1 RX on TB4. Two corpus samples confirm asymmetric mode
+        // on real hardware (m4max_macos26.5.2_f, m5max_macos26.5.1); this
+        // covers the TB4 generation with the same math.
         let port = makeLanePort(speed: .usb4Tb4, widthRaw: 0x4)
-        #expect(ThunderboltLabels.linkLabel(for: port) == "Up to 20 Gb/s (3 TX / 1 RX)")
+        #expect(ThunderboltLabels.linkLabel(for: port) == "Up to 60 Gb/s out, 20 Gb/s in")
+    }
+
+    /// Seen from the far end of the link, out and in swap. A symmetric
+    /// label reads the same from either end.
+    @Test("Label from the far end flips the two directions")
+    func labelFromFarEndFlipsDirections() {
+        let rxSide = makeLanePort(speed: .tb5, widthRaw: 0x8)
+        #expect(ThunderboltLabels.linkLabel(for: rxSide, from: .farEnd) == "Up to 120 Gb/s out, 40 Gb/s in")
+        let txSide = makeLanePort(speed: .tb5, widthRaw: 0x4)
+        #expect(ThunderboltLabels.linkLabel(for: txSide, from: .farEnd) == "Up to 40 Gb/s out, 120 Gb/s in")
+        let symmetric = makeLanePort(speed: .tb5, widthRaw: 0x2)
+        #expect(ThunderboltLabels.linkLabel(for: symmetric, from: .farEnd) == "Up to 40 Gb/s × 2")
+    }
+
+    /// The dock's upstream lane faces the Mac, so its 1 TX / 3 RX reads as
+    /// the Mac's 120 out, 40 in. Any other lane keeps its own point of view.
+    @Test("Mac-side label on a dock's upstream lane")
+    func macSideLabelOnDockUpstreamLane() {
+        let upstream = makeLanePort(portNumber: 1, speed: .tb5, widthRaw: 0x8)
+        let dock = makeSwitch(uid: 200, depth: 1, parent: 100, upstreamPortNumber: 1, ports: [upstream])
+        #expect(ThunderboltLabels.linkLabel(for: upstream, on: dock) == "Up to 120 Gb/s out, 40 Gb/s in")
+
+        let downstream = makeLanePort(portNumber: 3, speed: .tb5, widthRaw: 0x8)
+        #expect(ThunderboltLabels.linkLabel(for: downstream, on: dock) == "Up to 40 Gb/s out, 120 Gb/s in")
+
+        let hostLane = makeLanePort(portNumber: 1, socketID: "1", speed: .tb5, widthRaw: 0x4)
+        let root = makeSwitch(uid: 100, depth: 0, ports: [hostLane])
+        #expect(ThunderboltLabels.linkLabel(for: hostLane, on: root) == "Up to 120 Gb/s out, 40 Gb/s in")
     }
 
     // MARK: - deviceName

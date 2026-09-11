@@ -228,20 +228,27 @@ struct TextFormatterTests {
         )
     }
 
-    private func fabricLanePort(_ portNumber: Int, socketID: String?) -> IOThunderboltPort {
+    private func fabricLanePort(
+        _ portNumber: Int, socketID: String?,
+        speed: LinkGeneration = .usb4Tb4, widthRaw: UInt8 = 0x2
+    ) -> IOThunderboltPort {
         IOThunderboltPort(
             portNumber: portNumber,
             socketID: socketID,
             adapterType: .lane,
-            currentSpeed: .usb4Tb4,
-            currentWidth: LinkWidth(rawValue: 0x2),
+            currentSpeed: speed,
+            currentWidth: LinkWidth(rawValue: widthRaw),
             targetWidth: nil,
             rawTargetSpeed: nil,
             linkBandwidthRaw: nil
         )
     }
 
-    private func fabricSwitch(uid: Int64, depth: Int, parent: Int64?, vendor: String, model: String, lane: Int, socketID: String?) -> IOThunderboltSwitch {
+    private func fabricSwitch(
+        uid: Int64, depth: Int, parent: Int64?, vendor: String, model: String,
+        lane: Int, socketID: String?,
+        speed: LinkGeneration = .usb4Tb4, widthRaw: UInt8 = 0x2
+    ) -> IOThunderboltSwitch {
         IOThunderboltSwitch(
             id: uid,
             className: "IOThunderboltSwitchType5",
@@ -254,7 +261,7 @@ struct TextFormatterTests {
             upstreamPortNumber: 1,
             maxPortNumber: 8,
             supportedSpeed: SupportedSpeedMask(rawValue: 12),
-            ports: [fabricLanePort(lane, socketID: socketID)],
+            ports: [fabricLanePort(lane, socketID: socketID, speed: speed, widthRaw: widthRaw)],
             parentSwitchUID: parent
         )
     }
@@ -284,6 +291,31 @@ struct TextFormatterTests {
         // Studio Display (depth 3) sits deeper than the OWC (depth 2).
         #expect(output.contains("      ↳ Apple Inc. Studio Display"), "Studio Display indent wrong; got:\n\(output)")
         #expect(output.contains("    ↳ OWC Express 1M2"), "OWC indent wrong; got:\n\(output)")
+    }
+
+    /// The dock arrives on its upstream lane (port 1) at 1 TX / 3 RX. The
+    /// fabric row is written from the Mac's side, the same way the port
+    /// line is, so it reads 120 out, 40 in and never the dock's own flip.
+    @Test("CLI fabric row labels an asymmetric dock link from the Mac's side")
+    func cliFabricRowReadsAsymmetricLinkFromMacSide() {
+        let switches = [
+            fabricSwitch(
+                uid: 100, depth: 0, parent: nil, vendor: "Apple Inc.", model: "iOS",
+                lane: 1, socketID: "1", speed: .tb5, widthRaw: 0x4
+            ),
+            fabricSwitch(
+                uid: 200, depth: 1, parent: 100, vendor: "Ugreen", model: "TBT5 Dock",
+                lane: 1, socketID: nil, speed: .tb5, widthRaw: 0x8
+            ),
+        ]
+        let output = TextFormatter.render(
+            ports: [tbFabricPort()], sources: [], identities: [],
+            showRaw: false, thunderboltSwitches: switches
+        )
+        // The fabric row, not the "Connected to" summary bullet above it.
+        let dockRow = output.split(separator: "\n").first { $0.contains("Ugreen TBT5 Dock -") }.map(String.init)
+        #expect(dockRow?.contains("Up to 120 Gb/s out, 40 Gb/s in") == true, "dock row must read from the Mac's side; got:\n\(output)")
+        #expect(dockRow?.contains("40 Gb/s out") == false, "dock row must not flip to the dock's side; got:\n\(output)")
     }
 
     @Test("CLI encodes terminal controls in Thunderbolt device names")

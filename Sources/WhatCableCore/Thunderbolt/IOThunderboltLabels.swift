@@ -9,14 +9,26 @@ import Foundation
 /// issue #52, so the renderer now emits a confirmed TB5 label for raw speed
 /// code `0x2`. See planning/thunderbolt-fabric.md for the reasoning.
 public enum ThunderboltLabels {
+    /// Which end of a link "out" and "in" are written from. `.farEnd` swaps
+    /// the two directions. It only matters on an asymmetric width: a
+    /// symmetric label reads the same from both ends.
+    public enum LinkViewpoint {
+        case thisPort
+        case farEnd
+    }
+
     /// Compact human label for an active TB link.
     /// Returns nil if the port has no active link.
     /// Examples:
     /// - `"Up to 20 Gb/s × 2"` (USB4 / TB4 dual-lane)
     /// - `"Up to 10 Gb/s × 1"` (TB3 single-lane)
     /// - `"Up to 40 Gb/s × 2"` (TB5 / USB4 v2 dual-lane)
-    /// - `"Up to 40 Gb/s (3 TX / 1 RX)"` (TB5 asymmetric)
-    public static func linkLabel(for port: IOThunderboltPort) -> String? {
+    /// - `"Up to 120 Gb/s out, 40 Gb/s in"` (TB5 asymmetric, 3 TX / 1 RX side)
+    /// - `"Up to 40 Gb/s out, 120 Gb/s in"` (TB5 asymmetric, 1 TX / 3 RX side)
+    public static func linkLabel(
+        for port: IOThunderboltPort,
+        from viewpoint: LinkViewpoint = .thisPort
+    ) -> String? {
         guard port.hasTrainedLanes,
               let gen = port.currentSpeed,
               let width = port.currentWidth else {
@@ -26,6 +38,18 @@ public enum ThunderboltLabels {
         switch gen {
         case .tb3, .usb4Tb4, .tb5:
             guard let perLane = gen.perLaneGbps else { return nil }
+            if width.asymmetricTx || width.asymmetricRx {
+                // Directional totals, from this port's own point of view.
+                // No single symmetric total exists on an asymmetric link, so
+                // each direction gets its own honest figure rather than a
+                // lane-count aside. `perLane * lanes` (Int) rather than
+                // `port.txGbps`/`rxGbps` (Double), so the label never shows
+                // a trailing ".0".
+                var tx = perLane * width.txLanes
+                var rx = perLane * width.rxLanes
+                if viewpoint == .farEnd { swap(&tx, &rx) }
+                return String(localized: "Up to \(tx) Gb/s out, \(rx) Gb/s in", bundle: _coreLocalizedBundle)
+            }
             let lanes = describeLanes(width)
             return String(localized: "Up to \(perLane) Gb/s \(lanes)", bundle: _coreLocalizedBundle)
         case .unknown(let raw):
@@ -34,13 +58,21 @@ public enum ThunderboltLabels {
         }
     }
 
-    /// Lane-count suffix. Symmetric links read `× N`; asymmetric links
-    /// (TB5 3+1 configurations) read `(N TX / M RX)`.
+    /// The Mac's-side label for a lane on `sw`. A downstream switch's
+    /// upstream lane faces the Mac, so out of the Mac is into that lane and
+    /// the label is read from the far end. A host root lane, or a downstream
+    /// switch's own downstream lane, already points away from the Mac. Every
+    /// rendered row uses this so they all agree with the port line; JSON
+    /// stays per-port on purpose.
+    public static func linkLabel(for port: IOThunderboltPort, on sw: IOThunderboltSwitch) -> String? {
+        let facesMac = !sw.isHostRoot && port.portNumber == sw.upstreamPortNumber
+        return linkLabel(for: port, from: facesMac ? .farEnd : .thisPort)
+    }
+
+    /// Lane-count suffix for a symmetric link, `× N`. `linkLabel` handles
+    /// asymmetric widths separately (one rate per direction), so this only
+    /// ever sees a symmetric width.
     private static func describeLanes(_ width: LinkWidth) -> String {
-        if width.asymmetricTx || width.asymmetricRx {
-            return "(\(width.txLanes) TX / \(width.rxLanes) RX)"
-        }
-        // Symmetric: just lane count.
         let lanes = max(width.txLanes, 1)
         return "× \(lanes)"
     }

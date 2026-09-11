@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "알 수 없는 세대 (속도 코드 0x2, TB5로 추정)";
 "Unspecified" = "지정되지 않음";
 "Up to %lld Gb/s %@" = "최대 %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "최대 %1$lld Gb/s 송신, %2$lld Gb/s 수신";
 "VCONN-powered device" = "VCONN 전원 기기";
 "Vendor ID isn't in USB-IF's published list" = "벤더 ID가 USB-IF 공개 목록에 없음";
 "What can this USB-C cable actually do?" = "이 USB-C 케이블, 실제로 어떤 성능일까요?";

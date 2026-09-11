@@ -357,7 +357,7 @@ public enum TextFormatter {
                     let prefix = node.depth > 0 ? "\u{21B3}" : ANSI.wrap(ANSI.gray, "\u{2022}")
                     let name = terminalField(ThunderboltLabels.deviceName(for: node.sw))
                     let link = ThunderboltTopology.connectionLanePort(node.sw, in: thunderboltSwitches)
-                        .flatMap { ThunderboltLabels.linkLabel(for: $0) }
+                        .flatMap { ThunderboltLabels.linkLabel(for: $0, on: node.sw) }
                     let suffix = link.map { " - \(terminalField($0))" } ?? ""
                     out += "\(indent)\(prefix) \(name)\(suffix)\n"
                 }
