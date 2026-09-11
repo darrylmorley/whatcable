@@ -290,6 +290,12 @@ struct DataLinkDiagnosticTests {
         #expect(cable == 5)
         #expect(capable == 20)
         #expect(diag!.isWarning)
+        // Both host and device are faster than the cable here (both
+        // resolve to 20), so the detail keeps the original two-party
+        // English text byte-identical: existing translations of this
+        // exact string must not be invalidated.
+        #expect(diag!.detail.contains("The Mac and device can do"),
+            "two-party cableLimit detail changed: \(diag!.detail)")
     }
 
     @Test("Host port is the bottleneck")
@@ -312,6 +318,68 @@ struct DataLinkDiagnosticTests {
         #expect(host == 5)
         #expect(capable == 20)
         #expect(diag!.isWarning)
+        // Both cable and device are faster than the port here, so the
+        // detail keeps the original two-party English text byte-identical.
+        #expect(diag!.detail.contains("The cable and device can do"),
+            "two-party hostLimit detail changed: \(diag!.detail)")
+    }
+
+    @Test("Cable is the bottleneck, only the host resolved faster (device unresolved)")
+    func cableLimitNamesOnlyHostWhenDeviceUnresolved() {
+        // Same cable/host numbers as "Cable is the bottleneck", but with no
+        // device evidence at all: `fasterOthers` holds only "host", never
+        // "device". The old fixed-pair wording ("The Mac and device can do
+        // ...") would falsely claim a device figure that was never resolved.
+        // Uses `tbActiveGbps` directly (rather than USB3 transport
+        // signaling) so the active rate does not depend on an enumerated
+        // device for corroboration (issue #181): any device passed in
+        // `devices` would itself become the resolved device figure.
+        let diag = DataLinkDiagnostic(
+            port: makePort(),
+            identities: [cableEmarker(speedCode: 1)],   // 5 Gbps
+            devices: [],                                 // no device data at all
+            usb3Transports: [],
+            cio: nil,
+            tbActiveGbps: 5,                             // active 5 Gbps
+            hostMaxGbps: 20
+        )
+        guard case .cableLimit(let cable, let capable) = diag?.bottleneck else {
+            Issue.record("expected .cableLimit, got \(String(describing: diag?.bottleneck))")
+            return
+        }
+        #expect(cable == 5)
+        #expect(capable == 20)
+        #expect(diag!.detail.contains("Mac"),
+            "expected the host-only wording to name the Mac: \(diag!.detail)")
+        #expect(!diag!.detail.contains("device"),
+            "no device was resolved, so the detail must not claim one: \(diag!.detail)")
+    }
+
+    @Test("Host port is the bottleneck, only the device resolved faster (cable unresolved)")
+    func hostLimitNamesOnlyDeviceWhenCableUnresolved() {
+        // Host at the floor, a faster device, and no cable e-marker or
+        // controller reading at all: `fasterOthers` holds only "device".
+        // The old fixed-pair wording ("The cable and device can do ...")
+        // would falsely claim a cable figure that was never resolved.
+        let diag = DataLinkDiagnostic(
+            port: makePort(),
+            identities: [],                              // no cable e-marker
+            devices: [device(speedRaw: 5)],              // 20 Gbps device
+            usb3Transports: [],
+            cio: nil,
+            tbActiveGbps: 5,                             // active 5 Gbps
+            hostMaxGbps: 5
+        )
+        guard case .hostLimit(let host, let capable) = diag?.bottleneck else {
+            Issue.record("expected .hostLimit, got \(String(describing: diag?.bottleneck))")
+            return
+        }
+        #expect(host == 5)
+        #expect(capable == 20)
+        #expect(diag!.detail.contains("device"),
+            "expected the device-only wording to name the device: \(diag!.detail)")
+        #expect(!diag!.detail.contains("cable"),
+            "no cable was resolved, so the detail must not claim one: \(diag!.detail)")
     }
 
     @Test("Device is the cap, not a fault")
@@ -741,6 +809,11 @@ struct DataLinkDiagnosticTests {
         #expect(active == 40)
         #expect(diag!.isWarning == false, "A hedge is informational, not a warning")
         #expect(diag!.detail.contains("80"), "The detail should still mention the cable's claim")
+        // Host AND device are both genuinely unresolved here, so this is
+        // the one case where "no host or device data" is actually true.
+        // Keep the byte-identical original text.
+        #expect(diag!.detail.contains("no host or device data"),
+            "genuinely-unresolved-both detail changed: \(diag!.detail)")
     }
 
     @Test("CIO cableSpeed 2 maps to 20 Gbps (TB3)")
@@ -2359,6 +2432,12 @@ struct DataLinkDiagnosticTests {
         #expect(diag.isWarning == false)
         #expect(diag.cableSignalConflict == false)
         #expect(diag.facts.cableGbps == 80)
+        // The host figure (80) IS known here, so the detail must not claim
+        // "no host ... data". The device is the genuinely-unresolved party.
+        #expect(!diag.detail.contains("host"),
+            "detail falsely claims no host data when a host figure is known: \(diag.detail)")
+        #expect(diag.detail.contains("device"),
+            "detail should say there is no device data to compare against: \(diag.detail)")
     }
 
     @Test("CableSpeed 0 on a live link with a Gen 1 e-marker is not a contradiction")

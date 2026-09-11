@@ -1001,4 +1001,116 @@ struct DataLinkDiagnosticVerdictReplayTests {
             }
         }
     }
+
+    // MARK: - Verdict-case stability (wording-only changes must not move a case)
+
+    /// One row per replayed port: which `Bottleneck` CASE it resolved to
+    /// (never the wording). A wording-only change to `DataLinkDiagnostic`'s
+    /// `detail` strings must never move a port from one case to another;
+    /// this is the corpus-wide net that proves it, the same golden-file
+    /// idiom `FormatterGoldenOutputTests` uses for rendered output.
+    ///
+    /// The comparison is keyed by `folder\tport`, not by the row set: a port
+    /// present in both the golden snapshot and the current replay fails the
+    /// test if its verdict case differs, but a port that is only in one side
+    /// (the corpus gained or lost a folder since the golden file was
+    /// captured, e.g. a new test-kit submission was ingested) is not a
+    /// failure on its own. Corpus growth/shrinkage is not a verdict-wording
+    /// regression, and a `#expect` over the raw row set would red every
+    /// checkout the next time a probe is ingested, for a reason this test
+    /// has nothing to do with.
+    ///
+    /// Regenerating: `WC_REGENERATE_GOLDEN=1 swift test --filter
+    /// DataLinkDiagnosticVerdictReplayTests` rewrites the golden file and
+    /// the run reports the rewrite as a failure, so a regeneration can never
+    /// be mistaken for a pass. Only regenerate against a change that is
+    /// KNOWN to alter verdict selection (never for a wording-only change,
+    /// which is the exact thing this net exists to catch), or to pick up new
+    /// corpus coverage after growth; review the diff before committing a
+    /// regenerated file.
+    private static let goldenDirectory: URL = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .appendingPathComponent("Fixtures")
+        .appendingPathComponent("golden")
+
+    private static let goldenFileName = "data-link-verdict-replay-cases.tsv"
+
+    private static var isRegeneratingGolden: Bool {
+        ProcessInfo.processInfo.environment["WC_REGENERATE_GOLDEN"] == "1"
+    }
+
+    /// `folder\tport\tverdict` per replayed port, sorted the same way
+    /// `replay` already is (folder, then port name), so the golden file
+    /// diffs cleanly and the comparison needs no re-sorting.
+    private static func verdictCaseRows(_ replay: [ReplayedPort]) -> String {
+        replay.map { "\($0.folder)\t\($0.portName)\t\(Self.verdictName($0.diagnostic))" }
+            .joined(separator: "\n") + "\n"
+    }
+
+    /// Parses `folder\tport\tverdict` rows into a map keyed by `folder\tport`,
+    /// so the comparison below can tell "changed" apart from "new" or "gone".
+    private static func verdictCaseMap(_ rows: String) -> [String: String] {
+        var map: [String: String] = [:]
+        for line in rows.split(separator: "\n") {
+            let fields = line.split(separator: "\t", maxSplits: 2, omittingEmptySubsequences: false)
+            guard fields.count == 3 else { continue }
+            map["\(fields[0])\t\(fields[1])"] = String(fields[2])
+        }
+        return map
+    }
+
+    @Test("Corpus replay: verdict CASE per port is unchanged (wording-only net)")
+    func verdictCasesUnchanged() throws {
+        guard Self.hasCIOProbeFiles() else { return }
+        let replay = Self.replay
+        guard !replay.isEmpty else {
+            Issue.record("No ports replayed; the verdict-case stability net tested nothing")
+            return
+        }
+        let actual = Self.verdictCaseRows(replay)
+        let url = Self.goldenDirectory.appendingPathComponent(Self.goldenFileName)
+
+        if Self.isRegeneratingGolden {
+            try FileManager.default.createDirectory(
+                at: Self.goldenDirectory, withIntermediateDirectories: true)
+            try actual.write(to: url, atomically: true, encoding: .utf8)
+            Issue.record("Regenerated \(Self.goldenFileName) (\(replay.count) rows). Review the diff, then re-run without WC_REGENERATE_GOLDEN.")
+            return
+        }
+        guard let expected = try? String(contentsOf: url, encoding: .utf8) else {
+            Issue.record("Missing golden file \(Self.goldenFileName). Run WC_REGENERATE_GOLDEN=1 swift test --filter DataLinkDiagnosticVerdictReplayTests to create it.")
+            return
+        }
+
+        let actualMap = Self.verdictCaseMap(actual)
+        let expectedMap = Self.verdictCaseMap(expected)
+
+        let changed = actualMap.compactMap { key, verdict -> String? in
+            guard let was = expectedMap[key], was != verdict else { return nil }
+            return "\(key)\t\(was) -> \(verdict)"
+        }.sorted()
+
+        let added = actualMap.keys.filter { expectedMap[$0] == nil }
+        let removed = expectedMap.keys.filter { actualMap[$0] == nil }
+        if !added.isEmpty || !removed.isEmpty {
+            print("""
+                Verdict replay golden note: \(added.count) port(s) new since the golden \
+                snapshot, \(removed.count) no longer replayed. Not a failure on their own \
+                (corpus growth/shrinkage, not a wording change); regenerate with \
+                WC_REGENERATE_GOLDEN=1 if the golden file should cover them.
+                """)
+        }
+
+        if !changed.isEmpty {
+            Issue.record("""
+                verdict case(s) changed for \(changed.count) port(s) present in both the \
+                golden snapshot and the current replay:
+                \(changed.prefix(10).joined(separator: "\n"))
+                If this is a deliberate verdict-selection change, regenerate with \
+                WC_REGENERATE_GOLDEN=1 and review the diff. A wording-only change must \
+                never hit this.
+                """)
+        }
+        #expect(changed.isEmpty, "\(changed.count) port(s) changed verdict case since the golden snapshot")
+    }
 }

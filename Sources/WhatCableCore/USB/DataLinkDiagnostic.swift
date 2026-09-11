@@ -467,10 +467,10 @@ extension DataLinkDiagnostic {
             deviceCapIsDirectPartner && Self.capContradictsActive($0, active: active)
         } ?? false
         let reportedDeviceGbps = deviceCapDropped ? nil : deviceMaxGbps
-        // Known gap: when this fires, the cable-limit and host-limit details
-        // still say "the Mac and device can do N", naming a figure just
-        // discarded. It fires on zero of 1336 corpus machines; the verdict
-        // wording ticket owns the fix.
+        // A dropped device figure never enters `caps`, so it can't be named
+        // in a cable-limit/host-limit detail either: those sentences build
+        // from `fasterOthers`, which only ever lists parties actually in
+        // `caps`.
 
         // Capture the resolved figures for the Pro breakdown. Every
         // constructed instance flows through here (the only earlier return
@@ -550,7 +550,15 @@ extension DataLinkDiagnostic {
                 self.bottleneck = .unknownCable(activeGbps: active)
                 self.summary = String(localized: "Running at \(Self.label(active))", bundle: _coreLocalizedBundle)
                 if let claim = cableMaxGbps {
-                    self.detail = String(localized: "The cable claims \(Self.label(claim)), and the link has run at least \(Self.label(active)). There's no host or device data to compare against, so we can't tell if anything else is limiting it.", bundle: _coreLocalizedBundle)
+                    if reportedHostGbps != nil {
+                        // The host figure IS known here (it's just not the
+                        // reason this branch fired: the device is what's
+                        // unresolved). Naming "no host ... data" would be
+                        // false, so this variant names only the device.
+                        self.detail = String(localized: "The cable claims \(Self.label(claim)), and the link has run at least \(Self.label(active)). There's no device data to compare against, so we can't tell if anything else is limiting it.", bundle: _coreLocalizedBundle)
+                    } else {
+                        self.detail = String(localized: "The cable claims \(Self.label(claim)), and the link has run at least \(Self.label(active)). There's no host or device data to compare against, so we can't tell if anything else is limiting it.", bundle: _coreLocalizedBundle)
+                    }
                 } else {
                     self.detail = String(localized: "This cable has no e-marker and no controller data, so we can't tell whether it is the limit.", bundle: _coreLocalizedBundle)
                 }
@@ -592,15 +600,42 @@ extension DataLinkDiagnostic {
         let priority = ["device", "host", "cable"]
         let culprit = priority.first { p in limiters.contains { $0.party == p } } ?? "device"
 
+        // Which OTHER parties actually resolved faster than the floor,
+        // named individually rather than assumed as a fixed pair: a party
+        // absent from `fasterOthers` was never resolved, and naming it
+        // anyway (the old "Mac and device" / "cable and device" wording)
+        // claims a figure nobody measured. `fasterOthers` can never
+        // contain `culprit` itself (it's tied at the floor, not faster
+        // than it), so for "cable" this is host and/or device, and for
+        // "host" it's cable and/or device.
+        let fasterParties = Set(fasterOthers.map(\.party))
+
         switch culprit {
         case "cable":
             self.bottleneck = .cableLimit(cableGbps: expected, capableGbps: capable)
             self.summary = String(localized: "Cable is limiting data speed", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "The Mac and device can do \(Self.label(capable)), but the cable only carries \(Self.label(expected)). A faster cable would unlock full speed.", bundle: _coreLocalizedBundle) + conflictNote
+            if fasterParties == ["host"] {
+                self.detail = String(localized: "The Mac can do \(Self.label(capable)), but the cable only carries \(Self.label(expected)). A faster cable would unlock full speed.", bundle: _coreLocalizedBundle) + conflictNote
+            } else if fasterParties == ["device"] {
+                self.detail = String(localized: "The device can do \(Self.label(capable)), but the cable only carries \(Self.label(expected)). A faster cable would unlock full speed.", bundle: _coreLocalizedBundle) + conflictNote
+            } else {
+                // Both host and device resolved faster: keep the original
+                // two-party English text byte-identical so its existing
+                // translations aren't invalidated.
+                self.detail = String(localized: "The Mac and device can do \(Self.label(capable)), but the cable only carries \(Self.label(expected)). A faster cable would unlock full speed.", bundle: _coreLocalizedBundle) + conflictNote
+            }
         case "host":
             self.bottleneck = .hostLimit(hostGbps: expected, capableGbps: capable)
             self.summary = String(localized: "This Mac port limits data speed", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "The cable and device can do \(Self.label(capable)), but this port maxes out at \(Self.label(expected)).", bundle: _coreLocalizedBundle) + conflictNote
+            if fasterParties == ["cable"] {
+                self.detail = String(localized: "The cable can do \(Self.label(capable)), but this port maxes out at \(Self.label(expected)).", bundle: _coreLocalizedBundle) + conflictNote
+            } else if fasterParties == ["device"] {
+                self.detail = String(localized: "The device can do \(Self.label(capable)), but this port maxes out at \(Self.label(expected)).", bundle: _coreLocalizedBundle) + conflictNote
+            } else {
+                // Both cable and device resolved faster: keep the original
+                // two-party English text byte-identical.
+                self.detail = String(localized: "The cable and device can do \(Self.label(capable)), but this port maxes out at \(Self.label(expected)).", bundle: _coreLocalizedBundle) + conflictNote
+            }
         default: // device
             self.bottleneck = .deviceLimit(deviceGbps: expected)
             self.summary = String(localized: "Device runs at \(Self.label(expected))", bundle: _coreLocalizedBundle)

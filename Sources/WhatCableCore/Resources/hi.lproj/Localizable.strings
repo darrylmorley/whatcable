@@ -321,8 +321,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "कोई रुकावट नहीं है: जो हिस्से दिख रहे हैं वे सभी इस गति को सपोर्ट करते हैं।";
 "Cable is limiting data speed" = "केबल डेटा गति को सीमित कर रही है";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac और डिवाइस %@ कर सकते हैं, लेकिन केबल केवल %@ ले जा सकती है। तेज़ केबल से पूरी गति मिलेगी।";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac %1$@ कर सकता है, लेकिन केबल केवल %2$@ ले जा सकती है। तेज़ केबल से पूरी गति मिलेगी।";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "डिवाइस %1$@ कर सकता है, लेकिन केबल केवल %2$@ ले जा सकती है। तेज़ केबल से पूरी गति मिलेगी।";
 "This Mac port limits data speed" = "यह Mac पोर्ट डेटा गति को सीमित करता है";
 "The cable and device can do %@, but this port maxes out at %@." = "केबल और डिवाइस %@ कर सकते हैं, लेकिन यह पोर्ट अधिकतम %@ तक ही जाता है।";
+"The cable can do %@, but this port maxes out at %@." = "केबल %1$@ कर सकती है, लेकिन यह पोर्ट अधिकतम %2$@ तक ही जाता है।";
+"The device can do %@, but this port maxes out at %@." = "डिवाइस %1$@ कर सकता है, लेकिन यह पोर्ट अधिकतम %2$@ तक ही जाता है।";
 "Device runs at %@" = "डिवाइस %@ पर चलता है";
 "This is the fastest the connected device supports. It is not a cable problem." = "यह कनेक्टेड डिवाइस की अधिकतम गति है। यह केबल की समस्या नहीं है।";
 "Battery full, not charging" = "बैटरी पूरी, चार्ज नहीं हो रही";
@@ -545,6 +549,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "कंट्रोलर Thunderbolt केबल की पुष्टि करता है (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt लिंक %@ पर सक्रिय है";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "केबल %1$@ होने का दावा करती है, और लिंक कम से कम %2$@ पर चल चुका है। तुलना के लिए पोर्ट या डिवाइस का कोई डेटा नहीं है, इसलिए हम नहीं बता सकते कि कुछ और इसे सीमित कर रहा है या नहीं।";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "केबल %1$@ होने का दावा करती है, और लिंक कम से कम %2$@ पर चल चुका है। तुलना के लिए डिवाइस का कोई डेटा नहीं है, इसलिए हम नहीं बता सकते कि कुछ और इसे सीमित कर रहा है या नहीं।";
 
 "Shared controller port" = "साझा नियंत्रक पोर्ट";
 

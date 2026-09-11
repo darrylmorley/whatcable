@@ -321,8 +321,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "발목을 잡는 부분이 없어요. 확인 가능한 부품이 모두 이 속도를 지원합니다.";
 "Cable is limiting data speed" = "케이블이 데이터 속도를 제한하고 있어요";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac과 기기는 %@을(를) 낼 수 있지만, 케이블은 %@까지만 전달합니다. 더 빠른 케이블을 쓰면 최고 속도를 낼 수 있어요.";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac은 %1$@을(를) 낼 수 있지만, 케이블은 %2$@까지만 전달합니다. 더 빠른 케이블을 쓰면 최고 속도를 낼 수 있어요.";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "기기는 %1$@을(를) 낼 수 있지만, 케이블은 %2$@까지만 전달합니다. 더 빠른 케이블을 쓰면 최고 속도를 낼 수 있어요.";
 "This Mac port limits data speed" = "이 Mac 포트가 데이터 속도를 제한하고 있어요";
 "The cable and device can do %@, but this port maxes out at %@." = "케이블과 기기는 %@을(를) 낼 수 있지만, 이 포트는 최대 %@까지만 지원합니다.";
+"The cable can do %@, but this port maxes out at %@." = "케이블은 %1$@을(를) 낼 수 있지만, 이 포트는 최대 %2$@까지만 지원합니다.";
+"The device can do %@, but this port maxes out at %@." = "기기는 %1$@을(를) 낼 수 있지만, 이 포트는 최대 %2$@까지만 지원합니다.";
 "Device runs at %@" = "기기가 %@로 동작 중";
 "This is the fastest the connected device supports. It is not a cable problem." = "이것이 연결된 기기가 지원하는 최고 속도입니다. 케이블 문제가 아니에요.";
 "Cable says %@, link reads %@" = "케이블은 %@라고 하지만, 링크는 %@로 측정됨";
@@ -545,6 +549,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "컨트롤러가 Thunderbolt 케이블을 확인했어요 (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt 링크가 %@로 활성화되어 있어요";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "이 케이블은 %1$@라고 주장하며, 링크는 최소 %2$@로 동작한 적이 있어요. 비교할 포트나 기기 데이터가 없어서 다른 무언가가 이를 제한하고 있는지는 알 수 없어요.";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "이 케이블은 %1$@라고 주장하며, 링크는 최소 %2$@로 동작한 적이 있어요. 비교할 기기 데이터가 없어서 다른 무언가가 이를 제한하고 있는지는 알 수 없어요.";
 
 "Shared controller port" = "컨트롤러 공유 포트";
 

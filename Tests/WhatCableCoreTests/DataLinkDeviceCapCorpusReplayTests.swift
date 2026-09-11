@@ -500,9 +500,14 @@ struct DataLinkDeviceCapCorpusReplayTests {
             \(deviceLimits) of them device limits, \(hostCapsBelowActive) host caps below the link rate
             """)
         // Floors, so a green run over an empty corpus fails loudly instead of
-        // reading as a pass. Re-derived 2026-09-10 from the run's own print
-        // against the 1336-folder corpus: 1234 folders replayed, 384 verdicts,
-        // 25 of them device limits. Raise these only against another measured
+        // reading as a pass. Re-derived 2026-09-11 from the run's own print:
+        // 1234 folders replayed, 384 verdicts, 40 of them device limits.
+        // Checked against a port-number-ordered run too (ports sorted by
+        // `portNumber` before the inner loop, temporarily, then reverted):
+        // same 40, confirming the earlier 25 was a stale reading rather than
+        // an ordering effect this loop is actually sensitive to (each port's
+        // diagnostic only depends on that port and the shared fabric, never
+        // on iteration order). Raise these only against another measured
         // run, and read the figure off the print rather than from here.
         #expect(verdicts > 250,
             "only \(verdicts) verdicts replayed: the corpus is missing or the fabric rebuild stopped resolving")

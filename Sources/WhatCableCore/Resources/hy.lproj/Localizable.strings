@@ -322,8 +322,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "Ոչինչ չի սահմանափակվում. բոլոր տեսանելի բաղադրիչները աջակցում են այս արագությանը:";
 "Cable is limiting data speed" = "Մալուխը սահմանափակում է տվյալների արագությունը";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac-ը և սարքը կարող են %@, սակայն մալուխն ապահովում է միայն %@: Ավելի արագ մալուխ կբացի լրիվ արագությունը:";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac-ը կարող է %1$@, սակայն մալուխն ապահովում է միայն %2$@: Ավելի արագ մալուխ կբացի լրիվ արագությունը:";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Սարքը կարող է %1$@, սակայն մալուխն ապահովում է միայն %2$@: Ավելի արագ մալուխ կբացի լրիվ արագությունը:";
 "This Mac port limits data speed" = "Mac-ի այս նավահանգիստը սահմանափակում է տվյալների արագությունը";
 "The cable and device can do %@, but this port maxes out at %@." = "Մալուխը և սարքը կարող են %@, սակայն այս նավահանգստի առավելագույնը %@ է:";
+"The cable can do %@, but this port maxes out at %@." = "Մալուխը կարող է %1$@, սակայն այս նավահանգստի առավելագույնը %2$@ է:";
+"The device can do %@, but this port maxes out at %@." = "Սարքը կարող է %1$@, սակայն այս նավահանգստի առավելագույնը %2$@ է:";
 "Device runs at %@" = "Սարքն աշխատում է %@ արագությամբ";
 "This is the fastest the connected device supports. It is not a cable problem." = "Սա միացված սարքի ամենաբարձր աջակցվող արագությունն է: Մալուխի հետ կապ չկա:";
 "Battery full, not charging" = "Մարտկոցը լիքն է, չի լիցքավորվում";
@@ -546,6 +550,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "Կարգավարը հաստատում է Thunderbolt մալուխը (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt կապն ակտիվ է %@ արագությամբ";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "Մալուխը հայտարարում է %1$@, և կապն արդեն աշխատել է առնվազն %2$@ արագությամբ: Համեմատելու համար պորտի կամ սարքի տվյալներ չկան, ուստի չենք կարող ասել՝ արդյոք որևէ այլ բան այն սահմանափակում է, թե ոչ:";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "Մալուխը հայտարարում է %1$@, և կապն արդեն աշխատել է առնվազն %2$@ արագությամբ: Համեմատելու համար սարքի տվյալներ չկան, ուստի չենք կարող ասել՝ արդյոք որևէ այլ բան այն սահմանափակում է, թե ոչ:";
 
 "Shared controller port" = "Կարգավորիչի ընդհանուր պորտ";
 
