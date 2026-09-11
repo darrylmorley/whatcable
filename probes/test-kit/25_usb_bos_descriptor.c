@@ -109,7 +109,7 @@ static const char *capabilityName(UInt8 capType) {
         case 0x0e: return "Authentication";
         case 0x0f: return "Billboard Alternate Mode";
         case 0x10: return "Configuration Summary";
-        case 0x11: return "USB4 Capability";
+        case 0x11: return "FWStatus";
         default:   return "unknown";
     }
 }
