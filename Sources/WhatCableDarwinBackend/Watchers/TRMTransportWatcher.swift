@@ -239,11 +239,32 @@ public final class TRMTransportWatcher: ObservableObject {
     ///
     /// Unlike TRM, CIO has no hard gate key -- any IOPortTransportStateCIO
     /// service is a valid candidate. Callers guard on transportType == "CIO".
+    /// An explicit `Active: false` is filtered here (see gate below): it
+    /// means the CIO leg is not currently up, even though a cable can be
+    /// seated (measured: on every affected corpus port, the port's own HPM
+    /// node shows `ConnectionActive`/`PlugOrientation` for a plugged cable).
     nonisolated static func makeCIOCapability(
         entryID: UInt64,
         read: (String) -> Any?,
         hpmControllerUUID: String?
     ) -> CIOCableCapability? {
+        // `Active: false` means the CIO leg is not currently up -- a cable
+        // can still be seated (measured: corpus ports carrying this row also
+        // show ConnectionActive/PlugOrientation for a plugged cable, with
+        // only CC active). In most observed cases (3 of 4 affected ports)
+        // the accessory is TRM-restricted/Unauthorized. Either way, a row
+        // like that must never reach a consumer as if it described a live
+        // link. Absence of the key is not a gate here (see doc comment
+        // above) -- only an explicit `false` drops the row. Across the whole
+        // corpus, `Active` is present on all 707 real CIO blocks (700 true,
+        // 7 false, 0 absent), so the absent-key branch is only exercised by
+        // a synthetic test; it stays because IOKit gives no guarantee the
+        // key is always present, and failing open (treat unknown as active)
+        // is the safer default for a field with no observed absence case.
+        if (read("Active") as? NSNumber)?.boolValue == false {
+            return nil
+        }
+
         let parent = parentPortIdentity(read: read)
         let portKey = "\(parent.type)/\(parent.number)"
 
