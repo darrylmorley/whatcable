@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Неизвестное поколение (код скорости 0x2, предположительно TB5)";
 "Unspecified" = "Не указано";
 "Up to %lld Gb/s %@" = "До %1$lld Гбит/с %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "До %1$lld Гбит/с исходящих, %2$lld Гбит/с входящих";
 "VCONN-powered device" = "Устройство с питанием VCONN";
 "Vendor ID isn't in USB-IF's published list" = "Vendor ID нет в опубликованном списке USB-IF";
 "What can this USB-C cable actually do?" = "Что на самом деле умеет этот кабель USB-C?";
@@ -321,8 +322,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "Ничто не сдерживает скорость: все видимые части поддерживают этот режим.";
 "Cable is limiting data speed" = "Кабель ограничивает скорость данных";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac и устройство поддерживают %@, но кабель тянет только %@. Более быстрый кабель даст полную скорость.";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac поддерживает %1$@, но кабель тянет только %2$@. Более быстрый кабель даст полную скорость.";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Устройство поддерживает %1$@, но кабель тянет только %2$@. Более быстрый кабель даст полную скорость.";
 "This Mac port limits data speed" = "Этот порт Mac ограничивает скорость данных";
 "The cable and device can do %@, but this port maxes out at %@." = "Кабель и устройство поддерживают %@, но этот порт максимум %@.";
+"The cable can do %@, but this port maxes out at %@." = "Кабель поддерживает %1$@, но этот порт максимум %2$@.";
+"The device can do %@, but this port maxes out at %@." = "Устройство поддерживает %1$@, но этот порт максимум %2$@.";
 "Device runs at %@" = "Устройство работает на %@";
 "This is the fastest the connected device supports. It is not a cable problem." = "Это максимум подключённого устройства. Это не проблема кабеля.";
 "Cable says %@, link reads %@" = "Кабель сообщает %@, линк показывает %@";
@@ -545,6 +550,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "Контроллер подтверждает кабель Thunderbolt (%@)";
 "Thunderbolt link active at %@" = "Соединение Thunderbolt активно на скорости %@";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "Кабель заявляет %1$@, а соединение уже работало на скорости не ниже %2$@. Нет данных о порте или устройстве для сравнения, поэтому нельзя сказать, ограничивает ли его что-то ещё.";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "Кабель заявляет %1$@, а соединение уже работало на скорости не ниже %2$@. Нет данных об устройстве для сравнения, поэтому нельзя сказать, ограничивает ли его что-то ещё.";
 
 "Shared controller port" = "Общий порт контроллера";
 

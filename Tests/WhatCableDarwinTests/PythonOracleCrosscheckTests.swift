@@ -890,25 +890,33 @@ struct CIOBlockCountOracleCrosscheckTests {
             // the 118 ports that both probes captured.
             let byPort = oracleCIOBlocksByPort(folder: folder)
             var swiftCIOBlocks = 0
+            var knownInactiveDrops = 0
             for (idx, port) in byPort.keys.sorted().enumerated() {
                 let props = byPort[port]!
                 let read: (String) -> Any? = { props[$0] }
                 // makeCIOCapability has no hard gate key (unlike TRM's
-                // TRM_State); any IOPortTransportStateCIO block is a valid
-                // candidate and always produces a non-nil capability, per
-                // its own doc comment. The count is therefore really "did
-                // we find the right number of linked ports", not "did the
-                // parser succeed" -- which is exactly what this check is
-                // validating against the Python oracle.
+                // TRM_State), except an explicit Active=false row, which it
+                // drops because the CIO leg is not currently up (a cable can
+                // still be seated). The Python oracle counts raw blocks with
+                // no Active filtering, so we
+                // track those drops here and subtract them from its count
+                // below rather than from Swift's. The count is therefore
+                // really "did we find the right number of linked ports", not
+                // "did the parser succeed" -- which is exactly what this
+                // check is validating against the Python oracle.
+                if (props["Active"] as? NSNumber)?.boolValue == false {
+                    knownInactiveDrops += 1
+                }
                 if TRMTransportWatcher.makeCIOCapability(entryID: UInt64(idx + 1), read: read, hpmControllerUUID: nil) != nil {
                     swiftCIOBlocks += 1
                 }
             }
 
-            if swiftCIOBlocks == pythonCIOBlocks {
+            let expectedCIOBlocks = pythonCIOBlocks - knownInactiveDrops
+            if swiftCIOBlocks == expectedCIOBlocks {
                 matched += 1
             } else {
-                mismatches.append("\(folder): swift=\(swiftCIOBlocks) python=\(pythonCIOBlocks)")
+                mismatches.append("\(folder): swift=\(swiftCIOBlocks) python=\(pythonCIOBlocks) (adjusted expected \(expectedCIOBlocks))")
             }
         }
 

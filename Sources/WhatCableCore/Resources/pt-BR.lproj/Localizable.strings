@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Geração desconhecida (código bruto de velocidade 0x2, inferido como TB5)";
 "Unspecified" = "Não especificado";
 "Up to %lld Gb/s %@" = "Até %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "Até %1$lld Gb/s de saída, %2$lld Gb/s de entrada";
 "VCONN-powered device" = "Dispositivo alimentado por VCONN";
 "Vendor ID isn't in USB-IF's published list" = "O ID do fornecedor não está na lista publicada pelo USB-IF";
 "What can this USB-C cable actually do?" = "O que este cabo USB-C realmente consegue fazer?";
@@ -320,8 +321,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "Nada está limitando: as partes visíveis oferecem suporte a esta velocidade.";
 "Cable is limiting data speed" = "O cabo está limitando a velocidade de dados";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "O Mac e o dispositivo conseguem %@, mas o cabo só transporta %@. Um cabo mais rápido liberaria a velocidade total.";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "O Mac consegue %1$@, mas o cabo só transporta %2$@. Um cabo mais rápido liberaria a velocidade total.";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "O dispositivo consegue %1$@, mas o cabo só transporta %2$@. Um cabo mais rápido liberaria a velocidade total.";
 "This Mac port limits data speed" = "Esta porta do Mac limita a velocidade de dados";
 "The cable and device can do %@, but this port maxes out at %@." = "O cabo e o dispositivo conseguem %@, mas esta porta chega no máximo a %@.";
+"The cable can do %@, but this port maxes out at %@." = "O cabo consegue %1$@, mas esta porta chega no máximo a %2$@.";
+"The device can do %@, but this port maxes out at %@." = "O dispositivo consegue %1$@, mas esta porta chega no máximo a %2$@.";
 "Device runs at %@" = "O dispositivo roda a %@";
 "This is the fastest the connected device supports. It is not a cable problem." = "Esta é a maior velocidade compatível com o dispositivo conectado. Não é um problema do cabo.";
 "Cable says %@, link reads %@" = "O cabo informa %@, o link lê %@";
@@ -545,6 +550,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "O controlador confirma o cabo Thunderbolt (%@)";
 "Thunderbolt link active at %@" = "Link Thunderbolt ativo a %@";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "O cabo declara %1$@, e o link já rodou a pelo menos %2$@. Não há dados da porta ou do dispositivo para comparar, então não conseguimos dizer se algo mais está limitando a conexão.";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "O cabo declara %1$@, e o link já rodou a pelo menos %2$@. Não há dados do dispositivo para comparar, então não conseguimos dizer se algo mais está limitando a conexão.";
 
 "Shared controller port" = "Porta compartilhada do controlador";
 

@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "未知代际（原始速度代码 0x2，推断为 TB5）";
 "Unspecified" = "未指定";
 "Up to %lld Gb/s %@" = "最高 %lld Gb/s %@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "最高 %1$lld Gb/s 输出，%2$lld Gb/s 输入";
 "VCONN-powered device" = "VCONN 供电设备";
 "Vendor ID isn't in USB-IF's published list" = "Vendor ID 不在 USB-IF 已发布列表中";
 "What can this USB-C cable actually do?" = "这条 USB-C 线缆到底能做什么？";
@@ -322,8 +323,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "没有受到任何限制：已知组件均支持此速度。";
 "Cable is limiting data speed" = "线缆限制了数据传输速度";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac 和设备均可支持 %@，但线缆仅支持 %@。更换更快的线缆将能达到全速。";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac 可支持 %1$@，但线缆仅支持 %2$@。更换更快的线缆将能达到全速。";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "设备可支持 %1$@，但线缆仅支持 %2$@。更换更快的线缆将能达到全速。";
 "This Mac port limits data speed" = "此 Mac 端口限制了数据传输速度";
 "The cable and device can do %@, but this port maxes out at %@." = "线缆和设备均可支持 %@，但此端口最高仅支持 %@。";
+"The cable can do %@, but this port maxes out at %@." = "线缆可支持 %1$@，但此端口最高仅支持 %2$@。";
+"The device can do %@, but this port maxes out at %@." = "设备可支持 %1$@，但此端口最高仅支持 %2$@。";
 "Device runs at %@" = "设备运行在 %@";
 "This is the fastest the connected device supports. It is not a cable problem." = "这是已连接设备支持的最快速度。这并非线缆问题。";
 "Battery full, not charging" = "电池已充满，未在充电";
@@ -546,6 +551,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "控制器已确认 Thunderbolt 线缆（%@）";
 "Thunderbolt link active at %@" = "Thunderbolt 链路以 %@ 速率保持连接";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "该线缆声称可达 %1$@，且链路实际至少已以 %2$@ 运行过。目前没有端口或设备数据可供比对，因此无法判断是否还有其他因素在限制它。";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "该线缆声称可达 %1$@，且链路实际至少已以 %2$@ 运行过。目前没有设备数据可供比对，因此无法判断是否还有其他因素在限制它。";
 
 "Shared controller port" = "控制器共享端口";
 

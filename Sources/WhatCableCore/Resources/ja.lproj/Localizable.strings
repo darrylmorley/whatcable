@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "不明な世代（速度コード 0x2、TB5と推定）";
 "Unspecified" = "未指定";
 "Up to %lld Gb/s %@" = "最大%1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "最大%1$lld Gb/s 送信、%2$lld Gb/s 受信";
 "VCONN-powered device" = "VCONN給電デバイス";
 "Vendor ID isn't in USB-IF's published list" = "ベンダーIDがUSB-IFの公開リストにありません";
 "What can this USB-C cable actually do?" = "このUSB-Cケーブルで実際に何ができる？";
@@ -323,8 +324,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "制限なし。確認できる構成要素はすべてこの速度に対応しています。";
 "Cable is limiting data speed" = "ケーブルがデータ速度を制限しています";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac とデバイスは %@ に対応していますが、ケーブルは %@ しか転送できません。より高速なケーブルを使うとフルスピードが出ます。";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac は %1$@ に対応していますが、ケーブルは %2$@ しか転送できません。より高速なケーブルを使うとフルスピードが出ます。";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "デバイスは %1$@ に対応していますが、ケーブルは %2$@ しか転送できません。より高速なケーブルを使うとフルスピードが出ます。";
 "This Mac port limits data speed" = "このMacのポートがデータ速度を制限しています";
 "The cable and device can do %@, but this port maxes out at %@." = "ケーブルとデバイスは %@ に対応していますが、このポートは最大 %@ までです。";
+"The cable can do %@, but this port maxes out at %@." = "ケーブルは %1$@ に対応していますが、このポートは最大 %2$@ までです。";
+"The device can do %@, but this port maxes out at %@." = "デバイスは %1$@ に対応していますが、このポートは最大 %2$@ までです。";
 "Device runs at %@" = "デバイスは %@ で動作しています";
 "This is the fastest the connected device supports. It is not a cable problem." = "これは接続デバイスの最大速度です。ケーブルの問題ではありません。";
 "Battery full, not charging" = "バッテリー満充電、充電していません";
@@ -547,6 +552,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "コントローラーが Thunderbolt ケーブルを確認しました (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt リンクは %@ でアクティブです";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "このケーブルは %1$@ を主張していて、リンクは少なくとも %2$@ で動作したことがあります。比較できるポートやデバイスのデータがないため、他に何かが制限しているかどうかは判断できません。";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "このケーブルは %1$@ を主張していて、リンクは少なくとも %2$@ で動作したことがあります。比較できるデバイスのデータがないため、他に何かが制限しているかどうかは判断できません。";
 
 "Shared controller port" = "コントローラ共有ポート";
 

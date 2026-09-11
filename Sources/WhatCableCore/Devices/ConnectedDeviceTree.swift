@@ -175,7 +175,7 @@ public enum ConnectedDeviceTree {
         // depth 1 would read as belonging to whichever came last. The old layout
         // shows the first hop only, which is what it does today.
         guard chain.count == 1, chainNodes.count > 1 || !attribution.isEmpty else {
-            var rows = [chainRow(for: chainNodes[0])]
+            var rows = [chainRow(for: chainNodes[0], in: thunderboltSwitches)]
             rows.append(contentsOf: displays)
             // Shift the device rows one level to sit under the Thunderbolt root,
             // carrying `device` across. Dropping it here would make the
@@ -211,7 +211,7 @@ public enum ConnectedDeviceTree {
 
         var rows: [Row] = []
         for (index, node) in chainNodes.enumerated() {
-            rows.append(chainRow(for: node))
+            rows.append(chainRow(for: node, in: thunderboltSwitches))
             // Displays stay at depth 1 under the first hop, where they render
             // today, and are deliberately NOT attributed to a deeper chain
             // device: `IOPortTransportStateDisplayPort` is joined to a port by
@@ -531,9 +531,12 @@ public enum ConnectedDeviceTree {
     ///
     /// Chain rows carry no `device`, so a renderer treats them like the display
     /// and bus-header rows: plain text, no expandable detail.
-    private static func chainRow(for node: IOThunderboltSwitchNode) -> Row {
+    private static func chainRow(
+        for node: IOThunderboltSwitchNode,
+        in switches: [IOThunderboltSwitch]
+    ) -> Row {
         let name = ThunderboltLabels.deviceName(for: node.sw)
-        guard let link = linkDescription(for: node.sw) else {
+        guard let link = linkDescription(for: node.sw, in: switches) else {
             return Row(label: name, depth: node.depth)
         }
         return Row(label: "\(name) - \(link)", depth: node.depth)
@@ -542,9 +545,11 @@ public enum ConnectedDeviceTree {
     /// "Thunderbolt link active at 40 Gbps" for symmetric links (the common
     /// case). Reuses the exact localised key `PortSummary`'s bullet uses, so
     /// the tree and the bullet can never disagree in any language. Asymmetric
-    /// TB5 links (3 TX / 1 RX) have no single honest total, so they fall back
-    /// to `ThunderboltLabels.linkLabel`'s per-lane form
-    /// ("Up to 40 Gb/s (3 TX / 1 RX)"). `nil` when no lane is active.
+    /// TB5 links (3 TX / 1 RX) have no single symmetric total, so they fall
+    /// back to `ThunderboltLabels.linkLabel`'s per-direction form, written
+    /// from the Mac's side like the port line: "Up to 120 Gb/s out,
+    /// 40 Gb/s in" on the dock's 1 TX / 3 RX upstream lane. `nil` when no
+    /// lane is active.
     ///
     /// The lane is the switch's UPSTREAM lane (the leg toward the Mac) when
     /// it is active: the root row describes how the dock reaches this port,
@@ -552,16 +557,22 @@ public enum ConnectedDeviceTree {
     /// the downstream leg to the next device, which can run a different
     /// generation. Falls back to `connectionLanePort` (first active lane)
     /// when the upstream lane is not the active one.
-    private static func linkDescription(for sw: IOThunderboltSwitch) -> String? {
+    private static func linkDescription(
+        for sw: IOThunderboltSwitch,
+        in switches: [IOThunderboltSwitch]
+    ) -> String? {
         let upstream = sw.ports.first {
-            $0.adapterType.isLane && $0.hasActiveLink && $0.portNumber == sw.upstreamPortNumber
+            $0.adapterType.isLane
+                && ThunderboltTopology.isLinked(port: $0, on: sw, in: switches)
+                && $0.portNumber == sw.upstreamPortNumber
         }
-        guard let lane = upstream ?? ThunderboltTopology.connectionLanePort(sw) else { return nil }
+        guard let lane = upstream ?? ThunderboltTopology.connectionLanePort(sw, in: switches)
+        else { return nil }
         guard let gen = lane.currentSpeed,
               let width = lane.currentWidth,
               let perLane = gen.perLaneGbps,
               !(width.asymmetricTx || width.asymmetricRx)
-        else { return ThunderboltLabels.linkLabel(for: lane) }
+        else { return ThunderboltLabels.linkLabel(for: lane, on: sw) }
         let total = Double(perLane * max(width.txLanes, 1))
         return String(localized: "Thunderbolt link active at \(DataLinkDiagnostic.label(total))", bundle: _coreLocalizedBundle)
     }

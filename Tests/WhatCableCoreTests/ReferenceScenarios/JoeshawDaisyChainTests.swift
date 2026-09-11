@@ -18,7 +18,8 @@ import Testing
 ///
 /// **Bug class**: same issue #111 pattern as
 /// [BluevulpineTS3DockTests.swift](BluevulpineTS3DockTests.swift)
-/// (passive e-marker, CIO confirms TB), but on a different real Mac
+/// (USB-only e-marker speed field, CIO confirms TB, no note since
+/// the CIO-semantics change), but on a different real Mac
 /// (M2 Pro, not the unspecified TB4-class machine) and with the added
 /// daisy-chain complication. The CIO `Generation = 3` here (source
 /// line 65) versus `Generation = 2` on bluevulpine: empirical evidence
@@ -102,12 +103,14 @@ struct JoeshawDaisyChainTests {
         )
     }
 
-    @Test("Sumitomo passive cable on M2 Pro daisy chain: controller wins")
+    @Test("Sumitomo passive cable on M2 Pro daisy chain: controller's figure stands without a note")
     func sumitomoPassiveCable_ControllerWins() {
         // Sumitomo TB3 cable e-marker self-reports as 10 Gbps passive
         // (USB-PD VDO speed code 2). CIO controller at the depth-1 ASUS
-        // hop reports CableSpeed = 3 (40 Gbps TB-capable). Cross-tier
-        // disagreement; CIO wins. The link is genuinely at 40 Gbps
+        // hop reports CableSpeed = 3 (40 Gbps TB-capable). The
+        // controller's figure is the cable figure; the USB-only field
+        // is not a disagreement, so no note (CIO-semantics change; the flag used to
+        // be set here). The link is genuinely at 40 Gbps
         // because the M2 Pro and the ASUS PA32QCV both negotiate TB4
         // (the WhatCable JSON in the dump confirms "Linked at up to
         // 20 Gb/s × 2").
@@ -126,13 +129,13 @@ struct JoeshawDaisyChainTests {
             return
         }
         #expect(active == 40)
-        #expect(diag!.cableSignalConflict == true,
-            "10 Gbps e-marker vs 40 Gbps CIO is a cross-tier conflict. Flag must be set.")
+        #expect(diag!.cableSignalConflict == false,
+            "A USB-only 10 Gbps e-marker field under CIO 40 is not a disagreement.")
         #expect(diag!.facts.cableEmarkerGbps == 10)
         #expect(diag!.facts.cableControllerGbps == 40)
         #expect(diag!.facts.cableGbps == 40,
-            "Controller (40) must win over the under-reporting e-marker (10).")
-        #expect(diag!.detail.contains("disagree"),
-            "Detail must surface the disagreement: \(diag!.detail)")
+            "Controller (40) is the cable figure over the USB-only e-marker field (10).")
+        #expect(!diag!.detail.contains("disagree"),
+            "Detail must not print a disagreement note: \(diag!.detail)")
     }
 }

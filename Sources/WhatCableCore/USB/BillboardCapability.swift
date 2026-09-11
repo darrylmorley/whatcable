@@ -138,4 +138,79 @@ public struct BillboardCapability: Codable, Hashable, Sendable {
         }
         return BillboardCapability(altModes: modes, preferredIndex: preferred)
     }
+
+    // MARK: - Registry keys (macOS's own decode)
+
+    /// Builds the capability from the `UsbBillboard*` registry keys macOS
+    /// publishes on an `AppleUSBHostBillboardDevice` node.
+    ///
+    /// Why this exists alongside `parse(bos:)`: on all 400 standalone Billboard
+    /// nodes in the customer-probe corpus the BOS control transfer is refused
+    /// (`kIOReturnUnsupported`), while 362 of them carry these keys. The kernel
+    /// has already decoded the descriptor; reading its answer back is a
+    /// registry property read, not bus traffic.
+    ///
+    /// Mode strings come in two shapes: a protocol name macOS resolved
+    /// ("DisplayPort", "Thunderbolt", "USB") or `"SVID 0x<hex> VDO 0x<hex>"`.
+    /// Entries that parse as neither are dropped; the order of the rest is
+    /// kept. Current and preferred modes are matched by SVID, not by string,
+    /// so "DisplayPort" still matches "SVID 0xff01 VDO ...".
+    ///
+    /// Per-mode state: `altModeFailed` (present only as true, and only on nodes
+    /// with no current mode: 29 of 29 in the corpus) marks every mode `.error`.
+    /// Otherwise the current mode is `.configured` and the rest `.notAttempted`;
+    /// the registry says nothing finer than that.
+    ///
+    /// `version` (`UsbBillboardVersion`, e.g. "1.22") is accepted and ignored:
+    /// the struct has no field for it yet, and the value is informational.
+    ///
+    /// Returns nil when no supported-mode string parses. Three corpus nodes
+    /// carry Current/Preferred/Version but no SupportedModes; they get no table.
+    public static func fromRegistry(
+        supportedModes: [String],
+        currentMode: String?,
+        preferredMode: String?,
+        altModeFailed: Bool,
+        version: String?
+    ) -> BillboardCapability? {
+        let svids = supportedModes.compactMap(registryModeSVID)
+        guard !svids.isEmpty else { return nil }
+
+        let current = currentMode.flatMap(registryModeSVID)
+        let preferred = preferredMode.flatMap(registryModeSVID)
+
+        // Only the first entry sharing the current SVID is marked configured.
+        let currentIndex = current.flatMap { svids.firstIndex(of: $0) }
+        let modes = svids.enumerated().map { index, svid -> AltMode in
+            if altModeFailed { return AltMode(svid: svid, state: .error) }
+            let state: AltModeState = index == currentIndex ? .configured : .notAttempted
+            return AltMode(svid: svid, state: state)
+        }
+        let preferredIndex = preferred.flatMap { svids.firstIndex(of: $0) }
+        return BillboardCapability(altModes: modes, preferredIndex: preferredIndex)
+    }
+
+    /// Parses one registry mode string to its SVID: a resolved protocol name
+    /// ("DisplayPort" 0xFF01, "Thunderbolt" 0x8087, "USB" 0xFF00) or
+    /// `"SVID 0x<hex> VDO 0x<hex>"`, where only the SVID matters. Returns nil
+    /// for anything else so the caller drops the mode rather than crashing.
+    /// Case-insensitive on both the names and the hex digits.
+    static func registryModeSVID(_ string: String) -> UInt16? {
+        let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch trimmed.lowercased() {
+        case "displayport": return 0xFF01
+        case "thunderbolt": return 0x8087
+        case "usb": return 0xFF00
+        default: break
+        }
+
+        // "SVID 0xff00 VDO 0x2687e000": take the token after "SVID", strip
+        // the 0x prefix, and read it as hex. Anything else is not a mode.
+        let tokens = trimmed.split(whereSeparator: { $0.isWhitespace })
+        guard tokens.count >= 2, tokens[0].lowercased() == "svid" else { return nil }
+        var hex = tokens[1].lowercased()
+        if hex.hasPrefix("0x") { hex = hex.dropFirst(2).description }
+        guard !hex.isEmpty else { return nil }
+        return UInt16(hex, radix: 16)
+    }
 }

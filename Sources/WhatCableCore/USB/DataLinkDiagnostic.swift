@@ -28,11 +28,11 @@ public struct DataLinkDiagnostic {
         case degraded(activeGbps: Double, expectedGbps: Double)
         /// No e-marker and no controller data, so we cannot say whether the
         /// cable is the limit. Stated plainly rather than guessed. Also
-        /// reused (issue #393) as a hedge when the only figure suggesting
-        /// the link is "slower than expected" is an unverified e-marker
-        /// claim above the CIO floor, with no independently-known host or
-        /// device cap to corroborate it: a healthy link, not a fault, so
-        /// we say what we can verify rather than guess a culprit.
+        /// reused (issue #393) as a hedge when the only figures above the
+        /// active rate are a cable claim (e-marker or controller) and the
+        /// host's own ceiling, with no device known to exceed the link: a
+        /// healthy link, not a fault, so we say what we can verify rather
+        /// than guess a culprit.
         case unknownCable(activeGbps: Double)
         /// The cable's e-marker reports a speed meaningfully below the
         /// link's apparent active rate, and there is no controller (CIO)
@@ -67,11 +67,13 @@ public struct DataLinkDiagnostic {
         }
     }
 
-    /// True when the cable's own e-marker disagrees with the Thunderbolt
-    /// controller's view of the cable (issue #111: active TB4 cables that
-    /// report "passive" / a low speed in their e-marker while the
-    /// controller correctly negotiates the full rate). When true the
-    /// controller's higher figure is used and `detail` says so.
+    /// True when the cable's e-marker claims a USB4 speed (Gen 3 or Gen 4
+    /// speed bits) and the controller reads a tier above it with the live
+    /// lane agreeing (issue #111). A USB-only speed field below the
+    /// controller's figure is not a disagreement: that field describes
+    /// USB data, not Thunderbolt, and an active-cable VDO is not a speed
+    /// claim either. When true the controller's higher figure is used and
+    /// `detail` says so.
     public let cableSignalConflict: Bool
 
     /// The resolved per-party figures behind the verdict, in Gbps. The
@@ -84,15 +86,14 @@ public struct DataLinkDiagnostic {
         public let hostGbps: Double?
         /// Cable speed as claimed by its own USB-PD e-marker.
         public let cableEmarkerGbps: Double?
-        /// The negotiated link rate as the Thunderbolt controller sees it
-        /// (CIO). A floor on cable capability, never a cap.
+        /// The Thunderbolt controller's claim about the cable and peer
+        /// pair (CIO CableSpeed). A floor on cable capability, never a
+        /// cap, and it can sit above the lane the port actually trained.
         public let cableControllerGbps: Double?
-        /// The cable figure actually used: agreement when both signals are
-        /// the same tier; the controller's figure when it measured a
-        /// higher, confirmed rate than the e-marker claims (issue #111);
-        /// otherwise the e-marker's own claim, since the controller's
-        /// negotiated-rate floor never caps what the cable itself can do
-        /// (issue #393).
+        /// The cable figure actually used: the e-marker's own claim, or the
+        /// controller's figure when it reads a higher tier than the
+        /// e-marker claims; either way never below the lane a live
+        /// Thunderbolt link carried.
         public let cableGbps: Double?
         /// The fastest connected device's speed.
         public let deviceGbps: Double?
@@ -217,6 +218,16 @@ extension DataLinkDiagnostic {
         // where the link state isn't readable yet.
         guard let active = activeGbps else { return nil }
 
+        // A port cannot be slower than a link it trained, so a host figure
+        // meaningfully below `active` is wrong rather than binding and is
+        // dropped from the facts and the comparison, the same way a
+        // direct-partner device cap is (`deviceCapDropped` below). The
+        // corpus holds one such port: an asymmetric TB5 link at 120 whose
+        // `supportedSpeed` mask assumes two lanes and reads 80. The mask
+        // itself is the rate model's business, not this diagnostic's.
+        let hostCapDropped = resolvedHostMaxGbps.map { Self.capContradictsActive($0, active: active) } ?? false
+        let reportedHostGbps = hostCapDropped ? nil : resolvedHostMaxGbps
+
         // TRM (Trust and Restrict Management) short-circuit. When macOS has
         // blocked data on the USB3 transport, the transport's signaling rate
         // is still present (hence `active` is non-nil above) but no data
@@ -230,7 +241,7 @@ extension DataLinkDiagnostic {
            let signaledGbps = Self.usb3Gbps(usb3?.signaling) {
             self.cableSignalConflict = false
             self.facts = Facts(
-                hostGbps: resolvedHostMaxGbps,
+                hostGbps: reportedHostGbps,
                 cableEmarkerGbps: nil,
                 cableControllerGbps: nil,
                 cableGbps: nil,
@@ -244,16 +255,26 @@ extension DataLinkDiagnostic {
             return
         }
 
-        // The Thunderbolt controller's own read of the cable. This is the
-        // NEGOTIATED link rate (min of host, cable, device), read from the
-        // same lane state as `active`. It is a FLOOR on cable capability,
-        // never a cap: a cable can legitimately be faster than the link it
-        // happened to run at (issue #393: a genuine 80 Gbps CableMatters
-        // TB5 cable between two 40 Gbps endpoints negotiates 40, but it is
-        // still an 80 Gbps cable). Only the confirmed codes are mapped;
-        // unknown codes stay nil rather than guess (mirrors
-        // CIOCableCapability.speedLabel's conservatism).
+        // The Thunderbolt controller's claim about the cable and peer pair.
+        // It is not the trained lane: the corpus shows it sitting a tier
+        // above the lane the port actually runs, on peers that cannot run
+        // that tier at all (31 of 378 replayed ports above the lane; 13 of
+        // 70 code-4 ports on endpoints that cannot run 80), so it is a
+        // FLOOR on cable capability and never a cap or a measurement (issue
+        // #393: a genuine 80 Gbps CableMatters TB5 cable between two
+        // 40 Gbps endpoints negotiates 40, but it is still an 80 Gbps
+        // cable). Only the confirmed codes are mapped; unknown codes stay
+        // nil rather than guess (mirrors CIOCableCapability.speedLabel's
+        // conservatism).
         let cioGbps = Self.cioCableGbps(cio?.negotiatedLinkSpeed)
+        // A CIO row is live only when the port's active transports include
+        // CIO: the watcher passes every IOPortTransportStateCIO node whether
+        // or not its Active flag is set, and 4 corpus ports carry an
+        // Active: false row on a CC-only port. `activeTBGbps` gates on the
+        // same transport list, so the floor and the contradiction gate
+        // below share its notion of live. `cioGbps` and the facts keep
+        // reading the row as it is.
+        let liveCIO = port.transportsActive.contains("CIO") ? cio : nil
 
         // Cable's claimed speed from its e-marker (SOP' / SOP'').
         let cableIdentity = identities
@@ -272,18 +293,29 @@ extension DataLinkDiagnostic {
             emarkerGbps = 20
         }
 
-        // The e-marker describes what the cable itself claims to support;
-        // CIO describes what actually got negotiated. Resolve the two:
+        // The e-marker describes what the cable itself claims; CIO is the
+        // controller's claim about the cable and peer. Resolve the two:
         //   - Same tier: agreement, no conflict, take the (equal) value.
-        //   - CIO tier HIGHER than the e-marker: the link ran faster than
-        //     the cable claims, so the controller has proven the cable
-        //     does more than its own e-marker says (issue #111: an active
-        //     TB4 cable whose e-marker under-reports as passive/low-speed).
-        //     Conflict = true, the controller's higher, confirmed figure
-        //     wins.
+        //   - CIO tier HIGHER than the e-marker: the controller's figure
+        //     is the cable figure. It is a note only when the e-marker
+        //     claimed a USB4 speed of its own (Gen 3 or Gen 4 speed bits)
+        //     and the live lane agrees with the controller (issue #111:
+        //     a TB4 cable whose e-marker under-reports). The e-marker's
+        //     speed field describes USB data only, so a USB-only figure
+        //     (USB 2.0, Gen 1, Gen 2) under a Thunderbolt link is normal,
+        //     not a disagreement. An active-cable VDO is not a speed
+        //     claim either: an active Thunderbolt 3 cable with a USB 2.0
+        //     data path is the normal design for that generation (the LG
+        //     UltraFine 5K bundled cable, issue #331). On the unfixed code
+        //     the note fired on 93 of 383 replayed ports, 81 of them a
+        //     passive USB 3.2 Gen 2 e-marker under a 20 or 40 Gbps
+        //     controller figure; 4 survive, every one a passive e-marker
+        //     claiming USB4 Gen 3 under a controller figure of 80 with
+        //     the lane at 80. A CIO figure the lane does not corroborate
+        //     is a claim, handled below, not a note.
         //   - CIO tier LOWER than the e-marker: NOT a conflict. Both can
         //     be true at once (the cable claims 80, but only ran at 40
-        //     because that's all the floor allowed). The e-marker's claim
+        //     because that's all the peer allowed). The e-marker's claim
         //     is the cable figure here; the negotiated rate already lives
         //     in `active`. (This direction used to be treated as "the
         //     controller always wins", on the theory that a higher
@@ -294,57 +326,50 @@ extension DataLinkDiagnostic {
         //     cable is CableTrust's job, not this tiebreak's.)
         //   - Only one signal present: use it, no conflict.
         //   - Neither present: unknown, no conflict.
+        let emarkerClaimsUSB4Speed = cableIdentity?.cableVDO.map {
+            $0.speed == .usb4Gen3 || $0.speed == .usb4Gen4
+        } ?? false
         let conflict: Bool
-        let cableMaxGbps: Double?
-        // True when the resolved figure is an e-marker claim that beat a
-        // lower CIO floor: an unverified claim, not something the
-        // controller actually measured the link doing. Feeds the
-        // unknown-endpoint guard further down, which stops that claim
-        // alone from producing a false "degraded" verdict.
-        let cableClaimAboveCIOFloor: Bool
+        var cableMaxGbps: Double?
         switch (emarkerGbps, cioGbps) {
         case let (e?, c?):
             if Self.sameTier(e, c) {
                 conflict = false
                 cableMaxGbps = max(e, c)
-                cableClaimAboveCIOFloor = false
             } else if c > e {
-                if Self.sameTier(e, active), !Self.sameTier(c, active) {
-                    // Stale-controller guard (restored from the pre-#393
-                    // tiebreak). CIO and the TB switch lane state come from
-                    // two different IOKit services on two different watcher
-                    // streams, so a transient can leave CIO reading higher
-                    // than the link that is actually up. When the e-marker
-                    // matches the live link and the higher CIO figure does
-                    // not, the "controller measured more" story is not
-                    // corroborated by the link itself: keep the e-marker's
-                    // figure quietly rather than raise a confirmed-conflict
-                    // banner from possibly stale data.
-                    conflict = false
-                    cableMaxGbps = e
-                    cableClaimAboveCIOFloor = false
-                } else {
-                    conflict = true
-                    cableMaxGbps = c
-                    cableClaimAboveCIOFloor = false
-                }
+                conflict = emarkerClaimsUSB4Speed && Self.sameTier(c, active)
+                // A USB-only speed field says nothing about Thunderbolt, so
+                // the controller's figure stands in for it. A USB4 Gen 3 or
+                // Gen 4 claim is the cable's own Thunderbolt rating, and a
+                // controller tier above it that the lane has not carried is
+                // an uncorroborated claim about the cable and peer (13 of
+                // 70 code-4 ports sit on endpoints that cannot run 80), so
+                // the rating stays until the lane proves more.
+                cableMaxGbps = (emarkerClaimsUSB4Speed && !Self.sameTier(c, active)) ? e : c
             } else {
                 conflict = false
                 cableMaxGbps = e
-                cableClaimAboveCIOFloor = true
             }
         case let (e?, nil):
             conflict = false
             cableMaxGbps = e
-            cableClaimAboveCIOFloor = false
         case let (nil, c?):
             conflict = false
             cableMaxGbps = c
-            cableClaimAboveCIOFloor = false
         case (nil, nil):
             conflict = false
             cableMaxGbps = nil
-            cableClaimAboveCIOFloor = false
+        }
+        // A live CIO row (CIO among the active transports) means the
+        // Thunderbolt link is up and demonstrably carried `active`. A cable
+        // figure below that is self-refuting in
+        // the same way a direct-partner cap below it is
+        // (`capContradictsActive`): the e-marker's USB-only speed field, or
+        // an unmapped CIO code such as CableSpeed 0, is not evidence
+        // against the link. Floor the figure at the lane rate so the USB
+        // field never becomes the verdict's floor.
+        if liveCIO != nil, let c = cableMaxGbps, Self.capContradictsActive(c, active: active) {
+            cableMaxGbps = active
         }
         // Cable / active-rate contradiction detection. When the resolved
         // cable speed is meaningfully below the active rate, one of the
@@ -355,17 +380,16 @@ extension DataLinkDiagnostic {
         // gating in this commit, or any future leak we miss). The honest
         // answer is to surface the contradiction.
         //
-        // CIO-confirmed cases are already resolved upstream: whenever CIO
-        // is present at all, it's read from the same lane state as
-        // `active`, so `cableMaxGbps` can never end up meaningfully below
-        // `active` on those cases (whether the CIO tier won on a cross-
-        // tier disagreement, or the e-marker's above-floor claim won,
-        // which is always >= `active`, never below it). The remaining
-        // contradictions are exactly the ones where only the e-marker is
-        // available and it disagrees with the active reading by more
-        // than a tier.
+        // The gate is the absence of a live controller row (CIO among the
+        // active transports), not of a mapped controller figure. It exists
+        // for the no-controller USB3 path, where the active reading itself
+        // can be unreliable and the e-marker is the only other signal. With
+        // a live CIO row the link is demonstrably up at `active` and the
+        // floor above has already settled the figure; stating
+        // `liveCIO == nil` here anyway makes the rule explicit rather than
+        // a side effect of the floor.
         let cableContradiction: Bool
-        if let c = cableMaxGbps, c < active, !Self.sameTier(c, active), cioGbps == nil {
+        if let c = cableMaxGbps, c < active, !Self.sameTier(c, active), liveCIO == nil {
             cableContradiction = true
         } else {
             cableContradiction = false
@@ -401,15 +425,46 @@ extension DataLinkDiagnostic {
             .max { (Self.deviceGbps($0.speedRaw) ?? 0) < (Self.deviceGbps($1.speedRaw) ?? 0) }
         let usbDeviceGbps = Self.deviceGbps(fastestDevice?.speedRaw)
         let rawDeviceMaxGbps: Double?
+        // Where the figure came from. `active` is the FIRST HOP's rate
+        // (`activeTBGbps` reads the host's own downstream lane), so only a cap
+        // describing the direct partner is comparable to it at all. A terminal
+        // switch further down the chain, and a USB device tunnelled behind the
+        // partner, both describe a different link and are legitimately slower
+        // than the one carrying them.
+        let deviceCapIsDirectPartner: Bool
         if let terminal {
             rawDeviceMaxGbps = terminal.supportedSpeed.maxTotalGbps
                 ?? Self.terminalLegActiveGbps(terminal)
                 ?? Self.activeTBGbps(port: port, switches: thunderboltSwitches)
+            deviceCapIsDirectPartner = false
         } else if let partner {
             rawDeviceMaxGbps = partner.supportedSpeed.maxTotalGbps
                 ?? Self.activeTBGbps(port: port, switches: thunderboltSwitches)
+            deviceCapIsDirectPartner = true
         } else {
+            // A device that declares SuperSpeed in its BOS or bcdUSB but
+            // enumerated at 480 Mbps is not evidence against the cable.
+            // Across the customer-probe corpus (probe 25's declared-versus-
+            // negotiated speed joined to probe 38's wiring path, two parsers
+            // agreeing), 130 such rows on 68 machines sit with every hub
+            // above them at USB 2.0 (USB 2.0 companion hubs inside docks,
+            // and cameras such as a Logitech C920 behind one); rows where a
+            // faster hop sits above the device are 3 in 7815, each
+            // explained by a Gen 1 port or hop.
+            //
+            // So no cable-limit verdict is ever derived from BOS or
+            // declared-speed data here. Do not add one without an
+            // SS-capable hop above the device (a hub or port that itself
+            // enumerated at SuperSpeed), and even then the hub is the first
+            // suspect, not the cable.
+            //
+            // Reachability note: this arm only runs with no Thunderbolt
+            // partner, and `active` is nil unless a SuperSpeed device is in
+            // the native list or the transport is TRM-restricted, so the
+            // fastest device here is already SuperSpeed; a 480 Mbps device
+            // limit cannot be produced on this path in production.
             rawDeviceMaxGbps = usbDeviceGbps
+            deviceCapIsDirectPartner = false
         }
         // TB1/TB2-era device cap (issue #515): the device figure comes from
         // the terminal switch when there is a genuine multi-hop chain,
@@ -424,6 +479,20 @@ extension DataLinkDiagnostic {
             deviceMaxGbps = rawDeviceMaxGbps
         }
 
+        // A direct partner's cap that sits meaningfully below the rate the
+        // first hop demonstrably carried is self-refuting: the switch on the
+        // other end of this cable took part in that link. Such a figure is
+        // dropped from the comparison AND from the reported facts, so no
+        // consumer prints a capability the diagnostic decided not to trust.
+        let deviceCapDropped = deviceMaxGbps.map {
+            deviceCapIsDirectPartner && Self.capContradictsActive($0, active: active)
+        } ?? false
+        let reportedDeviceGbps = deviceCapDropped ? nil : deviceMaxGbps
+        // A dropped device figure never enters `caps`, so it can't be named
+        // in a cable-limit/host-limit detail either: those sentences build
+        // from `fasterOthers`, which only ever lists parties actually in
+        // `caps`.
+
         // Capture the resolved figures for the Pro breakdown. Every
         // constructed instance flows through here (the only earlier return
         // is the no-active-speed guard, which yields no instance).
@@ -437,11 +506,11 @@ extension DataLinkDiagnostic {
         }
 
         self.facts = Facts(
-            hostGbps: resolvedHostMaxGbps,
+            hostGbps: reportedHostGbps,
             cableEmarkerGbps: emarkerGbps,
             cableControllerGbps: cioGbps,
             cableGbps: cableMaxGbps,
-            deviceGbps: deviceMaxGbps,
+            deviceGbps: reportedDeviceGbps,
             deviceName: deviceLabel,
             activeGbps: active
         )
@@ -464,10 +533,16 @@ extension DataLinkDiagnostic {
 
         // Every capability we actually know about, tagged by party. The
         // link can never run faster than the slowest of these.
+        //
+        // The dropped direct-partner and host caps (`deviceCapDropped` and
+        // `hostCapDropped` above) never enter the comparison, so they can
+        // neither become the floor nor be blamed. The cable cap is left
+        // alone here: it already has its own floor and
+        // `cableContradictsActive` short-circuit above.
         var caps: [(party: String, value: Double)] = []
         if let c = cableMaxGbps         { caps.append((party: "cable",  value: c)) }
-        if let h = resolvedHostMaxGbps  { caps.append((party: "host",   value: h)) }
-        if let d = deviceMaxGbps        { caps.append((party: "device", value: d)) }
+        if let h = reportedHostGbps     { caps.append((party: "host",   value: h)) }
+        if let d = reportedDeviceGbps   { caps.append((party: "device", value: d)) }
 
         guard let expected = caps.map(\.value).min() else {
             // We know the active speed but have nothing to compare it to:
@@ -480,44 +555,43 @@ extension DataLinkDiagnostic {
         }
 
         if Self.meaningfullySlower(active, than: expected) {
-            // Unknown-endpoint guard (issue #393 follow-up). `cableMaxGbps`
-            // can now carry a high unverified e-marker claim (rule above)
-            // while `active` is lower. If neither the host nor the device
-            // is independently known to exceed the active rate, that
-            // unverified claim is the ONLY thing making `expected` look
-            // higher than what actually ran -- and blaming a "degraded"
-            // link on an unverified claim alone would be a false alarm on
-            // a perfectly healthy connection (a cable rated for more than
-            // its endpoints negotiate is normal, not a fault). When the
-            // host or device DOES independently exceed the active rate,
-            // this guard does not apply: something demonstrably capable
-            // of more really did come up slower, and the degraded verdict
-            // below is honest.
-            let hostExceedsActive = resolvedHostMaxGbps
-                .map { Self.meaningfullySlower(active, than: $0) } ?? false
+            // Inside this branch every known cap is above `active`, so a
+            // non-nil cable figure is always an unverified claim here:
+            // nobody has seen the cable carry it, whether it came from the
+            // e-marker or from the controller. A claim, or a fast host, or
+            // both, never earn `.degraded` on their own (issue #393: a
+            // known-fast host with an unknown device is a healthy link,
+            // not a fault). Only a device demonstrably capable of more
+            // than the link carried does, and then only with a cable
+            // figure in hand: with none, the cable is the honest suspect
+            // and the verdict says so rather than blaming the link.
             let deviceExceedsActive = deviceMaxGbps
                 .map { Self.meaningfullySlower(active, than: $0) } ?? false
-            if cableClaimAboveCIOFloor, !hostExceedsActive, !deviceExceedsActive,
-               let claim = cableMaxGbps {
+            if !deviceExceedsActive || cableMaxGbps == nil {
                 self.bottleneck = .unknownCable(activeGbps: active)
                 self.summary = String(localized: "Running at \(Self.label(active))", bundle: _coreLocalizedBundle)
-                self.detail = String(localized: "The cable claims \(Self.label(claim)), and the link has run at least \(Self.label(active)). There's no host or device data to compare against, so we can't tell if anything else is limiting it.", bundle: _coreLocalizedBundle)
+                if let claim = cableMaxGbps {
+                    if reportedHostGbps != nil {
+                        // The host figure IS known here (it's just not the
+                        // reason this branch fired: the device is what's
+                        // unresolved). Naming "no host ... data" would be
+                        // false, so this variant names only the device.
+                        self.detail = String(localized: "The cable claims \(Self.label(claim)), and the link has run at least \(Self.label(active)). There's no device data to compare against, so we can't tell if anything else is limiting it.", bundle: _coreLocalizedBundle)
+                    } else {
+                        self.detail = String(localized: "The cable claims \(Self.label(claim)), and the link has run at least \(Self.label(active)). There's no host or device data to compare against, so we can't tell if anything else is limiting it.", bundle: _coreLocalizedBundle)
+                    }
+                } else {
+                    self.detail = String(localized: "This cable has no e-marker and no controller data, so we can't tell whether it is the limit.", bundle: _coreLocalizedBundle)
+                }
                 return
             }
 
-            // Slower than even the slowest part we can see. Something
-            // unidentified degraded it. If the cable is the unknown, it's
-            // the honest suspect; otherwise it's an unattributed degrade.
-            // Either way, never claim "full speed" here (the old draft bug).
-            if cableMaxGbps == nil {
-                self.bottleneck = .unknownCable(activeGbps: active)
-                self.summary = String(localized: "Running at \(Self.label(active))", bundle: _coreLocalizedBundle)
-                self.detail = String(localized: "This cable has no e-marker and no controller data, so we can't tell whether it is the limit.", bundle: _coreLocalizedBundle)
-            } else {
-                self.bottleneck = .degraded(activeGbps: active, expectedGbps: expected)
-                self.summary = String(localized: "Running slower than expected (\(Self.label(active)))", bundle: _coreLocalizedBundle)
-                self.detail = String(localized: "The parts we can see all support \(Self.label(expected)) or more, but the link came up slower. Reseating the cable or trying another port may help.", bundle: _coreLocalizedBundle) + conflictNote
-            }
+            // Slower than a device we can see doing more, with a cable
+            // figure that says the same. Something unidentified degraded
+            // it. Never claim "full speed" here (the old draft bug).
+            self.bottleneck = .degraded(activeGbps: active, expectedGbps: expected)
+            self.summary = String(localized: "Running slower than expected (\(Self.label(active)))", bundle: _coreLocalizedBundle)
+            self.detail = String(localized: "The parts we can see all support \(Self.label(expected)) or more, but the link came up slower. Reseating the cable or trying another port may help.", bundle: _coreLocalizedBundle) + conflictNote
             return
         }
 
@@ -547,15 +621,42 @@ extension DataLinkDiagnostic {
         let priority = ["device", "host", "cable"]
         let culprit = priority.first { p in limiters.contains { $0.party == p } } ?? "device"
 
+        // Which OTHER parties actually resolved faster than the floor,
+        // named individually rather than assumed as a fixed pair: a party
+        // absent from `fasterOthers` was never resolved, and naming it
+        // anyway (the old "Mac and device" / "cable and device" wording)
+        // claims a figure nobody measured. `fasterOthers` can never
+        // contain `culprit` itself (it's tied at the floor, not faster
+        // than it), so for "cable" this is host and/or device, and for
+        // "host" it's cable and/or device.
+        let fasterParties = Set(fasterOthers.map(\.party))
+
         switch culprit {
         case "cable":
             self.bottleneck = .cableLimit(cableGbps: expected, capableGbps: capable)
             self.summary = String(localized: "Cable is limiting data speed", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "The Mac and device can do \(Self.label(capable)), but the cable only carries \(Self.label(expected)). A faster cable would unlock full speed.", bundle: _coreLocalizedBundle) + conflictNote
+            if fasterParties == ["host"] {
+                self.detail = String(localized: "The Mac can do \(Self.label(capable)), but the cable only carries \(Self.label(expected)). A faster cable would unlock full speed.", bundle: _coreLocalizedBundle) + conflictNote
+            } else if fasterParties == ["device"] {
+                self.detail = String(localized: "The device can do \(Self.label(capable)), but the cable only carries \(Self.label(expected)). A faster cable would unlock full speed.", bundle: _coreLocalizedBundle) + conflictNote
+            } else {
+                // Both host and device resolved faster: keep the original
+                // two-party English text byte-identical so its existing
+                // translations aren't invalidated.
+                self.detail = String(localized: "The Mac and device can do \(Self.label(capable)), but the cable only carries \(Self.label(expected)). A faster cable would unlock full speed.", bundle: _coreLocalizedBundle) + conflictNote
+            }
         case "host":
             self.bottleneck = .hostLimit(hostGbps: expected, capableGbps: capable)
             self.summary = String(localized: "This Mac port limits data speed", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "The cable and device can do \(Self.label(capable)), but this port maxes out at \(Self.label(expected)).", bundle: _coreLocalizedBundle) + conflictNote
+            if fasterParties == ["cable"] {
+                self.detail = String(localized: "The cable can do \(Self.label(capable)), but this port maxes out at \(Self.label(expected)).", bundle: _coreLocalizedBundle) + conflictNote
+            } else if fasterParties == ["device"] {
+                self.detail = String(localized: "The device can do \(Self.label(capable)), but this port maxes out at \(Self.label(expected)).", bundle: _coreLocalizedBundle) + conflictNote
+            } else {
+                // Both cable and device resolved faster: keep the original
+                // two-party English text byte-identical.
+                self.detail = String(localized: "The cable and device can do \(Self.label(capable)), but this port maxes out at \(Self.label(expected)).", bundle: _coreLocalizedBundle) + conflictNote
+            }
         default: // device
             self.bottleneck = .deviceLimit(deviceGbps: expected)
             self.summary = String(localized: "Device runs at \(Self.label(expected))", bundle: _coreLocalizedBundle)
@@ -570,6 +671,11 @@ extension DataLinkDiagnostic {
     /// `PortSummary` uses (socket-ID match -> host root -> active
     /// downstream lane port). Returns `nil` when the port isn't on a TB
     /// link or no link is up.
+    ///
+    /// Reads the lane port's width-aware `activeGbps` (per-lane Gbps times
+    /// trained TX lanes), not the generation's dual-lane headline: a link
+    /// trained down to one lane runs at half the headline, and the corpus
+    /// confirms the width-aware figure against `Link Bandwidth`.
     ///
     /// Gated on `transportsActive.contains("CIO")`: on Apple Silicon the
     /// internal root-to-downstream-switch lane is always reported as
@@ -587,13 +693,13 @@ extension DataLinkDiagnostic {
               !switches.isEmpty,
               let socketID = ThunderboltTopology.socketID(for: port),
               let root = ThunderboltTopology.hostRoot(forSocketID: socketID, in: switches),
-              let hostPort = ThunderboltTopology.activeDownstreamLanePort(root),
-              let gen = hostPort.currentSpeed,
-              let negotiated = gen.totalGbps else {
+              let hostPort = ThunderboltTopology.trainedDownstreamLanePort(root),
+              let negotiated = hostPort.activeGbps else {
             return nil
         }
         // TB1/TB2-era first-hop partner (issue #515): code 0x8 reads as a
-        // real TB3 40 Gbps link, but a TB1/TB2 device negotiates far less.
+        // real Gen 2 link at 10 Gb/s per trained lane, but a TB1/TB2 device
+        // negotiates less than even that.
         // Cap with the directly-connected partner's device-generation
         // ceiling, not the terminal device's: a dock's own link genuinely
         // runs at its rated speed even when a TB1 leaf hangs off it further
@@ -660,10 +766,23 @@ extension DataLinkDiagnostic {
               }) else {
             return nil
         }
-        return switches.first { sw in
-            sw.parentSwitchUID == root.id
-                && Int(sw.routeString & 0xFF) == hostLanePort.portNumber
+        // Both lanes of the socket. One physical socket is a pair of lane
+        // adapters sharing a Socket ID and only one of the pair carries the
+        // route byte, so resolving the socket to its first lane and stopping
+        // there would lose the partner whenever the byte names the other.
+        // `ThunderboltTopology.isLinked` reads the same socket the same way,
+        // through the same helper, so the two cannot disagree about whether
+        // there is a partner on this lane.
+        for lane in ThunderboltTopology.socketLanePorts(of: hostLanePort, on: root) {
+            if let partner = ThunderboltTopology.childSwitch(
+                below: root,
+                onPortNumber: lane.portNumber,
+                in: switches
+            ) {
+                return partner
+            }
         }
+        return nil
     }
 
     /// The switch at the far end of a genuine multi-hop Thunderbolt daisy
@@ -692,6 +811,35 @@ extension DataLinkDiagnostic {
     /// to two Thunderbolt devices) there's no single "last" device, so we
     /// bail and let the caller fall back to the direct partner (the dock
     /// itself is the right comparator there).
+    ///
+    /// Walks only past a passthrough. A dock with a display behind it has
+    /// the same two-hop shape as the adapter this was written for, but the
+    /// dock IS what the cable is plugged into, and naming the panel at the
+    /// end of the chain "the device on the cable" is wrong. The two are told
+    /// apart by what the direct partner publishes: a passthrough exposes
+    /// lane adapters only, while a dock, a display or a drive also exposes
+    /// PCIe, DisplayPort or USB (`exposesNonLaneAdapters`).
+    /// True when a switch publishes any adapter that is not a lane (physical
+    /// Thunderbolt port) and not inactive.
+    ///
+    /// A passthrough adapter forwards the fabric and tunnels nothing itself,
+    /// so it has lanes only. Anything that terminates a tunnel is a real
+    /// endpoint: a dock, a display, a drive. The test is deliberately "not a
+    /// lane" rather than a list of known protocol types, because an adapter
+    /// type the decoder has not learned yet lands in `.other` and would
+    /// otherwise read as a passthrough. TB5's USB Gen T adapter was exactly
+    /// that until issue #52 named it.
+    static func exposesNonLaneAdapters(_ sw: IOThunderboltSwitch) -> Bool {
+        sw.ports.contains { port in
+            switch port.adapterType {
+            case .lane, .inactive:
+                return false
+            default:
+                return true
+            }
+        }
+    }
+
     static func deepTerminalSwitch(
         port: AppleHPMInterface,
         switches: [IOThunderboltSwitch]
@@ -699,6 +847,14 @@ extension DataLinkDiagnostic {
         guard let partner = Self.partnerSwitch(port: port, switches: switches) else {
             return nil
         }
+        // A partner with no ports published is not evidence of a passthrough.
+        // A dock whose adapters failed to enumerate looks identical to a bare
+        // adapter here, and naming the leaf of the chain on that guess is the
+        // worse error, so the walk stops rather than proceeds.
+        guard !partner.ports.isEmpty else { return nil }
+        // A partner that tunnels a protocol of its own is the device on the
+        // cable, so the walk stops here.
+        guard !Self.exposesNonLaneAdapters(partner) else { return nil }
         let chain = ThunderboltTopology.chain(from: partner, in: switches)
         let downstream = Array(chain.dropFirst())
         guard !downstream.isEmpty else { return nil }
@@ -726,14 +882,13 @@ extension DataLinkDiagnostic {
     /// that one port anyway, so the fallback is usually a no-op).
     static func terminalLegActiveGbps(_ sw: IOThunderboltSwitch) -> Double? {
         let upstreamLeg = sw.ports.first {
-            $0.adapterType.isLane && $0.portNumber == sw.upstreamPortNumber && $0.hasActiveLink
+            $0.adapterType.isLane && $0.portNumber == sw.upstreamPortNumber && $0.hasTrainedLanes
         }
         guard let leg = upstreamLeg
-                ?? sw.ports.first(where: { $0.adapterType.isLane && $0.hasActiveLink }),
-              let gen = leg.currentSpeed else {
+                ?? sw.ports.first(where: { $0.adapterType.isLane && $0.hasTrainedLanes }) else {
             return nil
         }
-        return gen.totalGbps
+        return leg.activeGbps
     }
 
     /// USB 3 signaling generation to Gbps. 1 = Gen 1 (5), 2 = Gen 2 (10).
@@ -811,6 +966,17 @@ extension DataLinkDiagnostic {
     /// `a` is meaningfully slower than `b` (more than ~10% below it).
     static func meaningfullySlower(_ a: Double, than b: Double) -> Bool {
         a < b * 0.9
+    }
+
+    /// True when a resolved endpoint cap contradicts the rate the link
+    /// actually carried: the cap is meaningfully below `active`.
+    ///
+    /// An endpoint cannot be slower than a link it took part in, so such a
+    /// cap is wrong rather than binding. Callers drop it instead of letting
+    /// it set the floor and collect the blame. Uses `meaningfullySlower`, so
+    /// a cap inside the same tier as `active` still counts as agreeing.
+    static func capContradictsActive(_ cap: Double, active: Double) -> Bool {
+        Self.meaningfullySlower(cap, than: active)
     }
 
     /// Human-readable speed: sub-1-Gbps as Mbps, whole numbers without ".0".

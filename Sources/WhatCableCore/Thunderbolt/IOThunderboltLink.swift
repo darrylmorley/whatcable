@@ -38,14 +38,17 @@ public enum LinkGeneration: Hashable {
         }
     }
 
-    /// Headline full-link Gb/s for the known cases (TB3 / TB4 / USB4 v1 =
-    /// 40, TB5 / USB4 v2 = 80). `nil` for `.unknown`. These are the
-    /// published symmetric link speeds, used by `DataLinkDiagnostic` as the
-    /// active Thunderbolt data rate. Asymmetric mode (TB5 120/40) and
-    /// trained-down lane widths are deliberately not modelled here.
+    /// Headline symmetric dual-lane Gb/s for the known cases: TB3 = 20,
+    /// TB4 / USB4 v1 = 40, TB5 / USB4 v2 = 80. `nil` for `.unknown`. The
+    /// link rate is per-lane Gbps times lane count, corpus-confirmed
+    /// against `Link Bandwidth` without exception (see `activeGbps` on
+    /// `IOThunderboltPort` for the width-aware figure); this property
+    /// assumes the generation's own dual-lane case. Asymmetric mode
+    /// (TB5 120/40) and trained-down lane widths are deliberately not
+    /// modelled here.
     public var totalGbps: Double? {
         switch self {
-        case .tb3: return 40
+        case .tb3: return 20
         case .usb4Tb4: return 40
         case .tb5: return 80
         case .unknown: return nil
@@ -82,17 +85,40 @@ public struct SupportedSpeedMask: Hashable {
         self.supportsTb5 = (rawValue & 0x2) != 0
     }
 
-    /// Maximum headline full-link Gbps this controller can negotiate, taking
-    /// the highest supported generation. Nil if the mask is empty or has only
-    /// unrecognised bits. TB3 and TB4 / USB4 v1 both top out at 40 Gbps; TB5 /
-    /// USB4 v2 at 80 Gbps. Asymmetric mode (TB5 120/40) is deliberately not
-    /// modelled; the symmetric headline is what the diagnostic compares
-    /// against.
-    public var maxTotalGbps: Double? {
-        if supportsTb5 { return 80 }
-        if supportsUsb4Tb4 { return 40 }
-        if supportsTb3 { return 40 }
+    /// Per-lane Gb/s of the highest supported generation: TB5 / USB4 v2 = 40,
+    /// TB4 / USB4 v1 = 20, TB3 = 10. Nil if the mask is empty or has only
+    /// unrecognised bits. A mask carrying only the Gen 2 (TB3) bit is Gen 2
+    /// silicon, not a 40 Gbps TB3 host: every 40 Gbps TB3 host also sets the
+    /// Gen 3 (TB4/USB4) bit, so it is caught by `supportsUsb4Tb4` above that
+    /// check.
+    public var maxPerLaneGbps: Int? {
+        if supportsTb5 { return 40 }
+        if supportsUsb4Tb4 { return 20 }
+        if supportsTb3 { return 10 }
         return nil
+    }
+
+    /// `maxPerLaneGbps` times a trained lane count. Nil when the mask is
+    /// unrecognised or `lanes` is not positive. Callers that know the width
+    /// (`LinkWidth.txLanes` / `rxLanes`) use this rather than the dual-lane
+    /// headline.
+    public func maxTotalGbps(lanes: Int) -> Double? {
+        guard let perLane = maxPerLaneGbps, lanes > 0 else { return nil }
+        return Double(perLane) * Double(lanes)
+    }
+
+    /// Symmetric dual-lane headline Gbps for the highest supported
+    /// generation: TB3 = 20, TB4 / USB4 v1 = 40, TB5 / USB4 v2 = 80. Nil if
+    /// the mask is empty or has only unrecognised bits. This is NOT a ceiling
+    /// on a live TB5 link: asymmetric mode trains 3 TX lanes at 40 Gb/s per
+    /// lane, so this reads 80 on a link carrying 120 out of the Mac
+    /// (research/customer-probes/m5max_macos26.5.1 host Socket 1 port 1:
+    /// Current Link Width 4, Supported Link Width 2, Link Bandwidth 400).
+    /// `Supported Link Width` reads 2 (dual) on both ends of that link, so
+    /// nothing in the registers advertises the 3-lane mode; callers that know
+    /// the trained width use `maxTotalGbps(lanes:)`.
+    public var maxTotalGbps: Double? {
+        maxTotalGbps(lanes: 2)
     }
 }
 
@@ -137,10 +163,19 @@ public struct LinkWidth: Hashable {
     public var isActive: Bool { rawValue != 0 }
 }
 
-/// Decode of `Target Link Width`. Different encoding to Current Link Width:
-/// Linux defines `LANE_ADP_CS_1_TARGET_WIDTH_SINGLE = 0x1` and
-/// `LANE_ADP_CS_1_TARGET_WIDTH_DUAL = 0x3`. So `0x3` here means "negotiated
-/// dual lane", NOT "asymmetric". This was a footgun in the planning phase.
+/// Decode of `Target Link Width`. Different encoding to Current Link Width,
+/// as a simplification rather than a strict rule: Linux defines
+/// `LANE_ADP_CS_1_TARGET_WIDTH_SINGLE = 0x1` and
+/// `LANE_ADP_CS_1_TARGET_WIDTH_DUAL = 0x3`, so `0x3` here means "negotiated
+/// dual lane", NOT "asymmetric" (this was a footgun in the planning phase).
+/// But corpus-measured over 9313 lane adapters, value 5 is also observed
+/// twice (m5pro_macos26.5_b port 1 on a live symmetric Gen 4 link, and
+/// m5max_macos26.5.1 port 1 on an asymmetricTx one), plus one port in
+/// research/dumps/tb-fabric/052-nofr1ends-m5pro-ugreen-tb5-dock.md. It
+/// reads as `single | asymmetricTx` under the Current Link Width bitmask,
+/// and the same capture's asymmetricRx port reads 9, fitting the same
+/// reading. `from` already returns `.unknown(5)` and `.unknown(9)` for
+/// these, unchanged here.
 public enum TargetLinkWidth: Hashable {
     case single
     case dual
@@ -455,28 +490,33 @@ public struct IOThunderboltSwitch: Identifiable, Hashable {
     public var isAwake: Bool { currentPowerState == 2 }
 
     /// TB1/TB2-era device IDs whose `Current Link Speed` code `0x8` does
-    /// NOT mean a real 40 Gbps TB3 link (issue #515). Intel Falcon Ridge,
-    /// the TB2 controller. `Thunderbolt Version == 2` is not used for this:
-    /// it mixes real TB2 devices with TB3 controllers (Alpine Ridge etc),
-    /// so the cap is keyed on Device ID here instead. Device ID alone is
-    /// not a safe key across vendors (the same 16-bit number can be reused
-    /// outside Intel's own device space), so the match also requires
-    /// `Vendor ID == 0x8086` (Intel, decimal 32902, confirmed in the
-    /// corpus).
+    /// NOT mean a real link at the code's headline rate (issue #515). Intel
+    /// Falcon Ridge, the TB2 controller. `Thunderbolt Version == 2` is not
+    /// used for this: it mixes real TB2 devices with TB3 controllers
+    /// (Alpine Ridge etc), so the cap is keyed on Device ID here instead.
+    /// Device ID alone is not a safe key across vendors (the same 16-bit
+    /// number can be reused outside Intel's own device space), so the
+    /// match also requires `Vendor ID == 0x8086` (Intel, decimal 32902,
+    /// confirmed in the corpus). Verified against the pci.ids database
+    /// (https://pci-ids.ucw.cz/read/PC/8086, checked 2026-09-10): 0x156c is
+    /// "DSL5520 Thunderbolt 2 NHI [Falcon Ridge 4C 2013]" and 0x156d is
+    /// "DSL5520 Thunderbolt 2 Bridge [Falcon Ridge 4C 2013]".
     private static let falconRidgeTB2DeviceIDs: Set<Int> = [0x156c, 0x156d]
     private static let intelVendorID = 0x8086
 
     /// Capability ceiling for TB1/TB2-era devices, in Gbps, or `nil` when
     /// no cap applies (TB3-class silicon and newer).
     ///
-    /// `LinkGeneration` maps raw speed code `0x8` to `.tb3` (40 Gbps total),
-    /// and that mapping is correct for real TB3 links (corpus-verified). But
-    /// TB1/TB2-era devices report the same code `0x8` for what is actually a
-    /// 10 Gb/s single-lane link, so `totalGbps` overstates them (issue
-    /// #515: a LaCie Rugged THB, genuine TB1 silicon, showed "40 Gbps"
-    /// instead of its real 10 Gbps cap). This property flags those devices
-    /// so callers can cap the misleading figure without touching
-    /// `LinkGeneration` itself, which stays correct for real TB3 links.
+    /// Speed code `0x8` is 10 Gb/s per lane (corpus-measured: `Link
+    /// Bandwidth` = per-lane Gbps x lanes x 10 without exception across
+    /// 6548 records). A real 40 Gbps TB3 link trains at code `0x4`, the
+    /// same code TB4 uses; code `0x8` on a dual-lane link is a 20 Gbps
+    /// link, and on TB1/TB2-era silicon it can mean a single-lane 10 Gb/s
+    /// link that width-aware `activeGbps` already reads correctly. This
+    /// property exists for callers that only have the generation, not the
+    /// width: it flags devices where even the per-lane figure needs a
+    /// further cap (issue #515: a LaCie Rugged THB, genuine TB1 silicon,
+    /// reported a rate its own hardware cannot reach).
     ///
     /// `thunderboltVersion == 1` is corpus-verified as ONLY genuine TB1
     /// silicon (Light Ridge / Port Ridge device IDs), zero contamination
@@ -540,8 +580,12 @@ public struct IOThunderboltPort: Hashable {
     public let adapterDescription: String?
     /// Decoded `Current Link Speed`. `nil` on idle ports or non-lane adapters.
     public let currentSpeed: LinkGeneration?
-    /// Decoded `Current Link Width`. `nil` on non-lane adapters; on idle
-    /// lane ports, `LinkWidth.isActive` will be false.
+    /// Decoded `Current Link Width`. `nil` on non-lane adapters. An idle lane
+    /// port does NOT read zero on most silicon: Type2 to Type5 hosts idle at
+    /// Current Link Speed 8 and Current Link Width 1, so `LinkWidth.isActive`
+    /// is true there with nothing plugged in. Type7, which the corpus shows on
+    /// M4 Pro, M4 Max and every M5 class Mac, mostly idles at 0, 0 instead
+    /// (1232 of its 1344 idle-machine lanes).
     public let currentWidth: LinkWidth?
     public let targetWidth: TargetLinkWidth?
     /// Hardware-supported maximum link width.
@@ -551,10 +595,12 @@ public struct IOThunderboltPort: Hashable {
     public let perLaneGbps: Int?
     public let txLanes: Int?
     public let rxLanes: Int?
-    /// Raw `Target Link Speed`. Don't interpret this as a bitmask in the
-    /// renderer; Linux defines it as a single named value
-    /// (e.g. `LANE_ADP_CS_1_TARGET_SPEED_GEN3 = 0xc`). Kept raw for
-    /// diagnostics.
+    /// Raw `Target Link Speed`. Corpus-measured: it IS a bitmask over the
+    /// same codes as `Supported Link Speed`, not the single named value
+    /// Linux defines (`LANE_ADP_CS_1_TARGET_SPEED_GEN3 = 0xc`). It takes
+    /// three values across the corpus (8, 12, 14), equals `Supported Link
+    /// Speed` on 9013 of 9018 lane adapters, and every port linked at Gen 4
+    /// reports 14, never 12. Still stored raw; nothing decodes it.
     public let rawTargetSpeed: UInt8?
     /// Raw `Link Bandwidth`. Unitless aggregate that scales with active
     /// lanes; useful for diagnostics, not for user-facing labels.
@@ -785,9 +831,56 @@ public struct IOThunderboltPort: Hashable {
         )
     }
 
-    /// True for a TB lane port that has actually negotiated a link.
-    /// Useful for the renderer when picking which port to label.
-    public var hasActiveLink: Bool {
+    /// Active link rate in Gb/s: `perLaneGbps` times the TX lane count, the
+    /// same identity the corpus confirms for `Link Bandwidth` (per-lane
+    /// Gbps x lanes x 10). `nil` when `currentSpeed`, its `perLaneGbps`, or
+    /// `currentWidth` is nil, and also when no lane is trained: six corpus
+    /// records carry a real speed code with `Current Link Width` 0, and a
+    /// 0.0 there would read as a measured zero-rate link rather than as
+    /// "no link". Uses TX lanes, so an asymmetric TX link reads as the 3
+    /// lane figure (120 on Gen 4/TB5); on the two asymmetric corpus
+    /// records, `Link Bandwidth` tracks the RX side instead, so the two do
+    /// not agree there. Always equal to `txGbps`.
+    public var activeGbps: Double? {
+        txGbps
+    }
+
+    /// Rate out of this port in Gb/s: `perLaneGbps` times the TX lane count.
+    /// Same nil rules as `activeGbps`. On a symmetric link this equals
+    /// `rxGbps`; on a TB5 asymmetric TX link (3 TX / 1 RX) it reads 120
+    /// against an `rxGbps` of 40.
+    public var txGbps: Double? {
+        gbps(lanes: currentWidth?.txLanes)
+    }
+
+    /// Rate into this port in Gb/s: `perLaneGbps` times the RX lane count.
+    /// Same nil rules as `activeGbps`.
+    public var rxGbps: Double? {
+        gbps(lanes: currentWidth?.rxLanes)
+    }
+
+    /// Shared arithmetic for the three rate properties, so the nil guards
+    /// cannot drift apart. `lanes` is nil when `currentWidth` is.
+    private func gbps(lanes: Int?) -> Double? {
+        guard let currentSpeed, let perLane = currentSpeed.perLaneGbps, let lanes else {
+            return nil
+        }
+        guard lanes > 0 else { return nil }
+        return Double(perLane) * Double(lanes)
+    }
+
+    /// The raw `Current Link Speed` / `Current Link Width` register read for a
+    /// TB lane port: true when the lane reports a trained width and a decoded
+    /// speed. It is NOT "something is plugged in". An empty socket reports
+    /// trained lanes on most silicon, on a Mac's host root and on a dock
+    /// alike. Measured over the corpus lanes on machines with nothing
+    /// attached: every Type2, Type3 and Type4 lane reads speed code 8 width 1
+    /// (496 of 496), Type5 does on 3315 of 3634, and Type7 is the exception,
+    /// idling at 0, 0 on 1232 of 1344. Callers asking "is a device actually
+    /// connected on this lane" want
+    /// `ThunderboltTopology.isLinked(port:on:in:)`, which pairs the lane
+    /// against the switch graph.
+    public var hasTrainedLanes: Bool {
         guard adapterType.isLane else { return false }
         guard let currentWidth, currentWidth.isActive else { return false }
         return currentSpeed != nil

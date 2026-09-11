@@ -1868,7 +1868,7 @@ struct AdvancedPortDetails: View {
                 ActiveCableVDO2Section(vdo2: v2)
             }
             if let root = thunderboltRoot, !thunderboltTree.isEmpty {
-                ThunderboltFabricSection(root: root, nodes: thunderboltTree)
+                ThunderboltFabricSection(root: root, nodes: thunderboltTree, switches: thunderboltSwitches)
             }
             if let root = thunderboltRoot {
                 // Bundle is Core's, not the app's: ActiveTunnelPresentation's
@@ -1987,6 +1987,9 @@ struct ActiveCableVDO2Section: View {
 struct ThunderboltFabricSection: View {
     let root: IOThunderboltSwitch
     let nodes: [IOThunderboltSwitchNode]
+    /// The flat switch list, needed to tell a linked lane from a host root's
+    /// idle-but-trained one.
+    let switches: [IOThunderboltSwitch]
     @State private var expanded = true
 
     var body: some View {
@@ -1996,14 +1999,16 @@ struct ThunderboltFabricSection: View {
                     depth: 0,
                     arrow: "",
                     name: String(localized: "Host (\(root.className))", bundle: _appLocalizedBundle),
-                    port: ThunderboltTopology.activeDownstreamLanePort(root)
+                    port: ThunderboltTopology.activeDownstreamLanePort(root, in: switches),
+                    sw: root
                 )
                 ForEach(ThunderboltTopology.flatten(nodes), id: \.id) { node in
                     row(
                         depth: node.depth + 1,
                         arrow: "↳ ",
                         name: ThunderboltLabels.deviceName(for: node.sw),
-                        port: ThunderboltTopology.connectionLanePort(node.sw)
+                        port: ThunderboltTopology.connectionLanePort(node.sw, in: switches),
+                        sw: node.sw
                     )
                 }
             }
@@ -2015,9 +2020,10 @@ struct ThunderboltFabricSection: View {
     }
 
     @ViewBuilder
-    private func row(depth: Int, arrow: String, name: String, port: IOThunderboltPort?) -> some View {
+    private func row(depth: Int, arrow: String, name: String, port: IOThunderboltPort?, sw: IOThunderboltSwitch) -> some View {
         let indent = String(repeating: "  ", count: depth)
-        let linkLabel = port.flatMap { ThunderboltLabels.linkLabel(for: $0) } ?? String(localized: "no active link", bundle: _appLocalizedBundle)
+        // Read from the Mac's side so the row agrees with the port line.
+        let linkLabel = port.flatMap { ThunderboltLabels.linkLabel(for: $0, on: sw) } ?? String(localized: "no active link", bundle: _appLocalizedBundle)
         HStack(alignment: .top) {
             Text(verbatim: "\(indent)\(arrow)\(name)")
                 .scaledFont(.caption, design: .monospaced)

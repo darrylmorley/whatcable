@@ -51,9 +51,19 @@ public final class USBWatcher: ObservableObject {
     /// nothing in production branches on it.
     static var billboardReadCount = 0
 
+    /// Count of `AppleUSBHostBillboardDevice` nub arrivals handled by
+    /// `handleBillboardNubAdded` since last reset, and the `USBDevice.id` the
+    /// most recent one resolved to (nil when the walk up found no USB device).
+    /// Diagnostic only, same pattern as `billboardReadCount`: they exist so a
+    /// test can prove the nub registration fired and landed on the right
+    /// device. Nothing in production branches on them.
+    static var billboardNubArrivals = 0
+    static var lastBillboardNubDeviceID: UInt64?
+
     private var notifyPort: IONotificationPortRef?
     private var addedIter: io_iterator_t = 0
     private var removedIter: io_iterator_t = 0
+    private var nubIter: io_iterator_t = 0
 
     public init() {}
 
@@ -75,6 +85,12 @@ public final class USBWatcher: ObservableObject {
             guard let refcon else { return }
             let watcher = Unmanaged<USBWatcher>.fromOpaque(refcon).takeUnretainedValue()
             Task { @MainActor [weak watcher] in watcher?.handleRemoved(iterator: iterator) }
+        }
+
+        let nubCallback: IOServiceMatchingCallback = { refcon, iterator in
+            guard let refcon else { return }
+            let watcher = Unmanaged<USBWatcher>.fromOpaque(refcon).takeUnretainedValue()
+            Task { @MainActor [weak watcher] in watcher?.handleBillboardNubAdded(iterator: iterator) }
         }
 
         // IOServiceAddMatchingNotification consumes one reference to the matching
@@ -103,11 +119,35 @@ public final class USBWatcher: ObservableObject {
         ) == KERN_SUCCESS {
             handleRemoved(iterator: removedIter)
         }
+
+        // A device's matched notification does not wait for its children to
+        // match: the `AppleUSBHostBillboardDevice` nub is a separate driver
+        // that matches the Billboard interface afterwards and publishes the
+        // `UsbBillboard*` keys in its own start. A dock plugged in after
+        // launch can therefore reach `makeDevice` before its nub exists, and
+        // with the probe gate off it would keep `billboard == nil` for the
+        // life of the process (`handleAdded` drops a repeat of the same entry
+        // id, and `reenumerate` only runs when the gate opens). Watching the
+        // nub class closes that window: when a nub appears, its parent device
+        // is rebuilt on its own. Never `reenumerate` here; with the gate on
+        // that re-issues a control transfer to every device, the issue #429
+        // loop.
+        if IOServiceAddMatchingNotification(
+            port,
+            kIOFirstMatchNotification,
+            IOServiceMatching("AppleUSBHostBillboardDevice"),
+            nubCallback,
+            selfPtr,
+            &nubIter
+        ) == KERN_SUCCESS {
+            handleBillboardNubAdded(iterator: nubIter)
+        }
     }
 
     public func stop() {
         if addedIter != 0 { IOObjectRelease(addedIter); addedIter = 0 }
         if removedIter != 0 { IOObjectRelease(removedIter); removedIter = 0 }
+        if nubIter != 0 { IOObjectRelease(nubIter); nubIter = 0 }
         if let port = notifyPort {
             IONotificationPortDestroy(port)
             notifyPort = nil
@@ -163,6 +203,57 @@ public final class USBWatcher: ObservableObject {
         }
     }
 
+    /// A Billboard nub has matched. Resolve it to the `IOUSBHostDevice` two
+    /// levels above (nub -> interface -> device) and rebuild that one device
+    /// through `makeDevice`, replacing the entry already in `devices` or
+    /// appending when the device notification has not landed yet. At most one
+    /// gated control transfer can result (only if the nub's keys do not
+    /// parse), against one device, which is why this never re-enumerates.
+    private func handleBillboardNubAdded(iterator: io_iterator_t) {
+        let rebuilt = wcDrainAllRetrying(iterator) { nub -> USBDevice? in
+            Self.billboardNubArrivals += 1
+            guard let device = Self.parentUSBDevice(ofNub: nub) else {
+                Self.lastBillboardNubDeviceID = nil
+                return nil
+            }
+            defer { IOObjectRelease(device) }
+            let made = makeDevice(from: device)
+            Self.lastBillboardNubDeviceID = made?.id
+            return made
+        }
+        for device in rebuilt {
+            guard let device else { continue }
+            if let index = devices.firstIndex(where: { $0.id == device.id }) {
+                devices[index] = device
+            } else {
+                devices.append(device)
+            }
+        }
+        devices.sort { ($0.productName ?? "") < ($1.productName ?? "") }
+    }
+
+    /// The `IOUSBHostDevice` two hops above a Billboard nub in the service
+    /// plane, retained for the caller to release, or nil when either hop is
+    /// missing or the grandparent is not a USB device. The interface in the
+    /// middle is released here.
+    private static func parentUSBDevice(ofNub nub: io_service_t) -> io_service_t? {
+        var interface: io_service_t = 0
+        guard IORegistryEntryGetParentEntry(nub, kIOServicePlane, &interface) == KERN_SUCCESS else {
+            return nil
+        }
+        defer { IOObjectRelease(interface) }
+
+        var device: io_service_t = 0
+        guard IORegistryEntryGetParentEntry(interface, kIOServicePlane, &device) == KERN_SUCCESS else {
+            return nil
+        }
+        guard IOObjectConformsTo(device, "IOUSBHostDevice") != 0 else {
+            IOObjectRelease(device)
+            return nil
+        }
+        return device
+    }
+
     private func makeDevice(from service: io_service_t) -> USBDevice? {
         var entryID: UInt64 = 0
         guard IORegistryEntryGetRegistryEntryID(service, &entryID) == KERN_SUCCESS else { return nil }
@@ -188,10 +279,12 @@ public final class USBWatcher: ObservableObject {
         let current = (dict["Requested Power"] as? NSNumber).map { $0.intValue * 2 }
         let deviceClass = (dict["bDeviceClass"] as? NSNumber)?.uint8Value
 
-        // The leaf IOKit class. A Billboard device enumerates as
-        // "AppleUSBHostBillboardDevice" (a subclass of IOUSBHostDevice, so the
-        // matcher above still catches it). Used as a detection signal that
-        // doesn't depend on the product-name string.
+        // The leaf IOKit class, a detection signal that doesn't depend on the
+        // product-name string. Note the standalone Billboard nub
+        // ("AppleUSBHostBillboardDevice") is NOT an IOUSBHostDevice and so
+        // never reaches this method; it sits two levels below the device the
+        // matcher found, and `billboardNubPropertyDictionaries` reaches it
+        // from there.
         // Only trust the buffer when the call succeeds; on failure IOKit does
         // not guarantee it leaves the buffer untouched, and USBDevice's
         // contract is that ioClassName is nil when unavailable.
@@ -228,8 +321,23 @@ public final class USBWatcher: ObservableObject {
         // NOT invisible: it is a real control transfer on the bus, and some KVM
         // switches and hubs react to it (issue #429). `probeBillboardDescriptors`
         // is the user's escape hatch for that; when off, we issue nothing.
+        //
+        // A device with a Billboard nub below it takes a registry path first.
+        // The nub (`AppleUSBHostBillboardDevice`, two levels down: device ->
+        // Billboard interface -> nub) is where macOS writes its own decode of
+        // the descriptor as `UsbBillboard*` keys, and it is also where the BOS
+        // control transfer is refused (400 of 400 in the customer-probe
+        // corpus). That is why the transfer targets this parent device, and
+        // the keys are walked to on the nub. A nub whose keys are absent or do
+        // not parse (38 of 400 in the corpus) falls through to the gated
+        // transfer exactly as before, so no device loses anything it had.
         let billboard: BillboardCapability?
-        if Self.probeBillboardDescriptors {
+        if let fromRegistry = Self.billboardNubPropertyDictionaries(under: service)
+            .lazy.compactMap(Self.registryBillboard).first {
+            // Property read only, no bus traffic, so it runs whether or not
+            // the probe toggle is on.
+            billboard = fromRegistry
+        } else if Self.probeBillboardDescriptors {
             Self.billboardReadCount += 1
             billboard = Self.billboardReader(service)
         } else {
@@ -261,6 +369,101 @@ public final class USBWatcher: ObservableObject {
             ioClassName: ioClassName,
             billboard: billboard,
             rawProperties: raw
+        )
+    }
+
+    /// The property dictionary of every `AppleUSBHostBillboardDevice` nub two
+    /// levels below a USB device (device -> `IOUSBHostInterface` -> nub), in
+    /// registry order, empty when the device has none. Like `collectAncestors`,
+    /// this only gathers; `registryBillboard` decides, and `makeDevice` takes
+    /// the first dictionary that parses rather than the first nub met, so a
+    /// nub without usable keys cannot shadow a later one. No corpus device is
+    /// known to carry two nubs, but that cannot be counted (nubs carry no
+    /// locationID to tie them to a device), so the walk collects all of them.
+    ///
+    /// The walk exists because the nub is not a USB device: it inherits from
+    /// `IOService`, not `IOUSBHostDevice` (probe 41 class discovery, 50 of 50
+    /// folders in the customer-probe corpus, and `IOObjectConformsTo` says the
+    /// same live), so the `IOUSBHostDevice` matcher this watcher runs never
+    /// enumerates it (probe 38, 0 of 507 folders). What the matcher does find
+    /// is the parent device, whose Billboard interface (`bInterfaceClass 0x11`)
+    /// carries the nub as its child. Depth is fixed at two so a hub never picks
+    /// up a downstream device's Billboard through the port chain.
+    ///
+    /// Property reads only: no device open, no control transfer. The subtree
+    /// is small (a device's interfaces and their nubs), so this is plain
+    /// iteration rather than `wcDrainAllRetrying`; every object and iterator
+    /// it obtains is released.
+    private static func billboardNubPropertyDictionaries(under service: io_service_t) -> [[String: Any]] {
+        var interfaces: io_iterator_t = 0
+        guard IORegistryEntryGetChildIterator(service, kIOServicePlane, &interfaces) == KERN_SUCCESS else {
+            return []
+        }
+        defer { IOObjectRelease(interfaces) }
+        var dictionaries: [[String: Any]] = []
+
+        while case let interface = IOIteratorNext(interfaces), interface != 0 {
+            defer { IOObjectRelease(interface) }
+            guard IOObjectConformsTo(interface, "IOUSBHostInterface") != 0 else { continue }
+
+            var nubs: io_iterator_t = 0
+            guard IORegistryEntryGetChildIterator(interface, kIOServicePlane, &nubs) == KERN_SUCCESS else {
+                continue
+            }
+            defer { IOObjectRelease(nubs) }
+
+            while case let nub = IOIteratorNext(nubs), nub != 0 {
+                defer { IOObjectRelease(nub) }
+                var classBuf = [CChar](repeating: 0, count: 128)
+                guard IOObjectGetClass(nub, &classBuf) == KERN_SUCCESS,
+                      String(cString: classBuf) == "AppleUSBHostBillboardDevice" else {
+                    continue
+                }
+                var props: Unmanaged<CFMutableDictionary>?
+                guard IORegistryEntryCreateCFProperties(nub, &props, kCFAllocatorDefault, 0) == KERN_SUCCESS,
+                      let dict = props?.takeRetainedValue() as? [String: Any] else {
+                    continue
+                }
+                dictionaries.append(dict)
+            }
+        }
+        return dictionaries
+    }
+
+    /// Builds the Billboard capability from the `UsbBillboard*` registry keys
+    /// of an `AppleUSBHostBillboardDevice` nub, or nil when the dictionary
+    /// carries none. Pure over the property dictionary so the corpus sweep can
+    /// replay probe 25's recorded keys through the exact code production runs.
+    ///
+    /// The dictionary is the nub's own, handed over by
+    /// `billboardNubPropertyDictionaries`, which is what guarantees the class:
+    /// no class check is repeated here.
+    /// The claim being made is "this nub's BOS control transfer is refused and
+    /// its registry keys are the answer", measured on that one class (400 of
+    /// 400 in the corpus).
+    ///
+    /// Returns nil when the keys are absent or nothing in them parses, so the
+    /// caller falls through to the gated control transfer as before.
+    nonisolated static func registryBillboard(from dict: [String: Any]) -> BillboardCapability? {
+        // The array bridges as [Any]; keep only the string entries.
+        let supportedModes = (dict["UsbBillboardSupportedModes"] as? [Any])?
+            .compactMap { $0 as? String } ?? []
+        // Belt and braces, not a necessity: a live CFBoolean (`__NSCFBoolean`)
+        // bridges through `as? Bool` fine (measured). The NSNumber arm also
+        // accepts an integer-typed flag, which a replayed dictionary can carry.
+        let altModeFailed: Bool
+        if let flag = dict["UsbBillboardAltModeFailed"] as? NSNumber {
+            altModeFailed = flag.boolValue
+        } else {
+            altModeFailed = dict["UsbBillboardAltModeFailed"] as? Bool ?? false
+        }
+
+        return BillboardCapability.fromRegistry(
+            supportedModes: supportedModes,
+            currentMode: dict["UsbBillboardCurrentMode"] as? String,
+            preferredMode: dict["UsbBillboardPreferredMode"] as? String,
+            altModeFailed: altModeFailed,
+            version: dict["UsbBillboardVersion"] as? String
         )
     }
 

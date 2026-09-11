@@ -827,6 +827,22 @@ struct JSONFormatterTests {
         #expect((obj["thunderboltSwitches"] as? [Any])?.count == 0)
     }
 
+    /// The depth-1 switch an attached device produces. Its route string's
+    /// low byte is the host root's own downstream port number, which is what
+    /// makes that host lane read as linked rather than merely trained.
+    private func attachedPartner(parent: Int64, onPortNumber: Int = 1) -> IOThunderboltSwitch {
+        IOThunderboltSwitch(
+            id: -7,
+            className: "IOThunderboltSwitchIntelJHL8440",
+            vendorID: 0x8086, vendorName: "Intel", modelName: "JHL8440",
+            routerID: 1, depth: 1, routeString: Int64(onPortNumber),
+            upstreamPortNumber: 1, maxPortNumber: 4,
+            supportedSpeed: SupportedSpeedMask(rawValue: 12),
+            ports: [],
+            parentSwitchUID: parent
+        )
+    }
+
     @Test("IOThunderboltSwitches encoded at top level")
     func ioThunderboltSwitchesEncodedAtTopLevel() throws {
         let host = IOThunderboltSwitch(
@@ -858,11 +874,11 @@ struct JSONFormatterTests {
 
         let json = try JSONFormatter.render(
             ports: [makePort()], sources: [], identities: [], showRaw: false,
-            thunderboltSwitches: [host]
+            thunderboltSwitches: [host, attachedPartner(parent: host.id)]
         )
         let obj = parse(json)
         let switches = obj["thunderboltSwitches"] as? [[String: Any]] ?? []
-        #expect(switches.count == 1)
+        #expect(switches.count == 2)
 
         let sw = switches[0]
         // The hardware UID is a stable machine identifier and must never
@@ -880,6 +896,77 @@ struct JSONFormatterTests {
         #expect(port["generation"] as? String == "usb4Tb4")
         #expect(port["perLaneGbps"] as? Int == 20)
         #expect(port["txLanes"] as? Int == 2)
+        #expect(port["txGbps"] as? Double == 40)
+        #expect(port["rxGbps"] as? Double == 40)
+    }
+
+    @Test("Asymmetric TB5 port encodes separate txGbps and rxGbps")
+    func asymmetricTb5PortEncodesSeparateRates() throws {
+        let host = IOThunderboltSwitch(
+            id: 408750268121704800,
+            className: "IOIOThunderboltSwitchType5",
+            vendorID: 1452, vendorName: "Apple Inc.", modelName: "iOS",
+            routerID: 0, depth: 0, routeString: 0,
+            upstreamPortNumber: 7, maxPortNumber: 8,
+            supportedSpeed: SupportedSpeedMask(rawValue: 12),
+            ports: [
+                IOThunderboltPort(
+                    portNumber: 1, socketID: "1", adapterType: .lane,
+                    currentSpeed: .tb5,
+                    currentWidth: LinkWidth(rawValue: 0x4),
+                    targetWidth: .dual,
+                    rawTargetSpeed: 12,
+                    linkBandwidthRaw: 400
+                )
+            ],
+            parentSwitchUID: nil
+        )
+
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [], showRaw: false,
+            thunderboltSwitches: [host, attachedPartner(parent: host.id)]
+        )
+        let obj = parse(json)
+        let switches = obj["thunderboltSwitches"] as? [[String: Any]] ?? []
+        let port = (switches[0]["ports"] as? [[String: Any]] ?? []).first ?? [:]
+        #expect(port["linkLabel"] as? String == "Up to 120 Gb/s out, 40 Gb/s in")
+        #expect(port["txGbps"] as? Double == 120)
+        #expect(port["rxGbps"] as? Double == 40)
+    }
+
+    /// An idle host root still reports trained lanes, so the raw read would
+    /// publish a live link on an empty port. JSON must say linkActive false
+    /// and carry no label at all.
+    @Test("Idle host root port encodes linkActive false and no linkLabel")
+    func idleHostRootPortEncodesNoLink() throws {
+        let host = IOThunderboltSwitch(
+            id: 408750268121704800,
+            className: "IOThunderboltSwitchType5",
+            vendorID: 1452, vendorName: "Apple Inc.", modelName: "iOS",
+            routerID: 0, depth: 0, routeString: 0,
+            upstreamPortNumber: 7, maxPortNumber: 8,
+            supportedSpeed: SupportedSpeedMask(rawValue: 12),
+            ports: [
+                // Speed code 0x8, width 1: what an empty socket reads on
+                // Type3 to Type5 silicon, corpus-wide.
+                IOThunderboltPort(
+                    portNumber: 1, socketID: "1", adapterType: .lane,
+                    currentSpeed: .tb3,
+                    currentWidth: LinkWidth(rawValue: 0x1),
+                    targetWidth: .dual,
+                    rawTargetSpeed: 12, linkBandwidthRaw: 100
+                )
+            ],
+            parentSwitchUID: nil
+        )
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [], showRaw: false,
+            thunderboltSwitches: [host]
+        )
+        let obj = parse(json)
+        let port = ((obj["thunderboltSwitches"] as? [[String: Any]])?.first?["ports"] as? [[String: Any]])?.first ?? [:]
+        #expect(port["linkActive"] as? Bool == false)
+        #expect(port["linkLabel"] == nil)
     }
 
     /// A daisy-chained dock's switch must reference its parent by array
@@ -954,7 +1041,7 @@ struct JSONFormatterTests {
         )
         let json = try JSONFormatter.render(
             ports: [makePort()], sources: [], identities: [], showRaw: false,
-            thunderboltSwitches: [host]
+            thunderboltSwitches: [host, attachedPartner(parent: host.id)]
         )
         let obj = parse(json)
         let port = ((obj["thunderboltSwitches"] as? [[String: Any]])?.first?["ports"] as? [[String: Any]])?.first ?? [:]
@@ -1339,7 +1426,7 @@ struct JSONFormatterTests {
 
         let json = try JSONFormatter.render(
             ports: [usbC], sources: [], identities: [cableEmarker],
-            showRaw: false, thunderboltSwitches: [host]
+            showRaw: false, thunderboltSwitches: [host, attachedPartner(parent: host.id)]
         )
         let obj = parse(json)
         let port = (obj["ports"] as? [[String: Any]])?.first ?? [:]

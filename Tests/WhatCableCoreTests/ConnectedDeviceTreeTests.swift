@@ -268,17 +268,19 @@ struct ConnectedDeviceTreeTests {
         #expect(rows[0].label.hasSuffix("Thunderbolt link active at 80 Gbps"))
     }
 
-    @Test("Asymmetric TB5 link falls back to the per-lane label, never a false total")
+    @Test("Asymmetric TB5 link falls back to the per-direction label, never a false total")
     func asymmetricFallsBack() throws {
-        // 3 TX / 1 RX (raw 0x4): no single honest total exists.
+        // The dock's upstream lane is 1 TX / 3 RX (raw 0x8), the real shape.
+        // No single symmetric total exists, so the fallback reads one rate
+        // per direction, and the row is written from the Mac's side.
         let rows = ConnectedDeviceTree.rows(
             devices: [],
             port: makePort(),
-            thunderboltSwitches: [hostRoot(), dockSwitch(speed: .tb5, widthRaw: 0x4)],
+            thunderboltSwitches: [hostRoot(), dockSwitch(speed: .tb5, widthRaw: 0x8)],
             displayPorts: []
         )
         try #require(rows.count == 1)
-        #expect(rows[0].label.contains("TX"), "Asymmetric link must show the per-lane form: \(rows[0].label)")
+        #expect(rows[0].label.hasSuffix("Up to 120 Gb/s out, 40 Gb/s in"), "Asymmetric link must read from the Mac's side: \(rows[0].label)")
         #expect(!rows[0].label.contains("Thunderbolt link active at"))
     }
 

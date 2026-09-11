@@ -633,9 +633,14 @@ extension PortSummary {
                 emarkerLines.append(String(localized: "Passive (no signal-conditioning electronics)", bundle: _coreLocalizedBundle))
             }
 
-            // The controller's own reading of the cable. A measurement, so it
-            // belongs with the Mac's other measurements, not among the
-            // e-marker's claims.
+            // The controller's reading of the cable, placed with the Mac's
+            // other measurements rather than among the e-marker's claims.
+            //
+            // The CIO figure is the controller's claim about the cable and
+            // peer pair: a floor on cable capability that can sit above the
+            // lane the link trained (31 of 378 replayed corpus ports). The bullet
+            // confirms the lower of that claim and the lane; the cable's own
+            // ceiling stays on the e-marker group's "Cable speed" line.
             //
             // Still gated on a passive e-marker and a live Thunderbolt link,
             // which is where it has always fired. Widening it to active cables
@@ -644,19 +649,20 @@ extension PortSummary {
                let cio = cioCapability,
                let speed = cio.negotiatedLinkSpeed,
                let label = CIOCableCapability.speedLabel(for: speed),
-               let cioGbps = DataLinkDiagnostic.cioCableGbps(speed) {
-                // The controller's figure is the NEGOTIATED link rate, a floor
-                // on cable capability, never a cap (issue #393). Only call it a
-                // genuine confirmation when the controller measured at least
-                // what the e-marker claims; when the e-marker claims a higher
-                // tier than the controller measured, describing the *cable* as
-                // "N Gbps capable" would understate it, so describe the *link*
-                // instead and leave the cable's capability to the e-marker
-                // group's "Cable speed" line.
-                if !DataLinkDiagnostic.meaningfullySlower(cioGbps, than: cv.speed.maxGbps) {
+               let cioGbps = DataLinkDiagnostic.cioCableGbps(speed),
+               // With no trained lane figure the CIO code alone proves
+               // nothing about what the cable carried, so no controller
+               // bullet is printed rather than its claim as a rate.
+               let laneGbps = DataLinkDiagnostic.activeTBGbps(port: port, switches: thunderboltSwitches) {
+                let confirmed = min(cioGbps, laneGbps)
+                // `label` names the CIO tier, so it is only safe once the lane
+                // has carried that tier; otherwise it would sit above the lane.
+                let laneCorroboratesClaim = !DataLinkDiagnostic.meaningfullySlower(laneGbps, than: cioGbps)
+                if laneCorroboratesClaim,
+                   !DataLinkDiagnostic.meaningfullySlower(confirmed, than: cv.speed.maxGbps) {
                     measured.append(String(localized: "Controller confirms Thunderbolt cable (\(label))", bundle: _coreLocalizedBundle))
                 } else {
-                    measured.append(String(localized: "Thunderbolt link active at \(DataLinkDiagnostic.label(cioGbps))", bundle: _coreLocalizedBundle))
+                    measured.append(String(localized: "Thunderbolt link active at \(DataLinkDiagnostic.label(laneGbps))", bundle: _coreLocalizedBundle))
                 }
             }
         }
@@ -1190,7 +1196,7 @@ private func thunderboltBullets(
 
     // First-hop link state: the host root's downstream lane port describes
     // the cable's negotiated speed.
-    if let hostPort = ThunderboltTopology.activeDownstreamLanePort(root),
+    if let hostPort = ThunderboltTopology.trainedDownstreamLanePort(root),
        let label = ThunderboltLabels.linkLabel(for: hostPort) {
         // label is e.g. "Up to 20 Gb/s × 2" — replace the leading "Up"
         // with "up" for the bullet phrasing without lowercasing units.
@@ -1240,10 +1246,10 @@ private func thunderboltBullets(
     // (device N-1 -> device N) genuinely contrasts two distinct cables.
     if !isBranching,
        downstream.count >= 2,
-       let hostPort = ThunderboltTopology.activeDownstreamLanePort(root),
+       let hostPort = ThunderboltTopology.trainedDownstreamLanePort(root),
        let last = downstream.last,
-       let lastLeg = ThunderboltTopology.activeDownstreamLanePort(last)
-            ?? last.ports.first(where: { $0.adapterType.isLane && $0.hasActiveLink }),
+       let lastLeg = ThunderboltTopology.trainedDownstreamLanePort(last)
+            ?? last.ports.first(where: { $0.adapterType.isLane && $0.hasTrainedLanes }),
        let stepLabel = stepDownLabel(host: hostPort, lastLeg: lastLeg) {
         bullets.append(stepLabel)
     }

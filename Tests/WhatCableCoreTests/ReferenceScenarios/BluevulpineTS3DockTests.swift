@@ -15,10 +15,12 @@ import Testing
 ///   no conflict.
 /// - Scenario 2, 2026-05-20: original Sumitomo TB3 cable. E-marker
 ///   reports "USB 3.2 Gen 2 (10 Gbps), passive". CIO controller still
-///   says 40 Gbps. **Cross-tier disagreement, classic issue #111**:
-///   the cable is genuinely TB-capable but the e-marker under-reports.
-///   The controller's reading must win and the verdict must remain
-///   `.fine(40)` with `cableSignalConflict = true`.
+///   says 40 Gbps. The classic issue #111 shape: the cable is genuinely
+///   TB-capable and its e-marker speed field describes USB data only.
+///   The controller's figure is the cable figure and the verdict is
+///   `.fine(40)`. It is not a disagreement (CIO-semantics change): a USB-only speed
+///   field under a Thunderbolt link is normal (67 corpus ports), so
+///   `cableSignalConflict = false` and no note is printed.
 ///
 /// Both scenarios' CIO blocks are identical (see the comparison table
 /// at lines 16-25 of the source dump). The CIO codes are
@@ -150,14 +152,15 @@ struct BluevulpineTS3DockTests {
 
     // MARK: - Scenario 2: Sumitomo TB3 cable (2026-05-20)
 
-    @Test("Scenario 2: Sumitomo passive TB3 cable, controller wins (issue #111)")
+    @Test("Scenario 2: Sumitomo passive TB3 cable, controller's figure stands without a note (issue #111)")
     func scenario2_SumitomoPassiveCable_ControllerWins() {
         // The textbook #111 case. Sumitomo cable e-marker self-reports
         // "USB 3.2 Gen 2 (10 Gbps), passive" per the prose at source
         // lines 36-37. Speed code 2 in USB-PD VDO encoding. CIO
         // controller still reports CableSpeed = 3 (40 Gbps) per source
-        // line 91. Cross-tier disagreement; CIO wins, e-marker is
-        // recorded as conflicted but does not override.
+        // line 91. The controller's figure is the cable figure. The
+        // e-marker's field is USB-only, so this is not a disagreement
+        // and no note is printed (CIO-semantics change; before it the flag was set).
         let diag = DataLinkDiagnostic(
             port: Self.ts3HostPort(),
             identities: [Self.cableEmarker(speedCode: 2)],
@@ -173,17 +176,16 @@ struct BluevulpineTS3DockTests {
             return
         }
         #expect(active == 40)
-        #expect(diag!.cableSignalConflict == true,
-            "Passive e-marker (10 Gbps) disagrees with CIO (40 Gbps). Conflict flag must be set.")
+        #expect(diag!.cableSignalConflict == false,
+            "A USB-only e-marker speed field (10 Gbps) under CIO 40 is not a disagreement.")
         #expect(diag!.facts.cableEmarkerGbps == 10)
         #expect(diag!.facts.cableControllerGbps == 40)
         #expect(diag!.facts.cableGbps == 40,
-            "Controller (40) must win over the under-reporting e-marker (10). Got: \(String(describing: diag!.facts.cableGbps))")
-        // The detail string must surface the conflict in plain language
-        // so the user sees that the e-marker and controller disagree,
-        // and that the controller is being trusted.
-        #expect(diag!.detail.contains("disagree"),
-            "Detail must explain the e-marker vs controller disagreement: \(diag!.detail)")
+            "Controller (40) is the cable figure over the USB-only e-marker field (10). Got: \(String(describing: diag!.facts.cableGbps))")
+        // No note: the user is not told the two readings disagree,
+        // because they do not describe the same thing.
+        #expect(!diag!.detail.contains("disagree"),
+            "Detail must not print a disagreement note: \(diag!.detail)")
     }
 
     // MARK: - Cross-scenario cross-field consistency

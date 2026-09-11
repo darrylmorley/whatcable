@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Onbekende generatie (ruwe snelheidscode 0x2, vermoedelijk TB5)";
 "Unspecified" = "Niet gespecificeerd";
 "Up to %lld Gb/s %@" = "Tot %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "Tot %1$lld Gb/s uit, %2$lld Gb/s in";
 "VCONN-powered device" = "VCONN-gevoed apparaat";
 "Vendor ID isn't in USB-IF's published list" = "Fabrikant-ID staat niet in de gepubliceerde USB-IF-lijst";
 "What can this USB-C cable actually do?" = "Wat kan deze USB-C-kabel eigenlijk?";
@@ -321,8 +322,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "Er is niets dat beperkt: alle zichtbare onderdelen ondersteunen deze snelheid.";
 "Cable is limiting data speed" = "Kabel beperkt de datasnelheid";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "De Mac en het apparaat kunnen %@, maar de kabel draagt slechts %@. Een snellere kabel zou de volledige snelheid ontgrendelen.";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "De Mac kan %1$@, maar de kabel draagt slechts %2$@. Een snellere kabel zou de volledige snelheid ontgrendelen.";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Het apparaat kan %1$@, maar de kabel draagt slechts %2$@. Een snellere kabel zou de volledige snelheid ontgrendelen.";
 "This Mac port limits data speed" = "Deze Mac-poort beperkt de datasnelheid";
 "The cable and device can do %@, but this port maxes out at %@." = "De kabel en het apparaat kunnen %@, maar deze poort is maximaal %@.";
+"The cable can do %@, but this port maxes out at %@." = "De kabel kan %1$@, maar deze poort is maximaal %2$@.";
+"The device can do %@, but this port maxes out at %@." = "Het apparaat kan %1$@, maar deze poort is maximaal %2$@.";
 "Device runs at %@" = "Apparaat draait op %@";
 "This is the fastest the connected device supports. It is not a cable problem." = "Dit is de maximale snelheid die het verbonden apparaat ondersteunt. Het is geen kabelprobleem.";
 "Cable says %@, link reads %@" = "Kabel geeft %@ aan, verbinding meet %@";
@@ -545,6 +550,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "Controller bevestigt Thunderbolt-kabel (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt-verbinding actief op %@";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "De kabel claimt %1$@, en de verbinding heeft ten minste %2$@ gedraaid. Er zijn geen gegevens over de poort of het apparaat om mee te vergelijken, dus we kunnen niet zeggen of iets anders de beperkende factor is.";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "De kabel claimt %1$@, en de verbinding heeft ten minste %2$@ gedraaid. Er zijn geen gegevens over het apparaat om mee te vergelijken, dus we kunnen niet zeggen of iets anders de beperkende factor is.";
 
 "Shared controller port" = "Gedeelde controllerpoort";
 

@@ -62,6 +62,7 @@ struct PortSummaryThunderboltTests {
         uid: Int64,
         depth: Int,
         parent: Int64?,
+        routeString: Int64 = 0,
         upstreamPort: Int = 0,
         vendor: String,
         model: String,
@@ -75,7 +76,7 @@ struct PortSummaryThunderboltTests {
             modelName: model,
             routerID: 0,
             depth: depth,
-            routeString: 0,
+            routeString: routeString,
             upstreamPortNumber: upstreamPort,
             maxPortNumber: 8,
             supportedSpeed: SupportedSpeedMask(rawValue: 12),
@@ -95,7 +96,7 @@ struct PortSummaryThunderboltTests {
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .usb4Tb4, widthRaw: 0x2)]
         )
         let device = sw(
-            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
             vendor: "ASUS-Display", model: "PA32QCV",
             ports: [lanePort(portNumber: 1, socketID: nil, speed: .usb4Tb4, widthRaw: 0x2)]
         )
@@ -126,15 +127,24 @@ struct PortSummaryThunderboltTests {
             vendor: "Apple Inc.", model: "iOS",
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .tb3, widthRaw: 0x2)]
         )
+        // The device is what makes the host lane a link: a host root reports
+        // trained lanes on an empty socket too.
+        let device = sw(
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
+            vendor: "CalDigit, Inc.", model: "TS3 Plus",
+            ports: [lanePort(portNumber: 1, socketID: nil, speed: .tb3, widthRaw: 0x2)]
+        )
 
-        let summary = PortSummary(port: port, thunderboltSwitches: [host])
+        let summary = PortSummary(port: port, thunderboltSwitches: [host, device])
         #expect(summary.bullets.contains("Linked at up to 10 Gb/s × 2"))
-        // The badge uses the published TB3 headline rate (40 Gbps), the same
-        // figure DataLinkDiagnostic treats as the active TB rate and the real
-        // TS3 dock confirms (CableSpeed=3). The per-lane bullet is a separate
-        // representation; the badge intentionally shows the recognisable rate.
-        #expect(summary.linkSpeed?.tier == .tb40)
-        #expect(summary.linkSpeed?.badge == "40G")
+        // Speed code 0x8 is 10 Gb/s per lane, so two lanes carry 20 Gbps,
+        // corpus-confirmed against Link Bandwidth. The badge follows the
+        // active rate and so agrees with the bullet above; a real 40 Gbps
+        // TB3 link trains at code 0x4 and is covered by the USB4/TB4 test.
+        // There is no Thunderbolt tier below 40 Gbps, so the resolver
+        // reuses the 20G tier (see LinkSpeed resolution in PortSummary).
+        #expect(summary.linkSpeed?.tier == .usb20g)
+        #expect(summary.linkSpeed?.badge == "20G")
     }
 
     // MARK: - TB1/TB2-era device generation cap (issue #515)
@@ -203,7 +213,7 @@ struct PortSummaryThunderboltTests {
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .usb4Tb4, widthRaw: 0x2)]
         )
         let asus = sw(
-            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
             vendor: "ASUS-Display", model: "PA32QCV",
             ports: [
                 lanePort(portNumber: 1, socketID: nil, speed: .usb4Tb4, widthRaw: 0x2),
@@ -251,7 +261,7 @@ struct PortSummaryThunderboltTests {
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .usb4Tb4, widthRaw: 0x1)] // single-lane
         )
         let first = sw(
-            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
             vendor: "Dock Co.", model: "Middle Dock",
             ports: [
                 lanePort(portNumber: 1, socketID: nil, speed: .usb4Tb4, widthRaw: 0x1),
@@ -288,7 +298,7 @@ struct PortSummaryThunderboltTests {
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .usb4Tb4, widthRaw: 0x2)]
         )
         let middle = sw(
-            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
             vendor: "Dock Co.", model: "USB4 Dock",
             ports: [
                 lanePort(portNumber: 1, socketID: nil, speed: .usb4Tb4, widthRaw: 0x2),
@@ -325,7 +335,7 @@ struct PortSummaryThunderboltTests {
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .tb3, widthRaw: 0x1)]
         )
         let middle = sw(
-            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
             vendor: "Dock Co.", model: "Dock",
             ports: [
                 lanePort(portNumber: 1, socketID: nil, speed: .tb3, widthRaw: 0x1),
@@ -368,7 +378,7 @@ struct PortSummaryThunderboltTests {
         // Samsung-style single device: upstream port reports the same
         // link from the device side with a different width value.
         let samsung = sw(
-            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
             vendor: "SAMSUNG ELECTRONICS CO.,LTD", model: "C34J79x",
             ports: [lanePort(portNumber: 1, socketID: nil, speed: .tb3, widthRaw: 0x1)]
         )
@@ -398,7 +408,7 @@ struct PortSummaryThunderboltTests {
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .usb4Tb4, widthRaw: 0x2)]
         )
         let caldigit = sw(
-            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
             vendor: "CalDigit, Inc.", model: "Thunderbolt 4 Pro Dock",
             ports: [lanePort(portNumber: 2, socketID: nil, speed: .usb4Tb4, widthRaw: 0x2)]
         )
@@ -477,7 +487,7 @@ struct PortSummaryThunderboltTests {
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .usb4Tb4, widthRaw: 0x2)]
         )
         let dock = sw(
-            uid: 200, depth: 1, parent: 100, upstreamPort: 1,
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
             vendor: "CalDigit, Inc.", model: "TS4",
             ports: [lanePort(portNumber: 2, socketID: nil, speed: .usb4Tb4, widthRaw: 0x2)]
         )
@@ -535,7 +545,13 @@ struct PortSummaryThunderboltTests {
             vendor: "Apple Inc.", model: "iOS",
             ports: [lanePort(portNumber: 1, socketID: "1", speed: .tb5, widthRaw: 0x2)]
         )
-        let summary = PortSummary(port: port, thunderboltSwitches: [host])
+        // See the TB3 test: the attached device is what makes it a link.
+        let dock = sw(
+            uid: 200, depth: 1, parent: 100, routeString: 1, upstreamPort: 1,
+            vendor: "UGreen", model: "JHL9580",
+            ports: [lanePort(portNumber: 1, socketID: nil, speed: .tb5, widthRaw: 0x2)]
+        )
+        let summary = PortSummary(port: port, thunderboltSwitches: [host, dock])
         #expect(
             summary.bullets.contains { $0.contains("40 Gb/s") },
             "TB5 should report per-lane 40 Gb/s; got: \(summary.bullets)"
@@ -767,6 +783,136 @@ struct PortSummaryThunderboltTests {
             vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0,
             vdos: [idHeader, 0, 0, cableVDO],
             specRevision: 3
+        )
+    }
+
+    /// Same shape as `passiveCableIdentity()` but claiming USB4 Gen 3
+    /// (40 Gbps): a Thunderbolt 4 class passive cable.
+    private func passiveCableIdentityClaiming40() -> USBPDSOP {
+        let idHeader: UInt32 = (3 << 27) | 0x2B1D
+        // Cable VDO[3]: USB4 Gen 3 (speed=3), 5A current, latency = 1.
+        let cableVDO: UInt32 = 0b011 | (2 << 5) | (1 << 13)
+        return USBPDSOP(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 0, parentPortNumber: 0,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0,
+            vdos: [idHeader, 0, 0, cableVDO],
+            specRevision: 3
+        )
+    }
+
+    /// CIO-semantics change: the CIO `CableSpeed` code is the controller's
+    /// claim about the cable and peer pair, not the trained lane. On 13 of 70
+    /// corpus ports with `CableSpeed=4` the endpoint cannot run 80 Gbps at
+    /// all, so the old bullet told a 40 Gbps dock's owner the controller had
+    /// confirmed 80. The bullet may confirm only what the lane carried.
+    @Test("CIO above the trained lane prints the lane rate, not the CIO claim")
+    func cioAboveLanePrintsLinkActiveAtLaneRate() {
+        let port = tbPort(socket: "1")
+        // Host root lane trained at Gen 3 x2: 20 Gbps per lane, two lanes,
+        // 40 Gbps (the same shape the confirm fixture above uses).
+        let host = sw(
+            uid: 100, depth: 0, parent: nil,
+            vendor: "Apple Inc.", model: "iOS",
+            ports: [lanePort(portNumber: 1, socketID: "1", speed: .usb4Tb4, widthRaw: 0x2)]
+        )
+        let cable = passiveCableIdentityClaiming40()
+        let cio = CIOCableCapability(
+            id: 1, portKey: "1",
+            cableGeneration: 3, negotiatedLinkSpeed: 4, generation: 4,
+            asymmetricModeSupported: true, legacyAdapter: false,
+            linkTrainingMode: nil
+        )
+
+        let summary = PortSummary(
+            port: port,
+            identities: [cable],
+            thunderboltSwitches: [host],
+            cioCapability: cio
+        )
+
+        #expect(
+            summary.group(.measured)?.lines.contains { $0.contains("Thunderbolt link active at 40 Gbps") } == true,
+            "expected the lane rate in the measured group; got: \(summary.groups)"
+        )
+        #expect(
+            summary.bullets.contains { $0.contains("80 Gbps capable") } == false,
+            "nobody has seen this cable carry 80 Gbps; got: \(summary.bullets)"
+        )
+        #expect(
+            summary.bullets.contains { $0.contains("Controller confirms") } == false,
+            "the controller's claim sits above the lane, so nothing is confirmed; got: \(summary.bullets)"
+        )
+    }
+
+    /// Without a trained lane figure the CIO code alone proves nothing
+    /// about what the cable carried, so no controller bullet at all.
+    @Test("No trained lane figure: no controller bullet")
+    func noLaneFigureNoControllerBullet() {
+        let port = tbPort(socket: "1")
+        let cable = passiveCableIdentity()
+        let cio = CIOCableCapability(
+            id: 1, portKey: "1",
+            cableGeneration: 2, negotiatedLinkSpeed: 3, generation: 3,
+            asymmetricModeSupported: false, legacyAdapter: false,
+            linkTrainingMode: nil
+        )
+
+        let summary = PortSummary(
+            port: port,
+            identities: [cable],
+            thunderboltSwitches: [],
+            cioCapability: cio
+        )
+
+        #expect(
+            summary.group(.measured)?.lines.contains { $0.contains("Controller confirms") } != true,
+            "no lane figure, so the CIO code confirms nothing; got: \(summary.groups)"
+        )
+        #expect(
+            summary.group(.measured)?.lines.contains { $0.contains("Thunderbolt link active") } != true,
+            "no lane figure, so there is no link rate to print; got: \(summary.groups)"
+        )
+        #expect(
+            summary.group(.emarker)?.lines.contains { $0.contains("Passive (no signal-conditioning electronics)") } == true,
+            "the e-marker's own passive claim still stands; got: \(summary.groups)"
+        )
+    }
+
+    /// E-marker one tier above what the controller and lane agree on: the
+    /// link line names the lane rate and the cable's ceiling stays on the
+    /// e-marker group's "Cable speed" line. Same direction as the #393
+    /// fixture below, asserted against the lane figure explicitly.
+    @Test("E-marker above the confirmed tier prints the link line at the lane rate")
+    func emarkerAboveConfirmedTierPrintsLinkLine() {
+        let port = tbPort(socket: "1")
+        let host = sw(
+            uid: 100, depth: 0, parent: nil,
+            vendor: "Apple Inc.", model: "iOS",
+            ports: [lanePort(portNumber: 1, socketID: "1", speed: .usb4Tb4, widthRaw: 0x2)]
+        )
+        let cable = passiveCableIdentityClaiming80()
+        let cio = CIOCableCapability(
+            id: 1, portKey: "1",
+            cableGeneration: 2, negotiatedLinkSpeed: 3, generation: 3,
+            asymmetricModeSupported: false, legacyAdapter: false,
+            linkTrainingMode: nil
+        )
+
+        let summary = PortSummary(
+            port: port,
+            identities: [cable],
+            thunderboltSwitches: [host],
+            cioCapability: cio
+        )
+
+        #expect(
+            summary.group(.measured)?.lines.contains { $0 == "Thunderbolt link active at 40 Gbps" } == true,
+            "expected the lane rate on the link line; got: \(summary.groups)"
+        )
+        #expect(
+            summary.bullets.contains { $0.contains("Controller confirms") } == false,
+            "a Gen 4 e-marker is not confirmed by a 40 Gbps lane; got: \(summary.bullets)"
         )
     }
 

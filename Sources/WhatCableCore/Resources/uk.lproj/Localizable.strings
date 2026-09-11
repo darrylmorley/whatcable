@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Невідоме покоління (код швидкості 0x2, орієнтовно TB5)";
 "Unspecified" = "Не вказано";
 "Up to %lld Gb/s %@" = "До %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "До %1$lld Gb/s вихідних, %2$lld Gb/s вхідних";
 "VCONN-powered device" = "Пристрій з живленням від VCONN";
 "Vendor ID isn't in USB-IF's published list" = "Ідентифікатор виробника відсутній у опублікованому списку USB-IF";
 "What can this USB-C cable actually do?" = "На що справді здатний цей USB-C кабель?";
@@ -321,8 +322,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "Нічого не обмежує: всі видимі компоненти підтримують цю швидкість.";
 "Cable is limiting data speed" = "Кабель обмежує швидкість передачі даних";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac і пристрій можуть працювати на %@, але кабель підтримує лише %@. Швидший кабель розблокує повну швидкість.";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac може працювати на %1$@, але кабель підтримує лише %2$@. Швидший кабель розблокує повну швидкість.";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Пристрій може працювати на %1$@, але кабель підтримує лише %2$@. Швидший кабель розблокує повну швидкість.";
 "This Mac port limits data speed" = "Цей порт Mac обмежує швидкість передачі даних";
 "The cable and device can do %@, but this port maxes out at %@." = "Кабель і пристрій можуть працювати на %@, але цей порт обмежений %@.";
+"The cable can do %@, but this port maxes out at %@." = "Кабель може працювати на %1$@, але цей порт обмежений %2$@.";
+"The device can do %@, but this port maxes out at %@." = "Пристрій може працювати на %1$@, але цей порт обмежений %2$@.";
 "Device runs at %@" = "Пристрій працює на %@";
 "This is the fastest the connected device supports. It is not a cable problem." = "Це максимальна швидкість підключеного пристрою. Проблема не в кабелі.";
 "Cable says %@, link reads %@" = "Кабель заявляє %@, канал показує %@";
@@ -545,6 +550,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "Контролер підтверджує кабель Thunderbolt (%@)";
 "Thunderbolt link active at %@" = "З'єднання Thunderbolt активне на %@";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "Кабель заявляє %1$@, а з'єднання вже працювало зі швидкістю щонайменше %2$@. Немає даних про порт чи пристрій для порівняння, тому ми не можемо сказати, чи обмежує його щось інше.";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "Кабель заявляє %1$@, а з'єднання вже працювало зі швидкістю щонайменше %2$@. Немає даних про пристрій для порівняння, тому ми не можемо сказати, чи обмежує його щось інше.";
 
 "Shared controller port" = "Спільний порт контролера";
 

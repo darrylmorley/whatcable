@@ -312,10 +312,33 @@ public final class IOIOThunderboltSwitchWatcher: ObservableObject {
         if rebuilt != switches { switches = rebuilt }
     }
 
+    /// The ports of a switch service, ready for `IOThunderboltSwitch.from`:
+    /// the registry walk, then the ordering guarantee below.
+    ///
+    /// This is the ONLY place a switch gets its ports, so the sort has to
+    /// happen here or not at all. The IOKit walk is injected as
+    /// `readChildren` so that the assembly step itself is reachable from a
+    /// test: the walk needs a live `io_service_t` on a Thunderbolt Mac and
+    /// cannot be, but the ordering is pure and now has
+    /// `ThunderboltPortOrderTests.parsePortsOrdersWhatTheRegistryWalkReturned`
+    /// standing over it. Before the seam existed, deleting the sort call
+    /// from here was invisible to the entire test suite.
+    nonisolated static func parsePorts(
+        readChildren: () -> [IOThunderboltPort]
+    ) -> [IOThunderboltPort] {
+        portsInPortNumberOrder(readChildren())
+    }
+
+    private func parsePorts(of switchService: io_service_t) -> [IOThunderboltPort] {
+        Self.parsePorts(readChildren: { Self.portChildrenInRegistryOrder(of: switchService) })
+    }
+
     /// Walk port children of a switch service. Returns the parsed ports
     /// in registry order. Skips non-port children (driver shims sometimes
     /// hang off a switch service).
-    private func parsePorts(of switchService: io_service_t) -> [IOThunderboltPort] {
+    nonisolated private static func portChildrenInRegistryOrder(
+        of switchService: io_service_t
+    ) -> [IOThunderboltPort] {
         var ports: [IOThunderboltPort] = []
         var childIter: io_iterator_t = 0
         guard IORegistryEntryGetChildIterator(switchService, kIOServicePlane, &childIter) == KERN_SUCCESS else {
@@ -338,8 +361,34 @@ public final class IOIOThunderboltSwitchWatcher: ObservableObject {
             return IOThunderboltPort.from(read: read)
         }
         ports.append(contentsOf: results.compactMap { $0 })
-        ports.sort { $0.portNumber < $1.portNumber }
         return ports
+    }
+
+    /// Ports in the order every consumer assumes: ascending by port number.
+    ///
+    /// The registry hands them back in its own order, which is not port
+    /// order: the corpus dump prints lane 2 before lane 1 on 21 machines.
+    ///
+    /// ONE live consumer depends on this, `ThunderboltTopology`
+    /// `.trainedDownstreamLanePort`, which feeds the link rate. It takes the
+    /// FIRST trained lane of what it is handed and it cannot see this file,
+    /// so the guarantee has to be made here and pinned by
+    /// `ThunderboltPortOrderTests`. 4 dual-link pairs in the corpus have two
+    /// lanes that decode different rates, and picking the wrong one publishes
+    /// the higher figure on the lower link (`m4max_macos26.5.2_f` socket 2:
+    /// 120 Gb/s on an 80 Gb/s link, where `Link Bandwidth` corroborates 80).
+    /// That is the whole blast radius today.
+    ///
+    /// It used to be two. `DataLinkDiagnostic.partnerSwitch` also resolved a
+    /// socket to its first lane, and in registry order 21 CIO-active ports
+    /// lost their Thunderbolt partner. It no longer depends on the order:
+    /// `partnerSwitch` now consults both lanes of the socket through
+    /// `ThunderboltTopology.socketLanePorts`, and the device-cap corpus
+    /// replay returns the same 40 device limits in registry order and in
+    /// port-number order alike. Kept here because it is why the sort was
+    /// written, not because it still needs it.
+    nonisolated static func portsInPortNumberOrder(_ ports: [IOThunderboltPort]) -> [IOThunderboltPort] {
+        ports.sorted { $0.portNumber < $1.portNumber }
     }
 
     /// The two things a single upward walk from a switch's registry entry

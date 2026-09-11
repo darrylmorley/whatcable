@@ -238,14 +238,15 @@
         {
           "adapterType" : "lane",
           "generation" : "usb4Tb4",
-          "linkActive" : true,
-          "linkLabel" : "Up to 20 Gb\/s × 2",
+          "linkActive" : false,
           "perLaneGbps" : 20,
           "portNumber" : 1,
           "rawSpeedCode" : 4,
           "rawWidthCode" : 2,
+          "rxGbps" : 40,
           "rxLanes" : 2,
           "socketID" : "4",
+          "txGbps" : 40,
           "txLanes" : 2
         }
       ],

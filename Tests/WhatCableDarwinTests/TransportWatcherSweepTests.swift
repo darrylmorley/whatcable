@@ -300,6 +300,7 @@ struct TransportWatcherSweepTests {
         let folders = Self.allProbeFolders()
         var cioBlocks = 0
         var modelsProduced = 0
+        var inactiveBlocks = 0
         var cableGenVerified = 0
 
         for folder in folders {
@@ -315,7 +316,15 @@ struct TransportWatcherSweepTests {
                     read: read,
                     hpmControllerUUID: nil
                 )
-                // CIO has no gate key: every CIO block must produce a model
+                // CIO has no gate key, except an explicit Active=false row
+                // (the CIO leg is not currently up), which is dropped: every
+                // other CIO block must produce a model.
+                if (props["Active"] as? NSNumber)?.boolValue == false {
+                    #expect(model == nil,
+                        "Probe \(folder): CIO block with Active=false should be dropped")
+                    inactiveBlocks += 1
+                    continue
+                }
                 #expect(model != nil,
                     "Probe \(folder): CIO block should always produce a capability model")
                 guard let model else { continue }
@@ -345,8 +354,8 @@ struct TransportWatcherSweepTests {
         if Self.hasTransportProbeFiles() && cioBlocks > 0 {
             #expect(cioBlocks >= 90,
                 "Expected at least 90 CIO blocks in the corpus; got \(cioBlocks)")
-            #expect(modelsProduced == cioBlocks,
-                "Every CIO block should produce a model: expected \(cioBlocks), got \(modelsProduced)")
+            #expect(modelsProduced == cioBlocks - inactiveBlocks,
+                "Every CIO block except an Active=false row should produce a model: expected \(cioBlocks - inactiveBlocks), got \(modelsProduced)")
         }
     }
 

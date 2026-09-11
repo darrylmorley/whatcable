@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "Nezināma paaudze (neapstrādāts ātruma kods 0x2, secināts TB5)";
 "Unspecified" = "Nenorādīts";
 "Up to %lld Gb/s %@" = "Līdz %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "Līdz %1$lld Gb/s izejošs, %2$lld Gb/s ienākošs";
 "VCONN-powered device" = "Ar VCONN barota ierīce";
 "Vendor ID isn't in USB-IF's published list" = "Ražotāja ID nav USB-IF publicētajā sarakstā";
 "What can this USB-C cable actually do?" = "Ko šis USB-C kabelis patiesībā spēj?";
@@ -321,8 +322,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "Nekas netiek ierobežots: visas redzamās daļas atbalsta šo ātrumu.";
 "Cable is limiting data speed" = "Kabelis ierobežo datu ātrumu";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac un ierīce spēj %@, bet kabelis nodrošina tikai %@. Ātrāks kabelis atbloķētu pilnu ātrumu.";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac spēj %1$@, bet kabelis nodrošina tikai %2$@. Ātrāks kabelis atbloķētu pilnu ātrumu.";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Ierīce spēj %1$@, bet kabelis nodrošina tikai %2$@. Ātrāks kabelis atbloķētu pilnu ātrumu.";
 "This Mac port limits data speed" = "Šis Mac ports ierobežo datu ātrumu";
 "The cable and device can do %@, but this port maxes out at %@." = "Kabelis un ierīce spēj %@, bet šis ports maksimāli sasniedz %@.";
+"The cable can do %@, but this port maxes out at %@." = "Kabelis spēj %1$@, bet šis ports maksimāli sasniedz %2$@.";
+"The device can do %@, but this port maxes out at %@." = "Ierīce spēj %1$@, bet šis ports maksimāli sasniedz %2$@.";
 "Device runs at %@" = "Ierīce darbojas ar %@";
 "This is the fastest the connected device supports. It is not a cable problem." = "Tas ir ātrākais, ko pievienotā ierīce atbalsta. Tā nav kabeļa problēma.";
 "Battery full, not charging" = "Akumulators pilns, netiek uzlādēts";
@@ -545,6 +550,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "Kontrolieris apstiprina Thunderbolt kabeli (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt savienojums aktīvs ar %@";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "Kabelis norāda %1$@, un savienojums ir darbojies vismaz ar %2$@. Nav pieejami porta vai ierīces dati salīdzināšanai, tāpēc nevaram pateikt, vai kaut kas cits to ierobežo.";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "Kabelis norāda %1$@, un savienojums ir darbojies vismaz ar %2$@. Nav pieejami ierīces dati salīdzināšanai, tāpēc nevaram pateikt, vai kaut kas cits to ierobežo.";
 
 "Shared controller port" = "Koplietots kontroliera ports";
 

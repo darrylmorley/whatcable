@@ -283,12 +283,13 @@ struct CIOAndDataLinkCorpusTests {
 
     // MARK: (a1) CIO parse: every block produces a model, fields round-trip
 
-    @Test("CIO parse: every block produces a model and cableSpeed round-trips (probe 17)")
+    @Test("CIO parse: every active block produces a model and cableSpeed round-trips (probe 17)")
     func cioEveryBlockProducesModel() {
         let machines = Self.cioFixtureMachines
 
         var totalBlocks = 0
         var totalModels = 0
+        var totalInactiveBlocks = 0
 
         for machine in machines {
             guard let text = Self.loadProbeText(folder: machine, probe: "17_deep_property_dump")
@@ -306,8 +307,21 @@ struct CIOAndDataLinkCorpusTests {
                     read: read,
                     hpmControllerUUID: nil
                 )
+
+                // An explicit Active=false row means the CIO leg is not
+                // currently up (often because the accessory is TRM-restricted),
+                // even though a cable is seated, and is correctly dropped --
+                // that's not a parse failure, so it's excluded from the
+                // "every block produces a model" expectation below.
+                if (props["Active"] as? NSNumber)?.boolValue == false {
+                    totalInactiveBlocks += 1
+                    #expect(model == nil,
+                        "Machine \(machine) CIO block \(i): Active=false should be dropped, not produce a model")
+                    continue
+                }
+
                 #expect(model != nil,
-                    "Machine \(machine) CIO block \(i): makeCIOCapability should never return nil (no gate key)")
+                    "Machine \(machine) CIO block \(i): makeCIOCapability should not return nil for a non-inactive block")
                 guard let model else { continue }
                 totalModels += 1
 
@@ -332,8 +346,118 @@ struct CIOAndDataLinkCorpusTests {
 
         #expect(totalBlocks >= 20,
             "Expected at least 20 CIO blocks across CIO fixtures; got \(totalBlocks)")
-        #expect(totalModels == totalBlocks,
-            "Every CIO block must produce a model: expected \(totalBlocks), got \(totalModels)")
+        #expect(totalModels == totalBlocks - totalInactiveBlocks,
+            "Every non-inactive CIO block must produce a model: expected \(totalBlocks - totalInactiveBlocks), got \(totalModels)")
+        #expect(totalInactiveBlocks == 2,
+            "Expected exactly 2 inactive CIO blocks in the fixture set (m3max_macos26.5 port 2, m5_macos26.4_b port 1); got \(totalInactiveBlocks)")
+    }
+
+    // MARK: - (a6) CIO Active gate
+
+    @Test("CIO Active gate: makeCIOCapability drops a row with Active=false")
+    func makeCIOCapabilityDropsInactiveRow() {
+        let props: [String: Any] = [
+            "Active": NSNumber(value: false),
+            "CableSpeed": NSNumber(value: 3),
+            "ParentBuiltInPortType": NSNumber(value: 2),
+            "ParentBuiltInPortNumber": NSNumber(value: 1),
+        ]
+        let model = TRMTransportWatcher.makeCIOCapability(
+            entryID: 1,
+            read: { props[$0] },
+            hpmControllerUUID: nil
+        )
+        #expect(model == nil,
+            "A CIO row with Active=false means the CIO leg is not currently up and must not produce a model")
+    }
+
+    @Test("CIO Active gate: makeCIOCapability keeps a row with Active=true")
+    func makeCIOCapabilityKeepsActiveRow() {
+        let props: [String: Any] = [
+            "Active": NSNumber(value: true),
+            "CableSpeed": NSNumber(value: 3),
+            "ParentBuiltInPortType": NSNumber(value: 2),
+            "ParentBuiltInPortNumber": NSNumber(value: 1),
+        ]
+        let model = TRMTransportWatcher.makeCIOCapability(
+            entryID: 1,
+            read: { props[$0] },
+            hpmControllerUUID: nil
+        )
+        #expect(model != nil, "An Active=true row must still produce a model")
+        #expect(model?.negotiatedLinkSpeed == 3)
+    }
+
+    @Test("CIO Active gate: makeCIOCapability keeps a row with no Active key at all")
+    func makeCIOCapabilityKeepsRowWithoutActiveKey() {
+        // Per the function's own doc comment, CIO has no hard gate key: any
+        // IOPortTransportStateCIO service is a valid candidate. Absence of
+        // Active must not be misread as an inactive row.
+        let props: [String: Any] = [
+            "CableSpeed": NSNumber(value: 3),
+            "ParentBuiltInPortType": NSNumber(value: 2),
+            "ParentBuiltInPortNumber": NSNumber(value: 1),
+        ]
+        let model = TRMTransportWatcher.makeCIOCapability(
+            entryID: 1,
+            read: { props[$0] },
+            hpmControllerUUID: nil
+        )
+        #expect(model != nil,
+            "CIO has no hard gate key; absence of Active must not be treated as inactive")
+    }
+
+    /// Corpus replay: the 4 real ports (re-derived and confirmed with two
+    /// independent parsers) that carry a CIO row with Active=false while
+    /// their only actually-active transport is CC -- a cable is seated
+    /// (ConnectionActive/PlugOrientation on the port's own HPM node) but the
+    /// CIO leg is not up, in 3 of 4 cases because the accessory is
+    /// TRM-restricted/Unauthorized. That row must never reach a consumer as
+    /// if it described a live link.
+    @Test("CIO Active gate: inactive rows are dropped across the corpus")
+    func cioInactiveRowsAreDroppedAcrossCorpus() {
+        let machines = ["m1_macos27.0_p", "m3max_macos26.5", "m4_macos26.6", "m5_macos26.4_b"]
+        var droppedCount = 0
+
+        for machine in machines {
+            guard let text = Self.loadProbeText(folder: machine, probe: "19_pdo_decode_and_usb3_watch")
+            else {
+                Issue.record("Missing probe 19 for \(machine); this corpus sweep cannot verify this port")
+                continue
+            }
+            let blocks = Self.extractCIOBlocks(text: text)
+            guard !blocks.isEmpty else {
+                Issue.record("No CIO blocks found in probe 19 for \(machine); this corpus sweep cannot verify this port")
+                continue
+            }
+
+            var sawInactiveBlock = false
+            for (i, props) in blocks.enumerated() {
+                let read: (String) -> Any? = { props[$0] }
+                let model = TRMTransportWatcher.makeCIOCapability(
+                    entryID: UInt64(3000 + i),
+                    read: read,
+                    hpmControllerUUID: nil
+                )
+                let isActive = (props["Active"] as? NSNumber)?.boolValue
+
+                if isActive == false {
+                    sawInactiveBlock = true
+                    droppedCount += 1
+                    #expect(model == nil,
+                        "\(machine) CIO block \(i): Active=false must be dropped, but produced a model")
+                } else if isActive == true {
+                    #expect(model != nil,
+                        "\(machine) CIO block \(i): Active=true must still produce a model")
+                }
+            }
+
+            #expect(sawInactiveBlock,
+                "\(machine): expected an Active=false CIO block in probe 19; found none")
+        }
+
+        #expect(droppedCount == 4,
+            "Expected exactly 4 dropped CIO rows across the named ports (m1_macos27.0_p port 1, m3max_macos26.5 port 2, m4_macos26.6 port 1, m5_macos26.4_b port 1); got \(droppedCount)")
     }
 
     // MARK: (a1b) CIO invariant: LinkTrainingMode <= CableGeneration
@@ -505,14 +629,18 @@ struct CIOAndDataLinkCorpusTests {
             "m3_macos26.5: expected at least one CIO block with AsymmetricModeSupported=false")
     }
 
-    // MARK: (a6) CIO: TRM-restricted CIO block (m3max_macos26.5 port @2)
+    // MARK: (a7) CIO: TRM-restricted CIO block (m3max_macos26.5 port @2)
 
-    @Test("CIO TRM restricted: m3max_macos26.5 port @2 CIO block has transportRestricted=true")
+    @Test("CIO TRM restricted: m3max_macos26.5 port @2 CIO block has transportRestricted=true, and is the same Active=false row")
     func cioTRMRestrictedBlock() {
         // m3max_macos26.5 inspection.md: 1 port restricted. Probe 17 shows
         // IOPortTransportStateCIO on port @2 with TRM_TransportRestricted=true
-        // and CableSpeed=3 (TB4 class). The CIO model still parses correctly;
-        // the restriction is surfaced through the TRM transport, not CIO.
+        // and CableSpeed=3 (TB4 class). This same block also carries
+        // Active=false: the CIO leg is not currently up on this
+        // TRM-restricted/Unauthorized port, even though a cable is seated.
+        // The raw fields this test is about still round-trip out of the
+        // property dict; the parsed model is now correctly nil rather than
+        // describing a link that is not actually live.
         guard let text = Self.loadProbeText(folder: "m3max_macos26.5", probe: "17_deep_property_dump")
         else {
             Issue.record("Missing probe 17 for m3max_macos26.5")
@@ -524,24 +652,26 @@ struct CIOAndDataLinkCorpusTests {
             let isRestricted = (props["TRM_TransportRestricted"] as? NSNumber)?.boolValue == true
             guard isRestricted else { continue }
 
+            #expect((props["CableSpeed"] as? NSNumber)?.intValue == 3,
+                "m3max_macos26.5: restricted CIO block should still carry raw cableSpeed=3 (TB4)")
+            #expect((props["Active"] as? NSNumber)?.boolValue == false,
+                "m3max_macos26.5: the TRM-restricted CIO block is expected to be the same Active=false row")
+
             let read: (String) -> Any? = { props[$0] }
             let model = TRMTransportWatcher.makeCIOCapability(
                 entryID: UInt64(i),
                 read: read,
                 hpmControllerUUID: nil
             )
-            #expect(model != nil,
-                "m3max_macos26.5: CIO block with TRM_TransportRestricted=true should still parse")
-            // The speed is TB4 class regardless of restriction
-            #expect(model?.negotiatedLinkSpeed == 3,
-                "m3max_macos26.5: restricted CIO block should still read cableSpeed=3 (TB4)")
+            #expect(model == nil,
+                "m3max_macos26.5: TRM-restricted CIO block is also Active=false and must be dropped")
             foundRestrictedCIOBlock = true
         }
         #expect(foundRestrictedCIOBlock,
             "m3max_macos26.5: expected at least one CIO block with TRM_TransportRestricted=true")
     }
 
-    // MARK: (a7) CIO: cableSpeed range across the corpus
+    // MARK: (a8) CIO: cableSpeed range across the corpus
 
     @Test("CIO cableSpeed: only values 2, 3, 4 appear across fixture machines")
     func cioCableSpeedRangeCheck() {
