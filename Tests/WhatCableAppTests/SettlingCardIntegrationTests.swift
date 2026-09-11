@@ -576,6 +576,7 @@ struct SettlingCardIntegrationTests {
             isLive: false,
             showAdvanced: false,
             cioCapability: nil,
+            accessoryIdentity: nil,
             displayPorts: [],
             chargerWattageSource: .unknown,
             batteryFullyCharged: nil,

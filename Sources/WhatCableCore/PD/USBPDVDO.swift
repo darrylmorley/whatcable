@@ -460,6 +460,68 @@ public enum PDVDO {
         )
     }
 
+    // MARK: VPD VDO (VCONN-Powered Device, VDO[3] in PD 3.0+)
+
+    /// VCONN-Powered Device VDO, USB PD R3.2 Table 6.45. A VPD answers
+    /// Discover Identity at SOP' the way a cable does, but VDO[3] carries a
+    /// different layout, so the cable decoder must never be applied to it.
+    /// Apple's USB-C EarPods are one (issue #542).
+    public struct VPDVDO: Hashable {
+        /// Bits 31..28.
+        public let hwVersion: Int
+        /// Bits 27..24.
+        public let fwVersion: Int
+        /// Raw 3-bit "VDO Version" field (bits 23..21). Only `000` (v1.0)
+        /// is defined; anything else is reported via `decodeWarnings`.
+        public let vdoVersionEncoded: Int
+        /// Encoded "Max VBUS Voltage" field (bits 16..15): 00=20V,
+        /// 01..10=Deprecated (treat as 20V), 11=50V. A different bit
+        /// position from the cable VDOs, which carry it at bits 10..9.
+        public let maxVBUSVoltageEncoded: Int
+        /// Bit 14, "Charge Through Current Support": 0 = 3 A, 1 = 5 A.
+        public let chargeThroughFiveAmp: Bool
+        /// Bits 12..7, in 2 milliohm units. Only meaningful when
+        /// `chargeThroughSupported` is true.
+        public let vbusImpedanceMilliohms: Int
+        /// Bits 6..1, in 1 milliohm units. Only meaningful when
+        /// `chargeThroughSupported` is true.
+        public let groundImpedanceMilliohms: Int
+        /// Bit 0, "Charge Through Support".
+        public let chargeThroughSupported: Bool
+        public let decodeWarnings: [DecodeWarning]
+
+        /// Mirrors `CableVDO.maxVolts`: only encoding 11 means 50V, and the
+        /// deprecated encodings both mean 20V.
+        public var maxVBUSVolts: Int {
+            switch maxVBUSVoltageEncoded {
+            case 3: return 50
+            default: return 20
+            }
+        }
+
+        public var chargeThroughAmps: Double { chargeThroughFiveAmp ? 5.0 : 3.0 }
+    }
+
+    public static func decodeVPDVDO(_ vdo: UInt32) -> VPDVDO {
+        let vdoVersionBits = Int((vdo >> 21) & 0b111)
+        var warnings: [DecodeWarning] = []
+        // Table 6.45 defines only 000 (v1.0); 001..111 are Invalid.
+        if vdoVersionBits != 0 {
+            warnings.append(.invalidVDOVersion(vdoVersionBits))
+        }
+        return VPDVDO(
+            hwVersion: Int((vdo >> 28) & 0b1111),
+            fwVersion: Int((vdo >> 24) & 0b1111),
+            vdoVersionEncoded: vdoVersionBits,
+            maxVBUSVoltageEncoded: Int((vdo >> 15) & 0b11),
+            chargeThroughFiveAmp: (vdo >> 14) & 1 == 1,
+            vbusImpedanceMilliohms: Int((vdo >> 7) & 0b11_1111) * 2,
+            groundImpedanceMilliohms: Int((vdo >> 1) & 0b11_1111),
+            chargeThroughSupported: vdo & 1 == 1,
+            decodeWarnings: warnings
+        )
+    }
+
     // MARK: Active Cable VDO 2 (active cables only, VDO[4] in PD 3.0+)
 
     /// Physical medium the cable uses to carry data.

@@ -10,8 +10,8 @@ import Foundation
 // v0.14.0, because no test could see the render path. Anything expressible as
 // a plain function over a PortEntry belongs here.
 extension WidgetSnapshot.PortEntry {
-    /// Muted detail line: monitor + mode for a display, else the port's own
-    /// top line, else the subtitle.
+    /// Muted detail line: monitor + mode for a display, else the accessory's
+    /// own name, else the port's own top line, else the subtitle.
     ///
     /// `topBullet` is the specific fact about this port (what the Mac
     /// measured: "Linked at up to 40 Gb/s x 2"). The subtitle is generic
@@ -36,6 +36,11 @@ extension WidgetSnapshot.PortEntry {
     /// calls it, so publishing it would widen the library's API for nothing.
     public var rowDetail: String? {
         if let detail = displayDetail { return detail }
+        // Apple's own name for the accessory outranks the measured line: on an
+        // iPhone over USB 2 the top line is "USB 2.0 only (480 Mbps)", which
+        // says nothing about what is attached. A display keeps priority above,
+        // because its mode is the point of that row and its name is in it.
+        if let accessoryName, !accessoryName.isEmpty { return accessoryName }
         if let topBullet, !topBullet.isEmpty { return topBullet }
         return subtitle.isEmpty ? nil : subtitle
     }

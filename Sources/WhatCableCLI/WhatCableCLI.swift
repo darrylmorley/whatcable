@@ -238,6 +238,7 @@ private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Boo
             usb3Transports: snapshot.usb3Transports,
             trmTransports: snapshot.trmTransports,
             cioCapabilities: snapshot.cioCapabilities,
+            accessoryIdentities: snapshot.accessoryIdentities,
             usbDevices: snapshot.usbDevices,
             displayPorts: snapshot.displayPorts,
             builtInDisplayPorts: BuiltInDisplayPort.group(from: snapshot.displayPorts)
@@ -260,6 +261,7 @@ private func printSnapshot(_ snapshot: CableSnapshot, asJSON: Bool, showRaw: Boo
             usb3Transports: snapshot.usb3Transports,
             trmTransports: snapshot.trmTransports,
             cioCapabilities: snapshot.cioCapabilities,
+            accessoryIdentities: snapshot.accessoryIdentities,
             usbDevices: snapshot.usbDevices,
             displayPorts: snapshot.displayPorts,
             builtInDisplayPorts: BuiltInDisplayPort.group(from: snapshot.displayPorts)
@@ -330,6 +332,7 @@ private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Boo
                         usb3Transports: snapshot.usb3Transports,
                         trmTransports: snapshot.trmTransports,
                         cioCapabilities: snapshot.cioCapabilities,
+                        accessoryIdentities: snapshot.accessoryIdentities,
                         usbDevices: snapshot.usbDevices,
                         displayPorts: snapshot.displayPorts,
                         builtInDisplayPorts: BuiltInDisplayPort.group(from: snapshot.displayPorts)
@@ -355,6 +358,7 @@ private func consumeWatchStream(provider: any CableSnapshotProvider, asJSON: Boo
                     usb3Transports: snapshot.usb3Transports,
                     trmTransports: snapshot.trmTransports,
                     cioCapabilities: snapshot.cioCapabilities,
+                    accessoryIdentities: snapshot.accessoryIdentities,
                     usbDevices: snapshot.usbDevices,
                     displayPorts: snapshot.displayPorts,
                     builtInDisplayPorts: BuiltInDisplayPort.group(from: snapshot.displayPorts)

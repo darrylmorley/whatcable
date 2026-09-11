@@ -2690,4 +2690,461 @@ struct PortSummaryTests {
         #expect(apple.contains { $0.contains("Made by") },
                 "expected the vendor line, got: \(apple)")
     }
+
+    // MARK: - VCONN-Powered Device (issue #542)
+
+    /// Apple USB-C EarPods as they answer Discover Identity at SOP': a
+    /// VCONN-Powered Device (UFP product type 6), not a cable. VDO[3] uses
+    /// USB PD R3.2 Table 6.45, so the cable decoder must never touch it.
+    /// `vdo3` defaults to the real captured value, whose Charge Through
+    /// Support bit (bit 0) is clear.
+    private func vpdIdentity(vdo3: UInt32 = 0x1100_0000) -> USBPDSOP {
+        USBPDSOP(
+            id: 7001, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 3,
+            vendorID: 0x05AC, productID: 0x110B, bcdDevice: 0x2681,
+            vdos: [0x7000_05AC, 0x0000_0000, 0x110B_2681, vdo3],
+            specRevision: 3
+        )
+    }
+
+    /// A high-speed (USB 2.0) device, the shape the EarPods enumerate as.
+    private func usb2Device() -> USBDevice {
+        USBDevice(
+            id: 9010, locationID: 0x0021_0000,
+            vendorID: 0x05AC, productID: 0x110B,
+            vendorName: nil, productName: "USB-C to 3.5mm Headphone Jack Adapter",
+            serialNumber: nil,
+            usbVersion: nil, speedRaw: 2,
+            busPowerMA: nil, currentMA: nil,
+            rawProperties: [:]
+        )
+    }
+
+    private func vpdPort() -> USBCPort {
+        makePort(active: ["CC", "USB2"], supported: ["CC", "USB2", "USB3"])
+    }
+
+    @Test("VPD accessory gets its own headline, with no charger wattage (issue #542)")
+    func vpdAccessoryHeadline() {
+        // Apple USB-C EarPods read as "Slow USB device or charge-only cable ·
+        // 67W charger" before this branch existed. They are neither a slow
+        // cable nor anything the 67 W figure belongs to: the wattage is a
+        // machine-wide system-adapter reading and the accessory takes no
+        // power from it.
+        let summary = PortSummary(
+            port: vpdPort(),
+            identities: [vpdIdentity()],
+            devices: [usb2Device()],
+            chargerWattageSource: .systemAdapterFallback(watts: 67)
+        )
+        #expect(summary.status == .dataDevice)
+        #expect(summary.headline == "USB accessory (audio or adapter)",
+                "got: \(summary.headline)")
+        #expect(!summary.headline.contains("charge-only cable"),
+                "the charge-only wording must not survive, got: \(summary.headline)")
+        #expect(!summary.headline.contains("67W"),
+                "a machine-wide charger figure must not sit beside the accessory, got: \(summary.headline)")
+        #expect(!summary.headline.contains("W cable"),
+                "no cable rating suffix belongs on a VPD, got: \(summary.headline)")
+        #expect(summary.subtitle == "This accessory has its own USB-C plug. It is not a cable and does not charge.",
+                "got: \(summary.subtitle)")
+    }
+
+    @Test("A charge-through VPD keeps the existing wording (issue #542 guard)")
+    func chargeThroughVPDKeepsExistingWording() {
+        // Bit 0 of the VPD VDO is Charge Through Support. A VPD that does
+        // pass power through would make "does not charge" false, so it must
+        // fall through to the old branch rather than take the new one.
+        let summary = PortSummary(
+            port: vpdPort(),
+            identities: [vpdIdentity(vdo3: 0x1100_0001)],
+            devices: [usb2Device()],
+            chargerWattageSource: .systemAdapterFallback(watts: 67)
+        )
+        #expect(summary.status == .dataDevice)
+        #expect(summary.headline == "Slow USB device or charge-only cable · 67W charger",
+                "got: \(summary.headline)")
+    }
+
+    @Test("A plain USB2 port with no e-marker keeps the slow-device headline (issue #542 guard)")
+    func plainUSB2WithNoEmarkerKeepsSlowDeviceHeadline() {
+        // The real charge-only cable case. The new VPD branch must not steal
+        // it: this is what the old wording exists for.
+        let summary = PortSummary(
+            port: vpdPort(),
+            devices: [usb2Device()],
+            chargerWattageSource: .systemAdapterFallback(watts: 67)
+        )
+        #expect(summary.status == .dataDevice)
+        #expect(summary.headline == "Slow USB device or charge-only cable · 67W charger",
+                "got: \(summary.headline)")
+    }
+
+    @Test("VPD e-marker group says there is no cable rating, not 'no capability data' (issue #542)")
+    func vpdEmarkerGroupSubtitle() {
+        // The VPD answered with real data; it just is not cable data. Saying
+        // it "reported no capability data" is the wrong message.
+        let summary = PortSummary(
+            port: vpdPort(),
+            identities: [vpdIdentity()],
+            devices: [usb2Device()],
+            chargerWattageSource: .systemAdapterFallback(watts: 67)
+        )
+        let subtitle = summary.group(.emarker)?.subtitle
+        #expect(subtitle == "This plug is part of the accessory, not a cable, so there is no cable rating.",
+                "got: \(String(describing: subtitle))")
+    }
+
+    @Test("A cable that answers with nothing decodable still says 'no capability data' (issue #542 guard)")
+    func cableWithNoCapabilityDataKeepsGenericWording() {
+        // An ID header alone, from a real cable. The generic wording is
+        // correct here and must survive the VPD carve-out.
+        let cable = USBPDSOP(
+            id: 7002, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0, productID: 0, bcdDevice: 0,
+            vdos: [(3 << 27)], specRevision: 3
+        )
+        let summary = PortSummary(port: vpdPort(), identities: [cable])
+        let subtitle = summary.group(.emarker)?.subtitle
+        #expect(subtitle == "Answered, but reported no capability data.",
+                "got: \(String(describing: subtitle))")
+    }
+
+    @Test("A VPD never reads as a cable limit on charging (issue #542)")
+    func vpdIsNeverACableLimit() {
+        // VDO[3] = 0x11000000 decoded as a cable VDO looked like a 60 W
+        // cable, which put a 67 W charger into `.cableLimit` and printed
+        // "Cable is limiting charging speed" against a pair of earphones.
+        let diagnostic = ChargingDiagnostic(
+            port: vpdPort(),
+            sources: [usbPD(maxW: 67, winningW: 67)],
+            identities: [vpdIdentity()]
+        )
+        #expect(diagnostic != nil)
+        if case .cableLimit = diagnostic?.bottleneck {
+            Issue.record("a VPD must never be read as a cable limit, got: \(String(describing: diagnostic?.bottleneck))")
+        }
+        #expect(diagnostic?.cableW == nil,
+                "a VPD carries no cable rating, got: \(String(describing: diagnostic?.cableW))")
+    }
+
+    @Test("A VPD port that is actually charging keeps its charging headline (issue #542 guard)")
+    func vpdPortWithLiveContractKeepsChargingHeadline() {
+        // A VPD with Charge Through Support clear cannot pass power, so a live
+        // per-port contract contradicts its own e-marker and can only come
+        // from a miscoded one. Zero corpus machines reach it. But the
+        // accessory arm would say "does not charge" about a port charging the
+        // Mac at 67 W, which is the same false claim this ticket removes, so
+        // a live charging source keeps the charging arms it always reached.
+        let port = makePort(active: ["CC"], supported: ["CC", "USB2", "USB3"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 67, winningW: 67)],
+            identities: [vpdIdentity()]
+        )
+        #expect(summary.status == .charging, "got: \(summary.status)")
+        #expect(summary.headline == "Charging · 67W charger", "got: \(summary.headline)")
+        #expect(!summary.subtitle.contains("does not charge"),
+                "must not claim a charging port does not charge, got: \(summary.subtitle)")
+    }
+
+    // MARK: - Apple accessory name from the port's UVDM node
+
+    /// Fixture for the Apple accessory identity a UVDM node publishes.
+    /// `portKey` matches `makePort()`'s fixed "2/1".
+    private func accessory(
+        product: String? = nil,
+        userString: String? = nil,
+        model: String? = nil,
+        serialNumber: String? = nil,
+        hardwareVersion: String? = nil,
+        // The UVDM node's Manufacturer field. The corpus splits cleanly on it:
+        // "0x05AC" (raw hex) is the 33 power adapters, and everything else
+        // that carries a name carries "Apple Inc." or a blank. Devices are the
+        // default here; the brick fixtures pass the hex explicitly.
+        manufacturer: String? = "Apple Inc."
+    ) -> AppleAccessoryIdentity {
+        AppleAccessoryIdentity(
+            id: 700,
+            portKey: "2/1",
+            manufacturer: manufacturer,
+            vendor: "Apple Inc.",
+            product: product,
+            userString: userString,
+            model: model,
+            serialNumber: serialNumber,
+            hardwareVersion: hardwareVersion,
+            vendorID: 0x05AC,
+            productID: 0x1234
+        )
+    }
+
+    /// A SOP partner that answers Discover Identity as a PD USB peripheral,
+    /// which is what an iPhone does. Today that renders the generic
+    /// "Connected device: USB Peripheral, Apple Inc." line.
+    private func peripheralPartner(specRevision: Int = 0) -> USBPDSOP {
+        USBPDSOP(
+            id: 60, endpoint: .sop,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0x12A8, bcdDevice: 0,
+            vdos: [(2 << 27) | UInt32(0x05AC)],  // UFP product type 2 = PD USB peripheral
+            specRevision: specRevision
+        )
+    }
+
+    @Test("An accessory name replaces the PD product-type wording on the connected-device line")
+    func accessoryNameReplacesProductTypeWording() {
+        let port = makePort(connected: true, active: ["USB2"], supported: ["CC", "USB2"])
+        let summary = PortSummary(
+            port: port,
+            identities: [peripheralPartner()],
+            accessoryIdentity: accessory(product: "iPhone")
+        )
+        let line = summary.bullets.first { $0.hasPrefix("Connected device:") }
+        #expect(line == "Connected device: iPhone (Apple)",
+            "expected the accessory name, got: \(summary.bullets)")
+        #expect(
+            !summary.bullets.contains { $0.contains("USB Peripheral") },
+            "the PD product-type wording must not survive, got: \(summary.bullets)"
+        )
+    }
+
+    @Test("An accessory name folds the PD revision into the same connected-device line")
+    func accessoryNameKeepsPDRevision() {
+        let port = makePort(connected: true, active: ["USB2"], supported: ["CC", "USB2"])
+        let summary = PortSummary(
+            port: port,
+            identities: [peripheralPartner(specRevision: 3)],
+            accessoryIdentity: accessory(product: "iPhone")
+        )
+        let line = summary.bullets.first { $0.hasPrefix("Connected device:") }
+        #expect(line == "Connected device: iPhone (Apple) (PD 3.0)",
+            "expected the PD revision folded in, got: \(summary.bullets)")
+    }
+
+    @Test("No accessory identity leaves the existing connected-device wording byte-identical")
+    func noAccessoryIdentityLeavesWordingUnchanged() {
+        // The regression guard for every port with no Apple accessory on it,
+        // which is every non-Apple accessory ever: nothing may change.
+        let port = makePort(connected: true, active: ["USB2"], supported: ["CC", "USB2"])
+        let summary = PortSummary(
+            port: port,
+            identities: [peripheralPartner(specRevision: 3)],
+            accessoryIdentity: nil
+        )
+        #expect(
+            summary.bullets == [
+                "No e-marker read. The cable may have one; macOS usually reads it above 3A or over Thunderbolt.",
+                "USB 2.0 only (480 Mbps), no high-speed data",
+                "Connected device: USB Peripheral, Apple (0x05AC) (PD 3.0)",
+            ],
+            "unchanged wording expected, got: \(summary.bullets)")
+    }
+
+    @Test("A charger accessory name does not touch the Charger line when AdapterDetails is present")
+    func chargerAccessoryDoesNotOverrideAdapterDetails() {
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 140, winningW: 140)],
+            accessoryIdentity: accessory(userString: "96W USB-C Power Adapter", manufacturer: "0x05AC"),
+            adapter: adapter(manufacturer: "Apple Inc.", name: "140W USB-C Power Adapter")
+        )
+        let chargerLines = summary.bullets.filter {
+            $0.hasPrefix("Charger:") || $0.contains("Charger identified as")
+        }
+        #expect(chargerLines == ["Charger: Apple Inc. 140W USB-C Power Adapter"],
+            "AdapterDetails wins, and exactly one charger identity, got: \(summary.bullets)")
+    }
+
+    @Test("A charger accessory name fills the Charger line when AdapterDetails is absent")
+    func chargerAccessoryFillsChargerLineWhenAdapterAbsent() {
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 96)],
+            accessoryIdentity: accessory(userString: "96W USB-C Power Adapter", manufacturer: "0x05AC")
+        )
+        let chargerLines = summary.bullets.filter { $0.hasPrefix("Charger:") }
+        #expect(chargerLines == ["Charger: 96W USB-C Power Adapter"],
+            "expected the UVDM adapter name, got: \(summary.bullets)")
+    }
+
+    @Test("The FedDetails fallback line prefers the accessory name too")
+    func federatedFallbackPrefersAccessoryName() {
+        // No SOP identity at all, so the connected-device line comes from the
+        // battery controller's FedDetails vendor lookup. With a UVDM name in
+        // hand, that name is the better answer.
+        let port = makePort(connected: true, active: ["USB2"], supported: ["CC", "USB2"])
+        let summary = PortSummary(
+            port: port,
+            federatedIdentities: [fed(vid: 0x05AC)],
+            accessoryIdentity: accessory(product: "iPad")
+        )
+        let line = summary.bullets.first { $0.hasPrefix("Connected device:") }
+        #expect(line == "Connected device: iPad (Apple)",
+            "expected the accessory name on the FedDetails line, got: \(summary.bullets)")
+    }
+
+    @Test("A charger with PD identity VDOs is not named as the connected device")
+    func chargerWithPDIdentityIsNotNamedAsConnectedDevice() {
+        // A brick sourcing power on this port is the charger, not a
+        // "connected device", however good its UVDM name is. Same argument
+        // as the issue #268 cable case in the branch above.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 96)],
+            identities: [peripheralPartner(specRevision: 3)],
+            accessoryIdentity: accessory(userString: "96W USB-C Power Adapter", manufacturer: "0x05AC")
+        )
+        // Asserted narrowly on purpose: only that the accessory NAME stays off
+        // the connected-device line. Whatever generic PD wording the card shows
+        // for a third-party-shaped charger in this state is pre-existing
+        // behaviour owned elsewhere, not something this change endorses.
+        let connected = summary.bullets.filter { $0.hasPrefix("Connected device:") }
+        #expect(
+            !connected.contains { $0.contains("96W USB-C Power Adapter") },
+            "the accessory name must not name a charger as a connected device, got: \(summary.bullets)"
+        )
+    }
+
+    @Test("Exactly one charger identity when the UVDM node names the brick and AdapterDetails is silent")
+    func oneChargerIdentityWhenAdapterDetailsSilent() {
+        // The PD partner claims to be a passive cable while sourcing power
+        // (issue #268), so the "Charger identified as" line is in play. The
+        // UVDM name is the richer of the two and must suppress it, exactly as
+        // an AdapterDetails Manufacturer/Name pair does.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let partner = USBPDSOP(
+            id: 51, endpoint: .sop,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0, bcdDevice: 0,
+            vdos: [(3 << 27) | UInt32(0x05AC)],  // product type 3 = passive cable
+            specRevision: 3
+        )
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 96)],
+            identities: [partner],
+            accessoryIdentity: accessory(userString: "96W USB-C Power Adapter", manufacturer: "0x05AC")
+        )
+        let chargerLines = summary.bullets.filter {
+            $0.hasPrefix("Charger:") || $0.contains("Charger identified as")
+        }
+        #expect(chargerLines == ["Charger: 96W USB-C Power Adapter"],
+            "expected exactly one charger identity, got: \(summary.bullets)")
+    }
+
+    @Test("A UVDM node that is not the power-adapter population never reaches the Charger line")
+    func nonAdapterUVDMNodeNeverReachesChargerLine() {
+        // The gate is the node's raw Manufacturer field, not the English words
+        // in its name: a name is user-facing text and can arrive in any
+        // language.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 96)],
+            accessoryIdentity: accessory(
+                userString: "96W USB-C Power Adapter", manufacturer: "0x1234")
+        )
+        #expect(
+            !summary.bullets.contains { $0.hasPrefix("Charger:") },
+            "no Charger line expected outside the adapter population, got: \(summary.bullets)"
+        )
+    }
+
+    // MARK: - Which line the UVDM name goes on (gate round 1)
+
+    @Test("A brick with no live PD source is still not a connected device (issue #278)")
+    func batteryFullChargerIsNotAConnectedDevice() {
+        // Issue #278: the battery is full, so macOS tore the PD contract down.
+        // A charger is attached and delivering, but there is no live power
+        // source on the port, so `chargingSource` is nil. Power flow cannot
+        // decide which line the name goes on; the accessory population can.
+        //
+        // Asserted narrowly, and the narrowness is the point: this pins that
+        // the accessory NAME stays off the connected-device line. The card in
+        // this state ALSO prints a generic PD-derived "Connected device: USB
+        // Peripheral..." line beside the charger line, which is a known
+        // double line that predates this branch on `main` (`adapterIdentityWillFire`
+        // has always required a live charging source) and is ticketed
+        // separately. Nothing here endorses it.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let summary = PortSummary(
+            port: port,
+            identities: [peripheralPartner(specRevision: 3)],
+            accessoryIdentity: accessory(userString: "96W USB-C Power Adapter", manufacturer: "0x05AC"),
+            chargerWattageSource: .systemAdapterFallback(watts: 96),
+            adapter: adapter(manufacturer: "Apple Inc.", name: "96W USB-C Power Adapter", watts: 96)
+        )
+        #expect(
+            !summary.bullets.contains { $0.hasPrefix("Connected device:") && $0.contains("96W USB-C Power Adapter") },
+            "a brick must never be named as a connected device, got: \(summary.bullets)"
+        )
+        let chargerLines = summary.bullets.filter {
+            $0.hasPrefix("Charger:") || $0.contains("Charger identified as")
+        }
+        #expect(chargerLines == ["Charger: Apple Inc. 96W USB-C Power Adapter"],
+            "expected exactly one charger identity, got: \(summary.bullets)")
+    }
+
+    @Test("With no AdapterDetails, the battery-full state still names the brick on the Charger line")
+    func batteryFullChargerNamedFromUVDMWhenAdapterDetailsSilent() {
+        // Same issue #278 state, but AdapterDetails carries no Manufacturer.
+        // Without the UVDM fallback the card has no charger identity at all.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let summary = PortSummary(
+            port: port,
+            identities: [peripheralPartner(specRevision: 3)],
+            accessoryIdentity: accessory(userString: "96W USB-C Power Adapter", manufacturer: "0x05AC"),
+            chargerWattageSource: .systemAdapterFallback(watts: 96),
+            adapter: adapter(manufacturer: nil, name: nil, watts: 96)
+        )
+        let chargerLines = summary.bullets.filter {
+            $0.hasPrefix("Charger:") || $0.contains("Charger identified as")
+        }
+        #expect(chargerLines == ["Charger: 96W USB-C Power Adapter"],
+            "expected the UVDM name on the charger line, got: \(summary.bullets)")
+    }
+
+    @Test("A display sourcing power is still the connected device")
+    func displaySourcingPowerIsStillTheConnectedDevice() {
+        // A Studio Display supplies about 96W to a notebook over the same
+        // cable, so on a laptop it holds a live charging source. It is not a
+        // charger: its UVDM node carries Manufacturer "Apple Inc.", not the
+        // "0x05AC" the bricks carry. Its name belongs on this line.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 96)],
+            identities: [peripheralPartner(specRevision: 3)],
+            accessoryIdentity: accessory(product: "Studio Display", manufacturer: "Apple Inc.")
+        )
+        let connected = summary.bullets.filter { $0.hasPrefix("Connected device:") }
+        #expect(connected == ["Connected device: Studio Display (Apple) (PD 3.0)"],
+            "the display must keep its name while sourcing power, got: \(summary.bullets)")
+    }
+
+    @Test("A display sourcing power keeps its name on the FedDetails fallback too")
+    func displaySourcingPowerNamedOnFederatedFallback() {
+        // No SOP identity, so the line comes from FedDetails. Same rule: a
+        // named non-adapter accessory is the connected device even while it
+        // sources power, and no "Charger identified as" line stands in for it.
+        let port = makePort(connected: true, active: [], supported: ["CC"])
+        let summary = PortSummary(
+            port: port,
+            sources: [usbPD(maxW: 96, winningW: 96)],
+            federatedIdentities: [fed(vid: 0x05AC)],
+            accessoryIdentity: accessory(product: "Studio Display", manufacturer: "Apple Inc.")
+        )
+        #expect(summary.bullets.contains("Connected device: Studio Display (Apple)"),
+            "expected the display name on the FedDetails line, got: \(summary.bullets)")
+        #expect(
+            !summary.bullets.contains { $0.contains("Charger identified as") },
+            "a display is not a charger, got: \(summary.bullets)"
+        )
+    }
 }

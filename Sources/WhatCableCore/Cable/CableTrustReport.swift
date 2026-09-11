@@ -44,6 +44,16 @@ public struct CableTrustReport: Hashable {
             return
         }
 
+        // Belt and braces for issue #542. The flag catalogue below judges
+        // cable e-marker data, and a VCONN-powered device's VDOs are not
+        // that, so there is nothing here to judge. Strict `isCable`, not the
+        // looser `identifiesAsCable` heuristic: the point is to exclude
+        // responders that positively declare a non-cable product type.
+        guard identity.idHeader?.isCable == true else {
+            self.flags = []
+            return
+        }
+
         var collected: [TrustFlag] = []
 
         // Does the plug (SOP partner) declare itself a cable with a

@@ -188,6 +188,10 @@ public struct CableSnapshot: Equatable {
     /// Independent of USB-PD e-marker data. Present only while a
     /// Thunderbolt link is active.
     public let cioCapabilities: [CIOCableCapability]
+    /// Apple accessory identity read from the port's UVDM node. Present only
+    /// while an Apple accessory is connected; Apple-only by construction, since
+    /// macOS decodes UVDM for vendor 0x05AC alone.
+    public let accessoryIdentities: [AppleAccessoryIdentity]
     /// Per-port physical layer state from the TypeC PHY controller. Shows
     /// per-lane transport mode (CIO/DisplayPort/idle), USB2 state, and DP
     /// pixel clock. One entry per physical USB-C port.
@@ -219,6 +223,7 @@ public struct CableSnapshot: Equatable {
         usb3Transports: [USB3Transport] = [],
         trmTransports: [TRMTransport] = [],
         cioCapabilities: [CIOCableCapability] = [],
+        accessoryIdentities: [AppleAccessoryIdentity] = [],
         typeCPhys: [AppleTypeCPhy] = [],
         displayPorts: [IOPortTransportStateDisplayPort] = [],
         batteryFullyCharged: Bool? = nil,
@@ -235,6 +240,7 @@ public struct CableSnapshot: Equatable {
         self.usb3Transports = usb3Transports
         self.trmTransports = trmTransports
         self.cioCapabilities = cioCapabilities
+        self.accessoryIdentities = accessoryIdentities
         self.typeCPhys = typeCPhys
         self.displayPorts = displayPorts
         self.batteryFullyCharged = batteryFullyCharged

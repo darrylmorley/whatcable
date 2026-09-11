@@ -70,6 +70,7 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
         let trmWatcher = TRMTransportWatcher()
         let phyWatcher = AppleTypeCPhyWatcher()
         let displayWatcher = DisplayPortTransportWatcher()
+        let uvdmWatcher = AppleUVDMWatcher()
 
         // Each watcher's start() registers a persistent IOKit notification
         // wired to the main dispatch queue, holding an UNRETAINED pointer back
@@ -101,6 +102,7 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
             trmWatcher.stop()
             phyWatcher.stop()
             displayWatcher.stop()
+            uvdmWatcher.stop()
         }
 
         // The widget is a separate process, so the app's "Skip deep USB
@@ -119,6 +121,7 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
         trmWatcher.start()
         phyWatcher.start()
         displayWatcher.start()
+        uvdmWatcher.start()
 
         // Lets powerWatcher.refresh() synthesize a per-port source when macOS
         // never publishes a real IOPortFeaturePowerSource node (M1 Pro/Max/Ultra
@@ -147,6 +150,7 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
         trmWatcher.refresh()
         phyWatcher.refresh()
         displayWatcher.refresh()
+        uvdmWatcher.refresh()
 
         let ports = portWatcher.ports
         guard !ports.isEmpty else {
@@ -167,6 +171,7 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
             usb3Transports: usb3Watcher.transports,
             trmTransports: trmWatcher.transports,
             cioCapabilities: trmWatcher.cioCapabilities,
+            accessoryIdentities: uvdmWatcher.identities,
             typeCPhys: phyWatcher.phys,
             displayPorts: displayWatcher.statuses.map(\.status),
             batteryFullyCharged: battery.battery?.fullyCharged,

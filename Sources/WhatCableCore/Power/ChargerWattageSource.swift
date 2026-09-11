@@ -87,6 +87,13 @@ public enum ChargerWattageSource: Hashable {
     ///
     /// - Parameters:
     ///   - portSources: Power sources belonging to this port only.
+    ///   - portIsActive: This port's own `connectionActive` state. Every
+    ///     branch that returns the system adapter reading is gated on
+    ///     machine-wide COUNTS, which carry no port identity, so a sole active
+    ///     charger port and some other disconnected port being summarised
+    ///     alongside it look identical to them. This is the identity those
+    ///     counts lack, and a `.systemAdapterFallback` becomes `.unknown`
+    ///     without it (issue #542).
     ///   - activePortCount: Number of ports with `connectionActive == true`
     ///     across the whole machine. Gates the source-less adapter fallback
     ///     (issue #141: a dock delivers power with no per-port source node, so
@@ -99,6 +106,38 @@ public enum ChargerWattageSource: Hashable {
     ///     (issue #443).
     ///   - adapter: System-wide adapter info from `IOPSCopyExternalPowerAdapterDetails`.
     public static func resolve(
+        portSources: [PowerSource],
+        portIsActive: Bool,
+        activePortCount: Int,
+        chargerSourceCount: Int,
+        adapter: AdapterInfo?
+    ) -> ChargerWattageSource {
+        let resolved = resolveIgnoringPortIdentity(
+            portSources: portSources,
+            activePortCount: activePortCount,
+            chargerSourceCount: chargerSourceCount,
+            adapter: adapter
+        )
+
+        // The system adapter reading is machine-wide. Both branches that
+        // return it are gated on counts alone, which carry no port identity,
+        // so either can hand it to a port that is not itself connected
+        // (issue #542: 67W printed beside an accessory that draws nothing).
+        // Guarding the VALUE rather than one branch's condition covers both,
+        // and leaves the branches' own conditions untouched. Measured on the
+        // customer-probe corpus: 22 ports publish a Brick ID node while
+        // reporting `connectionActive == false`, so the node's presence is
+        // not evidence a charger is attached to that port.
+        if case .systemAdapterFallback = resolved, !portIsActive {
+            return .unknown
+        }
+        return resolved
+    }
+
+    /// The branch logic, unchanged since before issue #542. Split out so the
+    /// port-identity guard applies to every `.systemAdapterFallback` return
+    /// in one place. Callers use `resolve`.
+    private static func resolveIgnoringPortIdentity(
         portSources: [PowerSource],
         activePortCount: Int,
         chargerSourceCount: Int,
@@ -128,6 +167,11 @@ public enum ChargerWattageSource: Hashable {
         // a simultaneously-charging source-less dock) can misattribute the
         // adapter reading to MagSafe; it is pinned by a regression test so a
         // future change here is a conscious one.
+        //
+        // This branch's `.systemAdapterFallback` return is subject to the
+        // port-identity guard in `resolve`, the same as the source-less
+        // branch below. A Brick ID node persists on a disconnected port, so
+        // its presence is not evidence a charger is attached here.
         if let source, source.name == "Brick ID",
            chargerSourceCount == 1,
            let adapterW = adapter?.watts, adapterW > 0 {
@@ -164,6 +208,9 @@ public enum ChargerWattageSource: Hashable {
         //     guards against two docks delivering power on separate chains (#46).
         //
         // (b) The system adapter reports a positive wattage.
+        //
+        // `resolve` applies a third condition to the value this returns: the
+        // port must be active. See the guard there.
         if activePortCount == 1,
            let adapterW = adapter?.watts,
            adapterW > 0 {

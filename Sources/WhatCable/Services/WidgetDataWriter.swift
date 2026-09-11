@@ -33,6 +33,7 @@ final class WidgetDataWriter {
     private var tbWatcher: IOIOThunderboltSwitchWatcher { WatcherHub.shared.tbWatcher }
     private var usb3Watcher: USB3TransportWatcher { WatcherHub.shared.usb3Watcher }
     private var trmWatcher: TRMTransportWatcher { WatcherHub.shared.trmWatcher }
+    private var uvdmWatcher: AppleUVDMWatcher { WatcherHub.shared.uvdmWatcher }
     private var displayWatcher: DisplayPortTransportWatcher { WatcherHub.shared.displayWatcher }
 
     private var cancellables = Set<AnyCancellable>()
@@ -172,8 +173,12 @@ final class WidgetDataWriter {
             await self?.refreshPresence()
         }
 
-        // Watch all seven signals. A single cable plug can fire several of
-        // these within a few ms, so scheduleWrite() debounces into one write.
+        // Watch every signal the snapshot above is built from. A single cable
+        // plug can fire several of these within a few ms, so scheduleWrite()
+        // debounces into one write. A watcher that is read but not watched
+        // here is not a missing value, it is a late one: the widget keeps the
+        // previous row until something else publishes or the heartbeat comes
+        // round, up to `heartbeatInterval` later.
         WatcherHub.shared.portWatcher.$ports
             .dropFirst()
             .sink { [weak self] _ in self?.scheduleWrite() }
@@ -210,6 +215,11 @@ final class WidgetDataWriter {
             .store(in: &cancellables)
 
         WatcherHub.shared.displayWatcher.$statuses
+            .dropFirst()
+            .sink { [weak self] _ in self?.scheduleWrite() }
+            .store(in: &cancellables)
+
+        WatcherHub.shared.uvdmWatcher.$identities
             .dropFirst()
             .sink { [weak self] _ in self?.scheduleWrite() }
             .store(in: &cancellables)
@@ -503,6 +513,7 @@ final class WidgetDataWriter {
 
             let wattageSource = ChargerWattageSource.resolve(
                 portSources: sources,
+                portIsActive: port.connectionActive == true,
                 activePortCount: activePortCount,
                 chargerSourceCount: chargerSourceCount,
                 adapter: adapter
@@ -518,6 +529,7 @@ final class WidgetDataWriter {
                 usb3Transports: usb3Watcher.transports(for: port),
                 trmTransports: trmWatcher.transports.filter { $0.canonicallyMatches(port: port) },
                 cioCapability: trmWatcher.cioCapabilities.first { $0.canonicallyMatches(port: port) },
+                accessoryIdentity: uvdmWatcher.identities.first { $0.canonicallyMatches(port: port) },
                 isConnectedOverride: isLive,
                 chargerWattageSource: wattageSource,
                 batteryFullyCharged: batteryFull,
@@ -578,7 +590,9 @@ final class WidgetDataWriter {
                 linkSpeed: summary.linkSpeed,
                 displayMode: displayMode,
                 monitorName: monitorName,
-                displayCount: displayCount
+                displayCount: displayCount,
+                accessoryName: uvdmWatcher.identities
+                    .first { $0.canonicallyMatches(port: port) }?.displayName
             )
         }
 
@@ -668,6 +682,7 @@ private struct ReloadSignature: Equatable {
         let headline: String
         let subtitle: String
         let topBullet: String?
+        let accessoryName: String?
         let iconName: String
         let deviceCount: Int
         let portKey: String?
@@ -701,6 +716,7 @@ private struct ReloadSignature: Equatable {
                 headline: p.headline,
                 subtitle: p.subtitle,
                 topBullet: p.topBullet,
+                accessoryName: p.accessoryName,
                 iconName: p.iconName,
                 deviceCount: p.deviceCount,
                 portKey: p.portKey,

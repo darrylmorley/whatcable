@@ -215,45 +215,54 @@ final class BetaUpdateChannelTests: XCTestCase {
     // shown a beta, opt out, and still install it from the banner already on
     // screen, which makes the settings caption untrue.
 
+    // The tests below read/write `AppSettings.shared`, backed by
+    // `UserDefaults.standard`, a domain every `swift test` process on this
+    // machine shares. Wrapped in `withScratchAppSettingsDefaults` so a
+    // concurrent run can't flip these settings mid-assertion.
+
     @MainActor
     func testSuppressesPrereleaseOnlyWhenOptedOut() {
-        let settings = AppSettings.shared
-        let original = settings.receiveBetaUpdates
-        defer { settings.receiveBetaUpdates = original }
+        withScratchAppSettingsDefaults {
+            let settings = AppSettings.shared
+            let original = settings.receiveBetaUpdates
+            defer { settings.receiveBetaUpdates = original }
 
-        let beta = AvailableUpdate(version: "1.5.0-beta.3", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
-        let stable = AvailableUpdate(version: "1.5.0", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
+            let beta = AvailableUpdate(version: "1.5.0-beta.3", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
+            let stable = AvailableUpdate(version: "1.5.0", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
 
-        settings.receiveBetaUpdates = false
-        XCTAssertTrue(settings.suppressesPrerelease(beta), "Opted out, a beta must be suppressed")
-        XCTAssertFalse(settings.suppressesPrerelease(stable), "A stable is never suppressed")
+            settings.receiveBetaUpdates = false
+            XCTAssertTrue(settings.suppressesPrerelease(beta), "Opted out, a beta must be suppressed")
+            XCTAssertFalse(settings.suppressesPrerelease(stable), "A stable is never suppressed")
 
-        settings.receiveBetaUpdates = true
-        XCTAssertFalse(settings.suppressesPrerelease(beta), "Opted in, a beta is allowed")
-        XCTAssertFalse(settings.suppressesPrerelease(stable), "A stable is never suppressed")
+            settings.receiveBetaUpdates = true
+            XCTAssertFalse(settings.suppressesPrerelease(beta), "Opted in, a beta is allowed")
+            XCTAssertFalse(settings.suppressesPrerelease(stable), "A stable is never suppressed")
+        }
     }
 
     @MainActor
     func testOptingOutDiscardsABetaAlreadyOffered() {
-        let settings = AppSettings.shared
-        let checker = UpdateChecker.shared
-        let originalSetting = settings.receiveBetaUpdates
-        let originalAvailable = checker.available
-        defer {
-            settings.receiveBetaUpdates = originalSetting
-            if let originalAvailable { checker.updateAvailable(to: originalAvailable) }
+        withScratchAppSettingsDefaults {
+            let settings = AppSettings.shared
+            let checker = UpdateChecker.shared
+            let originalSetting = settings.receiveBetaUpdates
+            let originalAvailable = checker.available
+            defer {
+                settings.receiveBetaUpdates = originalSetting
+                if let originalAvailable { checker.updateAvailable(to: originalAvailable) }
+            }
+
+            settings.receiveBetaUpdates = true
+            let beta = AvailableUpdate(version: "9.9.9-beta.1", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
+            checker.updateAvailable(to: beta)
+            XCTAssertEqual(checker.available?.version, "9.9.9-beta.1", "Precondition: the beta is on offer")
+
+            settings.receiveBetaUpdates = false
+            XCTAssertNil(
+                checker.available,
+                "Opting out must withdraw the beta already on offer, not just stop the next one"
+            )
         }
-
-        settings.receiveBetaUpdates = true
-        let beta = AvailableUpdate(version: "9.9.9-beta.1", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
-        checker.updateAvailable(to: beta)
-        XCTAssertEqual(checker.available?.version, "9.9.9-beta.1", "Precondition: the beta is on offer")
-
-        settings.receiveBetaUpdates = false
-        XCTAssertNil(
-            checker.available,
-            "Opting out must withdraw the beta already on offer, not just stop the next one"
-        )
     }
 
     // MARK: - Update notifications are independent of the cable-change toggle (issue #550)
@@ -284,66 +293,70 @@ final class BetaUpdateChannelTests: XCTestCase {
 
     @MainActor
     func testPostNotificationFiresWithCableChangeToggleOffButUpdatesOn() {
-        let settings = AppSettings.shared
-        let checker = UpdateChecker.shared
-        let originalNotifyOnChanges = settings.notifyOnChanges
-        let originalNotifyOnUpdates = settings.notifyOnUpdates
-        let originalSink = checker.notificationSink
-        let originalEnsure = checker.ensureNotificationAuthorization
-        let originalRequester = settings.requestNotificationAuthorization
-        // Toggling a notification setting on requests OS permission, which
-        // crashes under the `swift test` runner (no signed app bundle). Swap
-        // in a no-op for the duration of this test.
-        settings.requestNotificationAuthorization = {}
-        defer {
-            settings.notifyOnChanges = originalNotifyOnChanges
-            settings.notifyOnUpdates = originalNotifyOnUpdates
-            checker.notificationSink = originalSink
-            checker.ensureNotificationAuthorization = originalEnsure
-            settings.requestNotificationAuthorization = originalRequester
+        withScratchAppSettingsDefaults {
+            let settings = AppSettings.shared
+            let checker = UpdateChecker.shared
+            let originalNotifyOnChanges = settings.notifyOnChanges
+            let originalNotifyOnUpdates = settings.notifyOnUpdates
+            let originalSink = checker.notificationSink
+            let originalEnsure = checker.ensureNotificationAuthorization
+            let originalRequester = settings.requestNotificationAuthorization
+            // Toggling a notification setting on requests OS permission, which
+            // crashes under the `swift test` runner (no signed app bundle). Swap
+            // in a no-op for the duration of this test.
+            settings.requestNotificationAuthorization = {}
+            defer {
+                settings.notifyOnChanges = originalNotifyOnChanges
+                settings.notifyOnUpdates = originalNotifyOnUpdates
+                checker.notificationSink = originalSink
+                checker.ensureNotificationAuthorization = originalEnsure
+                settings.requestNotificationAuthorization = originalRequester
+            }
+
+            settings.notifyOnChanges = false
+            settings.notifyOnUpdates = true
+
+            var posted: AvailableUpdate?
+            checker.notificationSink = { posted = $0 }
+            checker.ensureNotificationAuthorization = { completion in completion(true) }
+            let update = AvailableUpdate(version: "9.9.8", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
+            checker.postNotification(update)
+
+            XCTAssertEqual(
+                posted?.version,
+                "9.9.8",
+                "postNotification itself must fire with notifyOnChanges off, not just the pure shouldNotify rule"
+            )
         }
-
-        settings.notifyOnChanges = false
-        settings.notifyOnUpdates = true
-
-        var posted: AvailableUpdate?
-        checker.notificationSink = { posted = $0 }
-        checker.ensureNotificationAuthorization = { completion in completion(true) }
-        let update = AvailableUpdate(version: "9.9.8", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
-        checker.postNotification(update)
-
-        XCTAssertEqual(
-            posted?.version,
-            "9.9.8",
-            "postNotification itself must fire with notifyOnChanges off, not just the pure shouldNotify rule"
-        )
     }
 
     @MainActor
     func testPostNotificationStaysSilentWhenItsOwnToggleIsOff() {
-        let settings = AppSettings.shared
-        let checker = UpdateChecker.shared
-        let originalNotifyOnUpdates = settings.notifyOnUpdates
-        let originalSink = checker.notificationSink
-        let originalRequester = settings.requestNotificationAuthorization
-        // Restoring notifyOnUpdates below may flip it back to true, which
-        // requests OS permission; that crashes under the `swift test` runner
-        // (no signed app bundle), same reasoning as the test above.
-        settings.requestNotificationAuthorization = {}
-        defer {
-            settings.notifyOnUpdates = originalNotifyOnUpdates
-            checker.notificationSink = originalSink
-            settings.requestNotificationAuthorization = originalRequester
+        withScratchAppSettingsDefaults {
+            let settings = AppSettings.shared
+            let checker = UpdateChecker.shared
+            let originalNotifyOnUpdates = settings.notifyOnUpdates
+            let originalSink = checker.notificationSink
+            let originalRequester = settings.requestNotificationAuthorization
+            // Restoring notifyOnUpdates below may flip it back to true, which
+            // requests OS permission; that crashes under the `swift test` runner
+            // (no signed app bundle), same reasoning as the test above.
+            settings.requestNotificationAuthorization = {}
+            defer {
+                settings.notifyOnUpdates = originalNotifyOnUpdates
+                checker.notificationSink = originalSink
+                settings.requestNotificationAuthorization = originalRequester
+            }
+
+            settings.notifyOnUpdates = false
+
+            var posted: AvailableUpdate?
+            checker.notificationSink = { posted = $0 }
+            let update = AvailableUpdate(version: "9.9.7", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
+            checker.postNotification(update)
+
+            XCTAssertNil(posted, "postNotification must stay silent with notifyOnUpdates off")
         }
-
-        settings.notifyOnUpdates = false
-
-        var posted: AvailableUpdate?
-        checker.notificationSink = { posted = $0 }
-        let update = AvailableUpdate(version: "9.9.7", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
-        checker.postNotification(update)
-
-        XCTAssertNil(posted, "postNotification must stay silent with notifyOnUpdates off")
     }
 
     // MARK: - Authorization gate at post time (owner decision, issue #550)
@@ -461,24 +474,26 @@ final class BetaUpdateChannelTests: XCTestCase {
 
     @MainActor
     func testOptingOutLeavesAStableOfferAlone() {
-        let settings = AppSettings.shared
-        let checker = UpdateChecker.shared
-        let originalSetting = settings.receiveBetaUpdates
-        let originalAvailable = checker.available
-        defer {
-            settings.receiveBetaUpdates = originalSetting
-            if let originalAvailable { checker.updateAvailable(to: originalAvailable) }
+        withScratchAppSettingsDefaults {
+            let settings = AppSettings.shared
+            let checker = UpdateChecker.shared
+            let originalSetting = settings.receiveBetaUpdates
+            let originalAvailable = checker.available
+            defer {
+                settings.receiveBetaUpdates = originalSetting
+                if let originalAvailable { checker.updateAvailable(to: originalAvailable) }
+            }
+
+            settings.receiveBetaUpdates = true
+            let stable = AvailableUpdate(version: "9.9.9", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
+            checker.updateAvailable(to: stable)
+
+            settings.receiveBetaUpdates = false
+            XCTAssertEqual(
+                checker.available?.version,
+                "9.9.9",
+                "Opting out of betas must not throw away a legitimate stable update"
+            )
         }
-
-        settings.receiveBetaUpdates = true
-        let stable = AvailableUpdate(version: "9.9.9", url: URL(string: "https://example.com")!, downloadURL: nil, notes: nil)
-        checker.updateAvailable(to: stable)
-
-        settings.receiveBetaUpdates = false
-        XCTAssertEqual(
-            checker.available?.version,
-            "9.9.9",
-            "Opting out of betas must not throw away a legitimate stable update"
-        )
     }
 }

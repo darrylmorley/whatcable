@@ -98,6 +98,9 @@ extension PortSummary {
         usb3Transports: [USB3Transport] = [],
         trmTransports: [TRMTransport] = [],
         cioCapability: CIOCableCapability? = nil,
+        // Apple's own name for what is attached, read from the port's UVDM
+        // node. Nil for any non-Apple accessory, which never publishes one.
+        accessoryIdentity: AppleAccessoryIdentity? = nil,
         isConnectedOverride: Bool? = nil,
         chargerWattageSource: ChargerWattageSource = .unknown,
         batteryFullyCharged: Bool? = nil,
@@ -332,12 +335,40 @@ extension PortSummary {
             ? nil
             : PowerSource.preferredChargingSource(in: sources)
 
-        // Whether we'll emit a richer "Charger: <Manufacturer> <Name>"
-        // line later (in the charger details block). We use this to
-        // avoid double-prefixing with the FedDetails fallback below
-        // when both signals identify the same charger.
+        // Apple's own name for the accessory, from the port's UVDM node.
+        // Nil for every non-Apple accessory, and for an Apple one whose node
+        // publishes nothing displayable.
+        let accessoryName = accessoryIdentity?.displayName
+
+        // Which line the name belongs on is decided by what the accessory IS,
+        // not by whether power happens to be flowing. Power flow is the wrong
+        // axis twice over: a charger on a full battery has no live source at
+        // all (issue #278), and a Studio Display holds one while being the
+        // connected device.
+        //
+        // The node says which it is, exactly. Measured across all 1380
+        // probe-17 corpus folders: 33 nodes carry Manufacturer "0x05AC" (the
+        // raw hex vendor id, not a name), those 33 are exactly the nodes
+        // carrying a NON-EMPTY User String (35 carry the key at all; two of
+        // those hold an empty string), and every one of those 33 values ends
+        // in "USB-C Power Adapter". Everything else that carries a name
+        // (Studio Display, iPhone, iPad, Macintosh, Display, Vision Pro
+        // Battery, DevBand) carries "Apple Inc." or a blank Manufacturer. So
+        // the hex value is the power-adapter population, with no substring
+        // match on a user-facing name that arrives in the host's own language.
+        let accessoryIsPowerAdapter = accessoryIdentity?.manufacturer == "0x05AC"
+        /// A brick: belongs on the charger line, never the connected-device one.
+        let accessoryChargerName = accessoryIsPowerAdapter ? accessoryName : nil
+        /// Everything else: belongs on the connected-device line, power or no power.
+        let accessoryDeviceName = accessoryIsPowerAdapter ? nil : accessoryName
+
+        // Whether we'll emit a richer charger line later (in the charger
+        // details block): either "Charger: <Manufacturer> <Name>" from
+        // AdapterDetails, or "Charger: <name>" from the port's UVDM node. We
+        // use this to avoid double-prefixing with the PD and FedDetails
+        // fallbacks below when the signals identify the same charger.
         let adapterIdentityWillFire = chargingSource != nil
-            && (adapter?.manufacturer?.isEmpty == false)
+            && (adapter?.manufacturer?.isEmpty == false || accessoryChargerName != nil)
 
         // Partner identity (SOP): what's connected.
         if let partner = identities.first(where: { $0.endpoint == .sop }),
@@ -360,6 +391,21 @@ extension PortSummary {
                 // If adapterIdentityWillFire, a richer "Charger: <mfr> <name>"
                 // line is coming later; skip to avoid a double charger line
                 // (mirrors the federated branch's guard).
+            } else if let accessoryDeviceName {
+                // A power adapter never reaches here: it has no device name, so
+                // it falls through to the PD-derived wording below and is named
+                // on the charger line instead.
+                //
+                // A peer Mac publishes Product "Macintosh", so a Mac-to-Mac
+                // Thunderbolt link renders "Connected device: Macintosh
+                // (Apple)" here. Host-to-host wording is owned elsewhere and
+                // will add its own check ahead of this one, so this stays the
+                // LAST alternative tried before the PD-derived wording below.
+                // The PD revision goes inside the single %@ argument so no new
+                // localised key is needed, exactly as the charger line does.
+                let label = partner.pdRevisionLabel.map { "\(accessoryDeviceName) (Apple) (\($0))" }
+                    ?? "\(accessoryDeviceName) (Apple)"
+                measured.append(String(localized: "Connected device: \(label)", bundle: _coreLocalizedBundle))
             } else {
                 let kind = header.ufpProductType != .undefined ? header.ufpProductType.label : header.dfpProductType.label
                 if let pdRev = partner.pdRevisionLabel {
@@ -377,15 +423,24 @@ extension PortSummary {
             // name or just a hex code, both of which mislead users when
             // labelled as the "connected device" or "charger".
             let vendor = "\(vendorName) (0x\(String(format: "%04X", fed.vendorID)))"
-            if chargingSource != nil && !adapterIdentityWillFire {
+            if chargingSource != nil && !adapterIdentityWillFire && accessoryDeviceName == nil {
                 // A charging source is on this port and we don't have
                 // a richer Manufacturer/Name pair from AdapterDetails;
-                // label this as the charger.
+                // label this as the charger. A named non-adapter accessory
+                // takes the connected-device arm below instead: a display
+                // sourcing power is still the connected device.
                 databaseLines.append(String(localized: "Charger identified as \(vendor)", bundle: _coreLocalizedBundle))
+            } else if let accessoryDeviceName {
+                // Apple's own name for the thing, whether or not it is also
+                // sourcing power. The same ordering note as the branch above
+                // applies: this check stays last, ahead of nothing but the
+                // generic wording. The "(Apple)" suffix goes inside the single
+                // %@ argument, so this reuses the existing key.
+                let label = "\(accessoryDeviceName) (Apple)"
+                measured.append(String(localized: "Connected device: \(label)", bundle: _coreLocalizedBundle))
             } else if chargingSource == nil {
                 // No charging source: the connected thing is a
-                // peripheral, dock, drive, etc. Keep the generic
-                // wording.
+                // peripheral, dock, drive, etc.
                 measured.append(String(localized: "Connected device: \(vendor)", bundle: _coreLocalizedBundle))
             }
             // If chargingSource != nil && adapterIdentityWillFire,
@@ -745,6 +800,12 @@ extension PortSummary {
                 } else {
                     chargerLines.append(String(localized: "Charger: \(manufacturer)", bundle: _coreLocalizedBundle))
                 }
+            } else if let accessoryChargerName {
+                // AdapterDetails said nothing, but the port's UVDM node names
+                // the brick. This is the richer line, so `adapterIdentityWillFire`
+                // counts it and the PD / FedDetails "Charger identified as"
+                // wording stands down: never two charger identities on one card.
+                chargerLines.append(String(localized: "Charger: \(accessoryChargerName)", bundle: _coreLocalizedBundle))
             }
 
             switch chargerWattageSource {
@@ -783,6 +844,11 @@ extension PortSummary {
                 } else {
                     chargerLines.append(String(localized: "Charger: \(manufacturer)", bundle: _coreLocalizedBundle))
                 }
+            } else if let accessoryChargerName {
+                // AdapterDetails is silent, so the port's UVDM node is the only
+                // thing that names the brick in this state. Mirrors the
+                // live-source branch above.
+                chargerLines.append(String(localized: "Charger: \(accessoryChargerName)", bundle: _coreLocalizedBundle))
             }
             measured.append(String(localized: "System reports charger at \(w)W", bundle: _coreLocalizedBundle))
         }
@@ -863,6 +929,32 @@ extension PortSummary {
             self.subtitle = dataWithheld
                 ? String(localized: "macOS is holding data back until you approve the accessory.", bundle: _coreLocalizedBundle)
                 : String(localized: "SuperSpeed data link is active.", bundle: _coreLocalizedBundle)
+        } else if let vpd = cableEmarker?.vpdVDO, !vpd.chargeThroughSupported, !dataWithheld,
+                  chargingSource == nil {
+            // A VCONN-Powered Device answers Discover Identity at SOP' the way
+            // a cable does, so before this branch Apple's USB-C EarPods fell
+            // into the USB2 arm below and read as a slow charge-only cable
+            // (issue #542). They are an accessory with a USB-C plug on the end
+            // of them, not a cable.
+            //
+            // No wattage suffix, deliberately: the figure on this port is a
+            // machine-wide system-adapter reading, and the accessory draws
+            // nothing from it, so printing a charger figure next to a pair of
+            // earphones is the confusion the issue reports.
+            //
+            // Gated on Charge Through Support being clear. A VPD that does
+            // pass power through would make "does not charge" false, so it
+            // falls through to the arm below, which is no worse than today.
+            // No corpus sample sets that bit; it is covered by a unit test.
+            //
+            // Also gated on there being no live charging source. A VPD that
+            // says it cannot pass power, on a port holding a real contract,
+            // is contradicting its own e-marker, and "does not charge" would
+            // then be false about a port charging the Mac. Zero corpus
+            // machines reach it; the charging arms below keep it.
+            self.status = .dataDevice
+            self.headline = String(localized: "USB accessory (audio or adapter)", bundle: _coreLocalizedBundle)
+            self.subtitle = String(localized: "This accessory has its own USB-C plug. It is not a cable and does not charge.", bundle: _coreLocalizedBundle)
         } else if hasUSB2 && !hasCorroboratedUSB3 {
             self.status = .dataDevice
             if let w = chargerW {
@@ -1036,7 +1128,15 @@ extension PortSummary {
         // The old flat list said "Cable has an e-marker chip" here, so say the
         // equivalent rather than showing the user nothing.
         if hasEmarker, emarkerRead, emarkerLines.isEmpty, emarkerSubtitle == nil {
-            emarkerSubtitle = String(localized: "Answered, but reported no capability data.", bundle: _coreLocalizedBundle)
+            if cableEmarker?.vpdVDO != nil {
+                // A VCONN-Powered Device did answer, and with real data; it is
+                // simply not cable data, so `cableVDO` is nil and the group has
+                // no lines. Saying it "reported no capability data" would be a
+                // new wrong message rather than a fixed one (issue #542).
+                emarkerSubtitle = String(localized: "This plug is part of the accessory, not a cable, so there is no cable rating.", bundle: _coreLocalizedBundle)
+            } else {
+                emarkerSubtitle = String(localized: "Answered, but reported no capability data.", bundle: _coreLocalizedBundle)
+            }
         }
 
         // The cable first. This is a cable app: what the cable says about

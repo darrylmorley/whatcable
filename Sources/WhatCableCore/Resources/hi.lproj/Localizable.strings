@@ -618,3 +618,6 @@
    e-marker silicon vendor hint. */
 "E-marker reports passive, but the port controller detects an active cable" = "E-marker पैसिव बताता है, लेकिन पोर्ट कंट्रोलर सक्रिय केबल का पता लगाता है";
 "E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker अपने चिप निर्माता की डिफ़ॉल्ट वेंडर ID (%@) रखता है; केबल का ब्रांड दर्ज नहीं है";
+"USB accessory (audio or adapter)" = "USB एक्सेसरी (ऑडियो या अडैप्टर)";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "इस एक्सेसरी का अपना USB-C प्लग है। यह केबल नहीं है और चार्ज नहीं करती।";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "यह प्लग एक्सेसरी का हिस्सा है, केबल का नहीं, इसलिए कोई केबल रेटिंग नहीं है।";

@@ -401,4 +401,33 @@ struct WidgetSnapshotFromCableSnapshotTests {
             "must not deny a charger the widget is simultaneously showing, got: \(String(describing: entry?.subtitle))"
         )
     }
+
+    // MARK: - Apple accessory name
+
+    @Test("The port's UVDM accessory name reaches the widget entry")
+    func accessoryNameReachesTheEntry() {
+        let port = makePort(active: ["USB2"], supported: ["CC", "USB2"])
+        let identity = AppleAccessoryIdentity(
+            id: 700, portKey: "2/1",
+            manufacturer: "Apple Inc.", vendor: "Apple Inc.",
+            product: "iPhone", userString: nil, model: nil,
+            serialNumber: nil, hardwareVersion: nil,
+            vendorID: 0x05AC, productID: 0x12A8
+        )
+        let cable = CableSnapshot(
+            ports: [port], powerSources: [], identities: [], usbDevices: [],
+            adapter: nil, accessoryIdentities: [identity]
+        )
+        let widget = WidgetSnapshot(from: cable)
+        #expect(widget.ports.first?.accessoryName == "iPhone")
+        // The widget's row shows it instead of the link-speed line.
+        #expect(widget.ports.first?.rowDetail == "iPhone")
+    }
+
+    @Test("A port with no UVDM node carries no accessory name")
+    func noAccessoryNameWithoutANode() {
+        let cable = emptyCableSnapshot(ports: [makePort()])
+        let widget = WidgetSnapshot(from: cable)
+        #expect(widget.ports.first?.accessoryName == nil)
+    }
 }

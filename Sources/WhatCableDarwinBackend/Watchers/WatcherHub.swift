@@ -37,6 +37,7 @@ public final class WatcherHub {
     public let usb3Watcher    = USB3TransportWatcher()
     public let trmWatcher     = TRMTransportWatcher()
     public let displayWatcher = DisplayPortTransportWatcher()
+    public let uvdmWatcher    = AppleUVDMWatcher()
 
     /// Fires once after each steady-poll or burst `refreshAll()`. Lets an
     /// always-on consumer (the Pro cable-history sampler) sample at the hub's
@@ -88,6 +89,7 @@ public final class WatcherHub {
         usb3Watcher.start()
         trmWatcher.start()
         displayWatcher.start()
+        uvdmWatcher.start()
 
         // Lets powerWatcher.refresh() synthesize a per-port source when macOS
         // never publishes a real IOPortFeaturePowerSource node (M1 Pro/Max/Ultra
@@ -178,6 +180,7 @@ public final class WatcherHub {
         usb3Watcher.refresh()
         trmWatcher.refresh()
         displayWatcher.refresh()
+        uvdmWatcher.refresh()
         didRefresh.send(())
     }
 

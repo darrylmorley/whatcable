@@ -15,6 +15,7 @@ public enum JSONFormatter {
         usb3Transports: [USB3Transport] = [],
         trmTransports: [TRMTransport] = [],
         cioCapabilities: [CIOCableCapability] = [],
+        accessoryIdentities: [AppleAccessoryIdentity] = [],
         usbDevices: [USBDevice] = [],
         displayPorts: [IOPortTransportStateDisplayPort] = [],
         builtInDisplayPorts: [BuiltInDisplayPort] = []
@@ -36,6 +37,7 @@ public enum JSONFormatter {
             usb3Transports: usb3Transports,
             trmTransports: trmTransports,
             cioCapabilities: cioCapabilities,
+            accessoryIdentities: accessoryIdentities,
             displayPorts: displayPorts,
             batteryFullyCharged: batteryFullyCharged,
             batteryIsCharging: batteryIsCharging
@@ -87,6 +89,7 @@ public enum JSONFormatter {
                     usb3Transports: portContext.portUSB3,
                     trmTransports: portContext.portTRM,
                     cioCapability: portContext.portCIO,
+                    accessoryIdentity: portContext.portAccessory,
                     chargerWattageSource: portContext.chargerWattageSource,
                     batteryFullyCharged: context.batteryFullyCharged,
                     batteryIsCharging: context.batteryIsCharging,
@@ -266,6 +269,9 @@ private struct PortDTO: Codable {
     /// CIO cable capability from the Thunderbolt transport controller.
     /// Independent of the USB-PD e-marker. Nil when no TB link is active.
     let cio: CIOCableCapabilityDTO?
+    /// Apple's own name for the accessory, read from the port's UVDM node.
+    /// Nil when nothing on this port publishes one. Apple-only by construction.
+    let accessory: AccessoryDTO?
     let devices: [USBDeviceDTO]?
     let rawProperties: [String: String]?
 
@@ -281,6 +287,7 @@ private struct PortDTO: Codable {
         usb3Transports: [USB3Transport] = [],
         trmTransports: [TRMTransport] = [],
         cioCapability: CIOCableCapability? = nil,
+        accessoryIdentity: AppleAccessoryIdentity? = nil,
         chargerWattageSource: ChargerWattageSource = .unknown,
         batteryFullyCharged: Bool? = nil,
         batteryIsCharging: Bool? = nil,
@@ -315,6 +322,7 @@ private struct PortDTO: Codable {
             usb3Transports: usb3Transports,
             trmTransports: trmTransports,
             cioCapability: cioCapability,
+            accessoryIdentity: accessoryIdentity,
             chargerWattageSource: chargerWattageSource,
             batteryFullyCharged: batteryFullyCharged,
             batteryIsCharging: batteryIsCharging,
@@ -397,6 +405,9 @@ private struct PortDTO: Codable {
         // contract). Only when there's a cable e-marker to assess. The
         // negotiated wattage is the highest winning contract across sources,
         // matching how ChargingDiagnostic reads the live contract.
+        // No sessionVerdict is passed here: this is a one-shot render with no
+        // SessionMonitor to ask, so red (the only tier sessionVerdict can
+        // produce) can never appear in `--json` output.
         let negotiatedWatts: Int? = sources
             .compactMap { $0.winning.map { Int((Double($0.maxPowerMW) / 1000).rounded()) } }
             .max()
@@ -419,6 +430,7 @@ private struct PortDTO: Codable {
 
         self.trm = trmTransports.isEmpty ? nil : trmTransports.map { TRMTransportDTO(transport: $0) }
         self.cio = cioCapability.map { CIOCableCapabilityDTO(capability: $0) }
+        self.accessory = accessoryIdentity.flatMap { AccessoryDTO(identity: $0) }
 
         // The per-port JSON device tree is the deduplicated union of native
         // matches and structurally scoped tunnelled devices: one array, so no
@@ -432,6 +444,27 @@ private struct PortDTO: Codable {
         self.devices = tree.isEmpty ? nil : tree.map { USBDeviceDTO(node: $0) }
 
         self.rawProperties = showRaw ? port.redactedRawProperties : nil
+    }
+}
+
+/// The accessory's own identity strings from the port's UVDM node. Emitted
+/// only when a displayable name was read; `source` says which channel it came
+/// from, so a future second source can be told apart. Hardware identifiers are
+/// carried exactly as read, never cleaned or dropped: they are join keys.
+private struct AccessoryDTO: Codable {
+    let name: String
+    let model: String?
+    let hardwareVersion: String?
+    let serialNumber: String?
+    let source: String
+
+    init?(identity: AppleAccessoryIdentity) {
+        guard let name = identity.displayName else { return nil }
+        self.name = name
+        self.model = identity.model
+        self.hardwareVersion = identity.hardwareVersion
+        self.serialNumber = identity.serialNumber
+        self.source = "uvdm"
     }
 }
 

@@ -6,17 +6,16 @@ import WhatCableDarwinBackend
 /// user has been through the welcome screen), and the Settings switch allows it.
 @MainActor
 final class USBProbingSettingTests: XCTestCase {
-    /// Snapshot key PRESENCE, not just value: writing false creates the key and
-    /// turns "absent" into "present false" for anything that runs later.
+    /// Was a raw `UserDefaults.standard(forKey: "hasCompletedOnboarding")`
+    /// snapshot/restore, which bypassed `AppSettings` entirely and still hit
+    /// the real, cross-process-shared `.standard` domain. A throwaway suite
+    /// needs no snapshot/restore of that domain at all: it is discarded
+    /// whole afterward, and isolates this test from every concurrent
+    /// `swift test` process on the machine.
     private func withRestoredOnboarding(_ body: () -> Void) {
-        let key = "hasCompletedOnboarding"
-        let existed = UserDefaults.standard.object(forKey: key) != nil
-        let original = UserDefaults.standard.bool(forKey: key)
-        defer {
-            if existed { UserDefaults.standard.set(original, forKey: key) }
-            else { UserDefaults.standard.removeObject(forKey: key) }
+        withScratchAppSettingsDefaults {
+            body()
         }
-        body()
     }
 
     func testTogglingSkipDeepUSBProbingDrivesTheWatcherGate() {

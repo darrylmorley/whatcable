@@ -569,6 +569,7 @@ struct ChargingDiagnosticTests {
         // adapter reading, the fallback should produce a diagnostic.
         let wattageSource = ChargerWattageSource.resolve(
             portSources: [brickIDWithoutPDOs()],
+            portIsActive: true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: AdapterInfo(watts: 96, isCharging: nil, source: "AC")
@@ -600,6 +601,7 @@ struct ChargingDiagnosticTests {
         )
         let wattageSource = ChargerWattageSource.resolve(
             portSources: [bareUSBPD],
+            portIsActive: true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: AdapterInfo(watts: 87, isCharging: nil, source: "AC")
@@ -615,6 +617,7 @@ struct ChargingDiagnosticTests {
         // data/display port (issue #443, which no longer inflates the count).
         let wattageSource = ChargerWattageSource.resolve(
             portSources: [brickIDWithoutPDOs()],
+            portIsActive: true,
             activePortCount: 2,
             chargerSourceCount: 2,
             adapter: AdapterInfo(watts: 96, isCharging: nil, source: "AC")
@@ -626,6 +629,7 @@ struct ChargingDiagnosticTests {
     func resolverReturnsPortNegotiatedForNormalUSBPD() {
         let wattageSource = ChargerWattageSource.resolve(
             portSources: [usbPD(maxW: 96, winningW: 96)],
+            portIsActive: true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: nil
@@ -650,6 +654,7 @@ struct ChargingDiagnosticTests {
     func magSafeBrickIDPrefersSystemAdapter() {
         let wattageSource = ChargerWattageSource.resolve(
             portSources: [lowMagSafeBrickID()],
+            portIsActive: true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: AdapterInfo(watts: 100, isCharging: nil, source: "AC")
@@ -663,6 +668,7 @@ struct ChargingDiagnosticTests {
         // must stay port-negotiated, not get rewritten as a fallback.
         let wattageSource = ChargerWattageSource.resolve(
             portSources: [brickID(maxW: 100, winningW: 100)],
+            portIsActive: true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: AdapterInfo(watts: 100, isCharging: nil, source: "AC")
@@ -678,6 +684,7 @@ struct ChargingDiagnosticTests {
         // display port no longer counts here (issue #443).
         let wattageSource = ChargerWattageSource.resolve(
             portSources: [lowMagSafeBrickID()],
+            portIsActive: true,
             activePortCount: 2,
             chargerSourceCount: 2,
             adapter: AdapterInfo(watts: 100, isCharging: nil, source: "AC")
@@ -692,6 +699,7 @@ struct ChargingDiagnosticTests {
         let adapter = AdapterInfo(watts: 100, isCharging: nil, source: "AC")
         let wattageSource = ChargerWattageSource.resolve(
             portSources: [lowMagSafeBrickID()],
+            portIsActive: true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapter
@@ -820,6 +828,7 @@ struct ChargingDiagnosticTests {
         // MagSafe port: diverts to the real adapter wattage.
         let magsafeWattage = ChargerWattageSource.resolve(
             portSources: allSources.filter { $0.canonicallyMatches(port: magsafe) },
+            portIsActive: true,
             activePortCount: activePortCount,
             chargerSourceCount: sourceCount,
             adapter: adapter
@@ -831,6 +840,7 @@ struct ChargingDiagnosticTests {
         // shared count here handed the display port the charger's 65W.
         let displayWattage = ChargerWattageSource.resolve(
             portSources: allSources.filter { $0.canonicallyMatches(port: display) },
+            portIsActive: true,
             activePortCount: activePortCount,
             chargerSourceCount: sourceCount,
             adapter: adapter
@@ -850,6 +860,7 @@ struct ChargingDiagnosticTests {
         #expect(sourceCount == 0)
         let wattage = ChargerWattageSource.resolve(
             portSources: [],
+            portIsActive: true,
             activePortCount: 1,
             chargerSourceCount: 0,
             adapter: AdapterInfo(watts: 96, isCharging: nil, source: "AC")
@@ -869,6 +880,7 @@ struct ChargingDiagnosticTests {
         // comment on the Brick ID branch in ChargerWattageSource.resolve.)
         let wattage = ChargerWattageSource.resolve(
             portSources: [lowMagSafeBrickID()],
+            portIsActive: true,
             activePortCount: 2,     // a second port is active...
             chargerSourceCount: 1,  // ...but it exposes no power source of its own
             adapter: AdapterInfo(watts: 96, isCharging: nil, source: "AC")
@@ -883,6 +895,7 @@ struct ChargingDiagnosticTests {
         // the plain active-port count).
         let wattage = ChargerWattageSource.resolve(
             portSources: [],
+            portIsActive: true,
             activePortCount: 2,
             chargerSourceCount: 0,
             adapter: AdapterInfo(watts: 96, isCharging: nil, source: "AC")

@@ -34,6 +34,26 @@ final class ChargerBannerWattageTests: XCTestCase {
         )
     }
 
+    private func usbCPort(active: Bool = true) -> AppleHPMInterface {
+        AppleHPMInterface(
+            id: 2,
+            serviceName: "Port-USB-C@2",
+            className: "AppleHPMInterfaceType10",
+            portDescription: "Port-USB-C@2",
+            portTypeDescription: "USB-C",
+            portNumber: 2,
+            connectionActive: active,
+            activeCable: nil, opticalCable: nil,
+            usbActive: nil, superSpeedActive: nil, usbModeType: nil,
+            usbConnectString: nil,
+            transportsSupported: [], transportsActive: [], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            rawProperties: ["PortType": "2"]
+        )
+    }
+
     /// The #592 shape: a Brick ID source on MagSafe with a junk ~3W option
     /// and no winning contract.
     private func brickIDSource() -> PowerSource {
@@ -202,6 +222,31 @@ final class ChargerBannerWattageTests: XCTestCase {
 
         XCTAssertEqual(content?.title, "Charger connected")
         XCTAssertEqual(content?.body, "Wattage not reported")
+    }
+
+    /// Call-site pin for `portIsActive` (issue #542). The machine's sole
+    /// active port is the USB-C one; the MagSafe port reporting the bare
+    /// Brick ID is disconnected. `resolve`'s source-less fallback is gated on
+    /// the machine-wide active count alone, so before the guard this banner
+    /// read "System reports charger at 15W" for a port with nothing in it.
+    ///
+    /// Goes red if `chargerLabels` ever hardcodes `portIsActive: true`.
+    func testInactivePortDoesNotBorrowTheSystemAdapterWattage() async {
+        let bareBrickID = PowerSource(
+            id: 6, name: "Brick ID",
+            parentPortType: 17, parentPortNumber: 1,
+            options: [],
+            winning: nil
+        )
+
+        let content = await connectBanner(
+            sources: [bareBrickID],
+            ports: [magSafePort(active: false), usbCPort(active: true)],
+            adapter: adapter(watts: 15)
+        )
+
+        XCTAssertEqual(content?.body, "Wattage not reported")
+        XCTAssertFalse(content?.body.contains("15W") ?? true)
     }
 
     /// Every charger now carries a label, so this only guards the join:

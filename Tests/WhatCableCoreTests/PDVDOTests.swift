@@ -946,4 +946,83 @@ struct PDVDOTests {
         #expect(vdo2 != nil)
         #expect(vdo2?.maxOperatingTempC == 0x11)
     }
+
+    // MARK: - VPD VDO
+
+    @Test("Decode real EarPods VPD VDO")
+    func decodeVPDVDO_RealEarPods() {
+        // Apple USB-C EarPods, SOP' VDO[3] from the customer-probe corpus.
+        let vpd = PDVDO.decodeVPDVDO(0x1100_0000)
+        #expect(vpd.hwVersion == 1)
+        #expect(vpd.fwVersion == 1)
+        #expect(vpd.vdoVersionEncoded == 0)
+        #expect(vpd.maxVBUSVolts == 20)
+        #expect(vpd.chargeThroughSupported == false)
+        #expect(vpd.chargeThroughAmps == 3.0)
+        #expect(vpd.decodeWarnings.isEmpty)
+    }
+
+    @Test("Decode charge-through VPD VDO")
+    func decodeVPDVDO_ChargeThrough() {
+        // HW version 9 (bits 31..28), FW version 2 (bits 27..24), deliberately
+        // different so a transposed pair cannot pass. Max VBUS 50V
+        // (bits 16..15 = 11), 5A charge through (bit 14), VBUS impedance 5
+        // (2 milliohm units), ground impedance 3, charge through supported (bit 0).
+        let raw: UInt32 = (9 << 28) | (2 << 24) | (0b11 << 15) | (1 << 14) | (5 << 7) | (3 << 1) | 1
+        let vpd = PDVDO.decodeVPDVDO(raw)
+        #expect(vpd.hwVersion == 9)
+        #expect(vpd.fwVersion == 2)
+        #expect(vpd.chargeThroughSupported)
+        #expect(vpd.chargeThroughAmps == 5.0)
+        #expect(vpd.maxVBUSVoltageEncoded == 3)
+        #expect(vpd.maxVBUSVolts == 50)
+        #expect(vpd.vbusImpedanceMilliohms == 10)
+        #expect(vpd.groundImpedanceMilliohms == 3)
+    }
+
+    @Test("VPD SOP' exposes vpdVDO and no cableVDO")
+    func vpdIdentityIsNotACable() {
+        // Apple USB-C EarPods on a Mac mini M4 Pro, Port-USB-C@3.
+        let sop = USBPDSOP(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 3,
+            vendorID: 0x05AC,
+            productID: 0x110B,
+            bcdDevice: 0x2681,
+            vdos: [0x7000_05AC, 0x0000_0000, 0x110B_2681, 0x1100_0000],
+            specRevision: 3
+        )
+        #expect(sop.idHeader?.ufpProductType == .vpd)
+        #expect(sop.idHeader?.isCable == false)
+        #expect(sop.cableVDO == nil)
+        #expect(sop.vpdVDO != nil)
+        #expect(sop.vpdVDO?.maxVBUSVolts == 20)
+    }
+
+    @Test("Passive cable SOP' still decodes its cable VDO")
+    func passiveCableStillDecodesCableVDO() {
+        // Regression guard for the VPD gate: a real passive cable must keep
+        // its existing decode and must not gain a vpdVDO.
+        let sop = USBPDSOP(
+            id: 2,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 1,
+            vendorID: 0x2B01,
+            productID: 0,
+            bcdDevice: 0,
+            vdos: [(3 << 27) | 0x2B01, 0, 0, 0x1108_2040],
+            specRevision: 3
+        )
+        let cable = sop.cableVDO
+        #expect(cable != nil)
+        #expect(cable?.cableType == .passive)
+        #expect(cable?.current == .fiveAmp)
+        #expect(cable?.maxVolts == 20)
+        #expect(cable?.cableLatencyEncoded == 1)
+        #expect(cable?.decodeWarnings.isEmpty == true)
+        #expect(sop.vpdVDO == nil)
+    }
 }

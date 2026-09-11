@@ -57,17 +57,33 @@ public struct SessionMonitor: Equatable, Sendable {
         /// was plugged in is the baseline, and any rise while it stays plugged
         /// is a real overcurrent event on this connection.
         public let overcurrentCount: Int?
+        /// The port controller's lifetime hard-reset count
+        /// (`PortHealthCounters.hardResetCount`), or `nil` when unknown.
+        /// Read as an in-session delta, exactly like `overcurrentCount`: the
+        /// count at plug-in is the baseline and only a rise while the cable
+        /// stays connected is evidence about this connection.
+        public let hardResetCount: Int?
+        /// The port controller's lifetime attach count
+        /// (`PortHealthCounters.attachCount`), or `nil` when unknown. The
+        /// companion to `hardResetCount`: a rise here means someone
+        /// re-seated the connector, which explains a reset rather than
+        /// indicting the cable.
+        public let attachCount: Int?
 
         public init(
             fingerprint: String,
             dataDelivery: DataDelivery,
             resistanceTier: CableResistanceEstimate.Tier?,
-            overcurrentCount: Int? = nil
+            overcurrentCount: Int? = nil,
+            hardResetCount: Int? = nil,
+            attachCount: Int? = nil
         ) {
             self.fingerprint = fingerprint
             self.dataDelivery = dataDelivery
             self.resistanceTier = resistanceTier
             self.overcurrentCount = overcurrentCount
+            self.hardResetCount = hardResetCount
+            self.attachCount = attachCount
         }
     }
 
@@ -101,6 +117,10 @@ public struct SessionMonitor: Equatable, Sendable {
     /// Consecutive stable out-of-spec resistance readings before resistance
     /// counts as a real fault rather than one transient under a current spike.
     static let sustainedHighResistancePolls = 2
+    /// The in-session hard-reset delta has to reach this before the ratio
+    /// rule can fire. One reset is ordinary renegotiation; two or more with
+    /// no re-seat to explain them is the shape worth flagging.
+    static let minimumHardResetDelta = 2
 
     // MARK: Accumulated state (reset on a fingerprint change)
 
@@ -119,6 +139,15 @@ public struct SessionMonitor: Equatable, Sendable {
     /// seen. The delta against the latest count is the events on this cable.
     private var overcurrentBaseline: Int?
     private var overcurrentEvents = 0
+    /// Baselines for the lifetime hard-reset and attach counters, taken
+    /// together from the first observation that carries both. The rule
+    /// compares two deltas, so they only mean something anchored at the same
+    /// instant: an observation carrying one counter without the other sets
+    /// no baseline at all.
+    private var hardResetBaseline: Int?
+    private var attachBaseline: Int?
+    private var hardResetEvents = 0
+    private var attachEvents = 0
     /// Total observations recorded this session (lets the UI show "watched
     /// for N polls" without the engine needing a clock).
     public private(set) var observationCount = 0
@@ -139,6 +168,7 @@ public struct SessionMonitor: Equatable, Sendable {
         recordDataDelivery(observation.dataDelivery)
         recordResistance(observation.resistanceTier)
         recordOvercurrent(observation.overcurrentCount)
+        recordHardResets(count: observation.hardResetCount, attaches: observation.attachCount)
         return verdict
     }
 
@@ -152,6 +182,10 @@ public struct SessionMonitor: Equatable, Sendable {
         longestHighResistanceStreak = 0
         overcurrentBaseline = nil
         overcurrentEvents = 0
+        hardResetBaseline = nil
+        attachBaseline = nil
+        hardResetEvents = 0
+        attachEvents = 0
         observationCount = 0
     }
 
@@ -204,6 +238,35 @@ public struct SessionMonitor: Equatable, Sendable {
         overcurrentEvents = max(0, count - baseline)
     }
 
+    private mutating func recordHardResets(count: Int?, attaches: Int?) {
+        // The ratio compares two deltas, so it is only meaningful once both
+        // counters are anchored at the same poll. An observation carrying
+        // one without the other can't set that anchor: a lopsided baseline
+        // would make the comparison meaningless, not conservative.
+        guard let count, let attaches else { return }
+        guard let resetBase = hardResetBaseline, let attachBase = attachBaseline else {
+            // First observation carrying both: baseline them together here.
+            hardResetBaseline = count
+            attachBaseline = attaches
+            return
+        }
+        guard count >= resetBase, attaches >= attachBase else {
+            // Either counter moved backwards (sleep/wake, a controller
+            // reset). Re-anchor both to this poll and zero both deltas
+            // instead of clamping just the hard-reset side: clamping only
+            // the numerator would suppress it while leaving the denominator
+            // free to fall behind, making the caution MORE likely to fire,
+            // the wrong direction for a corroborating signal.
+            hardResetBaseline = count
+            attachBaseline = attaches
+            hardResetEvents = 0
+            attachEvents = 0
+            return
+        }
+        hardResetEvents = count - resetBase
+        attachEvents = attaches - attachBase
+    }
+
     // MARK: Verdict
 
     /// True when the data link has demonstrably failed to deliver the cable's
@@ -234,14 +297,35 @@ public struct SessionMonitor: Equatable, Sendable {
         overcurrentEvents
     }
 
+    /// True when this connection has logged more hard resets than attaches
+    /// while it stayed plugged in. A link renegotiating repeatedly without
+    /// anyone re-seating it is worth flagging, but the counters are lifetime
+    /// and cannot name a cable, so this is a caution and never contributes to
+    /// `.notPerforming` on its own. Before a joint baseline exists (no
+    /// observation has yet carried both counters) both deltas stay zero, so
+    /// this reads `false`: no attach evidence makes the comparison
+    /// unevaluable, not won by default.
+    public var hardResetsExceedAttaches: Bool {
+        hardResetEvents >= Self.minimumHardResetDelta && hardResetEvents > attachEvents
+    }
+
+    /// Hard resets seen on this connection since it was plugged in (the
+    /// in-session delta the caution uses). Exposed so a recorder can persist
+    /// the delta without re-deriving it, matching `overcurrentEventCount`.
+    public var hardResetEventCount: Int {
+        hardResetEvents
+    }
+
     /// The current verdict for this connection.
     public var verdict: Verdict {
         if dataNotDelivering || resistanceOutOfSpec || overcurrentTripped {
             return .notPerforming
         }
         // Some evidence of trouble, but below the conviction bar: a single
-        // (still-open or recovered) degradation, or one out-of-spec reading.
-        if dataEpisodeCount > 0 || longestHighResistanceStreak > 0 {
+        // (still-open or recovered) degradation, one out-of-spec reading, or
+        // a hard-reset ratio that looks unusual but can't be pinned on a
+        // cable (the counters are lifetime, not per-cable).
+        if dataEpisodeCount > 0 || longestHighResistanceStreak > 0 || hardResetsExceedAttaches {
             return .caution
         }
         return .performing

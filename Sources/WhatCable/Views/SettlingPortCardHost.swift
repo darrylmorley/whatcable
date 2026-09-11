@@ -40,6 +40,8 @@ struct SettlingPortCardHost: View {
     let isLive: Bool
     let showAdvanced: Bool
     let cioCapability: CIOCableCapability?
+    /// Apple's own name for what is attached, from the port's UVDM node.
+    let accessoryIdentity: AppleAccessoryIdentity?
     let displayPorts: [IOPortTransportStateDisplayPort]
     let chargerWattageSource: ChargerWattageSource
     let batteryFullyCharged: Bool?
@@ -115,6 +117,7 @@ struct SettlingPortCardHost: View {
         isLive: Bool,
         showAdvanced: Bool,
         cioCapability: CIOCableCapability?,
+        accessoryIdentity: AppleAccessoryIdentity?,
         displayPorts: [IOPortTransportStateDisplayPort],
         chargerWattageSource: ChargerWattageSource,
         batteryFullyCharged: Bool?,
@@ -140,6 +143,7 @@ struct SettlingPortCardHost: View {
         self.isLive = isLive
         self.showAdvanced = showAdvanced
         self.cioCapability = cioCapability
+        self.accessoryIdentity = accessoryIdentity
         self.displayPorts = displayPorts
         self.chargerWattageSource = chargerWattageSource
         self.batteryFullyCharged = batteryFullyCharged
@@ -276,6 +280,7 @@ struct SettlingPortCardHost: View {
                     isLive: isLive,
                     showAdvanced: showAdvanced,
                     cioCapability: cioCapability,
+                    accessoryIdentity: accessoryIdentity,
                     displayPorts: displayPorts,
                     chargerWattageSource: chargerWattageSource,
                     batteryFullyCharged: batteryFullyCharged,
@@ -314,6 +319,7 @@ struct SettlingPortCardHost: View {
                     isLive: false,
                     showAdvanced: showAdvanced,
                     cioCapability: nil,
+                    accessoryIdentity: nil,
                     displayPorts: [],
                     chargerWattageSource: .unknown,
                     batteryFullyCharged: nil,

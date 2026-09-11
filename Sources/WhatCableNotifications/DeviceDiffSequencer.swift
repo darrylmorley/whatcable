@@ -3159,6 +3159,10 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         let activePortCount = ports.filter { $0.connectionActive == true }.count
         let chargerSourceCount = ChargerWattageSource.chargerSourceCount(ports: ports, sources: sources)
         let adapter = currentAdapter()
+        // Port keys that are themselves connected. `resolve`'s source-less
+        // fallback needs this port's own state, not only the machine-wide
+        // count, or a disconnected port inherits the adapter reading (#542).
+        let activePortKeys = Set(ports.compactMap { $0.connectionActive == true ? $0.portKey : nil })
         let unreported = String(localized: "Wattage not reported", bundle: _notificationsLocalizedBundle)
         // Grouped by `portKey` (type/number), NOT `canonicalJoinKey`. Sibling
         // source nodes on one physical port ("USB-PD" + "Brick ID", the shape
@@ -3180,8 +3184,12 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
             if let winning = preferred?.winning {
                 return String(localized: "\(winning.wattsLabel) negotiated", bundle: _notificationsLocalizedBundle)
             }
+            // Every source in a group shares the group's `portKey`, so the
+            // first one names the port these sources belong to.
+            let portIsActive = portSources.first.map { activePortKeys.contains($0.portKey) } ?? false
             let resolved = ChargerWattageSource.resolve(
                 portSources: portSources,
+                portIsActive: portIsActive,
                 activePortCount: activePortCount,
                 chargerSourceCount: chargerSourceCount,
                 adapter: adapter

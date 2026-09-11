@@ -618,3 +618,6 @@
    e-marker silicon vendor hint. */
 "E-marker reports passive, but the port controller detects an active cable" = "E-marker ziņo par pasīvu, bet porta kontrolieris konstatē aktīvu kabeli";
 "E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker satur sava mikroshēmu ražotāja noklusējuma piegādātāja ID (%@); kabeļa zīmols nav norādīts";
+"USB accessory (audio or adapter)" = "USB piederums (audio vai adapteris)";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "Šim piederumam ir paša USB-C spraudnis. Tas nav kabelis un neuzlādē.";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "Šis spraudnis ir piederuma daļa, nevis kabelis, tāpēc kabeļa parametru nav.";

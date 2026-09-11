@@ -618,3 +618,6 @@
    e-marker silicon vendor hint. */
 "E-marker reports passive, but the port controller detects an active cable" = "E-marker는 패시브로 보고하지만 포트 컨트롤러는 액티브 케이블을 감지했습니다";
 "E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker에 칩 제조사의 기본 벤더 ID(%@)가 들어 있습니다. 케이블 브랜드는 기록되어 있지 않습니다";
+"USB accessory (audio or adapter)" = "USB 액세서리(오디오 또는 어댑터)";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "이 액세서리에는 자체 USB-C 플러그가 있습니다. 케이블이 아니며 충전하지 않습니다.";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "이 플러그는 케이블이 아니라 액세서리의 일부이므로 케이블 정격이 없습니다.";

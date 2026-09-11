@@ -161,6 +161,150 @@ struct SessionMonitorTests {
         #expect(m.verdict == .performing)
     }
 
+    // MARK: Hard resets
+
+    @Test("Three resets with no attaches is a caution")
+    func hardResetsWithNoAttachesIsCaution() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 2, attachCount: 0))
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 5, attachCount: 0))
+        #expect(m.verdict == .caution)
+        #expect(m.hardResetsExceedAttaches)
+        #expect(m.hardResetEventCount == 3)
+    }
+
+    @Test("A single reset with no attaches stays performing (below the minimum delta)")
+    func singleHardResetIsBelowMinimum() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: 0))
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 1, attachCount: 0))
+        #expect(m.verdict == .performing)
+        #expect(!m.hardResetsExceedAttaches)
+    }
+
+    @Test("Resets matched by re-seats (attaches) stay performing")
+    func resetsExplainedByAttachesArePerforming() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: 0))
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 10, attachCount: 12))
+        #expect(m.verdict == .performing)
+        #expect(!m.hardResetsExceedAttaches)
+    }
+
+    @Test("A delta of exactly two resets fires the caution (boundary)")
+    func exactlyTwoResetsFires() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: 0))
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 2, attachCount: 0))
+        #expect(m.verdict == .caution)
+        #expect(m.hardResetsExceedAttaches)
+    }
+
+    @Test("The hard-reset caution never escalates to red on its own")
+    func hardResetCautionNeverEscalatesAlone() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: 0))
+        for count in stride(from: 1, through: 40, by: 1) {
+            m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: count, attachCount: 0))
+        }
+        #expect(m.hardResetsExceedAttaches)
+        #expect(m.verdict == .caution)
+    }
+
+    @Test("A high but static lifetime count is the baseline, not an event")
+    func staticHighCountIsBaseline() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 500, attachCount: 300))
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 500, attachCount: 300))
+        #expect(!m.hardResetsExceedAttaches)
+        #expect(m.verdict == .performing)
+    }
+
+    @Test("Baselines reset when the cable is swapped")
+    func hardResetBaselineResetsOnSwap() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: "p#A", dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: 0))
+        m.record(.init(fingerprint: "p#A", dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 3, attachCount: 0))
+        #expect(m.verdict == .caution)
+        // New cable: fresh baseline even though the lifetime counter is non-zero.
+        m.record(.init(fingerprint: "p#B", dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 3, attachCount: 0))
+        #expect(!m.hardResetsExceedAttaches)
+        #expect(m.verdict == .performing)
+    }
+
+    @Test("A backward jump in both counters re-anchors the baseline together")
+    func backwardJumpReanchorsBaseline() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 10, attachCount: 100))
+        // Sleep/wake or a controller reset: both counters drop to zero.
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: 0))
+        // 15 resets and 15 re-seats since the new anchor: exactly matched.
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 15, attachCount: 15))
+        #expect(!m.hardResetsExceedAttaches)
+        #expect(m.verdict == .performing)
+    }
+
+    @Test("A backward jump does not hide a genuine reset climb with no re-seats")
+    func backwardJumpStillCatchesUnmatchedResets() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 500, attachCount: 300))
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: 0))
+        // Resets climb from the new anchor with no re-seats: still worth flagging.
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 60, attachCount: 0))
+        #expect(m.hardResetsExceedAttaches)
+        #expect(m.verdict == .caution)
+    }
+
+    @Test("An attach count that never arrives never lets the caution fire")
+    func attachCountNeverArrivesNeverFires() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: nil))
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 3, attachCount: nil))
+        #expect(!m.hardResetsExceedAttaches)
+        #expect(m.verdict == .performing)
+    }
+
+    @Test("A late-arriving attach count anchors the baseline at its own poll, not before")
+    func lateAttachBaselineAnchorsAtItsOwnPoll() {
+        var m = SessionMonitor()
+        // Hard resets arrive alone first: nothing to anchor against yet.
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 5, attachCount: nil))
+        // First poll carrying both: this is the anchor, (8, 20).
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 8, attachCount: 20))
+        // Three resets and three re-seats since the anchor: matched.
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 11, attachCount: 23))
+        #expect(!m.hardResetsExceedAttaches)
+        #expect(m.verdict == .performing)
+    }
+
+    @Test("A one-sided observation sets no baseline; the first joint observation does")
+    func oneSidedObservationSetsNoBaseline() {
+        var m = SessionMonitor()
+        // Hard-reset count alone: not enough to anchor a joint baseline. If
+        // this wrongly baselined hard resets on its own (at 5), the later
+        // delta would come out too large against the anchor below.
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 5, attachCount: nil))
+        // First observation carrying both: this is the anchor, (9, 9).
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 9, attachCount: 9))
+        // Two resets and two re-seats since the anchor: matched, stays performing.
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 11, attachCount: 11))
+        #expect(m.hardResetEventCount == 2)
+        #expect(!m.hardResetsExceedAttaches)
+        #expect(m.verdict == .performing)
+    }
+
+    @Test("The hard-reset caution does not mask a red data degradation")
+    func hardResetCautionDoesNotMaskRed() {
+        var m = SessionMonitor()
+        m.record(.init(fingerprint: fp, dataDelivery: .confirmed, resistanceTier: nil, hardResetCount: 0, attachCount: 0))
+        m.record(.init(fingerprint: fp, dataDelivery: .belowClaim, resistanceTier: nil, hardResetCount: 5, attachCount: 0))
+        m.record(.init(fingerprint: fp, dataDelivery: .belowClaim, resistanceTier: nil, hardResetCount: 8, attachCount: 0))
+        m.record(.init(fingerprint: fp, dataDelivery: .belowClaim, resistanceTier: nil, hardResetCount: 12, attachCount: 0))
+        #expect(m.hardResetsExceedAttaches)
+        #expect(m.dataNotDelivering)
+        #expect(m.verdict == .notPerforming)
+    }
+
     // MARK: Session identity
 
     @Test("Swapping cables resets the accumulated evidence")

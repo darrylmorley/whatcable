@@ -22,6 +22,15 @@ final class AppSettings: ObservableObject {
 
     private nonisolated static let log = Logger(subsystem: "uk.whatcable.whatcable", category: "settings")
 
+    /// Not `private`: a test helper needs to point every UserDefaults-backed
+    /// accessor below at a throwaway per-test suite
+    /// instead of the real `UserDefaults.standard` domain, which every
+    /// `swift test` process on the machine shares regardless of which SPM
+    /// package is running (the test runner, not the app, owns `Bundle.main`
+    /// there), so two concurrent runs can flip each other's settings mid
+    /// snapshot-and-assert window. Mirrors `LicenceManager.defaults`.
+    var defaults: UserDefaults = .standard
+
     private enum Keys {
         static let notifyOnChanges = "notifyOnChanges"
         static let notifyOnUpdates = "notifyOnUpdates"
@@ -58,7 +67,7 @@ final class AppSettings: ObservableObject {
     @Published var notifyOnChanges: Bool {
         didSet {
             guard notifyOnChanges != oldValue else { return }
-            UserDefaults.standard.set(notifyOnChanges, forKey: Keys.notifyOnChanges)
+            defaults.set(notifyOnChanges, forKey: Keys.notifyOnChanges)
             if notifyOnChanges {
                 requestNotificationAuthorization()
             }
@@ -76,7 +85,7 @@ final class AppSettings: ObservableObject {
     @Published var notifyOnUpdates: Bool {
         didSet {
             guard notifyOnUpdates != oldValue else { return }
-            UserDefaults.standard.set(notifyOnUpdates, forKey: Keys.notifyOnUpdates)
+            defaults.set(notifyOnUpdates, forKey: Keys.notifyOnUpdates)
             if notifyOnUpdates {
                 requestNotificationAuthorization()
             }
@@ -94,7 +103,7 @@ final class AppSettings: ObservableObject {
     @Published var receiveBetaUpdates: Bool {
         didSet {
             guard receiveBetaUpdates != oldValue else { return }
-            UserDefaults.standard.set(receiveBetaUpdates, forKey: Keys.receiveBetaUpdates)
+            defaults.set(receiveBetaUpdates, forKey: Keys.receiveBetaUpdates)
             // Opting out has to withdraw a beta that is already on offer, not
             // just stop the next one. Otherwise the banner still installs it.
             UpdateChecker.shared.discardPrereleaseOfferIfOptedOut()
@@ -111,7 +120,7 @@ final class AppSettings: ObservableObject {
     @Published var hideEmptyPorts: Bool {
         didSet {
             guard hideEmptyPorts != oldValue else { return }
-            UserDefaults.standard.set(hideEmptyPorts, forKey: Keys.hideEmptyPorts)
+            defaults.set(hideEmptyPorts, forKey: Keys.hideEmptyPorts)
         }
     }
 
@@ -120,7 +129,7 @@ final class AppSettings: ObservableObject {
     @Published var useMenuBarMode: Bool {
         didSet {
             guard useMenuBarMode != oldValue else { return }
-            UserDefaults.standard.set(useMenuBarMode, forKey: Keys.useMenuBarMode)
+            defaults.set(useMenuBarMode, forKey: Keys.useMenuBarMode)
         }
     }
 
@@ -130,7 +139,7 @@ final class AppSettings: ObservableObject {
     @Published var showTechnicalDetails: Bool {
         didSet {
             guard showTechnicalDetails != oldValue else { return }
-            UserDefaults.standard.set(showTechnicalDetails, forKey: Keys.showTechnicalDetails)
+            defaults.set(showTechnicalDetails, forKey: Keys.showTechnicalDetails)
         }
     }
 
@@ -147,7 +156,7 @@ final class AppSettings: ObservableObject {
     @Published var skipDeepUSBProbing: Bool {
         didSet {
             guard skipDeepUSBProbing != oldValue else { return }
-            UserDefaults.standard.set(skipDeepUSBProbing, forKey: Keys.skipDeepUSBProbing)
+            defaults.set(skipDeepUSBProbing, forKey: Keys.skipDeepUSBProbing)
             applyUSBProbeGate()
         }
     }
@@ -171,7 +180,7 @@ final class AppSettings: ObservableObject {
     @Published var preferredLanguage: String {
         didSet {
             guard preferredLanguage != oldValue else { return }
-            UserDefaults.standard.set(preferredLanguage, forKey: Keys.preferredLanguage)
+            defaults.set(preferredLanguage, forKey: Keys.preferredLanguage)
             setCoreLocale(preferredLanguage)
             setAppLocale(preferredLanguage)
             setNotificationsLocale(preferredLanguage)
@@ -187,7 +196,7 @@ final class AppSettings: ObservableObject {
             let clamped = min(max(fontSize, Self.fontSizeRange.lowerBound), Self.fontSizeRange.upperBound)
             if clamped != fontSize { fontSize = clamped; return }
             guard fontSize != oldValue else { return }
-            UserDefaults.standard.set(fontSize, forKey: Keys.fontSize)
+            defaults.set(fontSize, forKey: Keys.fontSize)
             // Mirror to the AppKit store so every SwiftUI surface (popover,
             // detached Pro windows, licence panel, welcome) tracks the slider
             // live, not just the popover.
@@ -205,7 +214,7 @@ final class AppSettings: ObservableObject {
             let clamped = min(max(uiOpacity, Self.opacityRange.lowerBound), Self.opacityRange.upperBound)
             if clamped != uiOpacity { uiOpacity = clamped; return }
             guard uiOpacity != oldValue else { return }
-            UserDefaults.standard.set(uiOpacity, forKey: Keys.uiOpacity)
+            defaults.set(uiOpacity, forKey: Keys.uiOpacity)
             // Mirror to the AppKit store so every surface (popover, detached
             // Pro windows, licence panel, welcome) tracks the slider live.
             OpacityStore.shared.opacity = uiOpacity
@@ -237,7 +246,7 @@ final class AppSettings: ObservableObject {
     @Published var showChargingWatts: Bool {
         didSet {
             guard showChargingWatts != oldValue else { return }
-            UserDefaults.standard.set(showChargingWatts, forKey: Keys.showChargingWatts)
+            defaults.set(showChargingWatts, forKey: Keys.showChargingWatts)
         }
     }
 
@@ -246,7 +255,7 @@ final class AppSettings: ObservableObject {
     @Published var menuBarWattsStyle: MenuBarWattsStyle {
         didSet {
             guard menuBarWattsStyle != oldValue else { return }
-            UserDefaults.standard.set(menuBarWattsStyle.rawValue, forKey: Keys.menuBarWattsStyle)
+            defaults.set(menuBarWattsStyle.rawValue, forKey: Keys.menuBarWattsStyle)
         }
     }
 
@@ -258,19 +267,19 @@ final class AppSettings: ObservableObject {
                 return
             }
             guard menuBarIcon != oldValue else { return }
-            UserDefaults.standard.set(menuBarIcon, forKey: Keys.menuBarIcon)
+            defaults.set(menuBarIcon, forKey: Keys.menuBarIcon)
         }
     }
 
     var testKitLastRunVersion: String? {
-        get { UserDefaults.standard.string(forKey: Keys.testKitLastRunVersion) }
-        set { UserDefaults.standard.set(newValue, forKey: Keys.testKitLastRunVersion) }
+        get { defaults.string(forKey: Keys.testKitLastRunVersion) }
+        set { defaults.set(newValue, forKey: Keys.testKitLastRunVersion) }
     }
 
     var hasCompletedOnboarding: Bool {
-        get { UserDefaults.standard.bool(forKey: Keys.hasCompletedOnboarding) }
+        get { defaults.bool(forKey: Keys.hasCompletedOnboarding) }
         set {
-            UserDefaults.standard.set(newValue, forKey: Keys.hasCompletedOnboarding)
+            defaults.set(newValue, forKey: Keys.hasCompletedOnboarding)
             // One of the two USB probe gate inputs (issue #571), so re-apply the
             // gate here rather than relying on every caller to remember.
             applyUSBProbeGate()
@@ -310,7 +319,7 @@ final class AppSettings: ObservableObject {
         // Launch at Login is owned by the system; read its current state.
         self.launchAtLogin = SMAppService.mainApp.status == .enabled
         // Notifications default off — opt in to avoid noise.
-        self.notifyOnChanges = UserDefaults.standard.bool(forKey: Keys.notifyOnChanges)
+        self.notifyOnChanges = defaults.bool(forKey: Keys.notifyOnChanges)
         // Update notifications default on, independent of notifyOnChanges
         // (owner decision on issue #550): absent key reads as on for fresh
         // installs and upgraders alike. This is a deliberate reversal of an
@@ -321,10 +330,10 @@ final class AppSettings: ObservableObject {
         // getting update notifications after upgrading. See postNotification
         // in UpdateChecker for how the resulting authorization gap (nothing
         // else requests permission before the first post) is closed.
-        if UserDefaults.standard.object(forKey: Keys.notifyOnUpdates) == nil {
+        if defaults.object(forKey: Keys.notifyOnUpdates) == nil {
             self.notifyOnUpdates = true
         } else {
-            self.notifyOnUpdates = UserDefaults.standard.bool(forKey: Keys.notifyOnUpdates)
+            self.notifyOnUpdates = defaults.bool(forKey: Keys.notifyOnUpdates)
         }
         // Betas are opt-in; an unset key reads false. Exception: a build
         // whose own version is a pre-release defaults the key to true, once,
@@ -332,41 +341,41 @@ final class AppSettings: ObservableObject {
         // defaultsReceiveBetaUpdates above). A stored value, explicit true or
         // explicit false, is never touched.
         if AppSettings.defaultsReceiveBetaUpdates(
-            storedValue: UserDefaults.standard.object(forKey: Keys.receiveBetaUpdates),
+            storedValue: defaults.object(forKey: Keys.receiveBetaUpdates),
             runningVersion: AppInfo.version
         ) {
-            UserDefaults.standard.set(true, forKey: Keys.receiveBetaUpdates)
+            defaults.set(true, forKey: Keys.receiveBetaUpdates)
         }
-        self.receiveBetaUpdates = UserDefaults.standard.bool(forKey: Keys.receiveBetaUpdates)
-        self.hideEmptyPorts = UserDefaults.standard.bool(forKey: Keys.hideEmptyPorts)
+        self.receiveBetaUpdates = defaults.bool(forKey: Keys.receiveBetaUpdates)
+        self.hideEmptyPorts = defaults.bool(forKey: Keys.hideEmptyPorts)
         // Menu bar mode is the default; UserDefaults returns false for unset
         // bool keys, so explicitly check presence.
-        if UserDefaults.standard.object(forKey: Keys.useMenuBarMode) == nil {
+        if defaults.object(forKey: Keys.useMenuBarMode) == nil {
             self.useMenuBarMode = true
         } else {
-            self.useMenuBarMode = UserDefaults.standard.bool(forKey: Keys.useMenuBarMode)
+            self.useMenuBarMode = defaults.bool(forKey: Keys.useMenuBarMode)
         }
-        self.showTechnicalDetails = UserDefaults.standard.bool(forKey: Keys.showTechnicalDetails)
+        self.showTechnicalDetails = defaults.bool(forKey: Keys.showTechnicalDetails)
         // Deep USB probing is on by default once onboarding is done; the absent
         // key reads as false (don't skip). Seed the watcher's static so the very
         // first enumeration honours both gate inputs, before the settings UI is
         // ever opened.
-        let skipProbing = UserDefaults.standard.bool(forKey: Keys.skipDeepUSBProbing)
+        let skipProbing = defaults.bool(forKey: Keys.skipDeepUSBProbing)
         self.skipDeepUSBProbing = skipProbing
         // Seed the watcher's static from both gate inputs: the saved preference,
         // and whether the app has ever loaded far enough to show its UI
         // (issue #571). Spelled out rather than calling applyUSBProbeGate(),
         // because self is not fully initialised here.
         USBWatcher.probeBillboardDescriptors = USBProbeGate.shouldProbe(
-            hasCompletedOnboarding: UserDefaults.standard.bool(forKey: Keys.hasCompletedOnboarding),
+            hasCompletedOnboarding: defaults.bool(forKey: Keys.hasCompletedOnboarding),
             skipDeepUSBProbing: skipProbing
         )
-        let savedLanguage = UserDefaults.standard.string(forKey: Keys.preferredLanguage) ?? ""
+        let savedLanguage = defaults.string(forKey: Keys.preferredLanguage) ?? ""
         self.preferredLanguage = savedLanguage
         setCoreLocale(savedLanguage)
         setAppLocale(savedLanguage)
         setNotificationsLocale(savedLanguage)
-        let stored = UserDefaults.standard.double(forKey: Keys.fontSize)
+        let stored = defaults.double(forKey: Keys.fontSize)
         let raw = stored > 0 ? stored : 1.0
         let initialScale = min(max(raw, Self.fontSizeRange.lowerBound), Self.fontSizeRange.upperBound)
         self.fontSize = initialScale
@@ -374,17 +383,17 @@ final class AppSettings: ObservableObject {
         // already gets the right scale, before the user ever touches the
         // slider. didSet runs only on subsequent changes.
         FontScaleStore.shared.fontScale = initialScale
-        let storedOpacity = UserDefaults.standard.double(forKey: Keys.uiOpacity)
+        let storedOpacity = defaults.double(forKey: Keys.uiOpacity)
         let rawOpacity = storedOpacity > 0 ? storedOpacity : 1.0
         let initialOpacity = min(max(rawOpacity, Self.opacityRange.lowerBound), Self.opacityRange.upperBound)
         self.uiOpacity = initialOpacity
         // Seed the AppKit-side store so the first surface opens at the saved
         // opacity, before the user touches the slider.
         OpacityStore.shared.opacity = initialOpacity
-        let savedIcon = UserDefaults.standard.string(forKey: Keys.menuBarIcon) ?? Self.defaultMenuBarIcon
+        let savedIcon = defaults.string(forKey: Keys.menuBarIcon) ?? Self.defaultMenuBarIcon
         self.menuBarIcon = Self.validatedMenuBarIcon(savedIcon)
-        self.showChargingWatts = UserDefaults.standard.bool(forKey: Keys.showChargingWatts)
-        self.menuBarWattsStyle = UserDefaults.standard.string(forKey: Keys.menuBarWattsStyle)
+        self.showChargingWatts = defaults.bool(forKey: Keys.showChargingWatts)
+        self.menuBarWattsStyle = defaults.string(forKey: Keys.menuBarWattsStyle)
             .flatMap(MenuBarWattsStyle.init(rawValue:)) ?? .number
     }
 

@@ -128,6 +128,29 @@ struct CableSnapshotContextTests {
         #expect(context.portContexts[0].portCIO?.negotiatedLinkSpeed == 3)
     }
 
+    // MARK: - Test: portAccessory resolves per-port, not globally
+
+    @Test("portAccessory resolves the accessory identity that matches its own port")
+    func portAccessoryJoinsPerPort() throws {
+        let port1 = makePort(portNumber: 1, portType: "USB-C", uuid: nil, connectionActive: true)
+        let port2 = makePort(portNumber: 2, portType: "USB-C", uuid: nil, connectionActive: true)
+
+        let accessory1 = makeAccessory(id: 1, portKey: "2/1", product: "iPhone")
+        let accessory2 = makeAccessory(id: 2, portKey: "2/2", product: "iPad")
+
+        let snapshot = makeSnapshot(
+            ports: [port1, port2],
+            accessoryIdentities: [accessory1, accessory2])
+        let context = CableSnapshotContext(snapshot: snapshot)
+
+        #expect(context.portContexts.count == 2)
+        let first = try #require(context.portContexts.first)
+        let second = context.portContexts[1]
+
+        #expect(first.portAccessory?.id == accessory1.id)
+        #expect(second.portAccessory?.id == accessory2.id)
+    }
+
     // MARK: - Test 4: cross-port charging flag
 
     @Test("anotherPortActivelyCharging points at the OTHER port holding the contract")
@@ -232,7 +255,8 @@ struct CableSnapshotContextTests {
         identities: [USBPDSOP] = [],
         usbDevices: [USBDevice] = [],
         thunderboltSwitches: [IOThunderboltSwitch] = [],
-        cioCapabilities: [CIOCableCapability] = []
+        cioCapabilities: [CIOCableCapability] = [],
+        accessoryIdentities: [AppleAccessoryIdentity] = []
     ) -> CableSnapshot {
         CableSnapshot(
             ports: ports,
@@ -241,7 +265,8 @@ struct CableSnapshotContextTests {
             usbDevices: usbDevices,
             adapter: nil,
             thunderboltSwitches: thunderboltSwitches,
-            cioCapabilities: cioCapabilities
+            cioCapabilities: cioCapabilities,
+            accessoryIdentities: accessoryIdentities
         )
     }
 
@@ -292,6 +317,15 @@ struct CableSnapshotContextTests {
             negotiatedLinkSpeed: negotiatedLinkSpeed, generation: nil,
             asymmetricModeSupported: nil, legacyAdapter: nil,
             linkTrainingMode: nil, hpmControllerUUID: uuid)
+    }
+
+    private func makeAccessory(id: UInt64, portKey: String, product: String,
+                               uuid: String? = nil) -> AppleAccessoryIdentity {
+        AppleAccessoryIdentity(
+            id: id, portKey: portKey, manufacturer: nil, vendor: nil,
+            product: product, userString: nil, model: nil, serialNumber: nil,
+            hardwareVersion: nil, vendorID: nil, productID: nil,
+            hpmControllerUUID: uuid)
     }
 
     private func makeDisplayPort(parentPortType: Int, parentPortNumber: Int,

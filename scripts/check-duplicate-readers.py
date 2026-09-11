@@ -136,6 +136,12 @@ DYNAMIC_MATCHERS = {
         {"matchClassName"},
         "The --tb-debug contributor dump, deliberately independent of the watcher.",
     ),
+    "WhatCableDarwinBackend/Watchers/AppleUVDMWatcher.swift": (
+        {"Self.watchedClass"},
+        "A single held constant rather than a loop, IOPortTransportProtocolAppleUVDM, "
+        "the node carrying an Apple accessory's own name. No other reader in Sources "
+        "matches this class (checked 2026-09-10).",
+    ),
 }
 
 # Every duplicate that exists today, with the reason it is allowed to.

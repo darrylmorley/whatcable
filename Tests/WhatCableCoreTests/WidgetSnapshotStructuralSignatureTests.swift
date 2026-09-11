@@ -34,7 +34,8 @@ struct WidgetSnapshotStructuralSignatureTests {
         portKey: String? = "port-1",
         displayMode: String? = nil,
         monitorName: String? = nil,
-        displayCount: Int = 0
+        displayCount: Int = 0,
+        accessoryName: String? = nil
     ) -> WidgetSnapshot.PortEntry {
         WidgetSnapshot.PortEntry(
             id: id,
@@ -51,7 +52,8 @@ struct WidgetSnapshotStructuralSignatureTests {
             linkSpeed: nil,
             displayMode: displayMode,
             monitorName: monitorName,
-            displayCount: displayCount
+            displayCount: displayCount,
+            accessoryName: accessoryName
         )
     }
 
@@ -203,5 +205,15 @@ struct WidgetSnapshotStructuralSignatureTests {
 
         // The new comparison correctly dedupes the same pair.
         #expect(a.structuralSignature == b.structuralSignature)
+    }
+
+    @Test("The accessory name is structural: it is the row's own detail line")
+    func accessoryNameChangeIsStructural() {
+        // An iPhone unplugged and an iPad plugged in reads differently on the
+        // widget, so it must earn a reload rather than being deduped away.
+        let a = WidgetSnapshot(ports: [makePort(accessoryName: "iPhone")], powerState: nil)
+        let b = WidgetSnapshot(ports: [makePort(accessoryName: "iPad")], powerState: nil)
+
+        #expect(a.structuralSignature != b.structuralSignature)
     }
 }

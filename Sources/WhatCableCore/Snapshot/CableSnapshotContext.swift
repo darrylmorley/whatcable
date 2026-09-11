@@ -68,6 +68,11 @@ public struct CableSnapshotContext {
         public let portTRM: [TRMTransport]
         /// First canonical CIO match, mirroring the formatters.
         public let portCIO: CIOCableCapability?
+        /// First canonical Apple accessory identity match for this port.
+        /// Nil covers two different things: no Apple accessory attached, and
+        /// an Apple accessory whose UVDM node publishes no identity fields
+        /// (8 nodes in the probe corpus). Never render nil as an absence.
+        public let portAccessory: AppleAccessoryIdentity?
         public let portDisplayPorts: [IOPortTransportStateDisplayPort]
         /// Native-bus matches (`AppleHPMInterface.matchingDevices`). Feeds
         /// PortSummary / DataLinkDiagnostic, whose speed corroboration is
@@ -134,12 +139,14 @@ public struct CableSnapshotContext {
                 portUSB3: snapshot.usb3Transports.filter { $0.canonicallyMatches(port: port) },
                 portTRM: snapshot.trmTransports.filter { $0.canonicallyMatches(port: port) },
                 portCIO: snapshot.cioCapabilities.first { $0.canonicallyMatches(port: port) },
+                portAccessory: snapshot.accessoryIdentities.first { $0.canonicallyMatches(port: port) },
                 portDisplayPorts: snapshot.displayPorts.filter { $0.canonicallyMatches(port: port) },
                 matchedDevices: matched,
                 structurallyScopedTunnelledDevices: scoped,
                 attributedDevices: union,
                 chargerWattageSource: ChargerWattageSource.resolve(
                     portSources: portSources,
+                    portIsActive: port.connectionActive == true,
                     activePortCount: activePortCount,
                     chargerSourceCount: chargerSourceCount,
                     adapter: snapshot.adapter),

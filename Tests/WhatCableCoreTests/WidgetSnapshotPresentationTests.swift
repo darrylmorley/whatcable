@@ -34,7 +34,8 @@ struct WidgetSnapshotPresentationTests {
         subtitle: String = "",
         displayMode: String? = nil,
         monitorName: String? = nil,
-        displayCount: Int = 0
+        displayCount: Int = 0,
+        accessoryName: String? = nil
     ) -> WidgetSnapshot.PortEntry {
         WidgetSnapshot.PortEntry(
             id: 1,
@@ -51,7 +52,8 @@ struct WidgetSnapshotPresentationTests {
             linkSpeed: nil,
             displayMode: displayMode,
             monitorName: monitorName,
-            displayCount: displayCount
+            displayCount: displayCount,
+            accessoryName: accessoryName
         )
     }
 
@@ -107,5 +109,32 @@ struct WidgetSnapshotPresentationTests {
     func multipleDisplaysAppendCount() {
         let p = port(displayMode: "4K 60Hz", monitorName: "Dell U2720Q", displayCount: 2)
         #expect(p.rowDetail == "Dell U2720Q · 4K 60Hz +1")
+    }
+
+    /// The accessory's own name beats the link-speed line. An iPhone on USB 2
+    /// showed "USB 2.0 only (480 Mbps), no high-speed data", which says nothing
+    /// about what is attached.
+    @Test("The row shows the accessory's own name ahead of the top line")
+    func rowDetailPrefersAccessoryName() {
+        let p = port(
+            topBullet: "USB 2.0 only (480 Mbps), no high-speed data",
+            subtitle: "USB 2.0 data link is active.",
+            accessoryName: "iPhone"
+        )
+        #expect(p.rowDetail == "iPhone")
+    }
+
+    /// A display keeps priority over the accessory name too: the mode is the
+    /// thing a display row is for, and the monitor name is already in it.
+    @Test("A display still outranks the accessory name")
+    func displayDetailOutranksAccessoryName() {
+        let p = port(
+            subtitle: "Carrying both data and DisplayPort video.",
+            displayMode: "5K 60Hz",
+            monitorName: "Studio Display",
+            displayCount: 1,
+            accessoryName: "Studio Display"
+        )
+        #expect(p.rowDetail == "Studio Display · 5K 60Hz")
     }
 }

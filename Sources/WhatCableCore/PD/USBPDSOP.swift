@@ -95,12 +95,27 @@ public struct USBPDSOP: Identifiable, Hashable {
     /// on `activeCableVDO2` explains why). Whether the cable is actually
     /// active is settled by `CableClassification.resolve`, which reads the
     /// port controller as well as this self-report.
+    ///
+    /// Gated on the responder actually declaring itself a cable. A VCONN-
+    /// Powered Device also answers at SOP' and also fills VDO[3], but with
+    /// the Table 6.45 layout, which the cable decoder misreads as a 60 W
+    /// cable with a reserved latency value (issue #542). See `vpdVDO`.
     public var cableVDO: PDVDO.CableVDO? {
         guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
-              vdos.count > 3 else { return nil }
+              vdos.count > 3,
+              idHeader?.isCable == true else { return nil }
         let header = idHeader
         let isActive = header?.ufpProductType == .activeCable
         return PDVDO.decodeCableVDO(vdos[3], isActive: isActive)
+    }
+
+    /// The VPD VDO also sits at index 3, but uses the VCONN-Powered Device
+    /// layout (Table 6.45) rather than either cable layout.
+    public var vpdVDO: PDVDO.VPDVDO? {
+        guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
+              vdos.count > 3,
+              idHeader?.ufpProductType == .vpd else { return nil }
+        return PDVDO.decodeVPDVDO(vdos[3])
     }
 
     /// Active Cable VDO 2 lives at index 4 and is only present on active

@@ -618,3 +618,6 @@
    e-marker silicon vendor hint. */
 "E-marker reports passive, but the port controller detects an active cable" = "De e-marker meldt passief, maar de poortcontroller detecteert een actieve kabel";
 "E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "De e-marker draagt de standaard leveranciers-ID van de chipfabrikant (%@); het kabelmerk is niet vastgelegd";
+"USB accessory (audio or adapter)" = "USB-accessoire (audio of adapter)";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "Dit accessoire heeft een eigen USB-C-stekker. Het is geen kabel en het laadt niet op.";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "Deze stekker hoort bij het accessoire en is geen kabel, dus er zijn geen kabelgegevens.";

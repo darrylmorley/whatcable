@@ -41,8 +41,8 @@ import Testing
 /// from probe 01, so `CableClassification.resolve` is exercised against real
 /// hardware rather than a hardcoded nil. It asserts the exact set of corpus
 /// ports the flag promotes from passive to active, that no port is ever
-/// demoted the other way, that a VCONN-Powered Device is never promoted, and
-/// that every other classifiable port keeps the e-marker's own verdict.
+/// demoted the other way, that a VCONN-Powered Device does not classify at
+/// all, and that every other classifiable port keeps the e-marker's own verdict.
 @Suite("PortSummary: corpus sweep")
 struct PortSummaryCorpusSweepTests {
 
@@ -438,11 +438,16 @@ struct PortSummaryCorpusSweepTests {
     // MARK: - Expected classification outcomes
     //
     // Measured by this sweep against the corpus snapshot these assertions
-    // were written against: of 1776 connected USB-C port cases, 764 carry a
+    // were written against: of 1776 connected USB-C port cases, 762 carry a
     // cable e-marker with VDO[3] and so classify at all. Of those, 12 are
     // promoted to active by the port controller's `ActiveCable` flag, 1 by
-    // the active-cable layout contradiction, and the remaining 751 are the
+    // the active-cable layout contradiction, and the remaining 749 are the
     // e-marker's own word.
+    //
+    // The classifiable figure was 764 (and the e-marker figure 751) until
+    // `cableVDO` stopped decoding VDO[3] for a non-cable responder (issue
+    // #542). The two cases it lost are the VCONN-Powered Devices below,
+    // which no longer classify as anything.
     //
     // Held as exact sets rather than counts on purpose: a count alone passes
     // when one port drops out and a different one appears.
@@ -473,9 +478,10 @@ struct PortSummaryCorpusSweepTests {
     private static let expectedLayoutContradiction = "m1_macos26.2 port 1"
 
     /// VCONN-Powered Devices (ID Header product type 6) sitting on a port
-    /// whose controller reports `ActiveCable = true`. They must not be
-    /// promoted: the e-marker reported a VPD, not a passive cable, so
-    /// "e-marker reports passive" would be false of them.
+    /// whose controller reports `ActiveCable = true`. They must not classify
+    /// at all: a VPD is not a cable, so it carries no cable VDO and
+    /// `CableClassification.resolve` returns nil. Promoting one, or calling
+    /// it passive, would both assert it is a cable.
     private static let expectedVPDCases: Set<String> = [
         "m3_macos26.5.2_f port 1",      // VID 0x05AC, VDO[3] 0x11000000
         "m4pro_macos27.0_d port 3"      // VID 0x05AC, VDO[3] 0x11000000
@@ -483,11 +489,13 @@ struct PortSummaryCorpusSweepTests {
 
     // MARK: - Classifiable-case floor
     //
-    // Measured 764 by this sweep against the corpus snapshot it was written
-    // against: cases whose cable e-marker carries VDO[3], so
-    // `CableClassification.resolve` returns non-nil. Floor = 85% of 764
-    // rounded down (649.4 -> 649), taken to 650, matching the `coverageFloor`
-    // convention above.
+    // Cases whose cable e-marker carries VDO[3] and declares itself a cable,
+    // so `CableClassification.resolve` returns non-nil. Measured 762 by this
+    // sweep against the current corpus snapshot, down from 764 since the
+    // VCONN-Powered Devices stopped classifying (issue #542). The floor stays
+    // where it was set: 85% of that original 764 rounded down (649.4 -> 649),
+    // taken to 650, matching the `coverageFloor` convention above. It is a
+    // floor, not an equality, and 762 clears it.
     //
     // Every classification assertion below filters this same set. Without a
     // floor on it, a broken `loadPorts` or a broken identity join would empty
@@ -638,7 +646,7 @@ struct PortSummaryCorpusSweepTests {
     func classifiableCaseFloorHolds() {
         let classifiable = Self.cases.filter { Self.resolution($0) != nil }.count
         #expect(classifiable >= Self.classifiableFloor,
-            "Only \(classifiable) of \(Self.cases.count) cases produced a cable classification; expected at least \(Self.classifiableFloor) (85% of the 764 counted when these assertions were written). Below this floor every cable-type assertion in this file is passing over an empty or near-empty set, so treat it as a parsing or join regression first.")
+            "Only \(classifiable) of \(Self.cases.count) cases produced a cable classification; expected at least \(Self.classifiableFloor) (85% of the 764 that classified when this floor was set; 762 classify today). Below this floor every cable-type assertion in this file is passing over an empty or near-empty set, so treat it as a parsing or join regression first.")
     }
 
     @Test("Exactly these corpus ports are promoted to active by the port controller")
@@ -760,8 +768,8 @@ struct PortSummaryCorpusSweepTests {
             #expect(c.port.activeCable == true,
                 "\(key) no longer has ActiveCable true on its port, so it no longer tests the gate: without the flag, nothing would promote it anyway")
             let r = Self.resolution(c)
-            #expect(r?.type == .passive && r?.source == .emarker,
-                "\(key) carries a VCONN-Powered Device, not a passive cable, so it must keep the e-marker's own verdict; resolved \(String(describing: r))")
+            #expect(r == nil,
+                "\(key) carries a VCONN-Powered Device, not a cable, so it has no cable VDO and nothing to classify; any resolution here would assert it is a cable. Resolved \(String(describing: r))")
 
             let summary = PortSummary(port: c.port, sources: c.sources, identities: c.identities, cioCapability: c.cio)
             let lines = summary.group(.emarker)?.lines ?? []
@@ -822,15 +830,19 @@ struct PortSummaryCorpusSweepTests {
     func decodedCableVDOProducesSpeedBullet() {
         // Source: PortSummary.init -- `if let cable = cableEmarker, let cv = cable.cableVDO { let speedLabel = cv.speed.label; bullets.append("Cable speed: \(speedLabel)") ... }`.
         // `cableEmarker` prefers a populated e-marker (`!$0.vdos.isEmpty`) over
-        // an empty one, so whenever a port's e-marker has `vdos.count > 3`
-        // (the precondition for `cableVDO` to decode, see USBPDSOP.cableVDO),
-        // the resolved cableEmarker must be that populated one, and the
-        // speed bullet must appear.
+        // an empty one, so whenever a port's e-marker has `vdos.count > 3` and
+        // declares itself a cable (the preconditions for `cableVDO` to decode,
+        // see USBPDSOP.cableVDO), the resolved cableEmarker must be that
+        // populated one, and the speed bullet must appear. The `isCable` half
+        // excludes VCONN-powered devices, whose VDO[3] is not cable data
+        // (issue #542).
         var examined = 0
         var violations: [String] = []
         for c in Self.cases {
             guard c.identities.contains(where: {
-                ($0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime) && $0.vdos.count > 3
+                ($0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime)
+                    && $0.vdos.count > 3
+                    && $0.idHeader?.isCable == true
             }) else { continue }
             examined += 1
             let summary = PortSummary(

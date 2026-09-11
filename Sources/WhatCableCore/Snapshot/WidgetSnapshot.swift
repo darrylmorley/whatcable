@@ -67,6 +67,13 @@ public struct WidgetSnapshot: Codable, Equatable {
         /// common case, more when a dock fans several out of one port. The card
         /// shows a "+N" hint when this exceeds 1 (issue #271).
         public let displayCount: Int
+        /// Apple's own name for the accessory, from the port's UVDM node
+        /// ("iPhone", "Studio Display", "96W USB-C Power Adapter"). Nil for
+        /// every non-Apple accessory, which never publishes one. Carried as its
+        /// own field rather than left to `topBullet`: the top line is whatever
+        /// the Mac measured, so an iPhone on USB 2 showed a link-speed string
+        /// where the device name belonged.
+        public let accessoryName: String?
 
         public init(
             id: UInt64,
@@ -83,7 +90,8 @@ public struct WidgetSnapshot: Codable, Equatable {
             linkSpeed: LinkSpeed? = nil,
             displayMode: String? = nil,
             monitorName: String? = nil,
-            displayCount: Int = 0
+            displayCount: Int = 0,
+            accessoryName: String? = nil
         ) {
             self.id = id
             self.portName = portName
@@ -100,6 +108,7 @@ public struct WidgetSnapshot: Codable, Equatable {
             self.displayMode = displayMode
             self.monitorName = monitorName
             self.displayCount = displayCount
+            self.accessoryName = accessoryName
         }
 
         /// Custom decoder so that JSON written before `deviceCount` was
@@ -124,6 +133,7 @@ public struct WidgetSnapshot: Codable, Equatable {
             displayMode = try c.decodeIfPresent(String.self, forKey: .displayMode)
             monitorName = try c.decodeIfPresent(String.self, forKey: .monitorName)
             displayCount = try c.decodeIfPresent(Int.self, forKey: .displayCount) ?? 0
+            accessoryName = try c.decodeIfPresent(String.self, forKey: .accessoryName)
         }
     }
 
@@ -243,6 +253,7 @@ extension WidgetSnapshot {
             public let displayMode: String?
             public let monitorName: String?
             public let displayCount: Int
+            public let accessoryName: String?
         }
 
         public let ports: [Port]
@@ -276,7 +287,8 @@ extension WidgetSnapshot {
                     linkSpeed: p.linkSpeed,
                     displayMode: p.displayMode,
                     monitorName: p.monitorName,
-                    displayCount: p.displayCount
+                    displayCount: p.displayCount,
+                    accessoryName: p.accessoryName
                 )
             },
             batteryPercent: powerState?.batteryPercent,
@@ -380,9 +392,11 @@ extension WidgetSnapshot {
 
             let usb3 = cable.usb3Transports.filter { $0.canonicallyMatches(port: port) }
             let cio = cable.cioCapabilities.first { $0.canonicallyMatches(port: port) }
+            let accessory = cable.accessoryIdentities.first { $0.canonicallyMatches(port: port) }
 
             let wattageSource = ChargerWattageSource.resolve(
                 portSources: sources,
+                portIsActive: port.connectionActive == true,
                 activePortCount: activePortCount,
                 chargerSourceCount: chargerSourceCount,
                 adapter: adapter
@@ -398,6 +412,7 @@ extension WidgetSnapshot {
                 usb3Transports: usb3,
                 trmTransports: cable.trmTransports.filter { $0.canonicallyMatches(port: port) },
                 cioCapability: cio,
+                accessoryIdentity: accessory,
                 isConnectedOverride: isLive,
                 chargerWattageSource: wattageSource,
                 batteryFullyCharged: batteryFullyCharged,
@@ -446,7 +461,8 @@ extension WidgetSnapshot {
                 linkSpeed: summary.linkSpeed,
                 displayMode: displayMode,
                 monitorName: monitorName,
-                displayCount: displayCount
+                displayCount: displayCount,
+                accessoryName: accessory?.displayName
             )
         }
 

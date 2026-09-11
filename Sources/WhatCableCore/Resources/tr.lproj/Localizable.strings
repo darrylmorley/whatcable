@@ -618,3 +618,6 @@
    e-marker silicon vendor hint. */
 "E-marker reports passive, but the port controller detects an active cable" = "E-marker pasif bildiriyor ancak bağlantı noktası denetleyicisi etkin bir kablo algılıyor";
 "E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker, yonga üreticisinin varsayılan satıcı kimliğini (%@) taşıyor; kablonun markası kayıtlı değil";
+"USB accessory (audio or adapter)" = "USB aksesuarı (ses veya adaptör)";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "Bu aksesuarın kendi USB-C fişi var. Kablo değildir ve şarj etmez.";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "Bu fiş kablo değil, aksesuarın bir parçası, bu yüzden kablo değerleri yok.";

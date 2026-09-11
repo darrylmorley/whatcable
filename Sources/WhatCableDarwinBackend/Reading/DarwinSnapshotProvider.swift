@@ -26,6 +26,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
         let trmWatcher = TRMTransportWatcher()
         let phyWatcher = AppleTypeCPhyWatcher()
         let displayWatcher = DisplayPortTransportWatcher()
+        let uvdmWatcher = AppleUVDMWatcher()
         var started = false
 
         func ensureStarted() {
@@ -39,6 +40,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
             trmWatcher.start()
             phyWatcher.start()
             displayWatcher.start()
+            uvdmWatcher.start()
 
             // Lets powerWatcher.refresh() synthesize a per-port source when
             // macOS never publishes a real IOPortFeaturePowerSource node
@@ -73,6 +75,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
             trmWatcher.refresh()
             phyWatcher.refresh()
             displayWatcher.refresh()
+            uvdmWatcher.refresh()
             let battery = AppleSmartBatteryReader.read()
             let snap = CableSnapshot(
                 ports: portWatcher.ports,
@@ -86,6 +89,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
                 usb3Transports: usb3Watcher.transports,
                 trmTransports: trmWatcher.transports,
                 cioCapabilities: trmWatcher.cioCapabilities,
+                accessoryIdentities: uvdmWatcher.identities,
                 typeCPhys: phyWatcher.phys,
                 // statuses are enriched with the live CoreGraphics mode at the
                 // watcher source now, so no enrich is needed here.

@@ -49,6 +49,7 @@ final class WidgetSnapshotBackCompatTests: XCTestCase {
         XCTAssertNil(port1.displayMode)
         XCTAssertNil(port1.monitorName)
         XCTAssertEqual(port1.displayCount, 0)
+        XCTAssertNil(port1.accessoryName)
 
         let port2 = snapshot.ports[1]
         XCTAssertEqual(port2.id, 2)

@@ -619,3 +619,6 @@
    e-marker silicon vendor hint. */
 "E-marker reports passive, but the port controller detects an active cable" = "E-marker-ը հայտնում է պասիվ, բայց պորտի կարգավորիչը հայտնաբերում է ակտիվ մալուխ";
 "E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker-ը կրում է իր չիպի արտադրողի կանխադրված վաճառողի ID-ն (%@). մալուխի ապրանքանիշը գրանցված չէ";
+"USB accessory (audio or adapter)" = "USB պարագա (աուդիո կամ ադապտեր)";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "Այս պարագան ունի իր սեփական USB-C խրոցակը։ Այն մալուխ չէ և չի լիցքավորում։";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "Այս խրոցակը պարագայի մասն է, ոչ թե մալուխ, ուստի մալուխի բնութագիր չկա։";

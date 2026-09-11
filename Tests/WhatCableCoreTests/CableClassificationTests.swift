@@ -147,14 +147,22 @@ struct CableClassificationTests {
         #expect(CableClassification.resolve(identity: identity, port: Self.port(activeCable: true)) == nil)
     }
 
-    @Test("A VCONN-powered device is never promoted by the port controller")
+    @Test("A VCONN-powered device does not classify as a cable at all")
     func vconnPoweredDeviceIsNeverPromoted() {
         // Real corpus shape: Apple VCONN-Powered Device, VID 0x05AC,
         // VDO[3] 0x11000000, ID Header product type 6, sitting on a port
         // whose controller reports ActiveCable true (m3_macos26.5.2_f port 1
-        // and m4pro_macos27.0_d port 3). "Not active" is not the same as
-        // "self-reported passive": promotion needs the passive product type,
-        // the same gate hasActiveLayoutContradiction already applies.
+        // and m4pro_macos27.0_d port 3).
+        //
+        // A VPD is not a cable, so there is nothing here to classify.
+        // `USBPDSOP.cableVDO` only decodes VDO[3] as cable data when the ID
+        // Header says the responder is a cable (issue #542), so a VPD has no
+        // cable VDO and `resolve` returns nil on its opening guard. Anything
+        // else would assert "this is a passive cable" about an accessory.
+        //
+        // The `ufpProductType == .passiveCable` gate on the port-controller
+        // promotion below that guard is now a second layer for this shape:
+        // correct, but unreachable for a VPD through `resolve`.
         let identity = USBPDSOP(
             id: 1, endpoint: .sopPrime,
             parentPortType: 2, parentPortNumber: 1,
@@ -163,8 +171,9 @@ struct CableClassificationTests {
             specRevision: 3
         )
         #expect(identity.idHeader?.ufpProductType == .vpd)
+        #expect(identity.cableVDO == nil)
         let resolution = CableClassification.resolve(identity: identity, port: Self.port(activeCable: true))
-        #expect(resolution?.type == .passive)
-        #expect(resolution?.source == .emarker)
+        #expect(resolution == nil,
+            "a VCONN-Powered Device carries no cable VDO, so there is nothing to classify; resolved \(String(describing: resolution))")
     }
 }

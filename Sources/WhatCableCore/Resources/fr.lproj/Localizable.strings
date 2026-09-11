@@ -619,3 +619,6 @@
    e-marker silicon vendor hint. */
 "E-marker reports passive, but the port controller detects an active cable" = "L'e-marker indique passif, mais le contrôleur du port détecte un câble actif";
 "E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "L'e-marker porte l'identifiant fournisseur par défaut de son fabricant de puces (%@) ; la marque du câble n'est pas enregistrée";
+"USB accessory (audio or adapter)" = "Accessoire USB (audio ou adaptateur)";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "Cet accessoire possède sa propre prise USB-C. Ce n'est pas un câble et il ne recharge pas.";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "Cette prise fait partie de l'accessoire, pas d'un câble, il n'y a donc aucune caractéristique de câble.";

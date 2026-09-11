@@ -40,48 +40,54 @@ final class NotificationManagerShimWiringTests: XCTestCase {
         )
     }
 
+    // This test writes `settings.notifyOnChanges`, backed by
+    // `UserDefaults.standard`, a domain every `swift test` process on this
+    // machine shares. Wrapped in `withScratchAppSettingsDefaults` so a
+    // concurrent run can't flip it mid-assertion.
     @MainActor
     func testASequencerGeneratedPostReachesNotificationManagersSink() {
-        let manager = NotificationManager.shared
-        let sequencer = manager.sequencer
-        let settings = AppSettings.shared
+        withScratchAppSettingsDefaults {
+            let manager = NotificationManager.shared
+            let sequencer = manager.sequencer
+            let settings = AppSettings.shared
 
-        let originalSink = manager.notificationSink
-        let originalDidPrimeBaseline = sequencer.didPrimeBaseline
-        let originalKnownDevices = sequencer.knownDevices
-        let originalLastChargerPostTime = sequencer.lastChargerPostTime
-        let originalNotifyOnChanges = settings.notifyOnChanges
-        let originalRequestAuth = settings.requestNotificationAuthorization
-        settings.requestNotificationAuthorization = {}
-        defer {
-            manager.notificationSink = originalSink
-            sequencer.didPrimeBaseline = originalDidPrimeBaseline
-            sequencer.knownDevices = originalKnownDevices
-            sequencer.lastChargerPostTime = originalLastChargerPostTime
-            settings.notifyOnChanges = originalNotifyOnChanges
-            settings.requestNotificationAuthorization = originalRequestAuth
+            let originalSink = manager.notificationSink
+            let originalDidPrimeBaseline = sequencer.didPrimeBaseline
+            let originalKnownDevices = sequencer.knownDevices
+            let originalLastChargerPostTime = sequencer.lastChargerPostTime
+            let originalNotifyOnChanges = settings.notifyOnChanges
+            let originalRequestAuth = settings.requestNotificationAuthorization
+            settings.requestNotificationAuthorization = {}
+            defer {
+                manager.notificationSink = originalSink
+                sequencer.didPrimeBaseline = originalDidPrimeBaseline
+                sequencer.knownDevices = originalKnownDevices
+                sequencer.lastChargerPostTime = originalLastChargerPostTime
+                settings.notifyOnChanges = originalNotifyOnChanges
+                settings.requestNotificationAuthorization = originalRequestAuth
+            }
+
+            settings.notifyOnChanges = true
+            sequencer.didPrimeBaseline = true
+            sequencer.knownDevices = [:]
+            sequencer.lastChargerPostTime = nil
+
+            var posted: [(NotificationManager.NotificationCategory, NotificationManager.NotificationContent, NotificationManager.DeliveryDirective)] = []
+            manager.notificationSink = { category, content, directive in posted.append((category, content, directive)) }
+
+            sequencer.runNowOrDelayForRecentChargerPost([fakeDevice(id: 9001)])
+
+            XCTAssertEqual(
+                posted.map(\.0),
+                [.device],
+                "a sequencer-generated device post must reach NotificationManager.shared's own notificationSink"
+            )
+            XCTAssertEqual(posted.first?.1.title, "Connected: Shim Wiring Test Device")
+            XCTAssertFalse(
+                posted.first?.2.identifier.isEmpty ?? true,
+                "the sink must receive a non-empty delivery directive identifier"
+            )
         }
-
-        settings.notifyOnChanges = true
-        sequencer.didPrimeBaseline = true
-        sequencer.knownDevices = [:]
-        sequencer.lastChargerPostTime = nil
-
-        var posted: [(NotificationManager.NotificationCategory, NotificationManager.NotificationContent, NotificationManager.DeliveryDirective)] = []
-        manager.notificationSink = { category, content, directive in posted.append((category, content, directive)) }
-
-        sequencer.runNowOrDelayForRecentChargerPost([fakeDevice(id: 9001)])
-
-        XCTAssertEqual(
-            posted.map(\.0),
-            [.device],
-            "a sequencer-generated device post must reach NotificationManager.shared's own notificationSink"
-        )
-        XCTAssertEqual(posted.first?.1.title, "Connected: Shim Wiring Test Device")
-        XCTAssertFalse(
-            posted.first?.2.identifier.isEmpty ?? true,
-            "the sink must receive a non-empty delivery directive identifier"
-        )
     }
 
     /// Gate-fixes fix 3 (licence staleness, Codex 1 + 4): `NotificationManager.start()`

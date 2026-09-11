@@ -376,6 +376,7 @@ struct ChargingDiagnosticProbeSweepTests {
         // because that second port has no power source (chargerSourceCount == 1).
         let magsafeWattage = ChargerWattageSource.resolve(
             portSources: sources.filter { $0.canonicallyMatches(port: magsafe) },
+            portIsActive: magsafe.connectionActive == true,
             activePortCount: activePortCount,
             chargerSourceCount: chargerSourceCount,
             adapter: adapter
@@ -401,6 +402,7 @@ struct ChargingDiagnosticProbeSweepTests {
         // regression on real data): resolve returns .unknown, no charger watts.
         let dataWattage = ChargerWattageSource.resolve(
             portSources: sources.filter { $0.canonicallyMatches(port: dataPort) },
+            portIsActive: dataPort.connectionActive == true,
             activePortCount: activePortCount,
             chargerSourceCount: chargerSourceCount,
             adapter: adapter
@@ -432,6 +434,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -480,6 +483,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -525,6 +529,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -569,6 +574,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -618,6 +624,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -668,6 +675,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -710,6 +718,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -761,6 +770,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -808,6 +818,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -850,6 +861,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -893,6 +905,7 @@ struct ChargingDiagnosticProbeSweepTests {
         let portSources = sources.filter { $0.canonicallyMatches(port: port) }
         let wattageSource = ChargerWattageSource.resolve(
             portSources: portSources,
+            portIsActive: port.connectionActive == true,
             activePortCount: 1,
             chargerSourceCount: 1,
             adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }
@@ -950,6 +963,7 @@ struct ChargingDiagnosticProbeSweepTests {
             let portSources = sources.filter { $0.canonicallyMatches(port: port) }
             let wattageSource = ChargerWattageSource.resolve(
                 portSources: portSources,
+                portIsActive: port.connectionActive == true,
                 activePortCount: 1,
                 chargerSourceCount: 1,
                 adapter: adapterW.map { AdapterInfo(watts: $0, isCharging: nil, source: "AC") }

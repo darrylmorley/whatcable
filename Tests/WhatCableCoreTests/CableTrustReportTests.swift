@@ -429,4 +429,55 @@ struct CableTrustReportTests {
         #expect(TrustFlag.eMarkerVIDBlankRegisteredPartner(0x05AC).code == "eMarkerVIDBlankRegisteredPartner")
         #expect(TrustFlag.eMarkerVIDBlankRegisteredPartner(0x05AC).severity == .note)
     }
+
+    @Test("A VCONN-powered device produces no trust flags")
+    func vpdProducesNoFlags() {
+        // Apple USB-C EarPods, SOP' on a Mac mini M4 Pro. The flag catalogue
+        // judges cable e-marker data, and none of a VPD's VDOs is that.
+        let earPods = USBPDSOP(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 3,
+            vendorID: 0x05AC,
+            productID: 0x110B,
+            bcdDevice: 0x2681,
+            vdos: [0x7000_05AC, 0x0000_0000, 0x110B_2681, 0x1100_0000],
+            specRevision: 3
+        )
+        let report = CableTrustReport(identity: earPods)
+        #expect(report.flags.isEmpty)
+    }
+
+    @Test("A real passive cable with zero latency bits still flags")
+    func realPassiveCableStillFlagsReservedLatency() {
+        // Over-suppression guard for the VPD gate. Corpus folder
+        // m1pro_macos26.5.2_x: a genuine passive cable whose cable-latency
+        // field reads 0000. Widening the gate must break this.
+        let report = CableTrustReport(
+            identity: cableIdentity(vendorID: 0x2B01, cableVDO: 0x000A_0640)
+        )
+        #expect(report.flags.contains(.reservedCableLatencyEncoding(0)))
+    }
+
+    @Test("A VCONN-powered device with a blank vendor ID produces no trust flags")
+    func vpdWithZeroVendorIDProducesNoFlags() {
+        // The blank-VID flag reads the identity directly, not the cable VDO,
+        // so suppressing the cable decode alone does not cover it. Nothing in
+        // a VPD's VDOs is cable data, so nothing there is judgeable.
+        let vpd = USBPDSOP(
+            id: 1,
+            endpoint: .sopPrime,
+            parentPortType: 2,
+            parentPortNumber: 3,
+            vendorID: 0,
+            productID: 0x110B,
+            bcdDevice: 0x2681,
+            vdos: [(6 << 27), 0x0000_0000, 0x110B_2681, 0x1100_0000],
+            specRevision: 3
+        )
+        #expect(vpd.idHeader?.ufpProductType == .vpd)
+        let report = CableTrustReport(identity: vpd)
+        #expect(report.flags.isEmpty)
+    }
 }

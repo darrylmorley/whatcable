@@ -619,3 +619,6 @@
    e-marker silicon vendor hint. */
 "E-marker reports passive, but the port controller detects an active cable" = "E-marker 报告为无源，但端口控制器检测到有源线缆";
 "E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker 使用其芯片厂商的默认厂商 ID (%@)，线缆品牌未被记录";
+"USB accessory (audio or adapter)" = "USB 配件（音频或转接器）";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "此配件自带 USB-C 插头。它不是线缆，也不充电。";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "此插头是配件的一部分，不是线缆，因此没有线缆规格。";
