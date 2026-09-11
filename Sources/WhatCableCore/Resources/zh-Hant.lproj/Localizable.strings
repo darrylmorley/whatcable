@@ -84,7 +84,7 @@
 "Supports %@." = "支援 %@。";
 "The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other." = "線材的 e-marker 宣告支援 EPR，但 Max VBUS Voltage 回報為 20V。EPR 運作需要 48V 或 50V VBUS，因此這兩個欄位互相矛盾。";
 "The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "線材的 e-marker 回報 VDO 版本 %lld；對於此線材類型，該值由 USB-PD 規範保留或標示為無效。真正的 e-marker 晶片不應輸出無效的版本值。";
-"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "線材的 e-marker 回報線材端接 %lld；USB-PD 規範將其標示為此線材類型的無效值。刷寫錯誤的 e-marker 常會在這裡與線材實際物理接線不一致。";
+"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "線材的 e-marker 回報線材端接 %lld；USB-PD 規範將其標示為此線材類型的無效值。程式設定錯誤的 e-marker 在這個欄位常會與線材的實際物理接線不一致。";
 "The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報線材延遲值 %lld；對於此線材類型，該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報電流值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報速度值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
@@ -110,6 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "未知世代（原始速度代碼 0x2，推測為 TB5）";
 "Unspecified" = "未指定";
 "Up to %lld Gb/s %@" = "最高 %1$lld Gb/s %2$@";
+"Up to %lld Gb/s out, %lld Gb/s in" = "傳送最高 %1$lld Gb/s，接收最高 %2$lld Gb/s";
 "VCONN-powered device" = "VCONN 供電裝置";
 "Vendor ID isn't in USB-IF's published list" = "Vendor ID 不在 USB-IF 已公布清單中";
 "What can this USB-C cable actually do?" = "這條 USB-C 線材到底能做什麼？";
@@ -321,8 +322,12 @@
 "Nothing is being held back: the parts we can see all support this speed." = "沒有任何限制：目前偵測到的裝置都支援此速度。";
 "Cable is limiting data speed" = "線材限制了資料傳輸速度";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac 和裝置都支援 %@，但線材僅能承載 %@。改用速度更高的線材即可發揮最高速度。";
+"The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac 支援 %1$@，但線材僅能承載 %2$@。改用速度更高的線材即可發揮最高速度。";
+"The device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "裝置支援 %1$@，但線材僅能承載 %2$@。改用速度更高的線材即可發揮最高速度。";
 "This Mac port limits data speed" = "這個 Mac 連接埠限制了資料傳輸速度";
 "The cable and device can do %@, but this port maxes out at %@." = "線材和裝置都支援 %@，但此連接埠最高僅支援 %@。";
+"The cable can do %@, but this port maxes out at %@." = "線材支援 %1$@，但此連接埠最高僅支援 %2$@。";
+"The device can do %@, but this port maxes out at %@." = "裝置支援 %1$@，但此連接埠最高僅支援 %2$@。";
 "Device runs at %@" = "裝置以 %@ 運作";
 "This is the fastest the connected device supports. It is not a cable problem." = "這是已連接裝置支援的最快速度。這不是線材問題。";
 "Battery full, not charging" = "電池已充滿，未充電";
@@ -545,6 +550,7 @@
 "Controller confirms Thunderbolt cable (%@)" = "控制器確認為 Thunderbolt 線材 (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt 連線正以 %@ 運作";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有主機或裝置資料可供比對，因此無法判斷是否還有其它因素限制它。";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有裝置資料可供比對，因此無法判斷是否還有其它限制因素。";
 
 "Shared controller port" = "共用控制器連接埠";
 
