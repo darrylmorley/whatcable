@@ -172,37 +172,12 @@ KNOWN_MISSING = {
         # resolve in both catalogues. See the matching entry under
         # "WhatCable (app)" below.
         ("Sources/WhatCableCore/USB/USBDevice.swift", "Billboard device: \x00"): 1,
-        # The rest of this target's baseline is WhatCablePlugins and
-        # WhatCableWidget: both call String(localized:, bundle:
-        # _coreLocalizedBundle), so they're checked against this catalogue,
-        # but neither was in scope before this check learned to classify by
-        # bundle argument instead of source directory (finding 1). This is
-        # the "batch of new baseline entries" that fix predicted.
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift",
-         "A Billboard device reports the Alt Modes a USB-C device supports. On a healthy dock it's normal."): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Advertised Alt Modes"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Alt Mode \x00"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Configured"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Device class"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Didn't come up"): 2,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Location ID"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "No active power request"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Not attempted"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift",
-         "One advertised Alt Mode didn't come up. That can be normal right after plugging in, or a sign the cable or port can't carry it."): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Power available"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Power requested"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Raw properties"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Serial number"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Status"): 3,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "USB version"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Unregistered cable (vendor ID not set)"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Yes, available power below Mac's max draw"): 1,
-        ("Sources/WhatCablePlugins/History/SavedCablesScreen.swift",
-         'Open WhatCable, find a connected cable, and choose "Add this cable" on its port to start tracking it.'): 1,
-        ("Sources/WhatCablePlugins/Power/PowerMonitorWindow.swift",
-         "Could be damage, debris, or a marginal cable. Try reseating it, or a known-good cable."): 1,
-        ("Sources/WhatCablePlugins/Power/PowerMonitorWindow.swift", "Worth keeping an eye on"): 1,
+        # The rest of this target's baseline is WhatCableWidget: it calls
+        # String(localized:, bundle: _coreLocalizedBundle), so it's checked
+        # against this catalogue, but wasn't in scope before this check
+        # learned to classify by bundle argument instead of source directory
+        # (finding 1). The WhatCablePlugins entries were deleted once their
+        # literals landed in the English catalogue.
         ("Sources/WhatCableWidget/Power/PowerWidgetViews.swift", "%@W draw"): 1,
         ("Sources/WhatCableWidget/Power/PowerWidgetViews.swift", "Battery and charging at a glance."): 1,
         ("Sources/WhatCableWidget/Power/PowerWidgetViews.swift", "No power data"): 1,
