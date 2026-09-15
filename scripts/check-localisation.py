@@ -230,6 +230,12 @@ KNOWN_MISSING = {
 # Same idea for a language carrying a key English does not.
 KNOWN_EXTRA = {
     ("WhatCable (app)", "uk", ".stringsdict"): {"%lld displays connected"},
+    ("WhatCable (app)", "lv", ".stringsdict"): {
+        "%lld displays connected",
+        "%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.",
+        "%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.",
+    },
+    ("WhatCableCore", "lv", ".stringsdict"): {"%lld displays connected"},
 }
 
 # Values that are byte-identical to English on purpose: loanwords, unit
@@ -412,15 +418,9 @@ ALLOWED_IDENTICAL = {
             "USB4 Gen 4 (80 Gbps)", "Variable, %@ to %@ @ %@", "WhatCable Pro",
         },
         "lv": {
-            "%lld displays connected", "%lld × %lld", "1-5 mW", "3 A", "5 A", "5-10 mW",
-            "50-200 µW", "< 50 µW", "> 10 mW", "Battery full, not drawing power",
-            "Built-in %1$@ port %2$lld", "CC Advertisement",
-            "Display running compressed (DSC) to fit through the link",
-            "High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally.",
-            "Isn't performing as expected", "Licence…", "MagSafe 3",
-            "No problems seen while watching this cable.", "Not performing as expected",
-            "Performing as expected", "Raw VDOs", "Raw cable VDOs", "Re-driver", "Re-timer",
-            "Saw a brief drop or a single high reading. Not conclusive; still watching.",
+            "%lld × %lld", "1-5 mW", "3 A", "5 A", "5-10 mW",
+            "50-200 µW", "< 50 µW", "> 10 mW", "CC Advertisement",
+            "Licence…", "MagSafe 3", "Raw VDOs", "Raw cable VDOs", "Re-driver", "Re-timer",
             "Thunderbolt", "Thunderbolt / USB4", "USB 2.0 (480 Mbps)",
             "USB 3.2 Gen 1 (5 Gbps)", "USB 3.2 Gen 2 (10 Gbps)", "USB4 Gen 3 (20 / 40 Gbps)",
             "USB4 Gen 4 (80 Gbps)", "Video", "WhatCable Pro", "video",
@@ -606,8 +606,7 @@ ALLOWED_IDENTICAL = {
             "Gen 1", "Pro", "SuperSpeed", "USB",
         },
         "lv": {
-            "%lld displays connected", "Built-in %1$@ port %2$lld", "Display connected", "Pro",
-            "SuperSpeed", "USB",
+            "Pro", "SuperSpeed", "USB",
         },
         "nb": {
             "%lld displays connected", "Built-in %1$@ port %2$lld", "Display connected",

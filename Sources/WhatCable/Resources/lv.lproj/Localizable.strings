@@ -33,9 +33,9 @@
 "Keep window open" = "Turēt logu atvērtu";
 "Language" = "Valoda";
 "Launch at login" = "Palaist, piesakoties";
-"Lives in the menu bar with no Dock icon." = "Atrodas izvēlņu joslā bez Dock ikonas.";
-"Menu bar icon" = "Izvēlņu joslas ikona";
-"Show charging watts in the menu bar" = "Rādīt uzlādes vatus izvēlņu joslā";
+"Lives in the menu bar with no Dock icon." = "Atrodas izvēļņu joslā bez Dock ikonas.";
+"Menu bar icon" = "Izvēļņu joslas ikona";
+"Show charging watts in the menu bar" = "Rādīt uzlādes vatus izvēļņu joslā";
 /* Menu bar icon choices */
 "Cable" = "Kabelis";
 "Cable, horizontal" = "Horizontāls kabelis";
@@ -62,11 +62,11 @@
 "System Default" = "Sistēmas noklusējums";
 "Settings" = "Iestatījumi";
 "Settings…" = "Iestatījumi…";
-"Show in menu bar" = "Rādīt izvēlņu joslā";
+"Show in menu bar" = "Rādīt izvēļņu joslā";
 "Show technical details" = "Rādīt tehniskās detaļas";
 "SuperSpeed" = "SuperSpeed";
 "Supported" = "Atbalstīts";
-"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "Šis Mac, šķiet, neatklāj savus porta kontrollera pakalpojumus. Nospiediet atsvaidzināt vai pārbaudiet Sistēmas informācija > USB.";
+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "Šis Mac, šķiet, neatklāj savus porta kontroliera pakalpojumus. Nospiediet atsvaidzināt vai pārbaudiet Sistēmas informācija > USB.";
 "Thunderbolt fabric" = "Thunderbolt tīkls";
 "Transports" = "Transporti";
 "USB active" = "USB aktīvs";
@@ -108,8 +108,8 @@
 "Welcome to WhatCable" = "Laipni lūdzam lietotnē WhatCable!";
 "See what your USB-C cables, chargers, and devices can actually do." = "Uzziniet, ko jūsu USB-C kabeļi, lādētāji un ierīces patiesībā spēj.";
 "How would you like to use WhatCable?" = "Kā vēlaties izmantot WhatCable?";
-"Menu bar" = "Izvēlņu josla";
-"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "Atrodas izvēlņu joslā ekrāna augšdaļā. Noklikšķiniet uz kabeļa ikonas jebkurā laikā, lai pārbaudītu savienojumu.";
+"Menu bar" = "Izvēļņu josla";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "Atrodas izvēļņu joslā ekrāna augšdaļā. Noklikšķiniet uz kabeļa ikonas jebkurā laikā, lai pārbaudītu savienojumu.";
 "Recommended" = "Ieteicams";
 "Dock app" = "Dock lietotne";
 "Opens as a regular window with a Dock icon, like most apps." = "Atveras kā parasts logs ar Dock ikonu, tāpat kā lielākā daļa lietotņu.";
@@ -152,7 +152,7 @@
 "Built-in USB-A ports" = "Iebūvētie USB-A porti";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Vienkārši USB porti aiz Mac iekšējā centrmezgla, tāpēc par tiem nav kabeļa, jaudas vai Thunderbolt datu.";
 
-/* Built-in display port card (issue #352). English placeholders, community can refine. */
+/* Built-in display port card (issue #352) */
 "Display connected" = "Displejs pievienots";
 "%lld displays connected" = "%lld displeji pievienoti";
 "Built-in %1$@ port %2$lld" = "Iebūvētais %1$@ ports %2$lld";
@@ -167,7 +167,7 @@
 
 /* Intel Macs are unsupported; notice shown on every launch. */
 "WhatCable can't read cables on this Mac" = "WhatCable šajā Mac nevar nolasīt kabeļus";
-"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Šim Mac ir Intel procesors. WhatCable iegūst kabeļu un portu datus no Apple Silicon portu kontrollera, un Intel Mac to nepadara pieejamu, tāpēc lietotne nerādīs neko noderīgu.\n\nTā paliks atvērta, ja vēlaties paskatīties, bet aiz tās nekā nav.";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Šim Mac ir Intel procesors. WhatCable iegūst kabeļu un portu datus no Apple Silicon portu kontroliera, un Intel Mac to nepadara pieejamu, tāpēc lietotne nerādīs neko noderīgu.\n\nTā paliks atvērta, ja vēlaties paskatīties, bet aiz tās nekā nav.";
 "OK" = "Labi";
 "Learn more" = "Uzzināt vairāk";
 /* USB device detail rows (downstream device enrichment). Labels for the

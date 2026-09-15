@@ -38,5 +38,59 @@
 			<string>Rādīt %lld centrmezglu</string>
 		</dict>
 	</dict>
+	<key>%lld displays connected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld displejs pievienots</string>
+			<key>other</key>
+			<string>%lld displeji pievienoti</string>
+			<key>zero</key>
+			<string>%lld displeju pievienoti</string>
+		</dict>
+	</dict>
+	<key>%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off &quot;Hide empty ports&quot; in Settings to see them.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld USB-C ports un 1 MagSafe ports konstatēti, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.</string>
+			<key>other</key>
+			<string>%lld USB-C porti un 1 MagSafe ports konstatēti, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.</string>
+			<key>zero</key>
+			<string>%lld USB-C portu un 1 MagSafe ports konstatēti, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.</string>
+		</dict>
+	</dict>
+	<key>%lld USB-C ports detected, but nothing is currently plugged in. Turn off &quot;Hide empty ports&quot; in Settings to see them.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld USB-C ports konstatēts, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.</string>
+			<key>other</key>
+			<string>%lld USB-C porti konstatēti, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.</string>
+			<key>zero</key>
+			<string>%lld USB-C portu konstatēti, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
