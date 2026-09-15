@@ -255,7 +255,7 @@
 "Source PDOs" = "Avota PDO";
 "Source capabilities received" = "Avota spējas saņemtas";
 "State" = "Stāvoklis";
-"System Power Input" = "Sistēmas strāvas ievade";
+"System Power Input" = "Sistēmas jaudas ievade";
 "That Mac will lose Pro until it activates again." = "Tas Mac zaudēs Pro, līdz tas tiks aktivizēts no jauna.";
 "The charger or power source advertised what voltages and currents it can provide." = "Lādētājs vai barošanas avots paziņoja, kādus spriegumus un strāvas tas var nodrošināt.";
 "This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "Neizdevās atbrīvot šī Mac vietu licences serverī, tāpēc tā joprojām var būt aizņemta. Atbrīvojiet to iestatījumos citā Mac, vai sazinieties ar atbalstu.";
@@ -423,7 +423,7 @@
 "Battery full, not drawing power" = "Akumulators pilns, jauda netiek patērēta";
 "Performing as expected" = "Darbojas, kā paredzēts";
 "No problems seen while watching this cable." = "Vērojot šo kabeli, problēmas netika konstatētas.";
-"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Konstatēts īslaicīgs kritums vai atsevišķs augsts rādījums. Nav viennozīmīgi; novērošana turpinās.";
+"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Konstatēts īslaicīgs kritums vai atsevišķs augsts rādījums. Secinājums nav viennozīmīgs; novērošana turpinās.";
 "Not performing as expected" = "Nedarbojas, kā paredzēts";
 "Isn't performing as expected" = "nedarbojas, kā paredzēts";
 
@@ -517,7 +517,7 @@
 "No history in this range" = "Nav vēstures šajā diapazonā";
 "Recording happens while the cable is plugged in and WhatCable is running." = "Ierakstīšana notiek, kamēr kabelis ir pievienots un WhatCable darbojas.";
 "No speed data" = "Nav ātruma datu";
-"This cable reported no negotiated link rate while connected." = "Šis kabelis pievienošanas laikā neziņoja nevienu saskaņoto savienojuma ātrumu.";
+"This cable reported no negotiated link rate while connected." = "Šis kabelis nepaziņoja par nevienu saskaņoto savienojuma ātrumu, kamēr tas bija pievienots.";
 "7 days" = "7 dienas";
 "30 days" = "30 dienas";
 "All" = "Visi";
@@ -530,15 +530,15 @@
 "Performing" = "Darbojas";
 
 /* Cable history: full-blob identity */
-"Identified by its e-marker (VID 0x%04X, PID 0x%04X)" = "Identificēts pēc e-markera (VID 0x%04X, PID 0x%04X)";
-"Has an e-marker, but no unique ID (product ID not set)" = "Ir e-markeris, bet nav unikāla ID (produkta ID nav iestatīts)";
-"Has an e-marker, but the maker never programmed an ID" = "Ir e-markeris, bet ražotājs nekad nav ieprogrammējis ID";
-"This cable has no e-marker, so it can't be tracked." = "Šim kabelim nav e-markera, tāpēc to nevar izsekot.";
+"Identified by its e-marker (VID 0x%04X, PID 0x%04X)" = "Identificēts pēc e-marker (VID 0x%04X, PID 0x%04X)";
+"Has an e-marker, but no unique ID (product ID not set)" = "Ir e-marker, bet nav unikāla ID (produkta ID nav iestatīts)";
+"Has an e-marker, but the maker never programmed an ID" = "Ir e-marker, bet ražotājs nekad nav ieprogrammējis ID";
+"This cable has no e-marker, so it can't be tracked." = "Šim kabelim nav e-marker, tāpēc to nevar izsekot.";
 "This cable can't be tracked" = "Šo kabeli nevar izsekot";
 "Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "Sakrīt ar jūsu saglabāto kabeli %@. Divus viena modeļa eksemplārus nevar atšķirt, tāpēc, saglabājot arī šo, to vēsture tiks apvienota.";
 "Identified by its MagSafe cable ID (VID 0x%04X, PID 0x%04X). Cables of this exact model look identical, so this record tracks the model, not one physical cable." = "Identificēts pēc MagSafe kabeļa ID (VID 0x%04X, PID 0x%04X). Šī modeļa kabeļi izskatās identiski, tāpēc šis ieraksts atspoguļo modeli, nevis vienu konkrētu kabeli.";
 "You already have this MagSafe cable saved as %@. Cables of this model can't be told apart, so add its history to that one instead." = "Jums jau ir šis MagSafe kabelis saglabāts kā %@. Šī modeļa kabeļus nevar atšķirt, tāpēc pievienojiet vēsturi tam esošajam ierakstam.";
-"This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "Šim kabelim nav e-markera, tāpēc tam nevar reģistrēt neko jaunu. Esošā vēsture joprojām ir pieejama.";
+"This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "Šim kabelim nav e-marker, tāpēc tam nevar reģistrēt neko jaunu. Esošā vēsture joprojām ir pieejama.";
 "Can't add this cable" = "Šo kabeli nevar pievienot";
 "OK" = "Labi";
 
@@ -575,7 +575,7 @@
 "Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "Ir, bet šajā savienojumā nav nolasīts. Mēģiniet kabeli pievienot vēlreiz; daži lādētāji un dokstacijas bloķē nolasīšanu.";
 "Present, but not read on this connection. macOS usually reads it above 3A or over Thunderbolt." = "Ir, bet šajā savienojumā nav nolasīts. macOS to parasti nolasa tikai virs 3 A vai caur Thunderbolt.";
 "This port can't read cable details: USB-only, no Power Delivery." = "Šis ports nevar nolasīt kabeļa datus: tikai USB, bez Power Delivery.";
-"The %@ contract shows the charger treated this as an e-marked, 5A-capable cable, so charging isn't limited by the cable. This Mac couldn't get its own read here. Connect the cable to another device to see its details." = "%@ līgums liecina, ka lādētājs šo kabeli uztvēra kā e-marker kabeli ar 5 A jaudu, tāpēc uzlādi kabelis neierobežo. Šis Mac šeit to nevarēja nolasīt pats. Pievienojiet kabeli citai ierīcei, lai redzētu tā datus.";
+"The %@ contract shows the charger treated this as an e-marked, 5A-capable cable, so charging isn't limited by the cable. This Mac couldn't get its own read here. Connect the cable to another device to see its details." = "%@ līgums liecina, ka lādētājs šo kabeli uztvēra kā e-marker kabeli ar 5 A nominālo strāvu, tāpēc uzlādi kabelis neierobežo. Šis Mac šeit to nevarēja nolasīt pats. Pievienojiet kabeli citai ierīcei, lai redzētu tā datus.";
 "No e-marker response. Cable details aren't available on this connection. Try another device to read it." = "Nav atbildes no e-marker. Kabeļa dati nav pieejami šajā savienojumā. Mēģiniet citu ierīci, lai to nolasītu.";
 "Reading cable details…" = "Nolasa kabeļa datus…";
 "No e-marker read. The cable may have one; macOS usually reads it above 3A or over Thunderbolt." = "E-marker nav nolasīts. Kabelim tāds var būt; macOS to parasti nolasa tikai virs 3 A vai caur Thunderbolt.";
@@ -592,7 +592,7 @@
 "Connect a charger to identify the cable." = "Pievienojiet lādētāju, lai identificētu kabeli.";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
-"No PD contract on this port. Incoming power shows in System Power Input below." = "Šim portam nav PD līguma. Ienākošā jauda redzama zemāk sadaļā «Sistēmas strāvas ievade».";
+"No PD contract on this port. Incoming power shows in System Power Input below." = "Šim portam nav PD līguma. Ienākošā jauda redzama zemāk sadaļā „Sistēmas jaudas ievade“.";
 
 /* PD event log: opcode-plus-argument decode of PortControllerEvtBuffer */
 "Plug attached" = "Spraudnis pievienots";
