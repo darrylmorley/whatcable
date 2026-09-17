@@ -1007,6 +1007,14 @@ private struct DisplayDTO: Codable {
     let currentMode: CurrentModeDTO?
     /// The display's highest mode from CoreGraphics, EDID-free.
     let maxMode: CurrentModeDTO?
+    /// The display's top mode as `DisplayDiagnostic.resolveTopMode` resolved
+    /// it: the highest-clock declared entry, or the CoreGraphics-only mode
+    /// when nothing declared matches. nil exactly when `edid` is nil.
+    let topMode: TopModeDTO?
+    /// The full parsed EDID: every declared mode, in every format the EDID
+    /// carries one in, plus the range-limits envelope, per-block checksums
+    /// and the tiled topology. nil when there is no readable EDID.
+    let edid: EDIDDTO?
 
     init(diagnostic: DisplayDiagnostic) {
         self.summary = diagnostic.summary
@@ -1035,6 +1043,170 @@ private struct DisplayDTO: Codable {
         self.branchDevice = facts.branchDevice
         self.currentMode = facts.currentMode.map(CurrentModeDTO.init)
         self.maxMode = facts.maxMode.map(CurrentModeDTO.init)
+        self.topMode = diagnostic.topMode.map(TopModeDTO.init)
+        self.edid = diagnostic.edid.map(EDIDDTO.init)
+    }
+}
+
+private struct TopModeDTO: Codable {
+    let width: Int
+    let height: Int
+    let refreshHz: Double
+    let pixelClockHz: Int?
+    let source: String
+
+    init(_ top: DisplayDiagnostic.TopMode) {
+        self.width = top.width
+        self.height = top.height
+        self.refreshHz = top.refreshHz
+        self.pixelClockHz = top.pixelClockHz
+        self.source = top.sourceDescription
+    }
+}
+
+private struct ModeDTO: Codable {
+    let width: Int
+    let height: Int
+    let refreshHz: Double
+    let pixelClockHz: Int
+    let hTotal: Int
+    let vTotal: Int
+    let interlaced: Bool
+    let source: String
+
+    init(_ mode: EDIDMode) {
+        self.width = mode.width
+        self.height = mode.height
+        self.refreshHz = mode.refreshHz
+        self.pixelClockHz = mode.pixelClockHz
+        self.hTotal = mode.hTotal
+        self.vTotal = mode.vTotal
+        self.interlaced = mode.interlaced
+        self.source = mode.sourceDescription
+    }
+}
+
+private struct StdIDDTO: Codable {
+    let width: Int
+    let height: Int
+    let refreshHz: Int
+
+    init(_ standard: EDIDInfo.StandardTimingID) {
+        self.width = standard.width
+        self.height = standard.height
+        self.refreshHz = standard.refreshHz
+    }
+}
+
+private struct RangeLimitsDTO: Codable {
+    let minVerticalHz: Int
+    let maxVerticalHz: Int
+    let minHorizontalKHz: Int
+    let maxHorizontalKHz: Int
+    let maxPixelClockHz: Int?
+    /// "defaultGTF" | "rangeLimitsOnly" | "secondaryGTF" | "cvt" | "unknown(0xNN)"
+    let timingSupport: String
+
+    init(_ limits: EDIDInfo.RangeLimits) {
+        self.minVerticalHz = limits.minVerticalHz
+        self.maxVerticalHz = limits.maxVerticalHz
+        self.minHorizontalKHz = limits.minHorizontalKHz
+        self.maxHorizontalKHz = limits.maxHorizontalKHz
+        self.maxPixelClockHz = limits.maxPixelClockHz
+        switch limits.timingSupport {
+        case .defaultGTF: self.timingSupport = "defaultGTF"
+        case .rangeLimitsOnly: self.timingSupport = "rangeLimitsOnly"
+        case .secondaryGTF: self.timingSupport = "secondaryGTF"
+        case .cvt: self.timingSupport = "cvt"
+        case .unknown(let raw): self.timingSupport = "unknown(0x" + String(format: "%02X", raw) + ")"
+        }
+    }
+}
+
+private struct DynamicRangeDTO: Codable {
+    let minPixelClockKHz: Int
+    let maxPixelClockKHz: Int
+    let minRefreshHz: Int
+    let maxRefreshHz: Int
+
+    init(_ limits: EDIDInfo.DynamicRangeLimits) {
+        self.minPixelClockKHz = limits.minPixelClockKHz
+        self.maxPixelClockKHz = limits.maxPixelClockKHz
+        self.minRefreshHz = limits.minRefreshHz
+        self.maxRefreshHz = limits.maxRefreshHz
+    }
+}
+
+private struct TiledDTO: Codable {
+    let hTiles: Int
+    let vTiles: Int
+    let tileWidth: Int
+    let tileHeight: Int
+    let hLocation: Int
+    let vLocation: Int
+
+    init(_ tiled: EDIDInfo.TiledTopology) {
+        self.hTiles = tiled.hTiles
+        self.vTiles = tiled.vTiles
+        self.tileWidth = tiled.tileWidth
+        self.tileHeight = tiled.tileHeight
+        self.hLocation = tiled.hLocation
+        self.vLocation = tiled.vLocation
+    }
+}
+
+private struct BlockDTO: Codable {
+    let index: Int
+    /// "base" | "cta861" | "displayID X.Y" | "vtb" | "blockMap" | "padding" | "unknown(0xNN)"
+    let kind: String
+    let checksumValid: Bool
+
+    init(_ block: EDIDInfo.BlockInfo) {
+        self.index = block.index
+        self.checksumValid = block.checksumValid
+        switch block.kind {
+        case .base: self.kind = "base"
+        case .cta861: self.kind = "cta861"
+        case .displayID(let version):
+            let major = (version & 0xF0) >> 4
+            let minor = version & 0x0F
+            self.kind = "displayID \(major).\(minor)"
+        case .vtb: self.kind = "vtb"
+        case .blockMap: self.kind = "blockMap"
+        case .padding: self.kind = "padding"
+        case .unknown(let tag): self.kind = "unknown(0x" + String(format: "%02X", tag) + ")"
+        }
+    }
+}
+
+private struct EDIDDTO: Codable {
+    let version: String   // "\(major).\(minor)"
+    let monitorName: String?
+    let continuousFrequency: Bool?
+    let declaredExtensionCount: Int
+    /// Omitted when the EDID marks no mode preferred (no base DTD, no flagged DisplayID record).
+    let preferredMode: ModeDTO?
+    let modes: [ModeDTO]
+    let undecodedStandardTimings: [StdIDDTO]
+    let rangeLimits: RangeLimitsDTO?
+    let displayIDRangeLimits: RangeLimitsDTO?
+    let dynamicRangeLimits: DynamicRangeDTO?
+    let tiledTopology: TiledDTO?
+    let blocks: [BlockDTO]
+
+    init(_ edid: EDIDInfo) {
+        self.version = "\(edid.versionMajor).\(edid.versionMinor)"
+        self.monitorName = edid.monitorName
+        self.continuousFrequency = edid.continuousFrequency
+        self.declaredExtensionCount = edid.declaredExtensionCount
+        self.preferredMode = edid.preferredMode.map(ModeDTO.init)
+        self.modes = edid.modes.map(ModeDTO.init)
+        self.undecodedStandardTimings = edid.undecodedStandardTimings.map(StdIDDTO.init)
+        self.rangeLimits = edid.rangeLimits.map(RangeLimitsDTO.init)
+        self.displayIDRangeLimits = edid.displayIDRangeLimits.map(RangeLimitsDTO.init)
+        self.dynamicRangeLimits = edid.dynamicRangeLimits.map(DynamicRangeDTO.init)
+        self.tiledTopology = edid.tiledTopology.map(TiledDTO.init)
+        self.blocks = edid.blocks.map(BlockDTO.init)
     }
 }
 

@@ -93,9 +93,9 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
     public let nominalSignalingFrequenciesHz: [Int]
     public let index: Int
     /// The live on-screen mode from CoreGraphics, attached by the Darwin
-    /// backend when it can match this node to exactly one display. nil on a
-    /// non-Darwin backend, in tests, and whenever the match is missing or
-    /// ambiguous, so every consumer treats its absence as "no extra data".
+    /// backend when it can match this node to exactly one display. nil in
+    /// tests, and whenever the match is missing or ambiguous, so every
+    /// consumer treats its absence as "no extra data".
     public let currentMode: DisplayCurrentMode?
     /// The display's native top mode as macOS reports it (from
     /// `CGDisplayCopyAllDisplayModes`): highest resolution, at its best refresh.

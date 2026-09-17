@@ -550,6 +550,7 @@
 "Display running compressed (DSC) to fit through the link" = "Display running compressed (DSC) to fit through the link";
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS-ն ձեր %@-ի ընթացիկ ռեժիմը հաղորդում է որպես %@, որն առանց սեղմման կպահանջեր ավելի շատ թողունակություն, քան այս կապը կրում է: Բարձր լուծաչափի էկրաններ օգտագործում են սեղմում (DSC)՝ նման ռեժիմն այսպիսի կապով անցկացնելու համար: Պատկերն ուղարկվում է էկրան, ուստի ամեն ինչ աշխատում է ըստ նախատեսվածի:";
+"macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS-ը հաղորդում է %1$lld × %2$lld ռեժիմ %3$lld Հց հաճախությամբ, որը ձեր %4$@-ի EDID-ը չի նկարագրում, ուստի անհրաժեշտ թողունակությունը հնարավոր չէ հաշվարկել:";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
 "Controller confirms Thunderbolt cable (%@)" = "Կարգավարը հաստատում է Thunderbolt մալուխը (%@)";

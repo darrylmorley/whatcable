@@ -549,6 +549,7 @@
 "Display running compressed (DSC) to fit through the link" = "Display running compressed (DSC) to fit through the link";
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS, %1$@'nızın geçerli modunu %2$@ olarak bildiriyor; bu mod sıkıştırmasız iletilseydi bu bağlantının taşıyabileceğinden daha fazla bant genişliği gerekirdi. Yüksek çözünürlüklü ekranlar, böyle bir modu böyle bir bağlantıya sığdırmak için sıkıştırma (DSC) kullanır. Görüntü ekrana ulaşıyor, dolayısıyla her şey beklendiği gibi çalışıyor.";
+"macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS, %4$@'nızın EDID'inde tanımlanmayan %1$lld × %2$lld, %3$lld Hz bir mod bildiriyor; bu nedenle gereken bant genişliği hesaplanamıyor.";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
 "Controller confirms Thunderbolt cable (%@)" = "Denetleyici Thunderbolt kablosunu doğruluyor (%@)";

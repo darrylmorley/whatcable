@@ -60,7 +60,7 @@ public struct AppleTypeCPhy: Identifiable, Hashable, Equatable, Sendable {
 public struct PhyLane: Hashable, Sendable {
     /// Lane index (0 or 1).
     public let index: Int
-    /// Transport protocol: "CIO", "DisplayPort", or empty string for idle.
+    /// Transport protocol: "CIO", "DisplayPort", "USB3", or empty string for idle.
     public let transport: String
     /// Power state: "on" or empty string for off.
     public let powerLevel: String

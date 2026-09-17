@@ -1,35 +1,21 @@
+import Darwin
 import Foundation
 
 /// ANSI color helpers. Disabled automatically when stdout isn't a TTY
 /// (piped output, redirected to file) or when NO_COLOR is set -
 /// see https://no-color.org for the convention.
-///
-/// Core has no way to ask the OS "is stdout a real terminal" by itself:
-/// that check (`isatty`) is a Darwin-only call, and Core stays free of
-/// platform imports so it can later build for a non-Darwin backend (see
-/// CLAUDE.md). Instead, whichever program prints colored text tells us the
-/// answer once at startup via `configure(isTTY:)`, using its own platform
-/// layer to work it out. Until `configure` is called, colour defaults to
-/// off: printing plain text is a safe default, printing raw escape codes
-/// into a pipe or a file is not.
 public enum ANSI {
-    /// Set once at startup by `configure(isTTY:)`, before any colored output
-    /// is produced, and never changed again during a run. There is only one
-    /// writer and it happens before any reader, so this does not need a lock.
-    nonisolated(unsafe) private static var configuredIsTTY = false
-
-    /// Tell ANSI whether stdout is a real terminal. Call this once, as early
-    /// as possible in `main`, before printing anything. Safe to call more
-    /// than once (e.g. in tests); the most recent call wins.
-    public static func configure(isTTY: Bool) {
-        configuredIsTTY = isTTY
-    }
+    /// Whether stdout is a real terminal. `isatty(3)` returns 0 when stdout is
+    /// piped or redirected to a file, which is exactly when colour should stay
+    /// off. A `static let` is evaluated lazily and exactly once per process, so
+    /// this costs one syscall however much coloured text gets printed, and it
+    /// needs no lock.
+    private static let stdoutIsTTY = isatty(fileno(stdout)) != 0
 
     /// Pure decision logic, pulled out of `isEnabled` so tests can exercise
-    /// every NO_COLOR / TTY combination directly, without touching the
-    /// shared `configuredIsTTY` state (multiple test files run concurrently
-    /// in the same process, so mutating shared state from a test would risk
-    /// other tests seeing the wrong value).
+    /// every NO_COLOR / TTY combination directly. Under `swift test` stdout is
+    /// redirected, so `stdoutIsTTY` is always false there; this seam is the
+    /// only way the TTY branch gets covered.
     static func shouldEnable(isTTY: Bool, noColorSet: Bool) -> Bool {
         if noColorSet { return false }
         return isTTY
@@ -38,7 +24,7 @@ public enum ANSI {
     /// Reports whether formatter-owned ANSI sequences may be emitted.
     public static var isEnabled: Bool {
         shouldEnable(
-            isTTY: configuredIsTTY,
+            isTTY: stdoutIsTTY,
             noColorSet: ProcessInfo.processInfo.environment["NO_COLOR"] != nil
         )
     }

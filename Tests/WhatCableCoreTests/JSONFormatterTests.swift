@@ -1441,7 +1441,10 @@ struct JSONFormatterTests {
     func displayDTOAppears() throws {
         // makePort is portKey "2/1"; the DP node's parent must match so the
         // formatter correlates them. A 2-lane HBR2 link with the G34w-10 EDID
-        // falls short of its 100Hz ceiling -> belowMonitorMax.
+        // falls short of its real 3440x1440@100 mode -> belowMonitorMax. That
+        // mode is declared in the CTA-861 extension, so the base block alone is
+        // not enough: without it the panel reads as its 60 Hz preferred mode and
+        // the link comfortably carries it (issue #596).
         let dp = IOPortTransportStateDisplayPort(
             link: DisplayPortLink(
                 active: true, laneCount: 2, maxLaneCount: 4, linkRate: 3,
@@ -1449,7 +1452,9 @@ struct JSONFormatterTests {
             ),
             monitor: MonitorInfo(
                 manufacturerName: nil, productName: nil, productId: nil,
-                yearOfManufacture: nil, edid: Data(EDIDInfoTests.g34wBaseBlock)
+                yearOfManufacture: nil,
+                edid: Data(EDIDInfoTests.g34wBaseBlock
+                    + EDIDInfoTests.hexBytes(EDIDInfoTests.g34wExtensionHex))
             ),
             parentPortType: 2,
             parentPortNumber: 1
@@ -1467,6 +1472,47 @@ struct JSONFormatterTests {
         #expect(display["monitorName"] as? String == "LEN G34w-10")
         #expect(display["lanes"] as? Int == 2)
         #expect(display["maxLanes"] as? Int == 4)
+    }
+
+    @Test("the display object carries the EDID's declared modes")
+    func displayCarriesDeclaredModes() throws {
+        // Same G34w-10 base block + CTA-861 extension as `displayDTOAppears`,
+        // so `EDIDInfo(Data(bytes))` parsed independently gives the ground
+        // truth to compare the JSON output against.
+        let bytes = EDIDInfoTests.g34wBaseBlock + EDIDInfoTests.hexBytes(EDIDInfoTests.g34wExtensionHex)
+        let expectedEDID = try #require(EDIDInfo(Data(bytes)))
+        let dp = IOPortTransportStateDisplayPort(
+            link: DisplayPortLink(
+                active: true, laneCount: 2, maxLaneCount: 4, linkRate: 3,
+                linkRateDescription: "5.4 Gbps (HBR2)", tunneled: false, hpdState: 1
+            ),
+            monitor: MonitorInfo(
+                manufacturerName: nil, productName: nil, productId: nil,
+                yearOfManufacture: nil, edid: Data(bytes)
+            ),
+            parentPortType: 2,
+            parentPortNumber: 1
+        )
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [],
+            showRaw: false, displayPorts: [dp]
+        )
+        let port = (parse(json)["ports"] as? [[String: Any]])?.first ?? [:]
+        let displays = port["displays"] as? [[String: Any]] ?? []
+        let display = displays.first ?? [:]
+
+        let edidObj = try #require(display["edid"] as? [String: Any])
+        let modes = try #require(edidObj["modes"] as? [[String: Any]])
+        #expect(modes.count == expectedEDID.modes.count)
+        let preferredMode = try #require(edidObj["preferredMode"] as? [String: Any])
+        #expect(preferredMode["source"] as? String == expectedEDID.preferredMode?.sourceDescription)
+
+        let topMode = try #require(display["topMode"] as? [String: Any])
+        let source = try #require(topMode["source"] as? String)
+        #expect(!source.isEmpty)
+
+        let blocks = try #require(edidObj["blocks"] as? [[String: Any]])
+        #expect((blocks.first ?? [:])["kind"] as? String == "base")
     }
 
     @Test("Two monitors on one port both appear in `displays` (issue #271)")

@@ -24,11 +24,14 @@ public struct TRMTransport: Identifiable, Hashable, Sendable {
 
     // MARK: - TRM state fields
 
-    /// Overall TRM state: 0 = Full access, 2 = Limited. Nil when the
-    /// transport doesn't carry a TRM_State property (e.g. DisplayPort
-    /// might only have TRM_TransportSupervised).
+    /// Overall TRM state. The kernel's own table (IOAccessoryManager,
+    /// macOS 26.6.2 build 25G83, read 2026-09-16): 0 Unknown, 1 Unrestricted,
+    /// 2 Limited, 3 Restricted, 4 Force Restricted. The corpus has shown 1, 2
+    /// and 3. Nil when the transport doesn't carry a TRM_State property
+    /// (e.g. DisplayPort might only have TRM_TransportSupervised).
+    /// See research/classes/_meaning/IOPortTransportState.md.
     public let state: Int?
-    /// Human-readable state label from IOKit, e.g. "Limited" or "Full".
+    /// Human-readable state label from IOKit, e.g. "Limited" or "Unrestricted".
     public let stateDescription: String?
     /// True when this transport is actively restricted by TRM.
     public let transportRestricted: Bool?

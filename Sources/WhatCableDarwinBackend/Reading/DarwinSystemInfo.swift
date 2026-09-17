@@ -3,10 +3,11 @@ import Darwin
 
 /// Reads the Mac model identifier (e.g. "Mac15,3") via `sysctlbyname`.
 ///
-/// This used to live in `WhatCableCore`, but Core has to stay free of
-/// Darwin-only APIs so it can eventually build for a non-Darwin (e.g. Linux)
-/// backend. The lookup moved back here, to the Darwin-specific layer, which
-/// is its original home before an earlier refactor moved it into Core.
+/// This is a live hardware read, so it belongs in the Darwin backend: code
+/// that fetches from real hardware stays separate from the code that
+/// decides what to do with the result, which is what keeps the decision
+/// side (`SystemInfo.current(macModel:)` in `WhatCableCore`) callable in
+/// tests without a real Mac underneath it.
 public enum DarwinSystemInfo {
     /// Returns the `hw.model` sysctl string, or "unknown" if the sysctl call
     /// fails for any reason (e.g. running somewhere that doesn't have it).

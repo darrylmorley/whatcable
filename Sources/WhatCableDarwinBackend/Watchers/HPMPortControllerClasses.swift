@@ -24,7 +24,7 @@ enum HPMPortControllerClasses {
         // a name that matches nothing is zero and the cost of missing a real
         // controller is a port that vanishes from the app.
         "AppleHPMInterfaceType12",
-        // Rare but real: 5 machines.
+        // Rare but real: 13 corpus folders, all A18 Pro (2026-09-17).
         "AppleHPMInterfaceType18",
         "AppleTCControllerType10",
         "AppleTCControllerType11",

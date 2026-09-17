@@ -183,6 +183,16 @@ ALLOWED = {
             "WhatCableDarwinBackend/Debug/ThunderboltProbe.swift",
         },
     ),
+    "AppleTypeCPhy": (
+        "Core names it only in the `renamed:` attribute on the deprecated "
+        "`TypeCPhy` typealias, a Swift type name and not a matcher. The "
+        "watcher matches the IOKit base class of that name so every chip's "
+        "leaf is found (issue #651).",
+        {
+            "WhatCableCore/Port/AppleTypeCPhy.swift",
+            "WhatCableDarwinBackend/Watchers/AppleTypeCPhyWatcher.swift",
+        },
+    ),
     "IOPlatformUUID": (
         "A property key, not a service class. Three readers of the machine id, "
         "all doing different things with it.",

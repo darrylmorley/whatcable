@@ -550,6 +550,7 @@
 "Display running compressed (DSC) to fit through the link" = "Display running compressed (DSC) to fit through the link";
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS indique que le mode actuel de votre %@ est %@, ce qui sans compression nécessiterait plus de débit que cette liaison ne peut en transporter. Les écrans haute résolution utilisent la compression (DSC) pour faire passer un tel mode par une telle liaison. L'image parvient à l'écran, ce qui signifie que tout fonctionne comme prévu.";
+"macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS indique un mode %1$lld × %2$lld à %3$lld Hz que l'EDID de votre %4$@ ne décrit pas, il est donc impossible de calculer le débit nécessaire.";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
 "Controller confirms Thunderbolt cable (%@)" = "Le contrôleur confirme le câble Thunderbolt (%@)";

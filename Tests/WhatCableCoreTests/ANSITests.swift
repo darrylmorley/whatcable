@@ -1,13 +1,12 @@
 import Testing
 @testable import WhatCableCore
 
-/// Tests the pure `shouldEnable` decision logic only, not `configure(isTTY:)`
-/// / `isEnabled` directly. Those two touch a single shared static
-/// (`configuredIsTTY`), and Swift Testing can run test files in this target
-/// concurrently in the same process; a test that flipped that shared value
-/// could make TextFormatterTests' "No ANSI escapes in non-TTY output" test
-/// flaky. `shouldEnable` takes both inputs as plain parameters, so it
-/// exercises the exact same logic with no shared state involved.
+/// Tests the pure `shouldEnable` decision logic only, not `isEnabled`
+/// directly. `isEnabled` reads `stdoutIsTTY`, which captures the real
+/// process's actual stdout state once at first access - under `swift test`
+/// that is always false, since stdout is redirected. `shouldEnable` takes
+/// both inputs as plain parameters, so it exercises the exact same logic
+/// without depending on the real environment.
 @Suite("ANSI color decision")
 struct ANSITests {
     @Test("Colour is on when stdout is a TTY and NO_COLOR is not set")
