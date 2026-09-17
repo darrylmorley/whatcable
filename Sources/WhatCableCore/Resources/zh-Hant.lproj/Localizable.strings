@@ -549,6 +549,7 @@
 "Display running compressed (DSC) to fit through the link" = "顯示器正使用影像串流壓縮 (DSC)，以配合此連線的頻寬";
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS 回報您的 %@ 目前模式為 %@，若不使用壓縮，所需頻寬會超過此連線可承載的範圍。高解析度顯示器會使用影像串流壓縮 (DSC)，讓這種顯示模式能在這類連線上正常傳輸。畫面已正常傳輸至顯示器，因此這是預期中的運作方式。";
+"macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS 回報了 %1$lld × %2$lld、%3$lldHz 的顯示模式，但您的 %4$@ EDID 未描述此模式，因此無法計算所需頻寬。";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). */
 "Controller confirms Thunderbolt cable (%@)" = "控制器確認為 Thunderbolt 線材 (%@)";
