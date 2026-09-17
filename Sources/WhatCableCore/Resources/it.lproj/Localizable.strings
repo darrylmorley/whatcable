@@ -323,7 +323,7 @@
 "Running at full data speed (%@)" = "Funzionante alla massima velocità (%@)";
 "Nothing is being held back: the parts we can see all support this speed." = "Nessun limite visibile: le parti che è possibile vedere supportano tutte questa velocità.";
 "Linked to another Mac at %@" = "Collegato a un altro Mac a %@";
-"Thunderbolt networking runs over this link. The 480 Mbps USB connection alongside it is normal and does not carry your data." = "La rete Thunderbolt funziona su questo collegamento. La connessione USB a 480 Mbps accanto ad essa è normale e non trasporta i tuoi dati.";
+"Thunderbolt networking runs over this link. The 480 Mbps USB connection alongside it is normal and does not carry your data." = "La rete Thunderbolt funziona con questo collegamento. La connessione USB a 480 Mbps accanto ad essa è normale e non trasporta i dati.";
 "Cable is limiting data speed" = "Il cavo limita la velocità dati";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Il Mac e il dispositivo supportano %@, ma il cavo supporta solo %@. Un cavo più veloce potrebbe usare la massima velocità.";
 "The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Il Mac supporta %1$@, ma il cavo supporta solo %2$@. Un cavo più veloce potrebbe usare la massima velocità.";
