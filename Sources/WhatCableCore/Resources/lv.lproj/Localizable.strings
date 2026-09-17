@@ -13,12 +13,12 @@
 "Active cable (VDO 2):" = "Aktīvs kabelis (VDO 2):";
 "Alternate Mode Adapter" = "Alternatīvā režīma adapteris";
 "Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle." = "Gan lādētājs, gan kabelis spēj vairāk, bet Mac pašlaik pieprasa mazāk. Tas ir normāli, kad akumulators ir gandrīz pilns vai sistēma ir dīkstāvē.";
-"Cable does not advertise an e-marker (basic cable)" = "Kabelim nav e-marķiera (vienkāršs kabelis)";
+"Cable does not advertise an e-marker (basic cable)" = "Kabelim nav e-marker (vienkāršs kabelis)";
 "Cable is limiting charging speed" = "Kabelis ierobežo uzlādes ātrumu";
 "Cable identified as %@" = "Kabelis identificēts kā %@";
 "This e-marker is used in: %@" = "Šis e-marker tiek izmantots: %@";
 "Cable rated for %@ at up to %lldV (~%lldW)" = "Kabelis novērtēts %1$@ pie sprieguma līdz %2$lld V (~%3$lld W)";
-"Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "Kabelis novērtēts līdz %1$lldV / %2$@, nodrošina līdz %3$lldW (USB-PD ierobežo līdz 48V)";
+"Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "Kabelis novērtēts līdz %1$lld V / %2$@, nodrošina līdz %3$lld W (USB-PD ierobežo līdz 48 V)";
 "Cable speed: %@" = "Kabeļa ātrums: %@";
 "Cable trust signals:" = "Kabeļa uzticamības signāli:";
 "Carrying DisplayPort video" = "Pārraida DisplayPort video";
@@ -48,15 +48,15 @@
 "Display connected" = "Displejs pievienots";
 "Display connected · %lldW charger" = "Displejs pievienots · %lld W lādētājs";
 "DisplayPort video over USB-C Alt Mode." = "DisplayPort video caur USB-C alt režīmu.";
-"E-marker claims EPR support but reports only 20V max VBUS" = "E-marķieris norāda EPR atbalstu, bet ziņo tikai 20 V maks. VBUS";
-"E-marker reports no vendor identity" = "E-marķieris neziņo ražotāja identitāti";
-"E-marker uses a reserved cable-latency value" = "E-marķieris izmanto rezervētu kabeļa latentuma vērtību";
-"E-marker uses a reserved current-rating value" = "E-marķieris izmanto rezervētu strāvas novērtējuma vērtību";
-"E-marker uses a reserved data-speed value" = "E-marķieris izmanto rezervētu datu ātruma vērtību";
-"E-marker uses an invalid VDO version" = "E-marķieris izmanto nederīgu VDO versiju";
-"E-marker uses an invalid cable-termination value" = "E-marķieris izmanto nederīgu kabeļa terminācijas vērtību";
+"E-marker claims EPR support but reports only 20V max VBUS" = "E-marker norāda EPR atbalstu, bet ziņo tikai 20 V maks. VBUS";
+"E-marker reports no vendor identity" = "E-marker neziņo ražotāja identitāti";
+"E-marker uses a reserved cable-latency value" = "E-marker izmanto rezervētu kabeļa latentuma vērtību";
+"E-marker uses a reserved current-rating value" = "E-marker izmanto rezervētu strāvas novērtējuma vērtību";
+"E-marker uses a reserved data-speed value" = "E-marker izmanto rezervētu datu ātruma vērtību";
+"E-marker uses an invalid VDO version" = "E-marker izmanto nederīgu VDO versiju";
+"E-marker uses an invalid cable-termination value" = "E-marker izmanto nederīgu kabeļa terminācijas vērtību";
 "Last leg drops from %@ to %@" = "Pēdējais posms samazinās no %1$@ uz %2$@";
-"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "Šī kabeļa e-marker neuzrāda ražotāja ID, kas oriģināliem kabeļiem ir izplatīta parādība. Tuvāk ieskatīties ir vērts tikai tad, ja arī pārējie kabeļa iespēju dati ir pretrunīgi.";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "Šī kabeļa e-marker neuzrāda ražotāja ID, kas īstiem kabeļiem ir izplatīta parādība. Tuvāk ieskatīties ir vērts tikai tad, ja arī pārējie kabeļa iespēju dati ir pretrunīgi.";
 "Linked at %@" = "Savienots ar %@";
 "Negotiation hasn't completed yet." = "Saskaņošana vēl nav pabeigta.";
 "Charger on standby" = "Lādētājs gaidstāvē";
@@ -74,21 +74,21 @@
 "Power is flowing but no data link is established." = "Strāva plūst, bet nav izveidots datu savienojums.";
 "Power is flowing. No data connection." = "Strāva plūst. Nav datu savienojuma.";
 "Raw IOKit properties:" = "Neapstrādātas IOKit īpašības:";
-"Re-driver" = "Atkārtots draiveris";
-"Re-timer" = "Atkārtots taimeris";
+"Re-driver" = "Re-driver";
+"Re-timer" = "Re-timer";
 "Reserved" = "Rezervēts";
 "Slow USB device or charge-only cable" = "Lēna USB ierīce vai tikai uzlādes kabelis";
 "Slow USB device or charge-only cable · %lldW charger" = "Lēna USB ierīce vai tikai uzlādes kabelis · %lld W lādētājs";
 "SuperSpeed USB (5 Gbps or faster)" = "SuperSpeed USB (5 Gbps vai ātrāks)";
 "SuperSpeed data link is active." = "SuperSpeed datu savienojums ir aktīvs.";
 "Supports %@." = "Atbalsta %@.";
-"The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other." = "Kabeļa e-marķieris norāda EPR spēju, bet ziņo maks. VBUS spriegumu kā 20 V. EPR darbībai nepieciešams 48 V vai 50 V VBUS, tāpēc abi lauki ir pretrunā.";
-"The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "Kabeļa e-marķieris ziņo VDO versiju %lld, kas USB-PD specifikācijā šim kabeļa tipam ir rezervēta vai atzīmēta kā nederīga. Īstam e-marķiera silīcijam nevajadzētu izstarot nederīgas versijas vērtības.";
-"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "Kabeļa e-marķieris ziņo kabeļa termināciju %lld, ko USB-PD specifikācija atzīmē kā nederīgu šim kabeļa tipam. Nepareizi ieprogrammēti e-marķieri bieži neatbilst kabeļa faktiskajam fiziskajam savienojumam.";
-"The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "Kabeļa e-marķieris ziņo kabeļa latentuma vērtību %lld, kas USB-PD specifikācijā šim kabeļa tipam ir rezervēta. Īstām e-marķiera mikroshēmām nevajadzētu izstarot rezervētas vērtības.";
-"The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "Kabeļa e-marķieris ziņo strāvas vērtību %lld, kas USB-PD specifikācijā ir rezervēta. Īstām e-marķiera mikroshēmām nevajadzētu izstarot rezervētas vērtības.";
-"The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "Kabeļa e-marķieris ziņo ātruma vērtību %lld, kas USB-PD specifikācijā ir rezervēta. Īstām e-marķiera mikroshēmām nevajadzētu izstarot rezervētas vērtības.";
-"The cable's e-marker reports vendor %@, which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies." = "Kabeļa e-marķieris ziņo ražotāju %@, kas nav mūsu iekļautajā USB-IF sarakstā. Numurs var būt nepiešķirts, kopēts vai piešķirts pēc saraksta izveides. Tas pats par sevi nav problēmas pierādījums, bet klona kabeļos tas bieži parādās kopā ar citām neatbilstībām.";
+"The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other." = "Kabeļa e-marker norāda EPR spēju, bet ziņo maks. VBUS spriegumu kā 20 V. EPR darbībai nepieciešams 48 V vai 50 V VBUS, tāpēc abi lauki ir pretrunā.";
+"The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "Kabeļa e-marker ziņo VDO versiju %lld, kas USB-PD specifikācijā šim kabeļa tipam ir rezervēta vai atzīmēta kā nederīga. Īstam e-marker silīcijam nevajadzētu izstarot nederīgas versijas vērtības.";
+"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "Kabeļa e-marker ziņo kabeļa termināciju %lld, ko USB-PD specifikācija atzīmē kā nederīgu šim kabeļa tipam. Nepareizi ieprogrammēti e-marker bieži neatbilst kabeļa faktiskajam fiziskajam savienojumam.";
+"The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "Kabeļa e-marker ziņo kabeļa latentuma vērtību %lld, kas USB-PD specifikācijā šim kabeļa tipam ir rezervēta. Īstām e-marker mikroshēmām nevajadzētu izstarot rezervētas vērtības.";
+"The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "Kabeļa e-marker ziņo strāvas vērtību %lld, kas USB-PD specifikācijā ir rezervēta. Īstām e-marker mikroshēmām nevajadzētu izstarot rezervētas vērtības.";
+"The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "Kabeļa e-marker ziņo ātruma vērtību %lld, kas USB-PD specifikācijā ir rezervēta. Īstām e-marker mikroshēmām nevajadzētu izstarot rezervētas vērtības.";
+"The cable's e-marker reports vendor %@, which isn't in our bundled USB-IF list. The number could be unassigned, copied, or assigned after the bundled list was generated. On its own this isn't proof of a problem, but on a clone cable it often appears alongside other inconsistencies." = "Kabeļa e-marker ziņo ražotāju %@, kas nav mūsu iekļautajā USB-IF sarakstā. Numurs var būt nepiešķirts, kopēts vai piešķirts pēc saraksta izveides. Tas pats par sevi nav problēmas pierādījums, bet klona kabeļos tas bieži parādās kopā ar citām neatbilstībām.";
 "Thunderbolt / USB4" = "Thunderbolt / USB4";
 "Thunderbolt / USB4 link active" = "Thunderbolt / USB4 savienojums aktīvs";
 "Thunderbolt / USB4 · %lldW charger" = "Thunderbolt / USB4 · %lld W lādētājs";
@@ -111,7 +111,7 @@
 "Unspecified" = "Nenorādīts";
 "Up to %lld Gb/s %@" = "Līdz %1$lld Gb/s %2$@";
 "Up to %lld Gb/s out, %lld Gb/s in" = "Līdz %1$lld Gb/s izejošs, %2$lld Gb/s ienākošs";
-"VCONN-powered device" = "Ar VCONN barota ierīce";
+"VCONN-powered device" = "Ar VCONN darbināma ierīce";
 "Vendor ID isn't in USB-IF's published list" = "Ražotāja ID nav USB-IF publicētajā sarakstā";
 "What can this USB-C cable actually do?" = "Ko šis USB-C kabelis patiesībā spēj?";
 " · %lldW cable" = " · %lld W kabelis";
@@ -123,7 +123,7 @@
 "20 Gbps capable" = "20 Gbps spējīgs";
 "40 Gbps capable" = "40 Gbps spējīgs";
 "80 Gbps capable" = "80 Gbps spējīgs";
-"Charger connected. Battery is full, so the Mac isn't drawing power." = "Lādētājs pievienots. Akumulators ir pilns, tāpēc Mac nepatērē strāvu.";
+"Charger connected. Battery is full, so the Mac isn't drawing power." = "Lādētājs pievienots. Akumulators ir pilns, tāpēc Mac nepatērē jaudu.";
 "Per-port negotiation data is not available. Wattage is from the system-wide adapter reading." = "Saskaņošanas dati pa portiem nav pieejami. Jauda ir no sistēmas mēroga adaptera nolasījuma.";
 "Plugged in · battery full" = "Pievienots · akumulators pilns";
 "Try a higher-wattage charger to identify the cable." = "Izmēģiniet lielākas jaudas lādētāju, lai identificētu kabeli.";
@@ -132,8 +132,8 @@
 "USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)" = "USB4 Gen 4 (80 Gbps, Thunderbolt 5 klase)";
 
 /* DisplayPort lane labels, connected-device variants, pin-diagram Data label */
-"2 DP lanes + USB3 data" = "2 DP līnijas + USB3 dati";
-"4 DP lanes (no USB3 alongside video)" = "4 DP līnijas (nav USB3 blakus video)";
+"2 DP lanes + USB3 data" = "2 DP joslas + USB3 dati";
+"4 DP lanes (no USB3 alongside video)" = "4 DP joslas (nav USB3 blakus video)";
 "Carrying DisplayPort video (%@)" = "Pārraida DisplayPort video (%@)";
 "Connected device: %@" = "Savienotā ierīce: %@";
 "Connected device: another Mac" = "Savienotā ierīce: cits Mac";
@@ -152,13 +152,13 @@
 "Active Cable" = "Aktīvs kabelis";
 "Active RDO" = "Aktīvs RDO";
 "Attach count" = "Pievienošanas skaits";
-"Buy a licence at whatcable.uk" = "Iegādāties licenci whatcable.uk";
-"CC Advertisement" = "CC paziņojums";
+"Buy a licence at whatcable.uk" = "Iegādāties licenci vietnē whatcable.uk";
+"CC Advertisement" = "CC Advertisement";
 "CC line voltage" = "CC līnijas spriegums";
 "Cable Identity" = "Kabeļa identitāte";
 "Cancel" = "Atcelt";
 "Capability mismatch" = "Spēju neatbilstība";
-"Connect a USB-C power source to view live telemetry." = "Pievienojiet USB-C strāvas avotu, lai skatītu tiešraides telemetriju.";
+"Connect a USB-C power source to view live telemetry." = "Pievienojiet USB-C barošanas avotu, lai skatītu tiešraides telemetriju.";
 "Connector" = "Savienotājs";
 "Current" = "Strāva";
 "Current (A)" = "Strāva (A)";
@@ -181,13 +181,13 @@
 "Event Log" = "Notikumu žurnāls";
 "FET enable failures" = "FET iespējošanas kļūmes";
 "FET status" = "FET statuss";
-"Hard reset count" = "Pilnīgo atiestati skaits";
+"Hard reset count" = "Pilno atiestatīšanu skaits";
 "Could not load the device list. Try again later." = "Neizdevās ielādēt ierīču sarakstu. Mēģiniet vēlreiz vēlāk.";
 "Could not reach the licence server. Check your internet connection and try again." = "Nevarēja sasniegt licences serveri. Pārbaudiet interneta savienojumu un mēģiniet vēlreiz.";
 "I2C error count" = "I2C kļūdu skaits";
 "Inactive" = "Neaktīvs";
 "Invalid licence key. Check the key and try again." = "Nederīga licences atslēga. Pārbaudiet atslēgu un mēģiniet vēlreiz.";
-"Lanes" = "Līnijas";
+"Lanes" = "Joslas";
 "Licence…" = "Licence…";
 "Licensed to: %@" = "Licencēts: %@";
 "Link rate" = "Savienojuma ātrums";
@@ -204,13 +204,13 @@
 "Mitigations" = "Mazināšanas pasākumi";
 "Mode" = "Režīms";
 "Monitor" = "Monitors";
-"Native" = "Dabīgs";
+"Native" = "Tiešais";
 "Port maximum. Live per-port metering is not available on this hardware." = "Porta maksimums. Tiešsaistes mērīšana pa portiem šajā aparatūrā nav pieejama.";
 "No" = "Nē";
 "No PD contract data" = "Nav PD līguma datu";
 "No PD events" = "Nav PD notikumu";
 "No PDOs advertised" = "Nav paziņotu PDO";
-"No Power Data" = "Nav strāvas datu";
+"No Power Data" = "Nav jaudas datu";
 "No SOP identity data" = "Nav SOP identitātes datu";
 "No cable connected." = "Nav pievienots kabelis.";
 "No cable identity data" = "Nav kabeļa identitātes datu";
@@ -232,16 +232,16 @@
 "Port Health" = "Porta veselība";
 "Power" = "Jauda";
 "Power (W)" = "Jauda (W)";
-"Power Contract" = "Strāvas līgums";
+"Power Contract" = "Jaudas līgums";
 "Power Monitor" = "Jaudas monitors";
-"Power role swaps" = "Strāvas lomu maiņas";
+"Power role swaps" = "Jaudas lomu maiņas";
 "Pro features unlocked." = "Pro funkcijas atbloķētas.";
 "Pro features will be locked until you enter your key again." = "Pro funkcijas tiks bloķētas, līdz atkārtoti ievadīsiet atslēgu.";
 "Pro required" = "Nepieciešama Pro";
 "Product ID" = "Produkta ID";
 "Product Type" = "Produkta tips";
-"Raw VDOs" = "Neapstrādāti VDO";
-"Raw cable VDOs" = "Neapstrādāti kabeļa VDO";
+"Raw VDOs" = "Raw VDOs";
+"Raw cable VDOs" = "Raw cable VDOs";
 "Refresh" = "Atsvaidzināt";
 "Registered %@" = "Reģistrēts %@";
 "Registration date unknown" = "Reģistrācijas datums nezināms";
@@ -255,9 +255,9 @@
 "Source PDOs" = "Avota PDO";
 "Source capabilities received" = "Avota spējas saņemtas";
 "State" = "Stāvoklis";
-"System Power Input" = "Sistēmas strāvas ievade";
+"System Power Input" = "Sistēmas jaudas ievade";
 "That Mac will lose Pro until it activates again." = "Tas Mac zaudēs Pro, līdz tas tiks aktivizēts no jauna.";
-"The charger or power source advertised what voltages and currents it can provide." = "Lādētājs vai strāvas avots paziņoja, kādus spriegumus un strāvas tas var nodrošināt.";
+"The charger or power source advertised what voltages and currents it can provide." = "Lādētājs vai barošanas avots paziņoja, kādus spriegumus un strāvas tas var nodrošināt.";
 "This Mac's slot could not be released on the licence server, so it may still be held. Free it from Settings on another Mac, or contact support." = "Neizdevās atbrīvot šī Mac vietu licences serverī, tāpēc tā joprojām var būt aizņemta. Atbrīvojiet to iestatījumos citā Mac, vai sazinieties ar atbalstu.";
 "This Mac" = "Šis Mac";
 "Tunneled" = "Tunelēts";
@@ -269,7 +269,7 @@
 "Unknown Device" = "Nezināma ierīce";
 "Unknown Mac" = "Nezināms Mac";
 "Unknown event %@" = "Nezināms notikums %@";
-"Unregistered cable (no e-marker)" = "Nereģistrēts kabelis (nav e-marķiera)";
+"Unregistered cable (no e-marker)" = "Nereģistrēts kabelis (nav e-marker)";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "Nestrukturēta VDM uzskaitīšana sākta (atklāj ražotāja specifiskās spējas).";
 "Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "Nestrukturēts VDM statuss mainījies (ražotāja specifiskā ziņojumapmaiņa, piemēram, alt režīma iestatīšana).";
 "VDO fail count" = "VDO kļūmju skaits";
@@ -301,9 +301,9 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Ievadiet licences atslēgu…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Šī ir maksimālā vērtība, par kuru vienojās lādētājs un jūsu Mac, nevis tiešais rādījums. Jūsu Mac ziņo tiešo vērtību tikai kā sistēmas kopsummu, kas redzama zemāk esošajā diagrammā „Sistēmas strāvas ievade“.";
-"No power data for this port right now." = "Pašlaik nav strāvas datu par šo portu.";
-"Waiting for power telemetry from macOS…" = "Gaida strāvas telemetriju no macOS…";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Šī ir maksimālā vērtība, par kuru vienojās lādētājs un jūsu Mac, nevis tiešais rādījums. Jūsu Mac ziņo tiešo vērtību tikai kā sistēmas kopsummu, kas redzama zemāk esošajā diagrammā „Sistēmas jaudas ievade“.";
+"No power data for this port right now." = "Pašlaik nav jaudas datu par šo portu.";
+"Waiting for power telemetry from macOS…" = "Gaida jaudas telemetriju no macOS…";
 "Upgrade to WhatCable Pro" = "Jaunināt uz WhatCable Pro";
 "not reported in this state" = "šajā stāvoklī netiek ziņots";
 
@@ -316,8 +316,8 @@
 /* Negotiation diagnostics + Pro UX (PR #55) */
 "The cable's e-marker and the Thunderbolt controller disagree on its speed. The controller measured a higher, confirmed rate, so that figure is used." = "Kabeļa e-marker un Thunderbolt kontrolieris nesakrīt par ātrumu. Kontrolieris izmērīja augstāku, apstiprinātu ātrumu, tāpēc tiek izmantots šis lielums.";
 "Running at %@" = "Darbojas ar %@";
-"There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "Nav kabeļa e-marķiera vai kontrollera datu, kā arī nav porta vai ierīces spēju, ar ko salīdzināt, tāpēc nevaram noteikt, vai kabelis ir ierobežojums.";
-"This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "Šim kabelim nav e-marķiera un kontrollera datu, tāpēc nevaram noteikt, vai tas ir ierobežojums.";
+"There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "Nav kabeļa e-marker vai kontroliera datu, kā arī nav porta vai ierīces spēju, ar ko salīdzināt, tāpēc nevaram noteikt, vai kabelis ir ierobežojums.";
+"This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "Šim kabelim nav e-marker un kontroliera datu, tāpēc nevaram noteikt, vai tas ir ierobežojums.";
 "Running slower than expected (%@)" = "Darbojas lēnāk nekā gaidīts (%@)";
 "The parts we can see all support %@ or more, but the link came up slower. Reseating the cable or trying another port may help." = "Visas redzamās daļas atbalsta %@ vai vairāk, bet savienojums izveidojās lēnāks. Kabeļa atkārtota pievienošana vai cita porta izmēģināšana var palīdzēt.";
 "Running at full data speed (%@)" = "Darbojas ar pilnu datu ātrumu (%@)";
@@ -367,7 +367,7 @@
 "Cable says %@, link reads %@" = "Kabelis norāda %@, savienojums nolasa %@";
 "The cable's e-marker reports %@, but the active link is reading %@. One of those readings is wrong, and without a Thunderbolt controller cross-check we can't tell which. Trying a known-good cable will identify the culprit." = "Kabeļa e-marker norāda %@, bet aktīvais savienojums nolasa %@. Viens no šiem rādījumiem ir kļūdains, un bez Thunderbolt kontroliera pārbaudes nav iespējams noskaidrot, kurš. Izmēģinot zināmi labu kabeli, var noteikt vainīgo.";
 "Data blocked by macOS accessory security" = "Dati bloķēti macOS piederumu drošības dēļ";
-"The link is capable of %@, but macOS is blocking data until you approve the accessory. Click Allow on the connection prompt, or check System Settings > Privacy & Security > Allow accessories to connect, then replug." = "Savienojums spēj %@, taču macOS bloķē datus, līdz jūs apstiprināt piederumu. Noklikšķiniet uz Atļaut savienojuma uzvednē vai pārbaudiet Sistēmas iestatījumi > Konfidencialitāte un drošība > Atļaut piederumiem savienoties, pēc tam atvieno un pievieno vēlreiz.";
+"The link is capable of %@, but macOS is blocking data until you approve the accessory. Click Allow on the connection prompt, or check System Settings > Privacy & Security > Allow accessories to connect, then replug." = "Savienojums spēj %@, taču macOS bloķē datus, līdz jūs apstiprināt piederumu. Noklikšķiniet uz „Atļaut“ savienojuma uzvednē vai pārbaudiet Sistēmas iestatījumi > Privātums un drošība > Atļaut piederumiem savienoties, pēc tam atvienojiet un pievienojiet vēlreiz.";
 
 /* Display dimension. English; non-English to be refined by the community translation flow. */
 "A display is connected but its capabilities aren't readable, so there's nothing to compare the link against." = "Monitors ir pievienots, bet tā iespējas nav nolasāmas, tāpēc nav ar ko salīdzināt savienojumu.";
@@ -380,11 +380,11 @@
 "%lld of %lld lanes" = "%lld no %lld joslām";
 "up to %lldHz" = "līdz %lld Hz";
 "a higher mode than the link is carrying" = "augstāks režīms nekā savienojums pārsūta";
-"High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally." = "High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally.";
-"Video is going through a %@ adapter" = "Video iet caur %@ adapteri";
-"Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "Jūsu %@ ir pievienots caur USB-C uz %@ adapteri, un savienojums pašlaik nepārsūta monitora augstāko režīmu (%@, aptuveni %@); tas pārsūta aptuveni %@ (%@). Ja ķēdē ir adapteris, tieši adaptera ierobežojums var būt ierobežojošais faktors, nevis kabelis. Mēģinot monitoru pievienot caur vietējo DisplayPort vai augstākas klases adapteri, varētu noskaidrot, kurš.";
+"High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally." = "Augstas izšķirtspējas displeji bieži izmanto saspiešanu (DSC), lai augstāko režīmu pārraidītu caur šādu savienojumu, tāpēc, izvēloties augstāko režīmu Displeja iestatījumos, to var sasniegt bez problēmām.";
+"Video is going through a %@ adapter" = "Video tiek pārraidīts caur %@ adapteri";
+"Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "Jūsu %@ ir pievienots caur USB-C uz %@ adapteri, un savienojums pašlaik nepārsūta monitora augstāko režīmu (%@, aptuveni %@); tas pārsūta aptuveni %@ (%@). Ja ķēdē ir adapteris, tieši adaptera ierobežojums var būt ierobežojošais faktors, nevis kabelis. Mēģinot monitoru pievienot caur tiešo DisplayPort vai augstākas klases adapteri, varētu noskaidrot, kurš.";
 "Monitor can do more than the link is carrying" = "Monitors spēj vairāk nekā savienojums pārsūta";
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate." = "Jūsu %@ var darbināt %@, kuram nepieciešams aptuveni %@, bet savienojums pašlaik pārsūta tikai aptuveni %@ (%@). Ja esat izvēlējies augstāko režīmu un to nesaņemat, kabelis vai adapteris visticamāk ir ierobežojums; ja neesat mēģinājis, tā izvēle var pārtrenēt savienojumu uz augstāku ātrumu.";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate." = "Jūsu %@ var darbināt %@, kuram nepieciešams aptuveni %@, bet savienojums pašlaik pārsūta tikai aptuveni %@ (%@). Ja esat izvēlējies augstāko režīmu un to nesaņemat, ierobežojums, visticamāk, ir kabelis vai adapteris; ja neesat mēģinājis, tā izvēle var pārtrenēt savienojumu uz augstāku ātrumu.";
 "Display Diagnostics" = "Monitora diagnostika";
 "What your monitor can do, and what the link is carrying." = "Ko jūsu monitors spēj un ko savienojums pārsūta.";
 "No Displays" = "Nav monitoru";
@@ -394,7 +394,7 @@
 "Display: %@" = "Monitors: %@";
 "Display: %@ · video output %lld" = "Monitors: %1$@ · video izeja %2$lld";
 "%lld × %lld" = "%lld × %lld";
-"native %lldHz" = "vietējs %lld Hz";
+"native %lldHz" = "sākotnējais %lld Hz";
 "Top mode needs" = "Augstākajam režīmam nepieciešams";
 "Link carries" = "Savienojums pārsūta";
 "Rate" = "Ātrums";
@@ -402,30 +402,30 @@
 "Display links have their own screen: Display Diagnostics." = "Displeja savienojumiem ir savs ekrāns: Monitora diagnostika.";
 
 /* Display dimension: cable attribution. English; community-refined. */
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "Jūsu %@ var darbināt %@, kuram nepieciešams aptuveni %@, bet savienojums pašlaik pārsūta tikai aptuveni %@ (%@). Video tiek tunelēts caur Thunderbolt vai USB4, tāpēc kabelis pārsūta daudz vairāk nekā displejam nepieciešams: visticamāk problēma nav kabeļa. Visdrīzāk tā ir Displeja iestatījumos izvēlētā izšķirtspēja vai atsvaidzes intensitāte, vai šī Mac ierobežojums šim displejam.";
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings." = "Jūsu %@ var darbināt %@, kuram nepieciešams aptuveni %@, bet savienojums pašlaik pārsūta tikai aptuveni %@ (%@). Kabelis jau pārsūta visas DisplayPort joslas, ko šis Mac nodrošina, tāpēc visticamāk problēma nav kabeļa. Visdrīzāk tā ir Displeja iestatījumos izvēlētā izšķirtspēja vai atsvaidzes intensitāte.";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "Jūsu %@ var darbināt %@, kuram nepieciešams aptuveni %@, bet savienojums pašlaik pārsūta tikai aptuveni %@ (%@). Video tiek tunelēts caur Thunderbolt vai USB4, tāpēc kabelis pārsūta daudz vairāk nekā displejam nepieciešams: iemesls, visticamāk, nav kabelis. Visdrīzāk tā ir Displeja iestatījumos izvēlētā izšķirtspēja vai atsvaidzes intensitāte, vai šī Mac ierobežojums šim displejam.";
+"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings." = "Jūsu %@ var darbināt %@, kuram nepieciešams aptuveni %@, bet savienojums pašlaik pārsūta tikai aptuveni %@ (%@). Kabelis jau pārsūta visas DisplayPort joslas, ko šis Mac nodrošina, tāpēc iemesls, visticamāk, nav kabelis. Visdrīzāk tā ir Displeja iestatījumos izvēlētā izšķirtspēja vai atsvaidzes intensitāte.";
 
 /* Display dimension: branch device. English; community-refined. */
-"Your %@ is reached through a USB-C to %@ adapter that reports as %@, currently carrying about %@ (%@), short of the monitor's top mode (%@, about %@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "Jūsu %@ ir pievienots caur USB-C uz %@ adapteri, kas identificējas kā %@, un pašlaik pārsūta aptuveni %@ (%@), kas ir zemāk par monitora augstāko režīmu (%@, aptuveni %@). Ja ķēdē ir adapteris, tieši adaptera ierobežojums var būt ierobežojošais faktors, nevis kabelis. Vietējais DisplayPort savienojums vai augstākas klases adapteris ļautu to noskaidrot.";
+"Your %@ is reached through a USB-C to %@ adapter that reports as %@, currently carrying about %@ (%@), short of the monitor's top mode (%@, about %@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "Jūsu %@ ir pievienots caur USB-C uz %@ adapteri, kas identificējas kā %@, un pašlaik pārsūta aptuveni %@ (%@), kas ir zemāk par monitora augstāko režīmu (%@, aptuveni %@). Ja ķēdē ir adapteris, tieši adaptera ierobežojums var būt ierobežojošais faktors, nevis kabelis. Tiešais DisplayPort savienojums vai augstākas klases adapteris ļautu to noskaidrot.";
 
 /* Billboard device (display dimension). English; community-refined. */
-"Billboard device present" = "Klātesošā Billboard ierīce";
+"Billboard device present" = "Konstatēta Billboard ierīce";
 "A Billboard device is present on this port. That usually appears when an Alt Mode like DisplayPort was set up but didn't fully come up. Your display is below its best mode, so a re-plug, a different cable, or a different adapter may bring it up. Some docks show a Billboard device normally, so this isn't always a fault." = "Šajā portā ir Billboard ierīce. Tas parasti parādās, kad Alt Mode, piemēram, DisplayPort, tika uzsākts, bet netika pilnībā aktivizēts. Jūsu displejs darbojas zemāk par savu labāko režīmu; atkārtota pievienošana, cits kabelis vai cits adapteris var to novērst. Daži doki parāda Billboard ierīci normāli, tāpēc tas ne vienmēr ir defekts.";
 
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "Iespējams, displejs izmanto saspiešanu, lai sasniegtu savu maksimālo režīmu";
-"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Jūsu %@ var darboties ar %@, kam nesaspiestā veidā būtu nepieciešami aptuveni %@. Šis savienojums jau izmanto visas līnijas ar augstu ātrumu un pārraida aptuveni %@ (%@). Daudzi augstas izšķirtspējas displeji izmanto saspiešanu (DSC), lai izvadītu savu maksimālo režīmu caur šādu savienojumu, tāpēc tikai pēc savienojuma ātruma vien nevar noteikt, vai jau esat savā labākajā režīmā. Ja attēls izskatās pareizs, tas, visticamāk, tāds arī ir.";
+"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Jūsu %@ var darboties ar %@, kam nesaspiestā veidā būtu nepieciešami aptuveni %@. Šis savienojums jau izmanto visas joslas ar augstu ātrumu un pārraida aptuveni %@ (%@). Daudzi augstas izšķirtspējas displeji izmanto saspiešanu (DSC), lai izvadītu savu maksimālo režīmu caur šādu savienojumu, tāpēc tikai pēc savienojuma ātruma vien nevar noteikt, vai jau esat savā labākajā režīmā. Ja attēls izskatās pareizs, tas, visticamāk, tāds arī ir.";
 
 /* Display dimension: confirmed full quality via CoreGraphics live mode (issue #246 Option B). */
 "macOS reports your %@ at its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "macOS ziņo, ka jūsu %@ darbojas maksimālajā režīmā (%@) un savienojums to pārraida. Daudzi augstas izšķirtspējas displeji izmanto saspiešanu (DSC), lai šādu režīmu pārraidītu caur savienojumu; savienojuma ātrums vien to nevar parādīt. Jūsu displejs darbojas pilnā kvalitātē.";
 
 /* Session monitor verdicts. */
-"Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
-"No problems seen while watching this cable." = "No problems seen while watching this cable.";
-"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
-"Isn't performing as expected" = "Isn't performing as expected";
+"Battery full, not drawing power" = "Akumulators pilns, jauda netiek patērēta";
+"Performing as expected" = "Darbojas, kā paredzēts";
+"No problems seen while watching this cable." = "Vērojot šo kabeli, problēmas netika konstatētas.";
+"Saw a brief drop or a single high reading. Not conclusive; still watching." = "Konstatēts īslaicīgs kritums vai atsevišķs augsts rādījums. Secinājums nav viennozīmīgs; novērošana turpinās.";
+"Not performing as expected" = "Nedarbojas, kā paredzēts";
+"Isn't performing as expected" = "nedarbojas, kā paredzēts";
 
 /* Power Monitor system power source indicator. */
 "Battery" = "Akumulators";
@@ -435,15 +435,15 @@
 "Waiting for live reading…" = "Gaida tiešo rādījumu…";
 
 /* Softened blank e-marker note (DAR-140) */
-"E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marķiera ražotāja ID ir tukšs, taču kabelis tiek identificēts pie savienotāja";
-"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Kabeļa e-marķiera mikroshēma ziņo tukšu ražotāja ID, taču savienotājs identificē kabeli kā %1$@ (%2$@) — USB-IF reģistrētu ražotāju. Tukšs e-marķiera VID pats par sevi ir izplatīts īstiem pasīvajiem kabeļiem, tāpēc tas nav problēmas pazīme.";
+"E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker ražotāja ID ir tukšs, taču kabelis tiek identificēts pie savienotāja";
+"The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Kabeļa e-marker mikroshēma ziņo tukšu ražotāja ID, taču savienotājs identificē kabeli kā %1$@ (%2$@) — USB-IF reģistrētu ražotāju. Tukšs e-marker VID pats par sevi ir izplatīts īstiem pasīvajiem kabeļiem, tāpēc tas nav problēmas pazīme.";
 "Cable note:" = "Piezīme par kabeli:";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "Ražotājs ir atpazīts, bet nav WhatCable iekļautajā USB-IF sarakstā";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Ražotāja ID %1$@ (%2$@) pieder atpazītam ražotājam kopienas USB sarakstā, bet ne USB-IF sarakstā, kas iekļauts WhatCable.";
 
 /* DFP product type labels (DAR-24) */
-"Host" = "Saimniekdators";
-"Power Brick" = "Strāvas adapteris";
+"Host" = "Resursdators";
+"Power Brick" = "Barošanas bloks";
 
 "Battery full" = "Akumulators pilns";
 "Thunderbolt" = "Thunderbolt";
@@ -456,9 +456,9 @@
 "Per-Port Metering Unavailable" = "Mērījumi katram portam nav pieejami";
 "This Mac reports overall power below, but not per-port readings." = "Šis Mac zemāk rāda kopējo jaudu, bet ne mērījumus katram portam.";
 "Per-port metering isn't available on this Mac." = "Mērījumi katram portam šajā Mac nav pieejami.";
-"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS reizēm lēni ziņo jaudu katram portam, dažkārt līdz pat minūtei.";
-"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Displejs pievienots. Caur šo portu jauda netiek izvadīta. Ienākošā jauda redzama zemāk sadaļā «Sistēmas strāvas ievade».";
-"A charger is connected here, but your Mac is drawing power through %@. Incoming power shows in System Power Input below." = "Šeit ir pievienots lādētājs, taču jūsu Mac saņem jaudu caur %@. Ienākošā jauda redzama zemāk sadaļā «Sistēmas strāvas ievade».";
+"macOS can be slow to report per-port power, sometimes up to a minute." = "macOS reizēm lēni ziņo par jaudu katram portam, dažkārt līdz pat minūtei.";
+"Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Displejs pievienots. Caur šo portu jauda netiek izvadīta. Ienākošā jauda redzama zemāk sadaļā „Sistēmas jaudas ievade“.";
+"A charger is connected here, but your Mac is drawing power through %@. Incoming power shows in System Power Input below." = "Šeit ir pievienots lādētājs, taču jūsu Mac saņem jaudu caur %@. Ienākošā jauda redzama zemāk sadaļā „Sistēmas jaudas ievade“.";
 "Connected to %lld Thunderbolt devices: %@" = "Savienots ar %1$lld Thunderbolt ierīcēm: %2$@";
 "Thunderbolt fabric:" = "Thunderbolt tīkls:";
 "Active tunnels:" = "Aktīvie tuneļi:";
@@ -468,11 +468,11 @@
 "adapter %lld" = "adapteris %lld";
 
 /* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
-"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marķieris ziņo par pasīvu, bet satur aktīvā kabeļa struktūru (iespējams, nepareizi ieprogrammēts e-marķieris)";
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker ziņo par pasīvu, bet satur aktīvā kabeļa struktūru (iespējams, nepareizi ieprogrammēts e-marker)";
 
 "Plugged in, charging on hold" = "Pievienots, uzlāde apturēta";
-"Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger." = "Lādētājs un kabelis ir kārtībā. macOS pašlaik ir apturējis uzlādi, parasti akumulatora uzlādes ierobežojuma vai optimizētas akumulatora uzlādes dēļ. Mac joprojām saņem strāvu no lādētāja.";
-"Plugged in · %lldW charger" = "Pievienots · %lldW lādētājs";
+"Charger and cable are fine. macOS has paused charging for now, usually a battery charge limit or Optimized Battery Charging. The Mac still draws power from the charger." = "Lādētājs un kabelis ir kārtībā. macOS pašlaik ir apturējis uzlādi, parasti akumulatora uzlādes ierobežojuma vai optimizētas akumulatora uzlādes dēļ. Mac joprojām saņem jaudu no lādētāja.";
+"Plugged in · %lldW charger" = "Pievienots · %lld W lādētājs";
 "Plugged in" = "Pievienots";
 "Charging on hold (charge limit or Optimized Battery Charging)" = "Uzlāde apturēta (uzlādes ierobežojums vai optimizēta uzlāde)";
 "Connected over Thunderbolt" = "Savienots caur Thunderbolt";
@@ -495,7 +495,7 @@
 "e.g. left drawer" = "piem. kreisā atvilktne";
 "Tracking: %@" = "Izseko: %@";
 "%@: underperformed before" = "%@: iepriekš zems sniegums";
-"This cable has dropped below its rating before. Open Saved Cables for the history." = "Šis kabelis iepriekš ir kritis zem sava nominālā. Atveriet Saglabātie kabeļi vēsturei.";
+"This cable has dropped below its rating before. Open Saved Cables for the history." = "Šis kabelis iepriekš ir kritis zem sava nominālā. Atveriet sadaļu Saglabātie kabeļi, lai skatītu vēsturi.";
 "Tracking this as %@?" = "Izsekot kā %@?";
 "Is this one of your cables?" = "Vai tas ir viens no jūsu kabeļiem?";
 "Pick…" = "Izvēlieties…";
@@ -506,7 +506,7 @@
 "Saved cables" = "Saglabātie kabeļi";
 "What each of your cables has delivered over time" = "Ko katrs jūsu kabelis ir sniedzis laika gaitā";
 "No saved cables yet" = "Vēl nav saglabātu kabeļu";
-"Open WhatCable, find a connected cable, and choose \"Add this cable\" on its port to start tracking it." = "Atveriet WhatCable, atrodiet pievienotu kabeli un izvēlieties \"Pievienot šo kabeli\" tā portā, lai sāktu izsekošanu.";
+"Open WhatCable, find a connected cable, and choose \"Add this cable\" on its port to start tracking it." = "Atveriet WhatCable, atrodiet pievienotu kabeli un izvēlieties „Pievienot šo kabeli“ tā portā, lai sāktu izsekošanu.";
 "History" = "Vēsture";
 "Rename" = "Pārdēvēt";
 "Delete" = "Dzēst";
@@ -517,7 +517,7 @@
 "No history in this range" = "Nav vēstures šajā diapazonā";
 "Recording happens while the cable is plugged in and WhatCable is running." = "Ierakstīšana notiek, kamēr kabelis ir pievienots un WhatCable darbojas.";
 "No speed data" = "Nav ātruma datu";
-"This cable reported no negotiated link rate while connected." = "Šis kabelis nesarunāja nevienu saites ātrumu pievienošanas laikā.";
+"This cable reported no negotiated link rate while connected." = "Šis kabelis nepaziņoja par nevienu saskaņoto savienojuma ātrumu, kamēr tas bija pievienots.";
 "7 days" = "7 dienas";
 "30 days" = "30 dienas";
 "All" = "Visi";
@@ -530,23 +530,23 @@
 "Performing" = "Darbojas";
 
 /* Cable history: full-blob identity */
-"Identified by its e-marker (VID 0x%04X, PID 0x%04X)" = "Identificēts pēc e-markera (VID 0x%04X, PID 0x%04X)";
-"Has an e-marker, but no unique ID (product ID not set)" = "Ir e-markeris, bet nav unikāla ID (produkta ID nav iestatīts)";
-"Has an e-marker, but the maker never programmed an ID" = "Ir e-markeris, bet ražotājs nekad nav ieprogrammējis ID";
-"This cable has no e-marker, so it can't be tracked." = "Šim kabelim nav e-markera, tāpēc to nevar izsekot.";
+"Identified by its e-marker (VID 0x%04X, PID 0x%04X)" = "Identificēts pēc e-marker (VID 0x%04X, PID 0x%04X)";
+"Has an e-marker, but no unique ID (product ID not set)" = "Ir e-marker, bet nav unikāla ID (produkta ID nav iestatīts)";
+"Has an e-marker, but the maker never programmed an ID" = "Ir e-marker, bet ražotājs nekad nav ieprogrammējis ID";
+"This cable has no e-marker, so it can't be tracked." = "Šim kabelim nav e-marker, tāpēc to nevar izsekot.";
 "This cable can't be tracked" = "Šo kabeli nevar izsekot";
 "Matches your saved cable %@. Two units of the same model can't be told apart, so their history will merge if you save this one too." = "Sakrīt ar jūsu saglabāto kabeli %@. Divus viena modeļa eksemplārus nevar atšķirt, tāpēc, saglabājot arī šo, to vēsture tiks apvienota.";
 "Identified by its MagSafe cable ID (VID 0x%04X, PID 0x%04X). Cables of this exact model look identical, so this record tracks the model, not one physical cable." = "Identificēts pēc MagSafe kabeļa ID (VID 0x%04X, PID 0x%04X). Šī modeļa kabeļi izskatās identiski, tāpēc šis ieraksts atspoguļo modeli, nevis vienu konkrētu kabeli.";
 "You already have this MagSafe cable saved as %@. Cables of this model can't be told apart, so add its history to that one instead." = "Jums jau ir šis MagSafe kabelis saglabāts kā %@. Šī modeļa kabeļus nevar atšķirt, tāpēc pievienojiet vēsturi tam esošajam ierakstam.";
-"This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "Šim kabelim nav e-markera, tāpēc tam nevar reģistrēt neko jaunu. Esošā vēsture joprojām ir pieejama.";
+"This cable has no e-marker, so nothing new can be recorded for it. Its existing history stays available." = "Šim kabelim nav e-marker, tāpēc tam nevar reģistrēt neko jaunu. Esošā vēsture joprojām ir pieejama.";
 "Can't add this cable" = "Šo kabeli nevar pievienot";
 "OK" = "Labi";
 
-/* Built-in display port card (issue #352). English placeholders, community can refine. */
-"%lld displays connected" = "%lld displays connected";
-"Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
+/* Built-in display port card (issue #352) */
+"%lld displays connected" = "%lld displeji pievienoti";
+"Built-in %1$@ port %2$lld" = "Iebūvētais %1$@ ports %2$lld";
 
-"Display running compressed (DSC) to fit through the link" = "Display running compressed (DSC) to fit through the link";
+"Display running compressed (DSC) to fit through the link" = "Monitors darbojas ar saspiešanu (DSC), lai ietilptu savienojumā";
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS ziņo, ka jūsu %@ pašreizējais režīms ir %@, kas nesaspiestā veidā prasītu lielāku joslas platumu, nekā šis savienojums var pārraidīt. Augstas izšķirtspējas displeji izmanto saspiešanu (DSC), lai šādu režīmu pārraidītu caur šādu savienojumu. Attēls sasniedz displeju, tāpēc viss darbojas kā paredzēts.";
 "macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS ziņo par %1$lld × %2$lld režīmu ar %3$lld Hz, ko jūsu %4$@ EDID neapraksta, tāpēc nepieciešamo joslas platumu nevar aprēķināt.";
@@ -569,22 +569,22 @@
 /* Header for a USB controller group in the connected-devices tree. */
 "USB bus" = "USB kopne";
 "USB device, data blocked" = "USB ierīce, dati bloķēti";
-"macOS is holding data back until you approve the accessory." = "macOS aiztur datus, līdz apstiprināsi piederumu.";
-"Video is working. macOS is holding data back until you approve the accessory." = "Attēls darbojas. macOS aiztur datus, līdz apstiprināsi piederumu.";
+"macOS is holding data back until you approve the accessory." = "macOS aiztur datus, līdz apstiprināsiet piederumu.";
+"Video is working. macOS is holding data back until you approve the accessory." = "Attēls darbojas. macOS aiztur datus, līdz apstiprināsiet piederumu.";
 "USB device, data blocked · %lldW charger" = "USB ierīce, dati bloķēti · %lld W lādētājs";
 /* Port card source attribution (grouped headers + e-marker read state) */
 "Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "Ir, bet šajā savienojumā nav nolasīts. Mēģiniet kabeli pievienot vēlreiz; daži lādētāji un dokstacijas bloķē nolasīšanu.";
 "Present, but not read on this connection. macOS usually reads it above 3A or over Thunderbolt." = "Ir, bet šajā savienojumā nav nolasīts. macOS to parasti nolasa tikai virs 3 A vai caur Thunderbolt.";
 "This port can't read cable details: USB-only, no Power Delivery." = "Šis ports nevar nolasīt kabeļa datus: tikai USB, bez Power Delivery.";
-"The %@ contract shows the charger treated this as an e-marked, 5A-capable cable, so charging isn't limited by the cable. This Mac couldn't get its own read here. Connect the cable to another device to see its details." = "%@ līgums liecina, ka lādētājs šo kabeli uztvēra kā e-marķiera kabeli ar 5 A jaudu, tāpēc uzlādi kabelis neierobežo. Šis Mac šeit to nevarēja nolasīt pats. Pievienojiet kabeli citai ierīcei, lai redzētu tā datus.";
-"No e-marker response. Cable details aren't available on this connection. Try another device to read it." = "Nav atbildes no e-marķiera. Kabeļa dati nav pieejami šajā savienojumā. Mēģiniet citu ierīci, lai to nolasītu.";
+"The %@ contract shows the charger treated this as an e-marked, 5A-capable cable, so charging isn't limited by the cable. This Mac couldn't get its own read here. Connect the cable to another device to see its details." = "%@ līgums liecina, ka lādētājs šo kabeli uztvēra kā e-marker kabeli ar 5 A nominālo strāvu, tāpēc uzlādi kabelis neierobežo. Šis Mac šeit to nevarēja nolasīt pats. Pievienojiet kabeli citai ierīcei, lai redzētu tā datus.";
+"No e-marker response. Cable details aren't available on this connection. Try another device to read it." = "Nav atbildes no e-marker. Kabeļa dati nav pieejami šajā savienojumā. Mēģiniet citu ierīci, lai to nolasītu.";
 "Reading cable details…" = "Nolasa kabeļa datus…";
-"No e-marker read. The cable may have one; macOS usually reads it above 3A or over Thunderbolt." = "E-marķieris nav nolasīts. Kabelim tāds var būt; macOS to parasti nolasa tikai virs 3 A vai caur Thunderbolt.";
+"No e-marker read. The cable may have one; macOS usually reads it above 3A or over Thunderbolt." = "E-marker nav nolasīts. Kabelim tāds var būt; macOS to parasti nolasa tikai virs 3 A vai caur Thunderbolt.";
 "Passive (no signal-conditioning electronics)" = "Pasīvs (bez signāla apstrādes elektronikas)";
 "%@ isn't in our bundled vendor list" = "%1$@ nav mūsu iekļautajā ražotāju sarakstā";
 "%@ isn't in our copy of the USB-IF registry" = "%1$@ nav mūsu USB-IF reģistra kopijā";
 "What your Mac measured" = "Ko izmērīja jūsu Mac";
-"What the cable's e-marker reports" = "Ko ziņo kabeļa e-marķieris";
+"What the cable's e-marker reports" = "Ko ziņo kabeļa e-marker";
 "What the charger reports" = "Ko ziņo lādētājs";
 "What WhatCable knows" = "Ko zina WhatCable";
 "Made by %@ (%@), per our bundled vendor list" = "Ražotājs: %1$@ (%2$@), pēc mūsu iekļautā ražotāju saraksta";
@@ -593,7 +593,7 @@
 "Connect a charger to identify the cable." = "Pievienojiet lādētāju, lai identificētu kabeli.";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
-"No PD contract on this port. Incoming power shows in System Power Input below." = "Šim portam nav PD līguma. Ienākošā jauda redzama zemāk sadaļā «Sistēmas strāvas ievade».";
+"No PD contract on this port. Incoming power shows in System Power Input below." = "Šim portam nav PD līguma. Ienākošā jauda redzama zemāk sadaļā „Sistēmas jaudas ievade“.";
 
 /* PD event log: opcode-plus-argument decode of PortControllerEvtBuffer */
 "Plug attached" = "Spraudnis pievienots";

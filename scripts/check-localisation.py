@@ -172,37 +172,12 @@ KNOWN_MISSING = {
         # resolve in both catalogues. See the matching entry under
         # "WhatCable (app)" below.
         ("Sources/WhatCableCore/USB/USBDevice.swift", "Billboard device: \x00"): 1,
-        # The rest of this target's baseline is WhatCablePlugins and
-        # WhatCableWidget: both call String(localized:, bundle:
-        # _coreLocalizedBundle), so they're checked against this catalogue,
-        # but neither was in scope before this check learned to classify by
-        # bundle argument instead of source directory (finding 1). This is
-        # the "batch of new baseline entries" that fix predicted.
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift",
-         "A Billboard device reports the Alt Modes a USB-C device supports. On a healthy dock it's normal."): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Advertised Alt Modes"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Alt Mode \x00"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Configured"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Device class"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Didn't come up"): 2,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Location ID"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "No active power request"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Not attempted"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift",
-         "One advertised Alt Mode didn't come up. That can be normal right after plugging in, or a sign the cable or port can't carry it."): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Power available"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Power requested"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Raw properties"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Serial number"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Status"): 3,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "USB version"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Unregistered cable (vendor ID not set)"): 1,
-        ("Sources/WhatCablePlugins/Diagnostics/CableDiagnosticView.swift", "Yes, available power below Mac's max draw"): 1,
-        ("Sources/WhatCablePlugins/History/SavedCablesScreen.swift",
-         'Open WhatCable, find a connected cable, and choose "Add this cable" on its port to start tracking it.'): 1,
-        ("Sources/WhatCablePlugins/Power/PowerMonitorWindow.swift",
-         "Could be damage, debris, or a marginal cable. Try reseating it, or a known-good cable."): 1,
-        ("Sources/WhatCablePlugins/Power/PowerMonitorWindow.swift", "Worth keeping an eye on"): 1,
+        # The rest of this target's baseline is WhatCableWidget: it calls
+        # String(localized:, bundle: _coreLocalizedBundle), so it's checked
+        # against this catalogue, but wasn't in scope before this check
+        # learned to classify by bundle argument instead of source directory
+        # (finding 1). The WhatCablePlugins entries were deleted once their
+        # literals landed in the English catalogue.
         ("Sources/WhatCableWidget/Power/PowerWidgetViews.swift", "%@W draw"): 1,
         ("Sources/WhatCableWidget/Power/PowerWidgetViews.swift", "Battery and charging at a glance."): 1,
         ("Sources/WhatCableWidget/Power/PowerWidgetViews.swift", "No power data"): 1,
@@ -230,6 +205,12 @@ KNOWN_MISSING = {
 # Same idea for a language carrying a key English does not.
 KNOWN_EXTRA = {
     ("WhatCable (app)", "uk", ".stringsdict"): {"%lld displays connected"},
+    ("WhatCable (app)", "lv", ".stringsdict"): {
+        "%lld displays connected",
+        "%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.",
+        "%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them.",
+    },
+    ("WhatCableCore", "lv", ".stringsdict"): {"%lld displays connected"},
 }
 
 # Values that are byte-identical to English on purpose: loanwords, unit
@@ -412,15 +393,9 @@ ALLOWED_IDENTICAL = {
             "USB4 Gen 4 (80 Gbps)", "Variable, %@ to %@ @ %@", "WhatCable Pro",
         },
         "lv": {
-            "%lld displays connected", "%lld × %lld", "1-5 mW", "3 A", "5 A", "5-10 mW",
-            "50-200 µW", "< 50 µW", "> 10 mW", "Battery full, not drawing power",
-            "Built-in %1$@ port %2$lld",
-            "Display running compressed (DSC) to fit through the link",
-            "High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally.",
-            "Isn't performing as expected", "Licence…", "MagSafe 3",
-            "No problems seen while watching this cable.", "Not performing as expected",
-            "Performing as expected",
-            "Saw a brief drop or a single high reading. Not conclusive; still watching.",
+            "%lld × %lld", "1-5 mW", "3 A", "5 A", "5-10 mW",
+            "50-200 µW", "< 50 µW", "> 10 mW", "CC Advertisement",
+            "Licence…", "MagSafe 3", "Raw VDOs", "Raw cable VDOs", "Re-driver", "Re-timer",
             "Thunderbolt", "Thunderbolt / USB4", "USB 2.0 (480 Mbps)",
             "USB 3.2 Gen 1 (5 Gbps)", "USB 3.2 Gen 2 (10 Gbps)", "USB4 Gen 3 (20 / 40 Gbps)",
             "USB4 Gen 4 (80 Gbps)", "Video", "WhatCable Pro", "video",
@@ -606,8 +581,7 @@ ALLOWED_IDENTICAL = {
             "Gen 1", "Pro", "SuperSpeed", "USB",
         },
         "lv": {
-            "%lld displays connected", "Built-in %1$@ port %2$lld", "Display connected", "Pro",
-            "SuperSpeed", "USB",
+            "Pro", "SuperSpeed", "USB",
         },
         "nb": {
             "%lld displays connected", "Built-in %1$@ port %2$lld", "Display connected",
