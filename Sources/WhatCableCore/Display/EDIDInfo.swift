@@ -102,7 +102,8 @@ public struct EDIDInfo: Hashable, Sendable {
     /// `a` beats `b` on the `topMode` tie-break chain: pixel clock, then picture area, then
     /// refresh. A full tie returns false, which keeps whichever of the two `topMode`'s scan
     /// already holds, so the earlier entry in `modes` wins ties.
-    private static func isHigherPriority(_ a: EDIDMode, than b: EDIDMode) -> Bool {
+    /// Internal rather than private: `DisplayDiagnostic` ranks a filtered list with this same chain.
+    static func isHigherPriority(_ a: EDIDMode, than b: EDIDMode) -> Bool {
         if a.pixelClockHz != b.pixelClockHz { return a.pixelClockHz > b.pixelClockHz }
         let aArea = a.width * a.height
         let bArea = b.width * b.height

@@ -17,4 +17,15 @@ struct DisplayCurrentModeTests {
         // Unusual resolution: no friendly name, so show raw pixels.
         #expect(DisplayCurrentMode(width: 1234, height: 567, refreshHz: 59.94).shortLabel == "1234x567 60Hz")
     }
+
+    @Test("pixelClockHz is nil unless a reader supplied it; nothing derives it from the active pixels")
+    func pixelClockIsNeverDerived() {
+        let cg = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
+        #expect(cg.pixelClockHz == nil)
+        #expect(cg.pixelThroughput == 3840 * 2160 * 60)
+        let node = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 527_850_000)
+        #expect(node.pixelClockHz == 527_850_000)
+        #expect(node.pixelThroughput == 3840 * 2160 * 60, "the active-pixel figure is unchanged by the clock")
+        #expect(node.label == "3840 x 2160 @ 60Hz")
+    }
 }

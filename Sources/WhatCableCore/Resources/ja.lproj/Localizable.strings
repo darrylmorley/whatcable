@@ -552,6 +552,7 @@
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS は %@ の現在のモードを %@ と報告していますが、これを非圧縮で伝送するには、このリンクが提供する帯域幅以上が必要です。高解像度ディスプレイは、このようなリンクでこのようなモードを通すために圧縮（DSC）を使用します。映像はディスプレイに届いているため、意図通りに動作しています。";
 "macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS は %1$lld × %2$lld、%3$lld Hz のモードを報告していますが、%4$@ の EDID にはこのモードの記述がないため、必要な帯域幅を計算できません。";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only, a mode macOS does not use." = "EDID には %1$lld × %2$lld、%3$lld Hz のモードも記載されていますが、これは 4:2:0 でのみ対応しており、macOS はこのモードを使用しません。";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
 "Controller confirms Thunderbolt cable (%@)" = "コントローラーが Thunderbolt ケーブルを確認しました (%@)";

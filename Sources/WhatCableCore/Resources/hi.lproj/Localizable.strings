@@ -550,6 +550,7 @@
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS आपके %@ का वर्तमान मोड %@ रिपोर्ट करता है, जिसे बिना संपीड़न के इस लिंक द्वारा वहन की जा सकने वाली बैंडविड्थ से अधिक की आवश्यकता होगी. उच्च-रिज़ॉल्यूशन डिस्प्ले इस तरह के मोड को इस तरह के लिंक से गुज़ारने के लिए संपीड़न (DSC) का उपयोग करते हैं. तस्वीर डिस्प्ले तक पहुँच रही है, इसलिए यह इरादे के अनुसार काम कर रहा है.";
 "macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS %1$lld × %2$lld का %3$lld Hz मोड रिपोर्ट करता है, जिसका वर्णन आपके %4$@ के EDID में नहीं है, इसलिए उसके लिए आवश्यक बैंडविड्थ की गणना नहीं की जा सकती.";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only, a mode macOS does not use." = "इसका EDID %1$lld × %2$lld का %3$lld Hz मोड भी सूचीबद्ध करता है, लेकिन केवल 4:2:0 में, जिसे macOS उपयोग नहीं करता.";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
 "Controller confirms Thunderbolt cable (%@)" = "कंट्रोलर Thunderbolt केबल की पुष्टि करता है (%@)";

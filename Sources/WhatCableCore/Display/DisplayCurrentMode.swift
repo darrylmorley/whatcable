@@ -2,7 +2,9 @@ import Foundation
 
 /// The live display mode that macOS is actually driving right now: the real
 /// on-screen resolution and refresh rate, read from CoreGraphics by the Darwin
-/// backend and attached to the matching DisplayPort node.
+/// backend and attached to the matching DisplayPort node, with a pixel clock
+/// filled in from macOS's own display node when that node can be matched to
+/// the same display.
 ///
 /// Why this exists, in plain terms: a monitor's EDID (the spec sheet it sends
 /// down the cable) can fail to describe its own best mode. Apple 5K/6K displays
@@ -33,12 +35,20 @@ public struct DisplayCurrentMode: Codable, Sendable, Equatable, Hashable {
     /// diagnostic uses this to tell DSC apart from a 10bpc HDR mode that
     /// simply needs more raw bandwidth.
     public let bitsPerComponent: Int?
+    /// The driven timing's pixel clock in Hz, blanking included: the figure
+    /// the link actually carries. Read from macOS's own display node
+    /// (`DisplayTimingReader` in the Darwin backend) when that node was
+    /// matched to this display; nil for a CoreGraphics mode, which reports
+    /// active pixels and refresh only. Never derived: `pixelThroughput` is
+    /// not multiplied up to fill it.
+    public let pixelClockHz: Int?
 
-    public init(width: Int, height: Int, refreshHz: Double, bitsPerComponent: Int? = nil) {
+    public init(width: Int, height: Int, refreshHz: Double, bitsPerComponent: Int? = nil, pixelClockHz: Int? = nil) {
         self.width = width
         self.height = height
         self.refreshHz = refreshHz
         self.bitsPerComponent = bitsPerComponent
+        self.pixelClockHz = pixelClockHz
     }
 
     /// Active-pixel throughput (pixels per second): width x height x refresh.

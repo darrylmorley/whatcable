@@ -219,6 +219,39 @@ struct DisplayDiagnosticProbeSweepTests {
         return data.isEmpty ? nil : data
     }
 
+    // MARK: - Helper: 4:2:0-only entries
+
+    /// A CTA VIC from the YCbCr 4:2:0 Video Data Block: a mode the panel
+    /// supports at 4:2:0 only.
+    private static func isYCbCr420Only(_ mode: EDIDMode) -> Bool {
+        if case .ctaVIC(_, _, _, true) = mode.source { return true }
+        return false
+    }
+
+    /// The highest declared entry the panel supports in full colour, by the
+    /// chain `EDIDInfo.topMode` uses (pixel clock, then area, then refresh,
+    /// then list order), written out here so the sweep does not lean on the
+    /// code it checks.
+    private static func fullColourTop(of edid: EDIDInfo) -> EDIDMode? {
+        var best: EDIDMode? = nil
+        for candidate in edid.modes where !isYCbCr420Only(candidate) {
+            guard candidate.width > 0, candidate.height > 0, candidate.hTotal > 0, candidate.vTotal > 0 else { continue }
+            guard let current = best else { best = candidate; continue }
+            if candidate.pixelClockHz != current.pixelClockHz {
+                if candidate.pixelClockHz > current.pixelClockHz { best = candidate }
+                continue
+            }
+            let candidateArea = candidate.width * candidate.height
+            let currentArea = current.width * current.height
+            if candidateArea != currentArea {
+                if candidateArea > currentArea { best = candidate }
+                continue
+            }
+            if candidate.refreshHz > current.refreshHz { best = candidate }
+        }
+        return best
+    }
+
     // MARK: - Individual machine tests
 
     // MARK: m4max_macos26.5.1_b -- Dell U4320Q on the M4 Max MBP's native HDMI port, HBR3 4/4 lanes
@@ -844,14 +877,65 @@ struct DisplayDiagnosticProbeSweepTests {
         }
     }
 
+    // MARK: - Sweep: the five panels whose EDID top is a 4:2:0-only VIC
+
+    /// Five corpus EDIDs put a YCbCr 4:2:0-only CTA VIC at the top of their
+    /// declared list on pixel clock (594 MHz). Each is judged against its
+    /// highest full-colour entry: the 27C1U-L's own 4K60 DTD, and the 297
+    /// MHz 4K30 VIC on the other three. The 4:2:0 entries stay in
+    /// `declaredModeCount` and are counted in `declared420OnlyModes`. Before
+    /// the change this fails with `.adapterLimit` on three of the five and
+    /// needed 14.256 Gbps on all five.
+    @Test("Sweep: the five 4:2:0-top panels are judged against their full-colour top")
+    func ycbcr420TopPanelsAreJudgedAgainstTheirFullColourTop() throws {
+        // folder, active-block offset, monitor name, needed Gbps, top source,
+        // top refresh, 4:2:0-only entry count, the named 4:2:0 mode
+        // (digits grouped by locale, as `String(localized:)` renders an Int)
+        let panels: [(String, Int, String, Double, String, Int, Int, String)] = [
+            ("m1max_macos26.5.2_k", 0, "HDMI",       7.128,  "CTA VIC 100 (block 1)",       30, 4, "\(4096.formatted()) × \(2160.formatted()) at 60Hz"),
+            ("m1max_macos26.5.2_b", 0, "SyncMaster", 7.128,  "CTA VIC 100 (block 1)",       30, 4, "\(4096.formatted()) × \(2160.formatted()) at 60Hz"),
+            ("m4_macos26.5.1_m",    1, "UGREEN",     7.128,  "CTA VIC 95 (block 1)",        30, 2, "\(3840.formatted()) × \(2160.formatted()) at 60Hz"),
+            ("m3_macos26.6.2",      0, "27C1U-L",    12.668, "detailed timing 1 (block 0)", 60, 1, "\(3840.formatted()) × \(2160.formatted()) at 60Hz"),
+            ("m3_macos26.5_j",      0, "27C1U-L",    12.668, "detailed timing 1 (block 0)", 60, 1, "\(3840.formatted()) × \(2160.formatted()) at 60Hz"),
+        ]
+        var checked = 0
+        for (folder, offset, name, neededGbps, topSource, topRefresh, count420, named420) in panels {
+            guard let dp = Self.firstActiveDP(folder: folder, blockOffset: offset),
+                  let data = Self.edidDataFromText(folder: folder, blockOffset: offset),
+                  let edid = EDIDInfo(data) else { continue }
+            checked += 1
+            let edidTop = try #require(edid.topMode)
+            #expect(edidTop.sourceDescription.contains("4:2:0"),
+                "\(folder): fixture guard, the EDID's own top is the 4:2:0 VIC, got \(edidTop.sourceDescription)")
+            let diag = try #require(DisplayDiagnostic(dp: dp, edid: edid))
+            #expect(diag.facts.monitorName == name)
+            #expect(diag.bottleneck == .fine, "\(folder): got \(diag.bottleneck): \(diag.detail)")
+            #expect(diag.isWarning == false)
+            let needed = try #require(diag.facts.neededGbps, "\(folder): needed is nil")
+            #expect(abs(needed - neededGbps) < 0.001, "\(folder): needed \(needed) Gbps, expected \(neededGbps)")
+            #expect(diag.facts.topModeSource == topSource,
+                "\(folder): top labelled \(String(describing: diag.facts.topModeSource))")
+            #expect(diag.facts.maxRefreshHz == topRefresh)
+            #expect(diag.facts.declaredModeCount == edid.modes.count)
+            #expect(diag.facts.declared420OnlyModes == count420,
+                "\(folder): \(diag.facts.declared420OnlyModes) 4:2:0-only entries")
+            #expect(diag.detail.contains("Its EDID also lists \(named420) in 4:2:0 only"), "\(folder): \(diag.detail)")
+        }
+        #expect(checked == 5, "only \(checked) of the five panels could be loaded from the corpus")
+    }
+
     // MARK: - Sweep: needed bandwidth is the declared top mode's clock, nothing else
 
     /// Walk every probe-33 folder in the corpus -- not the named fixture
     /// machines above, the whole thing -- and assert the property the
     /// diagnostic now guarantees: for every active DisplayPort block whose
-    /// EDID parses, the needed bandwidth is exactly the declared top mode's
-    /// pixel clock times bits per pixel, and the top mode is labelled from
-    /// that entry. Probe 33 carries no CoreGraphics data, so
+    /// EDID parses, the needed bandwidth is exactly the highest FULL-COLOUR
+    /// declared entry's pixel clock times bits per pixel, and the top mode
+    /// is labelled from that entry. A 4:2:0-only entry (a CTA VIC from the
+    /// Y420VDB) is a declared fact that never becomes the comparison mode:
+    /// it stays in `declaredModeCount`, is counted in
+    /// `declared420OnlyModes`, and the resolved top is never one. Probe 33
+    /// carries no CoreGraphics data, so
     /// `resolveTopMode`'s no-max-mode rule applies on every block. A block
     /// with no readable link rate is `.unknownMode` but still carries the
     /// figure, so it is checked too.
@@ -874,6 +958,7 @@ struct DisplayDiagnosticProbeSweepTests {
         var foldersWithProbe33 = 0
         var evaluated = 0
         var noLinkRate = 0
+        var ycbcr420Tops = 0
         let bitsPerPixel = Double(DisplayDiagnostic.assumedBitsPerPixel)
 
         for folder in folders {
@@ -897,7 +982,9 @@ struct DisplayDiagnosticProbeSweepTests {
                 guard let anglEnd = rest.range(of: "> ") else { continue }
                 let hexStr = String(rest[anglEnd.upperBound...]).trimmingCharacters(in: .whitespaces)
                 guard let data = Self.hexFromString(hexStr), let edidInfo = EDIDInfo(data) else { continue }
-                let top = try #require(edidInfo.topMode, "\(folder) block \(i): a parsed EDID always has a top mode")
+                let edidTop = try #require(edidInfo.topMode, "\(folder) block \(i): a parsed EDID always has a top mode")
+                if Self.isYCbCr420Only(edidTop) { ycbcr420Tops += 1 }
+                let top = try #require(Self.fullColourTop(of: edidInfo), "\(folder) block \(i): a parsed EDID always has a full-colour top")
                 guard let diag = DisplayDiagnostic(dp: dp, edid: edidInfo) else { continue }
                 if diag.facts.deliveredGbps == nil { noLinkRate += 1 }
 
@@ -910,6 +997,11 @@ struct DisplayDiagnosticProbeSweepTests {
                 #expect(diag.facts.topModeSource == top.sourceDescription,
                     "\(folder) block \(i): top mode labelled \(String(describing: diag.facts.topModeSource)), declared top is \(top.sourceDescription)")
                 #expect(diag.facts.declaredModeCount == edidInfo.modes.count)
+                #expect(diag.facts.declared420OnlyModes == edidInfo.modes.filter(Self.isYCbCr420Only).count)
+                let resolved = try #require(diag.topMode, "\(folder) block \(i): a declared top always resolves")
+                if case .declared(.ctaVIC(_, _, _, true)) = resolved.source {
+                    Issue.record("\(folder) block \(i): the verdict was computed against a 4:2:0-only entry")
+                }
             }
         }
 
@@ -921,6 +1013,7 @@ struct DisplayDiagnosticProbeSweepTests {
         // the time of writing (593 + the 15 the old envelope guard dropped).
         #expect(evaluated >= 550,
             "Only \(evaluated) blocks evaluated across \(foldersWithProbe33) folders with probe 33; expected at least 550 -- sweep may be near-vacuous")
-        print("neededBandwidthEqualsTheDeclaredTopModesPixelClock: evaluated \(evaluated) blocks (\(noLinkRate) of them with no readable link rate) across \(foldersWithProbe33) folders")
+        #expect(ycbcr420Tops >= 5, "expected the corpus's five 4:2:0-top EDIDs, saw \(ycbcr420Tops)")
+        print("neededBandwidthEqualsTheDeclaredTopModesPixelClock: evaluated \(evaluated) blocks (\(noLinkRate) of them with no readable link rate, \(ycbcr420Tops) whose EDID top is 4:2:0-only) across \(foldersWithProbe33) folders")
     }
 }

@@ -551,6 +551,7 @@
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS 报告您的 %@ 当前模式为 %@，若不压缩，所需带宽将超过此链路的承载能力。高分辨率显示器使用压缩（DSC）让这样的模式通过这样的链路传输。画面已正常传输至显示器，因此这是预期的工作方式。";
 "macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS 报告了一个 %1$lld × %2$lld、%3$lld Hz 的模式，但您的 %4$@ 的 EDID 中没有描述该模式，因此无法计算其所需带宽。";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only, a mode macOS does not use." = "其 EDID 还列出了一个仅支持 4:2:0 的 %1$lld × %2$lld、%3$lld Hz 模式，macOS 不使用该模式。";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
 "Controller confirms Thunderbolt cable (%@)" = "控制器已确认 Thunderbolt 线缆（%@）";

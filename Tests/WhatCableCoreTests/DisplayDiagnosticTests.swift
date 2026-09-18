@@ -1460,4 +1460,175 @@ struct DisplayDiagnosticTests {
         #expect(diag.bottleneck == .belowMonitorMax, "23.16 Gbps needed over 17.28 carried, got \(diag.bottleneck)")
         #expect(diag.cableAssessment == .unlikelyTheCable)
     }
+
+    // MARK: - YCbCr 4:2:0-only entries are declared facts, never the comparison mode
+
+    /// The 27C1U-L behind a "DisplayPort 1.2" USB-C to HDMI adapter (corpus
+    /// m3_macos26.6.2): the base block's DTD is 3840x2160 at 60 Hz, 527.85
+    /// MHz, and the CTA block adds VIC 97 (3840x2160 at 60 Hz, 594 MHz) from
+    /// the YCbCr 4:2:0 Video Data Block, a mode the panel supports at 4:2:0
+    /// only. `EDIDInfo.topMode` is that VIC on pixel clock.
+    private let panel27C1UL = EDIDInfo.fixture(
+        name: "27C1U-L",
+        version: (1, 3),
+        preferred: EDIDInfo.mode(3840, 2160, hTotal: 3910, vTotal: 2250, pixelClockHz: 527_850_000),
+        modes: [EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 594_000_000,
+                               source: .ctaVIC(block: 1, vic: 97, native: false, ycbcr420Only: true))]
+    )
+
+    /// The UGREEN behind a "176GB0" USB-C to HDMI adapter (corpus
+    /// m4_macos26.5.1_m, second display): a 1080p60 DTD, VIC 95 (3840x2160 at
+    /// 30 Hz, 297 MHz) in full colour, and VICs 96 and 97 (4K50 and 4K60,
+    /// 594 MHz) at 4:2:0 only.
+    private let panelUGREEN = EDIDInfo.fixture(
+        name: "UGREEN",
+        version: (1, 3),
+        preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
+        modes: [
+            EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 297_000_000,
+                          source: .ctaVIC(block: 1, vic: 95, native: false, ycbcr420Only: false)),
+            EDIDInfo.mode(3840, 2160, hTotal: 5280, vTotal: 2250, pixelClockHz: 594_000_000,
+                          source: .ctaVIC(block: 1, vic: 96, native: false, ycbcr420Only: true)),
+            EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 594_000_000,
+                          source: .ctaVIC(block: 1, vic: 97, native: false, ycbcr420Only: true)),
+        ]
+    )
+
+    @Test("A 4:2:0-only top entry above a full-colour DTD: the link is judged against the DTD (2-lane HBR3 behind an HDMI adapter)")
+    func ycbcr420OnlyTopIsSkippedOnHBR3Adapter() throws {
+        // Fixture guard: on pixel clock alone the 4:2:0 VIC is the EDID's top.
+        let edidTop = try #require(panel27C1UL.topMode)
+        #expect(edidTop.sourceDescription == "CTA VIC 97 4:2:0 (block 1)")
+        // 2 of 2 lanes at HBR3 = 12.96 Gbps usable. The DTD needs 527.85e6 x
+        // 24 = 12.668 Gbps; the 4:2:0 VIC would have needed 14.256.
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2")
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
+        #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.isWarning == false)
+        let needed = try #require(diag.facts.neededGbps)
+        #expect(abs(needed - 12.6684) < 0.001, "needed \(needed) Gbps, expected the DTD's 527.85 MHz x 24")
+        #expect(diag.facts.topModeSource == "detailed timing 1 (block 0)")
+        #expect(diag.facts.maxRefreshHz == 60)
+        #expect(diag.facts.declaredModeCount == 2, "the 4:2:0 entry stays a declared fact")
+        #expect(diag.facts.declared420OnlyModes == 1)
+        // Int interpolation in `String(localized:)` groups digits by locale
+        // ("3,840" in en_US), as the "macOS reports a %lld × %lld mode" key does.
+        #expect(diag.detail.contains("Its EDID also lists \(3840.formatted()) × \(2160.formatted()) at 60Hz in 4:2:0 only, a mode macOS does not use."), "detail: \(diag.detail)")
+        #expect(!diag.detail.contains("14.3"), "the 4:2:0 entry's bandwidth must never reach the user")
+    }
+
+    @Test("A 4:2:0-only 4K60 above a full-colour 4K30: the link is judged against 4K30 (2-lane HBR2 behind an HDMI adapter)")
+    func ycbcr420OnlyTopIsSkippedOnHBR2Adapter() throws {
+        let edidTop = try #require(panelUGREEN.topMode)
+        #expect(edidTop.sourceDescription == "CTA VIC 97 4:2:0 (block 1)")
+        // 2 of 2 lanes at HBR2 = 8.64 Gbps usable. VIC 95 needs 297e6 x 24 = 7.128 Gbps.
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "5.4 Gbps (HBR2)", dfpType: "HDMI", branchDeviceId: "176GB0")
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panelUGREEN))
+        #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
+        let needed = try #require(diag.facts.neededGbps)
+        #expect(abs(needed - 7.128) < 0.001)
+        #expect(diag.facts.topModeSource == "CTA VIC 95 (block 1)")
+        #expect(diag.facts.topModeWidth == 3840)
+        #expect(diag.facts.maxRefreshHz == 30)
+        #expect(diag.facts.declaredModeCount == 4)
+        #expect(diag.facts.declared420OnlyModes == 2)
+        // The named entry is the highest 4:2:0-only one: 4K60 over 4K50
+        // (same clock and area, higher refresh).
+        #expect(diag.detail.contains("Its EDID also lists \(3840.formatted()) × \(2160.formatted()) at 60Hz in 4:2:0 only, a mode macOS does not use."), "detail: \(diag.detail)")
+    }
+
+    @Test("A CoreGraphics max mode that matches only a 4:2:0-only entry is macOS's fact alone, never costed at 24 bpp")
+    func maxModeMatchingOnlyA420EntryIsReportedByMacOSOnly() throws {
+        // 4K60 is declared, but only from the Y420VDB. Step 3 must not label
+        // the top from that entry; step 4 sees a max mode above the 4K30
+        // full-colour top and reports it as macOS only, with no clock.
+        let cg = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
+        let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: cg, edid: panelUGREEN))
+        #expect(top.source == .reportedByMacOSOnly, "got \(top.source)")
+        #expect(top.pixelClockHz == nil)
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "5.4 Gbps (HBR2)", dfpType: "HDMI", maxMode: cg)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panelUGREEN))
+        #expect(diag.bottleneck == .unknownMode)
+        #expect(diag.facts.neededGbps == nil)
+        #expect(diag.facts.declared420OnlyModes == 2)
+        // The 4:2:0 sentence would contradict "a mode the EDID doesn't
+        // describe", so it is left off on this path.
+        #expect(!diag.detail.contains("4:2:0"), "detail: \(diag.detail)")
+    }
+
+    @Test("A max mode that matches a full-colour entry is labelled from it even when a higher-clock 4:2:0 twin exists")
+    func maxModeMatchingAFullColourEntryIgnoresIts420Twin() throws {
+        // The 27C1U-L declares 4K60 twice: the 527.85 MHz DTD and the 594 MHz
+        // 4:2:0 VIC. CoreGraphics naming 4K60 lands on the DTD, the
+        // highest-clock FULL-COLOUR match, not the higher-clock 4:2:0 one.
+        let cg = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
+        let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: cg, edid: panel27C1UL))
+        #expect(top.source == .declared(.detailedTiming(block: 0, index: 0)), "got \(top.source)")
+        #expect(top.pixelClockHz == 527_850_000)
+    }
+
+    @Test("No 4:2:0-only entries: the resolved top is EDIDInfo.topMode and no sentence is added")
+    func noYcbcr420EntriesKeepsTodaysTop() throws {
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4), edid: g34w))
+        #expect(diag.facts.declared420OnlyModes == 0)
+        #expect(!diag.detail.contains("4:2:0"))
+        let top = try #require(diag.topMode)
+        let edidTop = try #require(g34w.topMode)
+        #expect(top == DisplayDiagnostic.TopMode(declared: edidTop))
+    }
+
+    // MARK: - The driven timing's own clock feeds the DSC-active check
+
+    @Test("liveModeNeedsCompression uses the timing's pixel clock when the display node supplied one")
+    func liveModeNeedsCompressionUsesThePixelClock() {
+        // 4K60 whose active pixels (497.7 Mpx/s x 24 = 11.95 Gbps) fit a
+        // 12.16 Gbps link, but whose timing clock (VIC 97, 594 MHz x 24 =
+        // 14.256 Gbps) does not: the wire carries the clock, so DSC is on.
+        let activeOnly = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
+        #expect(DisplayDiagnostic.liveModeNeedsCompression(activeOnly, deliveredGbps: 12.16) == false)
+        let withClock = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, pixelClockHz: 594_000_000)
+        #expect(DisplayDiagnostic.liveModeNeedsCompression(withClock, deliveredGbps: 12.16) == true)
+        // And a clock that fits with room to spare is not compression.
+        let fits = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, pixelClockHz: 527_850_000)
+        #expect(DisplayDiagnostic.liveModeNeedsCompression(fits, deliveredGbps: 12.96) == false)
+        // 10 bpc scales the clock, not the active estimate: 594e6 x 30 = 17.82 Gbps.
+        let tenBit = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 10, pixelClockHz: 594_000_000)
+        #expect(DisplayDiagnostic.liveModeNeedsCompression(tenBit, deliveredGbps: 16.0) == true)
+        #expect(DisplayDiagnostic.liveModeNeedsCompression(tenBit, deliveredGbps: 17.82 / 1.05 + 0.01) == false)
+    }
+
+    @Test("A driven 4K60 at the DTD's clock over a 2-lane HBR3 link reads as fine, not compressed")
+    func drivenTimingAtTheTopClockIsFine() throws {
+        // The 27C1U-L over 2 of 2 lanes at HBR3 (12.96 Gbps) with the node
+        // reporting timing 45: 3840x2160 at 60.0 Hz, 527.85 MHz, 8 bit.
+        // needed 12.668 <= 12.96: fine on the first comparison, and the
+        // live mode's clock agrees the link carries it uncompressed.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 527_850_000)
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2", currentMode: live)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
+        #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.facts.currentMode?.pixelClockHz == 527_850_000)
+        #expect(DisplayDiagnostic.liveModeNeedsCompression(live, deliveredGbps: 12.96) == false)
+    }
+
+    @Test("meetsTopMode stays an active-pixel identity test: a lower-clock timing of the top picture still meets it")
+    func meetsTopModeIgnoresBlankingOnBothSides() throws {
+        // A panel that declares 4K60 twice, VIC 97 at 594 MHz on top and a
+        // reduced-blanking 533.25 MHz DTD below it. macOS drives the DTD (17
+        // corpus nodes do exactly this). The display IS at its top picture
+        // and refresh, so it meets the top even though its clock is 10% lower.
+        let panel = EDIDInfo.fixture(
+            name: "4K60 twice",
+            version: (1, 4),
+            preferred: EDIDInfo.mode(3840, 2160, hTotal: 4000, vTotal: 2222, pixelClockHz: 533_250_000),
+            modes: [EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 594_000_000,
+                                   source: .ctaVIC(block: 1, vic: 97, native: false, ycbcr420Only: false))]
+        )
+        let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel))
+        #expect(top.pixelClockHz == 594_000_000, "fixture guard: the 594 MHz VIC is the top")
+        let driven = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 59.996625, bitsPerComponent: 8, pixelClockHz: 533_250_000)
+        #expect(DisplayDiagnostic.meetsTopMode(driven, top: top) == true)
+        let below = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 297_000_000)
+        #expect(DisplayDiagnostic.meetsTopMode(below, top: top) == false)
+    }
 }

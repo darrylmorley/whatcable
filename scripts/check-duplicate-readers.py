@@ -113,6 +113,12 @@ DYNAMIC_MATCHERS = {
         {"cls"},
         "Loops over its own candidate class list.",
     ),
+    "WhatCableDarwinBackend/Reading/DisplayTimingReader.swift": (
+        {"className"},
+        "Loops over nodeClassNames: AppleCLCD2 and IOMobileFramebufferShim, the two "
+        "display-node classes (split by chip). No other reader in Sources matches "
+        "either class (checked 2026-09-17).",
+    ),
     "WhatCableDarwinBackend/Watchers/TRMTransportWatcher.swift": (
         {"cls"},
         "Loops over the four transport-state classes. Splitting this watcher is step 4 of the layering refactor.",

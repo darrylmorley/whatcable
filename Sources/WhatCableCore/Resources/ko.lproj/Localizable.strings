@@ -550,6 +550,7 @@
 
 "macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS가 %@의 현재 모드를 %@(으)로 보고하고 있으며, 이를 압축 없이 전송하려면 이 링크보다 더 많은 대역폭이 필요해요. 고해상도 디스플레이는 이런 링크로 이런 모드를 전달하기 위해 압축(DSC)을 사용해요. 화면이 디스플레이에 전달되고 있으므로 의도한 대로 작동하고 있어요.";
 "macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS가 %1$lld × %2$lld, %3$lld Hz 모드를 보고하지만 %4$@의 EDID에는 이 모드가 없어서 필요한 대역폭을 계산할 수 없어요.";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only, a mode macOS does not use." = "EDID에는 %1$lld × %2$lld, %3$lld Hz 모드도 나와 있지만 4:2:0에서만 지원되며, macOS는 이 모드를 사용하지 않아요.";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
 "Controller confirms Thunderbolt cable (%@)" = "컨트롤러가 Thunderbolt 케이블을 확인했어요 (%@)";

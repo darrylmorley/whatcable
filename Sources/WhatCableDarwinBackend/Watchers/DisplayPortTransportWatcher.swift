@@ -128,9 +128,14 @@ public final class DisplayPortTransportWatcher: ObservableObject {
     /// showed a stale verdict, for example "may be using compression" while the
     /// Diagnostics panel said "full quality" for the same display.
     /// `enrich` is a pure, order- and count-preserving map, so re-pairing by
-    /// index is safe.
+    /// index is safe. `DisplayTimingReader.enrich` then runs over that result
+    /// and, where macOS's own display node matches the display, replaces the
+    /// on-screen mode with the driven timing and its pixel clock.
     private func enrichedWithLiveMode(_ updates: [DisplayPortUpdate]) -> [DisplayPortUpdate] {
-        let modes = DisplayModeReader.enrich(updates.map(\.status))
+        // CoreGraphics first (max mode, NSScreen depth), then macOS's own
+        // display node, which replaces the on-screen mode with the driven
+        // timing and its pixel clock where the node matches the display.
+        let modes = DisplayTimingReader.enrich(DisplayModeReader.enrich(updates.map(\.status)))
         guard modes.count == updates.count else { return updates }
         return zip(updates, modes).map { update, status in
             DisplayPortUpdate(
