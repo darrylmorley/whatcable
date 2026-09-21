@@ -1441,10 +1441,10 @@ struct JSONFormatterTests {
     func displayDTOAppears() throws {
         // makePort is portKey "2/1"; the DP node's parent must match so the
         // formatter correlates them. A 2-lane HBR2 link with the G34w-10 EDID
-        // falls short of its real 3440x1440@100 mode -> belowMonitorMax. That
-        // mode is declared in the CTA-861 extension, so the base block alone is
-        // not enough: without it the panel reads as its 60 Hz preferred mode and
-        // the link comfortably carries it (issue #596).
+        // and no live mode or display-node statement: the verdict is
+        // unknownMode (issue #664). The 100 Hz mode is declared in the CTA-861
+        // extension, so the base block alone is not enough for the parse
+        // (issue #596).
         let dp = IOPortTransportStateDisplayPort(
             link: DisplayPortLink(
                 active: true, laneCount: 2, maxLaneCount: 4, linkRate: 3,
@@ -1467,8 +1467,7 @@ struct JSONFormatterTests {
         let displays = port["displays"] as? [[String: Any]] ?? []
         #expect(displays.count == 1)
         let display = displays.first ?? [:]
-        #expect(display["bottleneck"] as? String == "belowMonitorMax",
-            "got: \(String(describing: display["bottleneck"]))")
+        #expect(display["bottleneck"] as? String == "unknownMode", "probe-33-shaped input: an EDID but no live mode and no statement")
         #expect(display["monitorName"] as? String == "LEN G34w-10")
         #expect(display["lanes"] as? Int == 2)
         #expect(display["maxLanes"] as? Int == 4)
@@ -1513,6 +1512,87 @@ struct JSONFormatterTests {
 
         let blocks = try #require(edidObj["blocks"] as? [[String: Any]])
         #expect((blocks.first ?? [:])["kind"] as? String == "base")
+    }
+
+    @Test("the display object carries macOS's statement, the cross-check and the encoding fields")
+    func displayCarriesTheDrivenTimingStatement() throws {
+        let bytes = EDIDInfoTests.g34wBaseBlock + EDIDInfoTests.hexBytes(EDIDInfoTests.g34wExtensionHex)
+        let statement = DisplayTimingStatement(
+            colourModes: [
+                DisplayColourMode(id: 7, encoding: .rgb444, depth: 8, supportsDSC: 0, isVirtual: false, downstreamFormat: nil),
+                DisplayColourMode(id: 9, encoding: .ycbcr444, depth: 8, supportsDSC: 0, isVirtual: false,
+                                  downstreamFormat: DisplayDownstreamFormat(encoding: .ycbcr420, depth: 8)),
+                DisplayColourMode(id: 3, encoding: .ycbcr422, depth: 12, supportsDSC: 0, isVirtual: true, downstreamFormat: nil),
+            ],
+            dscRequiredList: [], unsafeList: [7, 9, 3], validPixelEncodings: 0x1b4f, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true,
+            allTimings: [DisplayNodeTiming(id: 42, width: 3440, height: 1440, refreshHz: 100.0, pixelClockHz: 533_160_000,
+                                           lists: DisplayTimingLists(colourModes: [DisplayColourMode(id: 7, encoding: .rgb444, depth: 8, supportsDSC: 0, isVirtual: false, downstreamFormat: nil)],
+                                                                     dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1b4f, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true))])
+        let live = DisplayCurrentMode(width: 3440, height: 1440, refreshHz: 100, bitsPerComponent: 8, pixelClockHz: 600_000_000)
+        let dp = IOPortTransportStateDisplayPort(
+            link: DisplayPortLink(active: true, laneCount: 4, maxLaneCount: 4, linkRate: 3,
+                                  linkRateDescription: "5.4 Gbps (HBR2)", tunneled: false, hpdState: 1),
+            monitor: MonitorInfo(manufacturerName: "LEN", productName: nil, productId: nil, yearOfManufacture: nil, edid: Data(bytes)),
+            dfpType: "HDMI", parentPortType: 2, parentPortNumber: 1,
+            currentMode: live, drivenTiming: statement
+        )
+        let json = try JSONFormatter.render(ports: [makePort()], sources: [], identities: [], showRaw: false, displayPorts: [dp])
+        let port = (parse(json)["ports"] as? [[String: Any]])?.first ?? [:]
+        let display = (port["displays"] as? [[String: Any]])?.first ?? [:]
+        #expect(display["bottleneck"] as? String == "fine", "got: \(String(describing: display["bottleneck"]))")
+        #expect(display["isAppleDisplay"] as? Bool == false)
+        let driven = try #require(display["drivenTiming"] as? [String: Any])
+        #expect(driven["dscReading"] as? String == "uncompressed")
+        #expect(driven["dscRequiredIDs"] as? [Int] == [])
+        #expect(driven["dscCapableIDs"] as? [Int] == [])
+        #expect(driven["unsafeIDs"] as? [Int] == [7, 9], "sorted, virtual resolved out")
+        // The lists as the node printed them, sorted, beside the resolved sets (PR #665 gate fix round 2, L1).
+        #expect(driven["unsafeIDsRaw"] as? [Int] == [3, 7, 9], "the virtual 3 the resolved set drops is still visible")
+        #expect(driven["dscRequiredIDsRaw"] as? [Int] == [])
+        #expect(driven["validPixelEncodings"] as? Int == 0x1b4f)
+        #expect(driven["colourModesComplete"] as? Bool == true && driven["dscListComplete"] as? Bool == true && driven["unsafeListComplete"] as? Bool == true)
+        #expect(driven["listsComplete"] == nil, "the single flag is gone (ruling 42)")
+        #expect(driven["downstream420"] as? String == "some", "1 of 2 non-virtual modes converts (ruling 44)")
+        let modes = try #require(driven["colourModes"] as? [[String: Any]])
+        #expect(modes.count == 3)
+        #expect(modes[1]["encoding"] as? Int == 3)
+        #expect(modes[1]["encodingName"] as? String == "YCbCr 4:4:4")
+        let downstream = try #require(modes[1]["downstreamFormat"] as? [String: Any])
+        #expect(downstream["encoding"] as? Int == 1)
+        #expect(downstream["encodingName"] as? String == "YCbCr 4:2:0")
+        #expect(downstream["depth"] as? Int == 8)
+        #expect(modes[2]["isVirtual"] as? Bool == true)
+        let cross = try #require(display["crossCheck"] as? [String: Any])
+        let need = try #require(cross["liveNeededGbps"] as? Double)
+        #expect(abs(need - 14.4) < 1e-9, "600 MHz x 24")
+        let top = try #require(cross["usableGbpsMax"] as? Double)
+        #expect(abs(top - 17.28) < 1e-9)
+        let bottom = try #require(cross["usableGbpsMin"] as? Double)
+        #expect(abs(bottom - 17.28 * 0.9765625) < 1e-9)
+        #expect(cross["statementContradiction"] as? Bool == false)
+        let current = try #require(display["currentMode"] as? [String: Any])
+        #expect(current["pixelClockHz"] as? Int == 600_000_000)
+        #expect(current["pixelEncoding"] == nil, "RGB beside 4:4:4: the reader left it nil, and nil is omitted")
+        let onLink = try #require(display["topModeOnLink"] as? [String: Any])
+        #expect(onLink["match"] as? String == "exact")
+        #expect(onLink["availability"] as? String == "offeredUncompressed")
+        #expect(onLink["statementOffersTopMode"] as? Bool == true)
+        #expect(onLink["topModeListedByNode"] as? Bool == true)
+        let topTiming = try #require(onLink["timing"] as? [String: Any])
+        #expect(topTiming["id"] as? Int == 42)
+        #expect(topTiming["interlaced"] as? Bool == false, "the node timing's interlace flag, additive (PR #665 gate rerun, Codex R1)")
+        #expect(topTiming["pixelClockHz"] as? Int == 533_160_000, "the real EDID's declared top mode (measured, EDIDInfoTests.scansAllDetailedTimings), not the live mode's clock")
+        #expect((topTiming["lists"] as? [String: Any])?["dscReading"] as? String == "uncompressed")
+        #expect(display["cableAssessment"] as? String == "unlikelyTheCable", "the statement's reason")
+        // Without a statement the three blocks are absent, not empty.
+        let plain = IOPortTransportStateDisplayPort(link: dp.link, monitor: dp.monitor, parentPortType: 2, parentPortNumber: 1)
+        let plainJSON = try JSONFormatter.render(ports: [makePort()], sources: [], identities: [], showRaw: false, displayPorts: [plain])
+        let plainDisplay = ((parse(plainJSON)["ports"] as? [[String: Any]])?.first?["displays"] as? [[String: Any]])?.first ?? [:]
+        #expect(plainDisplay["drivenTiming"] == nil)
+        #expect(plainDisplay["crossCheck"] == nil)
+        #expect(plainDisplay["topModeOnLink"] == nil)
+        #expect(plainDisplay["isAppleDisplay"] as? Bool == false)
+        #expect(plainDisplay["bottleneck"] as? String == "unknownMode", "probe-33-shaped input: no statement")
     }
 
     @Test("Two monitors on one port both appear in `displays` (issue #271)")

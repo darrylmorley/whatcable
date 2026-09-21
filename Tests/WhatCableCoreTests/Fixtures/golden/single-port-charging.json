@@ -82,6 +82,7 @@
           "bottleneck" : "unknownMode",
           "cableAssessment" : "unlikelyTheCable",
           "detail" : "A display is connected but its capabilities aren't readable, so there's nothing to compare the link against.",
+          "isAppleDisplay" : false,
           "isWarning" : false,
           "lanes" : 4,
           "maxLanes" : 4,

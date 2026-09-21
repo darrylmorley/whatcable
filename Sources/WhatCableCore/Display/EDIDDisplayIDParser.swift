@@ -18,7 +18,7 @@ import Foundation
 /// says. edid-decode's `tag_version` check treats a mismatch as a spec violation and warns, but
 /// still decodes by tag. Whether any corpus EDID carries a 2.0 tag (0x20-0x2e) in a 1.x section
 /// or a 1.x tag (0x00-0x13) in a 2.0 section is measured in
-/// `research/findings/edid-mode-sources.md`; the rule is the spec's, not a corpus fit.
+/// `research/displays/edid-mode-sources.md`; the rule is the spec's, not a corpus fit.
 public enum EDIDDisplayIDParser {
     public struct Result {
         public var modes: [EDIDMode] = []

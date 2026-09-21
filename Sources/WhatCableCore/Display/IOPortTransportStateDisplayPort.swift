@@ -59,6 +59,27 @@ public struct MonitorInfo: Codable, Sendable, Equatable {
     }
 }
 
+extension MonitorInfo {
+    /// Whether the panel is one of Apple's own displays: EDID bytes 8-9, the
+    /// big-endian PNP manufacturer id, equal to 0x0610 (PNP `APP`); when the
+    /// blob cannot hold byte 9, `manufacturerName == "APP"` stands in. The
+    /// same key the display-node pairs used (research/displays/display-node-keys.md,
+    /// "Apple's own displays carry a full DSC list on every timing").
+    ///
+    /// Gates only the wording of a DSC-on verdict (no link blame on an Apple
+    /// display: 45 of 46 Apple-display nodes list DSC on every timing whatever
+    /// the link). It is a statement about the producer's measured behaviour,
+    /// not a vendor heuristic: on a node that does not match, the general rule
+    /// gives the same "DSC on" reading and only the no-link-blame clause is lost.
+    public var isAppleDisplay: Bool {
+        if let edid, edid.count >= 10 {
+            let bytes = [UInt8](edid.prefix(10))
+            return bytes[8] == 0x06 && bytes[9] == 0x10
+        }
+        return manufacturerName == "APP"
+    }
+}
+
 public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
     public let link: DisplayPortLink
     public let monitor: MonitorInfo?
@@ -103,6 +124,13 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
     /// it is correct even for 5K/6K displays whose EDID can't describe their
     /// native mode. Same nil contract as `currentMode`.
     public let maxMode: DisplayCurrentMode?
+    /// What macOS's display node states about this display: the driven
+    /// timing's lists (colour modes, the DSC-required and unsafe lists, the
+    /// valid encodings) and every non-virtual timing the node lists, attached
+    /// by `DisplayTimingReader.match` when exactly one node matched this
+    /// display; nil in tests and whenever the match is missing. Set together
+    /// with `currentMode` and never without it.
+    public let drivenTiming: DisplayTimingStatement?
     /// HPM controller UUID captured by walking the IOKit parent chain from the
     /// `IOPortTransportStateDisplayPort` node up to `AppleHPMDeviceHALType3`.
     /// Internal join key only. Never serialised to JSON or text output.
@@ -144,6 +172,7 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
         index: Int = 0,
         currentMode: DisplayCurrentMode? = nil,
         maxMode: DisplayCurrentMode? = nil,
+        drivenTiming: DisplayTimingStatement? = nil,
         hpmControllerUUID: String? = nil
     ) {
         self.link = link
@@ -180,6 +209,7 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
         self.index = index
         self.currentMode = currentMode
         self.maxMode = maxMode
+        self.drivenTiming = drivenTiming
         self.hpmControllerUUID = hpmControllerUUID
     }
 
@@ -198,7 +228,7 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
         case parentPortType, parentPortTypeDescription, parentPortNumber
         case parentPortBuiltIn, parentBuiltInPortType, parentBuiltInPortTypeDescription, parentBuiltInPortNumber
         case edidChanged, nominalSignalingFrequenciesHz, index
-        case currentMode, maxMode
+        case currentMode, maxMode, drivenTiming
         // hpmControllerUUID is deliberately absent from this enum.
     }
 
@@ -241,6 +271,7 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
         index = try c.decode(Int.self, forKey: .index)
         currentMode = try c.decodeIfPresent(DisplayCurrentMode.self, forKey: .currentMode)
         maxMode = try c.decodeIfPresent(DisplayCurrentMode.self, forKey: .maxMode)
+        drivenTiming = try c.decodeIfPresent(DisplayTimingStatement.self, forKey: .drivenTiming)
         // hpmControllerUUID is internal only; always nil when decoded from persisted data.
         hpmControllerUUID = nil
     }

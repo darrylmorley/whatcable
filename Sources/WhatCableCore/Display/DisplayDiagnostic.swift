@@ -4,69 +4,77 @@ import Foundation
 /// `DataLinkDiagnostic` (data speed): it answers "is my monitor getting the
 /// bandwidth for its best picture, and if not, where is the limit?"
 ///
-/// **Honest altitude.** This dimension is genuinely weaker as an automatic
-/// bottleneck-namer than power was, and the type is shaped to say so. Power
-/// had three independently measured numbers (charger / cable / negotiated).
-/// Here the only "delivered" number we get is the *current* link state
-/// (`laneCount x rate`), and a DisplayPort link trains itself down to satisfy
-/// whatever mode is on screen right now, to save power. So a link carrying
-/// less than the monitor's top mode might mean "the cable/adapter can't do
-/// more" OR "the user simply hasn't selected the higher mode, so the GPU
-/// trained a lazy link." From passive current-state IOKit data we cannot tell
-/// those apart.
+/// **Where the answer comes from.** macOS's own display node, read by
+/// `DisplayTimingReader` and carried here as
+/// `IOPortTransportStateDisplayPort.drivenTiming` (a `DisplayTimingStatement`):
+/// - the driven timing's lists say whether the live mode is compressed
+///   (`DSCRequiredColorElementIDs` against that timing's DSC-capable modes)
+///   and which modes a converter rates over its TMDS cap
+///   (`UnsafeColorElementIDs`, a receipt, never a verdict);
+/// - the node's own timing for the panel's declared top mode says whether the
+///   top mode is offered over this link at all, uncompressed or with DSC
+///   (issue #664, ruling 37; research/displays/display-node-keys.md: a colour
+///   mode macOS lists on a timing is one the link carries, P3 H1, zero
+///   non-members above the link in every cell).
+/// The EDID's declared top mode, costed at 8-bit RGB (`topModeBitsPerPixel`),
+/// is a labelled receipt (`Facts.neededGbps`) and decides nothing. Before #664
+/// it decided everything, and a fifth arithmetic branch was queued.
+///
+/// **Honest altitude.** The only "delivered" number is the current link state
+/// (`laneCount x rate`), read as a snapshot. Whether a DisplayPort link trains
+/// itself down to the selected mode is unmeasured: nothing in the research
+/// library records a link retraining with a mode change, and measuring it is
+/// a live experiment filed as its own question. So a top mode the node does
+/// not offer might mean "the cable or adapter can't do more" OR "the user
+/// hasn't selected the higher mode", and the wording keeps both.
 ///
 /// Therefore:
-/// - `.fine` is the one confident, unambiguous verdict. If the current link
-///   already carries the monitor's top mode, there is definitively no link
-///   bottleneck. Lead with this.
-/// - `.belowMonitorMax` is **informational, not accusatory**. It states both
-///   explanations and never declares the cable guilty.
+/// - `.fine` is the confident verdict: macOS reports the live mode at the top
+///   mode (with a statement, uncompressed).
+/// - `.compressionActive` is macOS's statement that the live mode is carried
+///   with DSC, never an inference from bandwidth. On an Apple display the
+///   wording blames no link: Apple's displays list DSC on every timing
+///   whatever the rate (45 of 46 corpus nodes).
+/// - `.belowMonitorMax` is **informational, not accusatory**. When the node
+///   offers the top mode it names the selected mode or this Mac and clears
+///   the cable; when the node does not offer it, it states both explanations.
 /// - `.adapterLimit` flags that a USB-C -> HDMI/DVI/VGA converter is in the
-///   chain, so a shortfall can't be pinned on the cable.
-/// - `.unknownMode` when the link is live but there is nothing solid to
-///   compare it against: no readable EDID, no readable link rate, or a top
-///   mode that only macOS reports (`TopModeSource.reportedByMacOSOnly`).
-///   Report what the link is doing, blame nothing, promise nothing.
+///   chain and the node does not offer the top mode through it.
+/// - `.unknownMode` when there is nothing solid to say: no readable EDID or
+///   link rate, a statement that does not name the live colour mode, a node
+///   with no entry for the panel's top mode, or no statement at all. Report
+///   what the link is doing, blame nothing.
 ///
-/// Phase wording is deliberately plain (not `String(localized:)`) while the
-/// copy is under review; it moves to the localised bundle once approved,
-/// matching how `DataLinkDiagnostic` was handled.
+/// The bandwidth arithmetic on the live mode survives as a labelled cross-check
+/// (`Facts.liveNeededGbps`, `usableGbpsRange`, `statementContradiction`),
+/// reported beside the statement and deciding nothing.
 public struct DisplayDiagnostic {
     public enum Bottleneck: Hashable, Sendable {
         /// The current link already carries the monitor's top mode. No limit.
         case fine
-        /// The link, as currently trained, carries less than the monitor's
-        /// top mode. Ambiguous by nature (cable/adapter cap vs unselected
-        /// mode), so the wording stays non-accusatory.
+        /// The live mode is below the panel's top mode. Two shapes: the node
+        /// offers the top mode on this link (the selected mode or this Mac is
+        /// holding the picture back; the cable is cleared), or it does not (a
+        /// cable or adapter cap and an unselected mode cannot be told apart;
+        /// the wording stays non-accusatory).
         case belowMonitorMax
-        /// A USB-C -> HDMI / DVI / VGA adapter sits in the chain, so a
-        /// shortfall cannot be attributed to the cable.
+        /// A USB-C -> HDMI / DVI / VGA adapter sits in the chain and the node
+        /// does not offer the top mode through it, so the shortfall cannot be
+        /// attributed to the cable.
         case adapterLimit
-        /// Live link, but nothing trustworthy to compare it against. Exactly
-        /// three shapes reach it:
-        /// - No readable EDID.
-        /// - No readable link rate.
-        /// - The top mode is reported by macOS only: CoreGraphics names a max
-        ///   mode that no declared EDID entry matches and no tiled composite
-        ///   explains, so its pixel clock, and with it the bandwidth it needs,
-        ///   is nowhere we can read (`TopModeSource.reportedByMacOSOnly`).
-        ///   Report the mode and the link, assert nothing.
+        /// Live link, but nothing trustworthy to compare it against: no
+        /// readable EDID; no readable link rate; a statement whose list does
+        /// not name the live colour mode (a proper subset, or a timing listing
+        /// DSC-capable and non-capable modes together with the live depth and
+        /// encoding unable to split them); a node with no entry for the
+        /// panel's top mode; or no statement at all (the display node did not
+        /// match). Report the mode and the link, assert nothing.
         case unknownMode
-        /// The link is at the DisplayPort ceiling (every lane, HBR3 or faster)
-        /// yet short of the monitor's *uncompressed* top mode. DSC (~3:1
-        /// compression) may be carrying the top mode through the link, and
-        /// there is no wider link to select, so we can't claim the display is
-        /// under-driven. Informational, never a warning. (Issue #246.)
-        case compressionPlausible
-        /// DSC is **provably active right now**: the live on-screen mode needs
-        /// more uncompressed bandwidth than the link is carrying, yet the
-        /// picture is reaching the display. That can only happen with
-        /// compression on. Stronger than `.compressionPlausible` (a reasoned
-        /// inference from the link being at the DP ceiling): this one is
-        /// grounded in the empirical gap between `currentMode` and
-        /// `deliveredGbps`. Positive, never a warning. (Jimmy's group feedback:
-        /// users on DSC-needing modes like 4K120 over DP 1.4 were reading the
-        /// old "monitor can do more" shortfall message as a fault.)
+        /// macOS states DSC is on for the driven timing:
+        /// `DSCRequiredColorElementIDs` covers the live colour mode (or every
+        /// non-virtual mode). Read, never inferred (issue #664 replaced the
+        /// "live mode needs more than the link carries" arithmetic, which is
+        /// now the cross-check). Positive, never a warning.
         case compressionActive
     }
 
@@ -108,13 +116,15 @@ public struct DisplayDiagnostic {
         /// in `declaredModeCount`, the JSON and the bench report, and never
         /// become the comparison mode: a 4:2:0 mode carries half the data of
         /// the same mode in full colour, so 24 bits per pixel is not its
-        /// cost, and macOS's own display node lists no 4:2:0 colour mode for
-        /// any external panel in the corpus. 0 when there is no readable EDID.
+        /// cost; the DisplayPort link never carries 4:2:0, though a converter
+        /// behind it can (`DisplayTimingLists.downstream420`). 0 when there
+        /// is no readable EDID.
         public let declared420OnlyModes: Int
-        /// Bandwidth the monitor's top mode needs, usable Gbps: its declared
-        /// pixel clock times `assumedBitsPerPixel`. nil when there is no
-        /// readable EDID, and when the top mode is reported by macOS only
-        /// (there is no declared pixel clock to multiply).
+        /// Bandwidth the monitor's top mode would need at 8-bit RGB, usable
+        /// Gbps: its declared pixel clock times `topModeBitsPerPixel`. A
+        /// labelled receipt (the Pro cell K16, the text line K28): no verdict
+        /// branches on it (ruling 36). nil when there is no readable EDID and
+        /// when the top mode is reported by macOS only.
         public let neededGbps: Double?
         /// Bandwidth the current link carries, usable Gbps (estimated).
         public let deliveredGbps: Double?
@@ -139,6 +149,69 @@ public struct DisplayDiagnostic {
         /// "top mode" for the capability label and the at-top-mode check. Same
         /// nil contract as `currentMode`.
         public let maxMode: DisplayCurrentMode?
+        /// macOS's statement about the display, when the display node matched
+        /// (`IOPortTransportStateDisplayPort.drivenTiming`): the driven
+        /// timing's lists and every non-virtual timing the node lists. nil in
+        /// tests and when the node did not match; then `dscReading`,
+        /// `topModeMatch` and `topModeAvailability` are nil too.
+        public let drivenTiming: DisplayTimingStatement?
+        /// What the driven timing's lists say about the live mode, resolved
+        /// against `currentMode`'s depth and encoding. nil without a statement.
+        public let dscReading: DisplayTimingStatement.DSCReading?
+        /// How much of the driven timing the converter sends on as 4:2:0
+        /// (ruling 44): all, some or none of its non-virtual colour modes. nil
+        /// without a statement. Picks between K8, K37 and K17.
+        public let downstream420: DisplayTimingStatement.Downstream420Reading?
+        /// `MonitorInfo.isAppleDisplay`: EDID manufacturer 0x0610, else the
+        /// PNP name `APP`. Chooses the no-link-blame wording of a DSC-on verdict
+        /// and nothing else: an Apple display whose driven timing lists no DSC
+        /// reads by the general rule (spec Design 3 as corrected 2026-09-21).
+        public let isAppleDisplay: Bool
+        /// The cross-check: the live mode's pixel clock times Apple's bits per
+        /// pixel at its encoding and depth, usable Gbps. nil when there is no
+        /// statement, no clock, or the statement's candidate modes do not agree
+        /// on one bits-per-pixel figure. Decides nothing.
+        public let liveNeededGbps: Double?
+        /// The usable link with and without forward error correction:
+        /// `deliveredGbps x 0.9765625 ... deliveredGbps`. FEC state is not
+        /// published, so it is a range. nil when the rate is unreadable.
+        public let usableGbpsRange: ClosedRange<Double>?
+        /// True when the statement says uncompressed and `liveNeededGbps`
+        /// exceeds the top of `usableGbpsRange`, or says DSC on and it is below
+        /// the bottom, except on an Apple display, whose list reads DSC on
+        /// whatever the link (fix round 2, L2). Reported; the statement stands
+        /// either way.
+        public let statementContradiction: Bool
+        /// How the panel's declared top mode sits in the node's list (ruling
+        /// 37): exact, same refresh at another blanking, picture only, or not
+        /// listed. nil without a statement or without a resolved top mode.
+        public let topModeMatch: DisplayTimingStatement.TopModeMatchKind?
+        /// The node timing the top mode matched (`exact` or `sameRefresh`),
+        /// with its own lists. nil otherwise.
+        public let topModeTiming: DisplayNodeTiming?
+        /// What that timing says: offered (uncompressed, with DSC, or with
+        /// compression not named), not offered (listed only at lower
+        /// refreshes, or with no colour mode validated), or not listed. nil
+        /// without a statement or a resolved top mode.
+        public let topModeAvailability: TopModeAvailability?
+        /// True when `topModeAvailability` is one of the offered cases: the
+        /// third reason `cableAssessment` reads `.unlikelyTheCable`, and the
+        /// gate that keeps `billboardNote` silent (ruling 39).
+        public let statementOffersTopMode: Bool
+        /// Whether the resolved top is an entry the node lists (ruling 41's
+        /// step 1b chose it, or kept it for its preferred picture): true for
+        /// `exact`, `sameRefresh` and `pictureOnly`, false for `notListed`
+        /// (the top is a native declaration the node lists nowhere, or no
+        /// declared entry qualified and the declared top stands). nil
+        /// without a statement or a resolved top mode.
+        public let topModeListedByNode: Bool?
+        /// True when the DisplayPort node sits on the Mac's own HDMI port
+        /// (`ParentPortTypeDescription == "HDMI"`, issue #352), where
+        /// `sinkType` is nil by design: the SoC's HDMI transport is itself the
+        /// DP-to-HDMI stage (dump A1), so the converter's unsafe list is
+        /// meaningful and its receipt names the port (K39, K40) rather than
+        /// an adapter (PR #665 gate rerun, note 4 ruled).
+        public let isNativeHDMIPort: Bool
     }
 
     /// Whether the cable can be implicated in a shortfall. Deliberately has
@@ -156,6 +229,33 @@ public struct DisplayDiagnostic {
         case unlikelyTheCable
         /// Can't tell from current-state data. The honest default.
         case inconclusive
+    }
+
+    /// Whether macOS offers the panel's declared top mode over this link, read
+    /// from the node's own timing for it (ruling 37).
+    public enum TopModeAvailability: String, Codable, Hashable, Sendable {
+        /// Listed with a non-virtual colour mode and an empty DSC list.
+        case offeredUncompressed
+        /// Listed with a non-virtual colour mode and a DSC list equal to its
+        /// DSC-capable set, every non-virtual mode included.
+        case offeredWithDSC
+        /// Listed with a non-virtual colour mode, but its lists do not say
+        /// whether DSC would be used (a proper subset, or capable and
+        /// non-capable modes side by side).
+        case offeredUnresolved
+        /// The picture is listed only at lower refreshes, or the matched
+        /// timing has no colour mode validated: macOS does not offer the top
+        /// mode on this link as it is now.
+        case notOffered
+        /// No timing has the top mode's picture.
+        case notListed
+
+        public var isOffered: Bool {
+            switch self {
+            case .offeredUncompressed, .offeredWithDSC, .offeredUnresolved: return true
+            case .notOffered, .notListed: return false
+            }
+        }
     }
 
     public let bottleneck: Bottleneck
@@ -183,13 +283,15 @@ public struct DisplayDiagnostic {
 
     /// The Billboard-device diagnosis, or `nil` when it should not be shown.
     /// Fires only when a Billboard device is present **and** the link is below
-    /// the monitor's best mode (`isWarning`, the same `needed <= delivered`
-    /// comparison that drives the verdict, so there is one definition of
-    /// "degraded"). A Billboard device on its own is often benign (docks park
-    /// them there normally), so naming it is safe everywhere but this pointed
-    /// inference is gated on the corroborating degraded link.
+    /// the monitor's best mode (`isWarning`, the same verdict that drives the
+    /// inline surfaces, so there is one definition of "degraded"). A Billboard
+    /// device on its own is often benign (docks park them there normally), so
+    /// naming it is safe everywhere but this pointed inference is gated on the
+    /// corroborating degraded link. Silent when the statement offers the top
+    /// mode: a re-plug or another cable cannot improve a link macOS says
+    /// already carries it (ruling 39).
     public var billboardNote: String? {
-        guard billboardPresent, isWarning else { return nil }
+        guard billboardPresent, isWarning, !facts.statementOffersTopMode else { return nil }
         return String(localized: "A Billboard device is present on this port. That usually appears when an Alt Mode like DisplayPort was set up but didn't fully come up. Your display is below its best mode, so a re-plug, a different cable, or a different adapter may bring it up. Some docks show a Billboard device normally, so this isn't always a fault.", bundle: _coreLocalizedBundle)
     }
 
@@ -199,38 +301,32 @@ public struct DisplayDiagnostic {
     /// means "worth looking at", not "the cable is broken".
     public var isWarning: Bool {
         switch bottleneck {
-        case .fine, .unknownMode, .compressionPlausible, .compressionActive: return false
+        case .fine, .unknownMode, .compressionActive: return false
         case .belowMonitorMax, .adapterLimit: return true
         }
     }
 }
 
 extension DisplayDiagnostic {
-    /// Assume standard 8-bit RGB (24 bits/pixel) for the bandwidth estimate.
-    /// Real links may use 10-bit (30 bpp), chroma subsampling, or DSC
-    /// compression, all of which change the maths, so the verdict wording
-    /// hedges accordingly.
-    /// A mode the panel supports only at 4:2:0 never reaches this constant: `resolveTopMode` skips it.
-    static let assumedBitsPerPixel = 24
-    /// Don't declare a shortfall on estimation noise alone.
+    /// Bits per pixel the TOP MODE figure (`Facts.neededGbps`) is costed at:
+    /// 8-bit RGB, 24. A stated basis, labelled as such wherever the figure is
+    /// shown ("at 8-bit RGB"), and a receipt only: no verdict branches on it
+    /// (ruling 36). The live mode is costed from macOS's own statement of its
+    /// encoding and depth (`Facts.liveNeededGbps`), also a receipt; DSC and
+    /// the top mode's availability are read from the node. A mode the panel
+    /// supports only at 4:2:0 never reaches this constant: `resolveTopMode`
+    /// skips it.
+    static let topModeBitsPerPixel = 24
+    /// Matching window for `resolveTopMode`'s step 4 (a CoreGraphics max
+    /// mode above every declared entry): an identity test between modes, not
+    /// a bandwidth comparison. `meetsTopMode` no longer uses it (PR #665 gate,
+    /// Codex 1): it matches picture and refresh through `refreshMatchHz`.
     static let tolerance = 0.05
-    /// Margin for `.compressionActive`'s "live mode needs more than the link
-    /// carries" check. Kept at 5%, same as the noise margin used elsewhere.
-    ///
-    /// When `DisplayCurrentMode.pixelClockHz` is present the comparison is
-    /// exact: the clock times bits per pixel is the wire rate, blanking
-    /// included. When it is absent, the active-pixel estimate understates the
-    /// wire (which adds blanking), so "needed > delivered" already implies
-    /// "wire > delivered". Either way this margin stays an estimation-noise
-    /// margin, not a blanking adjustment; widening it further would only
-    /// create a false-negative band where genuine DSC modes get read as fine.
-    static let compressionActiveTolerance = 0.05
-    /// Per-lane rate (Gbps) at or above which the link is running at a high
-    /// rate. HBR3 (8.1 Gbps/lane) is the ceiling over USB-C DisplayPort Alt
-    /// Mode; UHBR is higher still. At all lanes and this rate, a shortfall
-    /// against the *uncompressed* top mode is most likely covered by DSC, not
-    /// a link the user can widen (issue #246).
-    static let highRatePerLaneGbps = 8.0
+    /// Forward error correction takes 64000/65536 of the payload (the DCP
+    /// firmware's `usableLinkBandwidth`, research/displays/dumps/
+    /// display-node-keys-kernel-decode-2026-09-18.md A2). FEC state is not
+    /// published, so the usable link is a range with and without it.
+    static let fecFactor = 0.9765625
 
     /// Production entry point. Parses the EDID from the DisplayPort node's own
     /// monitor blob, then defers to the injectable initialiser below.
@@ -263,53 +359,58 @@ extension DisplayDiagnostic {
         // Don't treat the built-in HDMI port on an Apple Silicon MacBook Pro /
         // Mac mini as if the display were behind a USB-C-to-HDMI adapter. The
         // SoC drives HDMI directly, so the HDMI sink is the port itself, not a
-        // dongle in the chain. With sinkType nil here we skip the adapter-blame
-        // branch below AND fall through to the HBR3 + max-lanes DSC carve-out
-        // when the link is at its ceiling, which is the right verdict for a
-        // native HDMI 2.1 panel running 4K120 via compression. Signal source:
-        // `ParentPortTypeDescription` on the DP transport node, populated for
-        // every native HDMI display across M1 Pro through M5 Pro in the corpus.
+        // dongle in the chain. With sinkType nil here we skip the adapter
+        // verdict below. Signal source: `ParentPortTypeDescription` on the DP
+        // transport node, populated for every native HDMI display across
+        // M1 Pro through M5 Pro in the corpus.
+        let nativeHDMI = dp.parentPortTypeDescription?.uppercased() == "HDMI"
         let sinkType: String?
-        if dp.parentPortTypeDescription?.uppercased() == "HDMI" {
+        if nativeHDMI {
             sinkType = nil
         } else {
             sinkType = Self.adapterSinkType(dp.dfpType)
         }
         let branchDevice = Self.branchDeviceLabel(dp.branchDeviceId)
 
-        // Cable attribution. Exonerate only on demonstrated evidence: a
-        // Thunderbolt / USB4 tunnel (the cable carries far more than any DP
-        // mode needs), or every host DisplayPort lane already in use on a
-        // cable we've positively identified as passive (so the cable isn't
-        // lane-limiting). We require a *known* passive e-marker, not merely a
-        // non-active one: an absent e-marker means an unidentified cable we
-        // can't vouch for (often a cheap passive cable that could itself be
-        // rate-limiting), and an active cable can misreport its own e-marker
-        // (issue #111). The e-marker's claimed rating is never used to
-        // exonerate. Assigned once here so it holds on every return path.
-        // Read through the classifier, not the e-marker's self-report. Two
-        // cables lose their exoneration by that change, both in the direction
-        // the paragraph above asks for, so `cableAssessment` moves from
-        // `.unlikelyTheCable` to `.inconclusive` for each:
-        //
-        //   1. a cable on a port whose controller reports an active cable;
-        //   2. a cable carrying the issue #111 layout contradiction, with or
-        //      without a port. Its VDO[3] is decoded under the passive layout
-        //      on purpose, so the raw self-report used to read passive.
+        // Cable attribution, part one: demonstrated evidence that does not
+        // need the EDID. A Thunderbolt / USB4 tunnel (the cable carries far
+        // more than any DP mode needs), or every host DisplayPort lane already
+        // in use on a cable we've positively identified as passive (so the
+        // cable isn't lane-limiting). We require a *known* passive e-marker,
+        // not merely a non-active one: an absent e-marker means an
+        // unidentified cable we can't vouch for (often a cheap passive cable
+        // that could itself be rate-limiting), and an active cable can
+        // misreport its own e-marker (issue #111). The e-marker's claimed
+        // rating is never used to exonerate. Read through the classifier, not
+        // the e-marker's self-report. Part two, the statement offering the
+        // top mode, needs the EDID and joins below.
         let cableKnownPassive = cable.flatMap {
             CableClassification.resolve(identity: $0, port: port)
         }?.type == .passive
-        let cableUnlikely = dp.link.tunneled
+        let cableUnlikelyByLink = dp.link.tunneled
             || (lanes > 0 && lanes == maxLanes && cableKnownPassive)
-        self.cableAssessment = cableUnlikely ? .unlikelyTheCable : .inconclusive
+
+        // macOS's statement about the display, and the arithmetic cross-check
+        // beside it. Computed once, before any verdict, so every Facts carries
+        // them, the no-EDID path included. The verdict branch below also
+        // needs a live mode (the reader sets both together, and every
+        // statement sentence names the live mode); the facts do not.
+        let statement = dp.drivenTiming
+        let reading = statement?.dscReading(for: dp.currentMode)
+        let downstream420 = statement?.downstream420
+        let isApple = dp.monitor?.isAppleDisplay ?? false
+        let liveNeeded = Self.liveNeededGbps(mode: dp.currentMode, statement: statement)
+        let usable = Self.usableGbpsRange(deliveredGbps: delivered)
+        let contradiction = Self.statementContradiction(reading: reading, liveNeededGbps: liveNeeded, usable: usable, isAppleDisplay: isApple)
 
         // No readable EDID: we can describe the link but have nothing to judge
         // it against. Report, blame nothing. An `EDIDInfo` whose `topMode` is
         // nil (an empty declared list, or every declared entry with a zero
         // dimension) has no top mode to resolve and is treated the same way.
-        guard let edid, let top = Self.resolveTopMode(maxMode: dp.maxMode, edid: edid) else {
+        guard let edid, let top = Self.resolveTopMode(maxMode: dp.maxMode, edid: edid, statement: statement) else {
             self.edid = edid
             self.topMode = nil
+            self.cableAssessment = cableUnlikelyByLink ? .unlikelyTheCable : .inconclusive
             self.facts = Facts(
                 monitorName: nil,
                 preferredWidth: nil, preferredHeight: nil, preferredRefreshHz: nil,
@@ -320,7 +421,12 @@ extension DisplayDiagnostic {
                 lanes: lanes, maxLanes: maxLanes,
                 rateDescription: rate, sinkType: sinkType,
                 branchDevice: branchDevice,
-                currentMode: dp.currentMode, maxMode: dp.maxMode
+                currentMode: dp.currentMode, maxMode: dp.maxMode,
+                drivenTiming: statement, dscReading: reading, downstream420: downstream420, isAppleDisplay: isApple,
+                liveNeededGbps: liveNeeded, usableGbpsRange: usable, statementContradiction: contradiction,
+                topModeMatch: nil, topModeTiming: nil, topModeAvailability: nil, statementOffersTopMode: false,
+                topModeListedByNode: nil,
+                isNativeHDMIPort: nativeHDMI
             )
             self.bottleneck = .unknownMode
             self.summary = String(localized: "Display connected", bundle: _coreLocalizedBundle)
@@ -333,6 +439,22 @@ extension DisplayDiagnostic {
             return
         }
 
+        // The node's own timing for the panel's top mode (ruling 37): Core
+        // decides which of the timings the reader carried is the top mode.
+        // `resolveTopMode` already walked the declared list with the statement
+        // (ruling 41, step 1b), so this match names how the chosen top sits in
+        // the node's list and never reads `notListed` unless no declared entry
+        // qualified. A top mode only CoreGraphics reports has no declared
+        // clock; the match runs on picture and refresh alone then.
+        let topMatch = statement?.topModeMatch(width: top.width, height: top.height, refreshHz: top.refreshHz, pixelClockHz: top.pixelClockHz, interlaced: top.interlaced)
+        let availability = topMatch.map(Self.topModeAvailability)
+        let statementOffersTop = availability?.isOffered == true
+        // Cable attribution, part two: a link macOS lists the top mode on is
+        // not a link the cable is limiting. Assigned once here so it holds on
+        // every return path below.
+        let cableUnlikely = cableUnlikelyByLink || statementOffersTop
+        self.cableAssessment = cableUnlikely ? .unlikelyTheCable : .inconclusive
+
         let name = edid.monitorName ?? String(localized: "display", bundle: _coreLocalizedBundle)
         // Entries the panel supports at YCbCr 4:2:0 only. Declared facts, so
         // they stay in `edid.modes`, but never the comparison mode (see
@@ -340,28 +462,46 @@ extension DisplayDiagnostic {
         // that only ever appears in the Y420VDB is not silently missing. Left
         // off when the top is macOS's own report: "a mode the EDID doesn't
         // describe" and "its EDID also lists" would contradict each other.
+        // The DisplayPort link never carries 4:2:0 (research/displays/
+        // display-node-keys.md, section 1), which is what the first sentence
+        // claims and nothing more; behind a converter whose driven timing
+        // records 4:2:0 output (`DownstreamFormat`), the second sentence says
+        // what the node records and does not claim the 4:2:0-only entry is
+        // the one driven (Design 6; that step is INFERRED in the findings).
+        // Ruling 44: "converting the picture" (K8) only when every non-virtual
+        // mode of the driven timing converts, which is also when
+        // `currentMode.downstreamFormat` is set (ruling 15); when only some
+        // do (every driven corpus timing with one), K37 says the timing
+        // includes such a mode and that macOS does not name the live one.
         let declared420 = edid.modes.filter(Self.isYCbCr420Only)
         let note420: String
         if case .declared = top.source, let named = Self.highestPriority(declared420) {
             let namedWidth = named.width
             let namedHeight = named.height
             let namedRefresh = Int(named.refreshHz.rounded())
-            note420 = " " + String(localized: "Its EDID also lists \(namedWidth) × \(namedHeight) at \(namedRefresh)Hz in 4:2:0 only, a mode macOS does not use.", bundle: _coreLocalizedBundle)
+            switch downstream420 {
+            case .everyMode?:
+                note420 = " " + String(localized: "Its EDID also lists \(namedWidth) × \(namedHeight) at \(namedRefresh)Hz in 4:2:0 only. On the current timing, macOS records the adapter converting the picture to 4:2:0 on its way to the display.", bundle: _coreLocalizedBundle)
+            case .someModes?:
+                note420 = " " + String(localized: "Its EDID also lists \(namedWidth) × \(namedHeight) at \(namedRefresh)Hz in 4:2:0 only. The current timing includes a colour mode the adapter sends to the display as 4:2:0; macOS does not name which of the timing's modes is in use.", bundle: _coreLocalizedBundle)
+            case .noMode?, nil:
+                note420 = " " + String(localized: "Its EDID also lists \(namedWidth) × \(namedHeight) at \(namedRefresh)Hz in 4:2:0 only, a mode macOS does not send over the DisplayPort link.", bundle: _coreLocalizedBundle)
+            }
         } else {
             note420 = ""
         }
-        // The monitor's top MODE drives the comparison, never the 0xFD
-        // range-limits envelope (issue #596). See `resolveTopMode`, resolved
-        // in the guard above.
+        // The monitor's top MODE is what the node is asked about, never the
+        // 0xFD range-limits envelope (issue #596). See `resolveTopMode`,
+        // resolved in the guard above.
         self.edid = edid
         self.topMode = top
-        // The declared pixel clock times bits per pixel, and nothing else. A
-        // top mode that only macOS reports has no declared clock to multiply,
-        // so `needed` is nil there and the verdict below says so by name.
-        let needed = top.pixelClockHz.map { Double($0) * Double(Self.assumedBitsPerPixel) / 1_000_000_000 }
+        // The declared pixel clock times 24 (8-bit RGB): a labelled receipt
+        // (`Facts.neededGbps`, ruling 36). Nothing below branches on it. nil
+        // for a top mode only macOS reports, which has no declared clock.
+        let needed = top.pixelClockHz.map { Double($0) * Double(Self.topModeBitsPerPixel) / 1_000_000_000 }
         let topRefresh = Int(top.refreshHz.rounded())
 
-        let baseFacts = Facts(
+        self.facts = Facts(
             monitorName: edid.monitorName,
             preferredWidth: edid.preferredWidth,
             preferredHeight: edid.preferredHeight,
@@ -376,137 +516,165 @@ extension DisplayDiagnostic {
             lanes: lanes, maxLanes: maxLanes,
             rateDescription: rate, sinkType: sinkType,
             branchDevice: branchDevice,
-            currentMode: dp.currentMode, maxMode: dp.maxMode
+            currentMode: dp.currentMode, maxMode: dp.maxMode,
+            drivenTiming: statement, dscReading: reading, downstream420: downstream420, isAppleDisplay: isApple,
+            liveNeededGbps: liveNeeded, usableGbpsRange: usable, statementContradiction: contradiction,
+            topModeMatch: topMatch?.kind, topModeTiming: topMatch?.timing,
+            topModeAvailability: availability, statementOffersTopMode: statementOffersTop,
+            topModeListedByNode: topMatch.map { $0.kind != .notListed },
+            isNativeHDMIPort: nativeHDMI
         )
 
         // Without a delivered figure (unparseable rate string) we can't
-        // compare. Report the monitor, blame nothing.
+        // describe the link. Report the monitor, blame nothing.
         guard let delivered else {
-            self.facts = baseFacts
             self.bottleneck = .unknownMode
             self.summary = String(localized: "Display connected", bundle: _coreLocalizedBundle)
             self.detail = String(localized: "Your \(name) is connected, but the link rate isn't readable, so there's nothing to compare its capability against.", bundle: _coreLocalizedBundle) + note420
             return
         }
 
-        // macOS reports a top mode the EDID does not describe. The mode is
-        // real (CoreGraphics lists it) but its pixel clock is not in the EDID,
-        // so the bandwidth it needs cannot be computed from anything we read.
-        // Name the mode, report the link, assert nothing.
-        guard let needed else {
-            self.facts = baseFacts
-            self.bottleneck = .unknownMode
-            self.summary = String(localized: "Display connected", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "macOS reports a \(top.width) × \(top.height) mode at \(topRefresh)Hz that your \(name)'s EDID doesn't describe, so the bandwidth it needs can't be computed.", bundle: _coreLocalizedBundle)
-                + " "
-                + String(localized: "The link is carrying about \(Self.gbps(delivered)) (\(lanes) of \(maxLanes) lanes).", bundle: _coreLocalizedBundle)
-                + note420
-            return
-        }
-
-        // Does the current link already carry the monitor's top mode?
-        if needed <= delivered * (1 + Self.tolerance) {
-            self.facts = baseFacts
-            self.bottleneck = .fine
-            self.summary = String(localized: "Display running at full quality", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "Your \(name) is connected and the link has the bandwidth for its top mode. Nothing is holding the picture back.", bundle: _coreLocalizedBundle) + note420
-            return
-        }
-
-        // Shortfall. The current link carries less than the monitor's top
-        // mode. Stay non-accusatory: we can't tell a cable/adapter cap from an
-        // unselected mode.
-        let needLabel = Self.gbps(needed)
-        let haveLabel = Self.gbps(delivered)
-        let laneLabel: String
-        if let rate {
-            laneLabel = String(localized: "\(lanes) of \(maxLanes) lanes at \(rate)", bundle: _coreLocalizedBundle)
-        } else {
-            laneLabel = String(localized: "\(lanes) of \(maxLanes) lanes", bundle: _coreLocalizedBundle)
-        }
+        // Shared labels. `canDo` names the top mode in every sentence below.
         let canDo = topRefresh > 0
             ? String(localized: "up to \(topRefresh)Hz", bundle: _coreLocalizedBundle)
             : String(localized: "a higher mode than the link is carrying", bundle: _coreLocalizedBundle)
-        let dscCaveat = " " + String(localized: "High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally.", bundle: _coreLocalizedBundle)
+        let linkLine = String(localized: "The link is carrying about \(Self.gbps(delivered)) (\(lanes) of \(maxLanes) lanes).", bundle: _coreLocalizedBundle)
 
-        if let sinkType {
-            self.facts = baseFacts
-            self.bottleneck = .adapterLimit
-            self.summary = String(localized: "Video is going through a \(sinkType) adapter", bundle: _coreLocalizedBundle)
+        // The node does not offer the top mode behind a converter.
+        func adapterNotOffered(_ sinkType: String, extra: String) -> (String, String) {
+            let summary = String(localized: "Video is going through a \(sinkType) adapter", bundle: _coreLocalizedBundle)
+            let detail: String
             if let branchDevice {
-                self.detail = String(localized: "Your \(name) is reached through a USB-C to \(sinkType) adapter that reports as \(branchDevice), currently carrying about \(haveLabel) (\(laneLabel)), short of the monitor's top mode (\(canDo), about \(needLabel)). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which.", bundle: _coreLocalizedBundle) + dscCaveat + note420
+                detail = String(localized: "Your \(name) is reached through a USB-C to \(sinkType) adapter that reports as \(branchDevice), and macOS does not offer the monitor's top mode (\(canDo)) on this link as it is now. With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which.", bundle: _coreLocalizedBundle)
             } else {
-                self.detail = String(localized: "Your \(name) is reached through a USB-C to \(sinkType) adapter, and the link isn't currently carrying the monitor's top mode (\(canDo), about \(needLabel)); it's carrying about \(haveLabel) (\(laneLabel)). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which.", bundle: _coreLocalizedBundle) + dscCaveat + note420
+                detail = String(localized: "Your \(name) is reached through a USB-C to \(sinkType) adapter, and macOS does not offer the monitor's top mode (\(canDo)) on this link as it is now. With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which.", bundle: _coreLocalizedBundle)
             }
-            return
+            return (summary, detail + extra + " " + linkLine + note420)
         }
 
-        // The link is at the DisplayPort ceiling (every lane, HBR3 or faster)
-        // but still short of the monitor's *uncompressed* top mode. High-
-        // resolution displays use DSC (~3:1 compression) to fit a higher mode
-        // through a link like this, so the link rate alone can't tell whether
-        // the display is already at its best mode, and there is no wider link
-        // to select. Drop the "monitor can do more / change your resolution"
-        // verdict here: it is the wrong advice when the link is maxed and the
-        // picture may already be at full quality via compression. (Issue #246:
-        // a 4K240 monitor running 240Hz over HBR3 + DSC was wrongly flagged as
-        // under-driven.) Native DisplayPort only: the adapter path returned
-        // above, and DSC reasoning doesn't carry through an HDMI/DVI/VGA
-        // converter.
-        if lanes > 0, lanes == maxLanes, let perLane, perLane >= Self.highRatePerLaneGbps {
-            // Certainty upgrade (issue #246): if CoreGraphics confirms the
-            // display is actually at its top mode, replace the hedged "may be
-            // using compression" with a definitive "running at full quality".
-            // Strict and fail-closed: only when we have a matched live mode and
-            // it meets the panel's top mode by active-pixel throughput.
-            // Anything short, or no live mode at all, keeps today's verdict.
-            if let current = dp.currentMode, Self.meetsTopMode(current, top: top) {
-                self.facts = baseFacts
-                self.bottleneck = .fine
-                self.summary = String(localized: "Display running at full quality", bundle: _coreLocalizedBundle)
-                self.detail = String(localized: "macOS reports your \(name) at its top mode (\(current.label)), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality.", bundle: _coreLocalizedBundle) + note420
+        // The node does not offer the top mode, no converter: the cable
+        // attribution wording. Non-accusatory: a cable or adapter cap and an
+        // unselected mode cannot be told apart from a snapshot.
+        func belowMaxNotOffered(extra: String) -> (String, String) {
+            let summary = String(localized: "Monitor can do more than the link is carrying", bundle: _coreLocalizedBundle)
+            let detail: String
+            if cableUnlikelyByLink {
+                if dp.link.tunneled {
+                    detail = String(localized: "macOS does not offer your \(name)'s top mode (\(canDo)) on this link as it is now. The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display; selecting the higher mode would retrain the link and show whether it is offered.", bundle: _coreLocalizedBundle)
+                } else {
+                    detail = String(localized: "macOS does not offer your \(name)'s top mode (\(canDo)) on this link as it is now. The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. Selecting the higher mode in Display settings would retrain the link and show whether it is offered.", bundle: _coreLocalizedBundle)
+                }
+            } else {
+                detail = String(localized: "macOS does not offer your \(name)'s top mode (\(canDo)) on this link as it is now. If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it would retrain the link and show whether it is offered.", bundle: _coreLocalizedBundle)
+            }
+            return (summary, detail + extra + " " + linkLine + note420)
+        }
+
+        // The node offers the top mode: the selected mode or this Mac is what
+        // holds the picture below it, and the cable is cleared (ruling 37).
+        func belowMaxOffered(_ availability: TopModeAvailability, extra: String) -> (String, String) {
+            let summary = String(localized: "Monitor can do more than it is set to", bundle: _coreLocalizedBundle)
+            let detail: String
+            switch availability {
+            case .offeredUncompressed:
+                detail = String(localized: "macOS lists your \(name)'s top mode (\(canDo)) as available on this link, uncompressed. The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter.", bundle: _coreLocalizedBundle)
+            case .offeredWithDSC:
+                detail = String(localized: "macOS lists your \(name)'s top mode (\(canDo)) as available on this link with compression (DSC). The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter.", bundle: _coreLocalizedBundle)
+            case .offeredUnresolved, .notOffered, .notListed:
+                detail = String(localized: "macOS lists your \(name)'s top mode (\(canDo)) as available on this link. The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter.", bundle: _coreLocalizedBundle)
+            }
+            return (summary, detail + extra + " " + linkLine + note420)
+        }
+
+        // (b), (c), (d): macOS's statement decides. The driven timing's lists
+        // decide the live mode; the top mode's own node timing decides the
+        // top mode. Nothing here reads `needed`.
+        // `reading` and `availability` are both nil exactly when there is no
+        // statement, so binding them binds the statement's presence.
+        if let reading, let availability, let current = dp.currentMode {
+            switch reading {
+            case .dscOn:
+                // (c) macOS lists DSC for the live colour mode. Read, not
+                // inferred. An Apple display lists DSC on every timing whatever
+                // the link (45 of 46 corpus nodes), so on one the list says
+                // "DSC on" and never "the link forced it": no link blame.
+                self.bottleneck = .compressionActive
+                if isApple {
+                    self.summary = String(localized: "Display running compressed (DSC)", bundle: _coreLocalizedBundle)
+                    self.detail = String(localized: "macOS reports your \(name)'s current mode as \(current.label) with compression (DSC) on. Apple displays run compressed whenever the link supports it, so this says nothing about the link's capacity. The picture is reaching the display, so this is working as intended.", bundle: _coreLocalizedBundle) + note420
+                } else {
+                    self.summary = String(localized: "Display running compressed (DSC) to fit through the link", bundle: _coreLocalizedBundle)
+                    self.detail = String(localized: "macOS reports your \(name)'s current mode as \(current.label) and states that this link needs compression (DSC) to carry it. High-resolution displays use DSC to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended.", bundle: _coreLocalizedBundle) + note420
+                }
                 return
+            case .unresolved:
+                // (d) The list is a shape the corpus has never seen, the lists
+                // were unreadable, or the timing lists DSC-capable and
+                // non-capable modes together and nothing names the live one.
+                self.bottleneck = .unknownMode
+                self.summary = String(localized: "Display connected", bundle: _coreLocalizedBundle)
+                self.detail = String(localized: "macOS reports your \(name)'s current mode as \(current.label) but does not name the colour format in use, so whether the link is compressing it can't be read from here.", bundle: _coreLocalizedBundle)
+                    + " " + linkLine + note420
+                return
+            case .uncompressed:
+                // (b) No mode on the driven timing needs DSC on this link, or
+                // the live mode resolves to one that cannot use it: the link
+                // carries the live mode uncompressed. At the top mode that is
+                // the whole answer; below it, the node's own timing for the
+                // top mode says whether the top is offered (ruling 37).
+                let uncompressedNote = " " + String(localized: "macOS states the current mode, \(current.label), is running uncompressed.", bundle: _coreLocalizedBundle)
+                if Self.meetsTopMode(current, top: top) {
+                    self.bottleneck = .fine
+                    self.summary = String(localized: "Display running at full quality", bundle: _coreLocalizedBundle)
+                    self.detail = String(localized: "macOS reports your \(name) at its top mode (\(current.label)) and states it is running uncompressed. The link is carrying it in full; nothing is holding the picture back.", bundle: _coreLocalizedBundle) + note420
+                    return
+                }
+                switch availability {
+                case .offeredUncompressed, .offeredWithDSC, .offeredUnresolved:
+                    self.bottleneck = .belowMonitorMax
+                    let verdict = belowMaxOffered(availability, extra: uncompressedNote)
+                    self.summary = verdict.0
+                    self.detail = verdict.1
+                    return
+                case .notOffered:
+                    if let sinkType {
+                        self.bottleneck = .adapterLimit
+                        let verdict = adapterNotOffered(sinkType, extra: uncompressedNote)
+                        self.summary = verdict.0
+                        self.detail = verdict.1
+                        return
+                    }
+                    self.bottleneck = .belowMonitorMax
+                    let verdict = belowMaxNotOffered(extra: uncompressedNote)
+                    self.summary = verdict.0
+                    self.detail = verdict.1
+                    return
+                case .notListed:
+                    self.bottleneck = .unknownMode
+                    self.summary = String(localized: "Display connected", bundle: _coreLocalizedBundle)
+                    self.detail = String(localized: "macOS's list of modes for your \(name) has no entry matching its top mode (\(canDo)), so whether this link could carry it can't be read from here.", bundle: _coreLocalizedBundle)
+                        + uncompressedNote + " " + linkLine + note420
+                    return
+                }
             }
-            self.facts = baseFacts
-            self.bottleneck = .compressionPlausible
-            self.summary = String(localized: "Display may be using compression to reach its top mode", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "Your \(name) can run \(canDo), which uncompressed would need about \(needLabel). This link is already running every lane at a high rate, carrying about \(haveLabel) (\(laneLabel)). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is.", bundle: _coreLocalizedBundle) + note420
-            return
         }
 
-        // DSC provably active. The live on-screen mode needs more uncompressed
-        // bandwidth than the link is carrying, yet the picture is reaching the
-        // display. The only way that holds is compression on: this is the link
-        // doing what it's designed to do, not a fault. Stronger than the
-        // ceiling-based `.compressionPlausible` inference above because the
-        // evidence is grounded in CoreGraphics' live mode, not just the link
-        // being at HBR3. This catches the case Jimmy's group flagged: 4K120
-        // DSC-mode displays (DELL U2725QE etc.) over sub-ceiling links being
-        // wrongly read as a shortfall.
-        if let current = dp.currentMode,
-           Self.liveModeNeedsCompression(current, deliveredGbps: delivered) {
-            self.facts = baseFacts
-            self.bottleneck = .compressionActive
-            self.summary = String(localized: "Display running compressed (DSC) to fit through the link", bundle: _coreLocalizedBundle)
-            self.detail = String(localized: "macOS reports your \(name)'s current mode as \(current.label), which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended.", bundle: _coreLocalizedBundle) + note420
+        // (e) No statement: the display node did not match this display, or
+        // there is no live mode. A live mode CoreGraphics reports at the top
+        // mode is the picture on screen at the top mode, whatever the link
+        // rate says; hedged, because without the statement nothing can say
+        // whether DSC carries it. Anything else is unknown: the top mode's
+        // availability is the node's to state, and the node is not here.
+        if let current = dp.currentMode, Self.meetsTopMode(current, top: top) {
+            self.bottleneck = .fine
+            self.summary = String(localized: "Display running at full quality", bundle: _coreLocalizedBundle)
+            self.detail = String(localized: "macOS reports your \(name) at its top mode (\(current.label)), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality.", bundle: _coreLocalizedBundle) + note420
             return
         }
-
-        self.facts = baseFacts
-        self.bottleneck = .belowMonitorMax
-        self.summary = String(localized: "Monitor can do more than the link is carrying", bundle: _coreLocalizedBundle)
-        if cableUnlikely {
-            // The cable is exonerated on demonstrated evidence, so point the
-            // user at the likely real cause (the selected mode / the Mac)
-            // instead of leaving the cable under suspicion.
-            if dp.link.tunneled {
-                self.detail = String(localized: "Your \(name) can run \(canDo), which needs about \(needLabel), but the link is currently carrying about \(haveLabel) (\(laneLabel)). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display.", bundle: _coreLocalizedBundle) + dscCaveat + note420
-            } else {
-                self.detail = String(localized: "Your \(name) can run \(canDo), which needs about \(needLabel), but the link is currently carrying about \(haveLabel) (\(laneLabel)). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings.", bundle: _coreLocalizedBundle) + dscCaveat + note420
-            }
-        } else {
-            self.detail = String(localized: "Your \(name) can run \(canDo), which needs about \(needLabel), but the link is currently carrying about \(haveLabel) (\(laneLabel)). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate.", bundle: _coreLocalizedBundle) + dscCaveat + note420
-        }
+        self.bottleneck = .unknownMode
+        self.summary = String(localized: "Display connected", bundle: _coreLocalizedBundle)
+        self.detail = String(localized: "macOS's display node could not be matched to your \(name), so whether this link could carry its top mode (\(canDo)) can't be read from here. If the picture looks right, it most likely is.", bundle: _coreLocalizedBundle)
+            + " " + linkLine + note420
     }
 
     // MARK: - Helpers
@@ -560,30 +728,68 @@ extension DisplayDiagnostic {
         String(format: "%.1f Gbps", locale: .current, value)
     }
 
-    /// Whether the live on-screen mode demands more bandwidth than the link
-    /// can carry uncompressed: the empirical proof that DSC is active right
-    /// now. Bits per pixel come from `current.bitsPerComponent` when
-    /// CoreGraphics reported it (8bpc -> 24bpp standard, 10bpc -> 30bpp for
-    /// HDR / 10-bit colour), so a HDR mode that legitimately needs more raw
-    /// bandwidth is not misread as DSC. With nil bpc we fall back to the
-    /// 24bpp assumption, which keeps today's behaviour on backends that don't
-    /// plumb bpc.
+    /// The cross-check's "needed": the live mode's pixel clock (the driven
+    /// timing's, blanking included) times Apple's bits per pixel for its
+    /// encoding and depth, as the statement's candidate modes determine it.
+    /// nil without a statement, without a clock, or when the candidates do
+    /// not agree on one figure (RGB beside 4:2:2). Reported, never decisive.
+    static func liveNeededGbps(mode: DisplayCurrentMode?, statement: DisplayTimingStatement?) -> Double? {
+        guard let mode, let clock = mode.pixelClockHz, let statement,
+              let bitsPerPixel = statement.liveBitsPerPixel(for: mode) else { return nil }
+        return Double(clock) * bitsPerPixel / 1_000_000_000
+    }
+
+    /// The usable link as a range: the delivered figure (lanes x rate x line
+    /// coding) with forward error correction (x 0.9765625) at the bottom and
+    /// without it at the top. FEC state is not published.
+    static func usableGbpsRange(deliveredGbps: Double?) -> ClosedRange<Double>? {
+        guard let deliveredGbps, deliveredGbps > 0 else { return nil }
+        return (deliveredGbps * Self.fecFactor)...deliveredGbps
+    }
+
+    /// True when the arithmetic disagrees with the statement: uncompressed
+    /// but the live mode needs more than the link can carry even without FEC,
+    /// or DSC on but the live mode fits even with FEC. Reported beside the
+    /// statement; the statement is what decides.
     ///
-    /// The driven timing's own clock when macOS's display node reported it
-    /// (blanking included, so this is the wire figure) feeds the estimate;
-    /// otherwise the active-pixel estimate, which understates the wire and
-    /// keeps the check conservative. See `compressionActiveTolerance` for
-    /// what the 5% margin means in each case.
-    static func liveModeNeedsCompression(_ current: DisplayCurrentMode, deliveredGbps: Double) -> Bool {
-        guard current.refreshHz > 0 else { return false }
-        let bitsPerPixel = current.bitsPerComponent.map { $0 * 3 } ?? Self.assumedBitsPerPixel
-        // The driven timing's own clock when macOS's display node reported
-        // it (blanking included, so this is the wire figure); otherwise the
-        // active-pixel estimate, which understates the wire and keeps the
-        // check conservative.
-        let pixelRate = current.pixelClockHz.map(Double.init) ?? current.pixelThroughput
-        let neededGbps = pixelRate * Double(bitsPerPixel) / 1_000_000_000
-        return neededGbps > deliveredGbps * (1 + Self.compressionActiveTolerance)
+    /// On an Apple display reading DSC on, a live need under the floor is
+    /// the expected state and not a contradiction: Apple's displays list DSC
+    /// on every timing whatever the link (the Apple clause: the list is not
+    /// a link statement), so the arithmetic has nothing to disagree with
+    /// (PR #665 gate fix round 2, L2). The K14 line that prompted it was seen
+    /// on a Studio Display (M5, macOS 26.6, 4 lanes HBR3) in the live check
+    /// run at 65a6a5fa, a build whose NSScreen fallback narrowed the two-depth
+    /// timing to 8 bits; at HEAD that timing yields no cross-check figure at
+    /// all, so on every corpus Apple shape the exemption has nothing to fire
+    /// on and it decides only the single-depth Apple case. Unchanged
+    /// everywhere else: on a non-Apple display DSC on under the floor is
+    /// informative and stays.
+    static func statementContradiction(reading: DisplayTimingStatement.DSCReading?, liveNeededGbps: Double?, usable: ClosedRange<Double>?, isAppleDisplay: Bool) -> Bool {
+        guard let reading, let liveNeededGbps, let usable else { return false }
+        switch reading {
+        case .uncompressed: return liveNeededGbps > usable.upperBound
+        case .dscOn: return !isAppleDisplay && liveNeededGbps < usable.lowerBound
+        case .unresolved: return false
+        }
+    }
+
+    /// What the node's timing for the top mode says (ruling 37). A matched
+    /// timing with no non-virtual colour mode is a listing macOS validated no
+    /// format for: not an offer. The matched timing's own lists, read with no
+    /// live mode (every non-virtual mode a candidate), say whether the top
+    /// mode would run uncompressed or with DSC.
+    static func topModeAvailability(_ match: DisplayTimingStatement.TopModeMatch) -> TopModeAvailability {
+        switch match {
+        case .exact(let timing), .sameRefresh(let timing):
+            guard timing.lists.hasNonVirtualColourMode else { return .notOffered }
+            switch timing.lists.dscReading(for: nil) {
+            case .uncompressed: return .offeredUncompressed
+            case .dscOn: return .offeredWithDSC
+            case .unresolved: return .offeredUnresolved
+            }
+        case .pictureOnly: return .notOffered
+        case .notListed: return .notListed
+        }
     }
 
     // MARK: - Top mode
@@ -591,9 +797,9 @@ extension DisplayDiagnostic {
     /// True for an entry the panel supports only at YCbCr 4:2:0: a CTA VIC
     /// from the Y420VDB. A declared fact about the panel, never the
     /// comparison mode: a 4:2:0 mode carries half the data of the same mode
-    /// in full colour, so `assumedBitsPerPixel` is not its cost, and macOS's
-    /// own display node lists no 4:2:0 colour mode for any external panel in
-    /// the corpus.
+    /// in full colour, so 24 bits per pixel is not its cost, and the
+    /// DisplayPort link never carries 4:2:0 (a converter behind it can:
+    /// `DisplayTimingLists.downstream420`).
     static func isYCbCr420Only(_ mode: EDIDMode) -> Bool {
         if case .ctaVIC(_, _, _, true) = mode.source { return true }
         return false
@@ -682,36 +888,63 @@ extension DisplayDiagnostic {
     /// whose only usable entries are 4:2:0-only. Then there is nothing to
     /// judge against, and the diagnostic's init treats it like no EDID.
     ///
-    /// Four steps, in order, and no other branch:
-    /// 1. `panelTop` is the highest-clock entry in the declared list that the
-    ///    panel supports in full colour: `EDIDInfo.topMode`'s own chain over
-    ///    the same list minus the `ycbcr420Only` entries (`isYCbCr420Only`).
-    ///    `preferredMode` plays no part: it is the EDID's stated default, not
-    ///    its top, and may be absent.
+    /// Five steps, in order, and no other branch:
+    /// 1. The declared full-colour candidates, ranked by `EDIDInfo.topMode`'s
+    ///    own chain (pixel clock, area, refresh, list order) over the same
+    ///    list minus the `ycbcr420Only` entries (`isYCbCr420Only`).
+    ///    `preferredMode` plays no part in the ranking: it is the EDID's
+    ///    stated default, not its top, and may be absent.
+    /// 1b. With a statement (the display node matched, ruling 41): the top
+    ///    is the highest-ranked candidate that `nodeLists` vouches for, which
+    ///    is one the node lists at its refresh, or one the node lists only
+    ///    at other refreshes or nowhere at all when it is the panel's own
+    ///    native declaration (its picture is the EDID's preferred picture,
+    ///    or its source is the tiled composite or a DisplayID timing other
+    ///    than the four code-list types), or, listed at other refreshes, when
+    ///    the EDID names no preferred mode. Anything else the node does not
+    ///    list at its refresh is a scaler-accepted entry macOS has already
+    ///    declined (a 1600x1200 DMT on a 1080p panel, a 4K VIC on a 1440p or
+    ///    5120x1440 one) and is skipped, so an unlisted native picture reads
+    ///    as not listed rather than falling through to a compatibility mode;
+    ///    when no candidate qualifies the declared top stands and reads the
+    ///    same way, and without a statement this step does nothing.
     /// 2. No max mode from CoreGraphics, or one with no readable refresh:
-    ///    `panelTop`.
+    ///    that candidate.
     /// 3. The max mode matches a declared entry (`declaredMode(matching:in:)`):
-    ///    that entry when its pixel clock is at least `panelTop`'s, so a max
-    ///    mode that IS a declared entry is labelled from that entry; otherwise
-    ///    `panelTop`. A max mode may only raise the top, never lower it:
-    ///    CoreGraphics builds its mode list from what the trained link can
-    ///    carry (`planning/display-current-mode-coregraphics.md`), so a lower
-    ///    max mode describes the link, not the panel.
+    ///    that entry when its pixel clock is at least the candidate's, so a
+    ///    max mode that IS a declared entry is labelled from that entry;
+    ///    otherwise the candidate. A max mode may only raise the top, never
+    ///    lower it: CoreGraphics builds its mode list from what the trained
+    ///    link can carry (`planning/display-current-mode-coregraphics.md`),
+    ///    so a lower max mode describes the link, not the panel.
     /// 4. No declared entry matches: when the max mode's active-pixel rate
-    ///    sits above `panelTop`'s by more than `tolerance`, macOS is reporting
-    ///    a mode the EDID does not describe, returned as
-    ///    `.reportedByMacOSOnly` with no pixel clock; otherwise `panelTop`.
+    ///    sits above the candidate's by more than `tolerance`, macOS is
+    ///    reporting a mode the EDID does not describe, returned as
+    ///    `.reportedByMacOSOnly` with no pixel clock; otherwise the candidate.
     ///
     /// Nothing here derives a pixel clock: every clock returned is an
     /// `EDIDMode.pixelClockHz` read from the EDID, or nil. The 0xFD
     /// range-limits envelope is never consulted, on a continuous-frequency
     /// panel or any other: it is the range of signals the panel accepts, not
     /// a mode it has (issue #596).
-    static func resolveTopMode(maxMode: DisplayCurrentMode?, edid: EDIDInfo) -> TopMode? {
-        // 1. The declared full-colour top. Nil when no entry qualifies (see
+    static func resolveTopMode(maxMode: DisplayCurrentMode?, edid: EDIDInfo, statement: DisplayTimingStatement? = nil) -> TopMode? {
+        // 1. The declared full-colour candidates. Nil when none qualifies (see
         //    above). A 4:2:0-only entry is skipped here and in step 3 both:
         //    it is a fact about the panel, not a mode macOS drives.
-        guard let panelTop = Self.highestPriority(edid.modes.filter { !Self.isYCbCr420Only($0) }) else { return nil }
+        var candidates = edid.modes.filter { !Self.isYCbCr420Only($0) }
+        guard let declaredTop = Self.highestPriority(candidates) else { return nil }
+        // 1b. With the node's list, the highest-ranked candidate it lists.
+        var panelTop = declaredTop
+        if let statement {
+            let preferredPicture = edid.preferredMode.map { (width: $0.width, height: $0.height) }
+            while let best = Self.highestPriority(candidates) {
+                if Self.nodeLists(best, in: statement, preferredPicture: preferredPicture) {
+                    panelTop = best
+                    break
+                }
+                candidates.removeAll { $0 == best }
+            }
+        }
         // 2. Nothing from CoreGraphics to weigh against the list.
         guard let maxMode, maxMode.refreshHz > 0 else { return TopMode(declared: panelTop) }
         // 3. The max mode is a declared entry: label it from that entry, but
@@ -731,6 +964,89 @@ extension DisplayDiagnostic {
             )
         }
         return TopMode(declared: panelTop)
+    }
+
+    /// Ruling 41's predicate as implemented: whether the node's list vouches
+    /// for a declared candidate as a mode this panel can be driven at on this
+    /// Mac. Listed at its refresh (`exact`, `sameRefresh`): yes, whether or
+    /// not the listing carries a colour mode. Listed only at other refreshes:
+    /// yes when the candidate is the panel's own native declaration and the
+    /// link is limiting it, which is any of: its picture is the EDID's
+    /// preferred picture (a base-block-DTD-native panel), or its source is
+    /// the tiled composite (the Studio Display's 5K, derived from the tile
+    /// and the topology), or a DisplayID timing (Type I to X less the
+    /// code-list types, in a DisplayID block or embedded in CTA: how the Pro
+    /// Display XDR, the PA32QCV and every 5K, 6K and 5120x1440 panel declare
+    /// a native mode an EDID 1.4 base-block DTD cannot hold), or the EDID
+    /// names no preferred mode; no otherwise (a scaler-accepted DMT or VIC).
+    /// Listed nowhere at all: yes for those same native declarations (the
+    /// preferred picture, the tiled composite, a DisplayID timing), because a
+    /// scaler entry never carries those sources and an unlisted native
+    /// picture must not fall through to a compatibility mode reading "full
+    /// quality"; the diagnostic then reads the top as not listed (K26,
+    /// unknown). No for anything else, listed nowhere and not a native
+    /// declaration: a scaler-accepted entry. The four DisplayID code-list
+    /// types (Type IV, tag 0x06, and Type VIII, tag 0x23, DMT and enumerated
+    /// code lists; the 0x07 DMT and 0x08 VIC bitmaps), all decoded by the
+    /// same code-list decoder, are lists of codes the panel accepts, not
+    /// timings it declares, so they never count as native (0 corpus
+    /// candidates of any of the four; PR #665 gate fix round 4, item 1).
+    /// (PR #665 gate rerun, Claude F1: the preferred-picture clause alone
+    /// keyed on a lower compatibility DTD on 38 of 231 corpus nodes, so a
+    /// link-limited Studio Display read "not the cable" and a link-limited
+    /// PA32QCV read full quality at 30 Hz.) A "largest picture by area the
+    /// node lists" rule was tried and withdrawn: on every 32:9 panel a 4K
+    /// scaler VIC out-areas the 5120x1440 native picture, and it moved the
+    /// LS49AG95 (`m4_macos26.5.2_b`, driven at its native mode) to a
+    /// "not offered" 4K120 top.
+    ///
+    /// Ruling 41's recorded text says "exact or sameRefresh with a colour
+    /// mode". The implemented predicate deliberately counts a listing with no
+    /// colour mode as listed (a planner's deviation, recorded in the task
+    /// ledger and confirmed at the PR #665 gate, Claude F2): the resolver's
+    /// job is to skip entries macOS never lists at all (scaler-accepted DMTs
+    /// and VICs); a listing with no format validated is the node saying it
+    /// knows the mode and offers no format for it on this link, which reads
+    /// not offered downstream (`topModeAvailability`), the link's fact and not
+    /// the resolver's to hide by moving the top to a lower entry. Measured on
+    /// the corpus (plan, figures table, 2026-09-21): the coordinator's simpler
+    /// criterion, exact or same-refresh with colour modes only, made every
+    /// link-limited "not offered" verdict vanish (228 of 231 paired nodes at
+    /// the top), which is why the preferred-picture clause is here; 0 of 231
+    /// nodes list a declared top with no colour mode and no colour twin.
+    static func nodeLists(_ candidate: EDIDMode, in statement: DisplayTimingStatement, preferredPicture: (width: Int, height: Int)?) -> Bool {
+        switch statement.topModeMatch(width: candidate.width, height: candidate.height, refreshHz: candidate.refreshHz, pixelClockHz: candidate.pixelClockHz, interlaced: candidate.interlaced) {
+        case .exact, .sameRefresh:
+            return true
+        case .pictureOnly:
+            if Self.isNativeDeclaration(candidate) { return true }
+            guard let preferredPicture else { return true }
+            return preferredPicture.width == candidate.width && preferredPicture.height == candidate.height
+        case .notListed:
+            // A native declaration the node lists nowhere is still the top:
+            // the diagnostic reads it as not listed (K26) rather than judging
+            // a compatibility mode as full quality (fix round 4, item 2).
+            if Self.isNativeDeclaration(candidate) { return true }
+            guard let preferredPicture else { return false }
+            return preferredPicture.width == candidate.width && preferredPicture.height == candidate.height
+        }
+    }
+
+    /// Whether a declared entry is the panel's own statement of a native
+    /// mode rather than a code it accepts: the tiled composite, or a DisplayID
+    /// timing of any type but the four code-list types (see `nodeLists`).
+    static func isNativeDeclaration(_ mode: EDIDMode) -> Bool {
+        switch mode.source {
+        case .tiledComposite:
+            return true
+        case .displayID(_, let type, _, _):
+            switch type {
+            case .vesaDMTBitmap, .ctaVICBitmap, .typeIV, .typeVIII: return false
+            default: return true
+            }
+        default:
+            return false
+        }
     }
 
     /// The declared entry a CoreGraphics mode is: same width and height,
@@ -754,23 +1070,26 @@ extension DisplayDiagnostic {
         return best
     }
 
-    /// Whether the live mode is the top mode. An identity test between two
-    /// modes in one domain, active-pixel throughput on both sides, never the
-    /// EDID pixel clock, which carries blanking and runs 10-20% above
-    /// CoreGraphics' active-pixel figure at the very same mode. The tolerance
-    /// absorbs refresh rounding; this is not a bandwidth estimate. A top mode
-    /// with no readable refresh meets nothing.
+    /// Whether the live mode is the top mode: the same picture (width and
+    /// height), and the same refresh within `refreshMatchHz` (CoreGraphics
+    /// rounds to whole hertz) or at the CTA alternate rate (top / 1.001
+    /// within `DisplayTimingStatement.exactRefreshHz`, the node's own rule).
+    /// An identity test, not a throughput one: 1920x1080 at 240 Hz carries
+    /// the same active pixels per second as 3840x2160 at 60 Hz and is a
+    /// quarter of the picture (PR #665 gate, Codex 1). A top mode with no
+    /// readable refresh meets nothing.
     ///
     /// The driven timing's `pixelClockHz`, when present, is deliberately not
     /// compared here: 17 corpus panels driven at their top picture and
     /// refresh sit on a lower-clock declared timing of the same mode (the
     /// 533.25 MHz 4K60 DTD where the top entry is VIC 97 at 594 MHz), and a
     /// clock identity test would call them short of the top. Bandwidth
-    /// questions use the clock in `liveModeNeedsCompression`; this is an
-    /// identity question.
+    /// questions use the clock in `liveNeededGbps` (a receipt); this is an
+    /// identity question (ruling 36).
     static func meetsTopMode(_ current: DisplayCurrentMode, top: TopMode) -> Bool {
-        guard top.activePixelRate > 0 else { return false }
-        return current.pixelThroughput >= top.activePixelRate * (1 - Self.tolerance)
+        guard top.refreshHz > 0, current.width == top.width, current.height == top.height else { return false }
+        return abs(current.refreshHz - top.refreshHz) <= Self.refreshMatchHz
+            || abs(current.refreshHz - top.refreshHz / 1.001) <= DisplayTimingStatement.exactRefreshHz
     }
 
     // MARK: - Link-rate labelling (shared by every Pro UI surface)
@@ -834,5 +1153,88 @@ extension DisplayDiagnostic {
             if !token.isEmpty, !token.contains("(") { return String(token) }
         }
         return resolved
+    }
+}
+
+extension DisplayDiagnostic {
+    /// Localised receipt lines for macOS's statement and the arithmetic
+    /// beside it, shared by the CLI text output and the Pro Display screen so
+    /// both say the same words. Empty when the display node did not match (no
+    /// statement). Order: what macOS states about the live mode (K9), the
+    /// cross-check (K13, K14), the top-mode figure at 8-bit RGB (K28, the
+    /// receipt ruling 36 keeps; the Pro screen shows it as cells and passes
+    /// `includeTopModeFigure: false`), the node's answer for the top mode
+    /// (K29), the cable cleared by the statement (K35), and the converter's
+    /// unsafe rating (K15: ruling 1's fact, never a verdict; it names the
+    /// count of non-virtual modes rated unsafe over the non-virtual total,
+    /// the same resolution as `DisplayTimingLists.unsafeIDs`, not the modes
+    /// or their downstream format, which are in the JSON `drivenTiming`
+    /// block beside the raw lists, because which mode is live is not on the
+    /// node). No receipt line names IDs.
+    public func statementReceipts(includeTopModeFigure: Bool = true) -> [String] {
+        guard let reading = facts.dscReading else { return [] }
+        var lines: [String] = []
+        lines.append(String(localized: "macOS states: \(Self.readingLabel(reading))", bundle: _coreLocalizedBundle))
+        if let need = facts.liveNeededGbps, let usable = facts.usableGbpsRange {
+            lines.append(String(localized: "Live mode needs about \(Self.gbps(need)); the link's usable rate is \(Self.gbps(usable.lowerBound)) to \(Self.gbps(usable.upperBound)).", bundle: _coreLocalizedBundle))
+        }
+        if facts.statementContradiction {
+            lines.append(String(localized: "The bandwidth arithmetic disagrees with macOS's statement for this mode. The statement is what is shown.", bundle: _coreLocalizedBundle))
+        }
+        if includeTopModeFigure, let needed = facts.neededGbps, let delivered = facts.deliveredGbps {
+            lines.append(String(localized: "Top mode needs about \(Self.gbps(needed)) at 8-bit RGB; the link carries about \(Self.gbps(delivered)).", bundle: _coreLocalizedBundle))
+        }
+        if let availability = facts.topModeAvailability {
+            lines.append(String(localized: "Top mode on this link: \(Self.availabilityLabel(availability))", bundle: _coreLocalizedBundle))
+        }
+        if facts.statementOffersTopMode {
+            lines.append(String(localized: "The cable is not the limit: macOS lists the top mode on this link.", bundle: _coreLocalizedBundle))
+        }
+        // The converter's unsafe rating (Design 5): the count when the list
+        // read, K38 when it did not (ruling 42). On the Mac's own HDMI port
+        // the SoC's transport is the DP-to-HDMI stage (dump A1), so the same
+        // two lines name the port instead of an adapter (K39, K40; PR #665
+        // gate rerun, note 4 ruled). Never on native DisplayPort, and never
+        // a verdict.
+        if let statement = facts.drivenTiming {
+            if let sinkType = facts.sinkType {
+                if !statement.unsafeListComplete {
+                    lines.append(String(localized: "macOS's list of colour modes above the \(sinkType) adapter's TMDS rate limit could not be read for this timing.", bundle: _coreLocalizedBundle))
+                } else if !statement.unsafeIDs.isEmpty {
+                    let flagged = statement.unsafeIDs.count
+                    let total = statement.nonVirtualIDs.count
+                    lines.append(String(localized: "macOS rates \(flagged) of \(total) colour modes on this timing as above the \(sinkType) adapter's TMDS rate limit.", bundle: _coreLocalizedBundle))
+                }
+            } else if facts.isNativeHDMIPort {
+                if !statement.unsafeListComplete {
+                    lines.append(String(localized: "macOS's list of colour modes above the HDMI port's TMDS rate limit could not be read for this timing.", bundle: _coreLocalizedBundle))
+                } else if !statement.unsafeIDs.isEmpty {
+                    let flagged = statement.unsafeIDs.count
+                    let total = statement.nonVirtualIDs.count
+                    lines.append(String(localized: "macOS rates \(flagged) of \(total) colour modes on this timing as above the HDMI port's TMDS rate limit.", bundle: _coreLocalizedBundle))
+                }
+            }
+        }
+        return lines
+    }
+
+    /// The statement's reading as a receipt value.
+    static func readingLabel(_ reading: DisplayTimingStatement.DSCReading) -> String {
+        switch reading {
+        case .dscOn: return String(localized: "DSC on", bundle: _coreLocalizedBundle)
+        case .uncompressed: return String(localized: "Uncompressed", bundle: _coreLocalizedBundle)
+        case .unresolved: return String(localized: "Not named", bundle: _coreLocalizedBundle)
+        }
+    }
+
+    /// The node's answer for the top mode as a receipt value.
+    static func availabilityLabel(_ availability: TopModeAvailability) -> String {
+        switch availability {
+        case .offeredUncompressed: return String(localized: "available, uncompressed", bundle: _coreLocalizedBundle)
+        case .offeredWithDSC: return String(localized: "available, with DSC", bundle: _coreLocalizedBundle)
+        case .offeredUnresolved: return String(localized: "available", bundle: _coreLocalizedBundle)
+        case .notOffered: return String(localized: "not offered", bundle: _coreLocalizedBundle)
+        case .notListed: return String(localized: "no matching entry", bundle: _coreLocalizedBundle)
+        }
     }
 }

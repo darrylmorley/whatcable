@@ -11,7 +11,7 @@ import Foundation
 /// real EDIDs under-declare it, hiding a further real block past what byte 126 admits
 /// (`EDIDInfo.declaredExtensionCount` still records the byte itself, as a fact, never as a
 /// limit). How often, and whether any over-declares, is measured in
-/// `research/findings/edid-mode-sources.md`; walking only what is actually present in the
+/// `research/displays/edid-mode-sources.md`; walking only what is actually present in the
 /// buffer is correct either way.
 public enum EDIDBlockWalker {
     public struct Result {
@@ -112,7 +112,7 @@ public enum EDIDBlockWalker {
         // real corpus shape. Some panels that declare a tiled topology declare their tile's own
         // mode only in a DisplayID block, at a resolution the base block's preferred mode never
         // matches, and declare the full composite resolution nowhere at all (how many, and which,
-        // is in `research/findings/edid-mode-sources.md`); under the old rule those panels' real
+        // is in `research/displays/edid-mode-sources.md`); under the old rule those panels' real
         // top mode went unexplained, which is exactly the "mystery" the topology block exists to
         // remove. The composite is now built from the highest-pixel-clock declared,
         // non-interlaced entry, from any source, whose own resolution equals the tile's - not

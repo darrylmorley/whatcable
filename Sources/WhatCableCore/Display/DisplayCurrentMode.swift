@@ -27,13 +27,16 @@ public struct DisplayCurrentMode: Codable, Sendable, Equatable, Hashable {
     /// historically returned 0 for some modes, which the backend treats as
     /// "no usable current mode" and declines to attach.
     public let refreshHz: Double
-    /// Bits per channel (R, G, B) macOS is driving the framebuffer at, when
-    /// CoreGraphics can tell us. 8 for SDR / standard colour; 10 for HDR or
-    /// 10-bit colour modes. Optional: 0 / unreadable values from CoreGraphics
-    /// become nil and the diagnostic falls back to the standard 24 bits-per-
-    /// pixel assumption. Multiply by 3 (RGB) to get bits per pixel; the
-    /// diagnostic uses this to tell DSC apart from a 10bpc HDR mode that
-    /// simply needs more raw bandwidth.
+    /// Bits per channel (R, G, B). On a CoreGraphics-only mode (no display
+    /// node matched) it is NSScreen's framebuffer depth when readable, 8 for
+    /// SDR / standard colour, 10 for HDR or 10-bit colour, nil for 0 or an
+    /// unreadable value. Once macOS's display node matches, it is the driven
+    /// timing's single depth, or nil when the timing lists several: the node
+    /// does not name the live depth, and NSScreen's value never stands in
+    /// (PR #665 gate, Claude F1). Nothing derives bits per pixel from it
+    /// alone: the cross-check costs the live mode with Apple's table at the
+    /// statement's encoding (`DisplayTimingLists.liveBitsPerPixel`), and DSC
+    /// is read from the node, never inferred.
     public let bitsPerComponent: Int?
     /// The driven timing's pixel clock in Hz, blanking included: the figure
     /// the link actually carries. Read from macOS's own display node
@@ -42,13 +45,28 @@ public struct DisplayCurrentMode: Codable, Sendable, Equatable, Hashable {
     /// active pixels and refresh only. Never derived: `pixelThroughput` is
     /// not multiplied up to fill it.
     public let pixelClockHz: Int?
+    /// The colour encoding on the DisplayPort link for the driven timing, when
+    /// macOS's display node lists exactly one encoding across the timing's
+    /// non-virtual colour modes. nil for a CoreGraphics-only mode, and when
+    /// the timing offers several (RGB beside YCbCr 4:4:4 on 322 of 401 paired
+    /// corpus panels): no key names the live one (dump Finding 3), so nothing
+    /// here guesses.
+    public let pixelEncoding: DisplayPixelEncoding?
+    /// The converter's output format when every non-virtual colour mode of the
+    /// driven timing carries the same `DownstreamFormat`; nil otherwise, and
+    /// for a CoreGraphics-only mode. The DisplayPort link never carries 4:2:0;
+    /// a converter behind it can (section 1).
+    public let downstreamFormat: DisplayDownstreamFormat?
 
-    public init(width: Int, height: Int, refreshHz: Double, bitsPerComponent: Int? = nil, pixelClockHz: Int? = nil) {
+    public init(width: Int, height: Int, refreshHz: Double, bitsPerComponent: Int? = nil, pixelClockHz: Int? = nil,
+                pixelEncoding: DisplayPixelEncoding? = nil, downstreamFormat: DisplayDownstreamFormat? = nil) {
         self.width = width
         self.height = height
         self.refreshHz = refreshHz
         self.bitsPerComponent = bitsPerComponent
         self.pixelClockHz = pixelClockHz
+        self.pixelEncoding = pixelEncoding
+        self.downstreamFormat = downstreamFormat
     }
 
     /// Active-pixel throughput (pixels per second): width x height x refresh.

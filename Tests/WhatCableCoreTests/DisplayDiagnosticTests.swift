@@ -33,10 +33,16 @@ struct DisplayDiagnosticTests {
         dfpType: String? = nil,
         branchDeviceId: String? = nil,
         edidData: Data? = nil,
+        manufacturerName: String? = nil,
         currentMode: DisplayCurrentMode? = nil,
-        maxMode: DisplayCurrentMode? = nil
+        maxMode: DisplayCurrentMode? = nil,
+        drivenTiming: DisplayTimingStatement? = nil
     ) -> IOPortTransportStateDisplayPort {
-        IOPortTransportStateDisplayPort(
+        let monitor: MonitorInfo? = (edidData == nil && manufacturerName == nil) ? nil : MonitorInfo(
+            manufacturerName: manufacturerName, productName: nil, productId: nil,
+            yearOfManufacture: nil, edid: edidData
+        )
+        return IOPortTransportStateDisplayPort(
             link: DisplayPortLink(
                 active: active,
                 laneCount: lanes,
@@ -46,16 +52,12 @@ struct DisplayDiagnosticTests {
                 tunneled: tunneled,
                 hpdState: 1
             ),
-            monitor: edidData.map {
-                MonitorInfo(
-                    manufacturerName: nil, productName: nil, productId: nil,
-                    yearOfManufacture: nil, edid: $0
-                )
-            },
+            monitor: monitor,
             dfpType: dfpType,
             branchDeviceId: branchDeviceId,
             currentMode: currentMode,
-            maxMode: maxMode
+            maxMode: maxMode,
+            drivenTiming: drivenTiming
         )
     }
 
@@ -73,6 +75,95 @@ struct DisplayDiagnosticTests {
         )
     }
 
+    // MARK: - Statement fixtures (issue #664), corpus timings transcribed by hand
+
+    private static func colour(_ id: Int, _ encoding: DisplayPixelEncoding, _ depth: Int, dsc: Int, virtual: Bool = false, downstream: DisplayDownstreamFormat? = nil) -> DisplayColourMode {
+        DisplayColourMode(id: id, encoding: encoding, depth: depth, supportsDSC: dsc, isVirtual: virtual, downstreamFormat: downstream)
+    }
+
+    /// One 8-bit RGB mode, not DSC-capable, DSC list empty: "uncompressed" lists.
+    private static func plainLists(id: Int = 1) -> DisplayTimingLists {
+        DisplayTimingLists(colourModes: [colour(id, .rgb444, 8, dsc: 0)], dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1ffd, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+    }
+
+    /// One 8-bit RGB mode, DSC-capable and listed: "with DSC" lists.
+    private static func dscLists(id: Int = 1) -> DisplayTimingLists {
+        DisplayTimingLists(colourModes: [colour(id, .rgb444, 8, dsc: 1)], dscRequiredList: [id], unsafeList: [], validPixelEncodings: 0x1ffd, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+    }
+
+    /// A timing the node lists with no colour mode validated: a listing, not an offer.
+    private static let emptyLists = DisplayTimingLists(colourModes: [], dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1ffd, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+
+    /// One node timing: picture, refresh, clock and its lists.
+    private static func listing(_ w: Int, _ h: Int, _ hz: Double, _ clock: Int?, _ lists: DisplayTimingLists = plainLists(), id: Int = 100) -> DisplayNodeTiming {
+        DisplayNodeTiming(id: id, width: w, height: h, refreshHz: hz, pixelClockHz: clock, lists: lists)
+    }
+
+    /// A statement whose driven timing is plain 8-bit RGB uncompressed and whose node lists `timings`.
+    private static func offering(_ timings: [DisplayNodeTiming], driven: DisplayTimingLists = plainLists()) -> DisplayTimingStatement {
+        DisplayTimingStatement(driven: driven, allTimings: timings)
+    }
+
+    /// The G34w-10 at 60 Hz, as the node lists it (319.89 MHz DTD) and as CoreGraphics reports it (8-bit RGB).
+    private static let g34wAt60 = listing(3440, 1440, 60.0, 319_890_000, id: 11)
+    /// The G34w-10's 100 Hz top (600 MHz), uncompressed, and the same with DSC listed.
+    /// 600 MHz over 4167 x 1440 totals is 99.992 Hz; the listing carries that figure so the exact step (0.001 Hz) matches it.
+    private static let g34wAt100 = listing(3440, 1440, 99.992, 600_000_000, id: 12)
+    private static let g34wAt100DSC = listing(3440, 1440, 99.992, 600_000_000, dscLists(id: 2), id: 12)
+    private static let liveG34w60 = DisplayCurrentMode(width: 3440, height: 1440, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 319_890_000, pixelEncoding: .rgb444)
+    private static let liveG34w100 = DisplayCurrentMode(width: 3440, height: 1440, refreshHz: 100, bitsPerComponent: 8, pixelClockHz: 600_000_000, pixelEncoding: .rgb444)
+
+    /// m3_macos26.6.2, 27C1U-L, timing 45: no mode DSC-capable, DSC list empty, all six unsafe (behind a DP 1.2 HDMI converter).
+    private static let lists27C1UL = DisplayTimingLists(
+        colourModes: [colour(90, .rgb444, 8, dsc: 0), colour(89, .rgb444, 8, dsc: 0), colour(91, .ycbcr444, 8, dsc: 0), colour(92, .ycbcr444, 8, dsc: 0),
+                      colour(10, .ycbcr422, 12, dsc: 0, virtual: true), colour(11, .ycbcr422DPTunneling, 12, dsc: 0, virtual: true)],
+        dscRequiredList: [], unsafeList: [90, 89, 91, 92, 10, 11], validPixelEncodings: 0x1b4d, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+    private static let statement27C1UL = DisplayTimingStatement(driven: lists27C1UL, allTimings: [listing(3840, 2160, 60.0, 527_850_000, lists27C1UL, id: 45)])
+    private static let live27C1UL = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 527_850_000)
+
+    /// m5_macos26.6.1_e, Studio Display, timing 43: 5120x2880 at 60 Hz, 936 MHz; three RGB modes, all DSC-capable, all listed.
+    private static let listsStudio = DisplayTimingLists(
+        colourModes: [colour(1, .rgb444, 8, dsc: 1, virtual: true), colour(46, .rgb444, 8, dsc: 1), colour(48, .rgb444, 10, dsc: 1)],
+        dscRequiredList: [1, 46, 48], unsafeList: [], validPixelEncodings: 0x1b4d, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+    private static let statementStudio = DisplayTimingStatement(driven: listsStudio, allTimings: [listing(5120, 2880, 60.0, 936_000_000, listsStudio, id: 43)])
+    private static let liveStudio = DisplayCurrentMode(width: 5120, height: 2880, refreshHz: 60, bitsPerComponent: 10, pixelClockHz: 936_000_000, pixelEncoding: .rgb444)
+
+    /// m4pro_macos26.6.1_b, DELL U3225QE, timing 76, the twelve printed modes: 4K120, 1188 MHz, RGB and 4:4:4 at 8 and 10 bit, all DSC-capable and listed.
+    private static let listsU3225QE = DisplayTimingLists(
+        colourModes: [colour(2, .rgb444, 8, dsc: 1, virtual: true), colour(122, .rgb444, 8, dsc: 1), colour(121, .rgb444, 8, dsc: 1), colour(1, .rgb444, 8, dsc: 1, virtual: true),
+                      colour(108, .rgb444, 8, dsc: 1), colour(109, .rgb444, 8, dsc: 1), colour(112, .ycbcr444, 8, dsc: 1), colour(113, .ycbcr444, 8, dsc: 1),
+                      colour(116, .rgb444, 10, dsc: 1), colour(115, .rgb444, 10, dsc: 1), colour(114, .rgb444, 10, dsc: 1), colour(117, .rgb444, 10, dsc: 1)],
+        dscRequiredList: [2, 122, 121, 1, 108, 109, 112, 113, 116, 115, 114, 117], unsafeList: [], validPixelEncodings: 0x1b4d, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+    private static let statementU3225QE = DisplayTimingStatement(driven: listsU3225QE, allTimings: [listing(3840, 2160, 120.0, 1_188_000_000, listsU3225QE, id: 76)])
+    private static let liveU3225QE = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120, pixelClockHz: 1_188_000_000)
+
+    /// m1max_macos26.5.2_p, timing 64 (4K144, 1328.25 MHz): RGB and 4:4:4 DSC-capable and listed, 4:2:2 neither.
+    private static let listsMixed = DisplayTimingLists(
+        colourModes: [colour(68, .rgb444, 8, dsc: 1), colour(1, .rgb444, 8, dsc: 1, virtual: true), colour(71, .ycbcr422, 8, dsc: 0), colour(70, .ycbcr422, 8, dsc: 0),
+                      colour(72, .ycbcr444, 8, dsc: 1), colour(73, .ycbcr444, 8, dsc: 1),
+                      colour(75, .rgb444, 10, dsc: 1), colour(74, .rgb444, 10, dsc: 1), colour(81, .rgb444, 10, dsc: 1), colour(82, .rgb444, 10, dsc: 1)],
+        dscRequiredList: [68, 1, 72, 73, 75, 74, 81, 82], unsafeList: [], validPixelEncodings: 0x1b4d, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+    private static let statementMixed = DisplayTimingStatement(driven: listsMixed, allTimings: [listing(3840, 2160, 143.9993, 1_328_249_948, listsMixed, id: 64)])
+    private static let liveMixed = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 143.999, pixelClockHz: 1_328_249_948)
+
+    /// m2pro_macos26.6.1, DELL S2721QS behind cHDMIb, timing 57: 4K60 at 594 MHz; three 4:4:4 modes carry a 4:2:0 downstream format; the plain RGB and 4:4:4 modes are unsafe.
+    private static let listsS2721QS = DisplayTimingLists(
+        colourModes: [colour(77, .rgb444, 8, dsc: 0), colour(76, .rgb444, 8, dsc: 0), colour(78, .ycbcr444, 8, dsc: 0), colour(79, .ycbcr444, 8, dsc: 0),
+                      colour(5, .ycbcr444, 8, dsc: 0, virtual: true, downstream: DisplayDownstreamFormat(encoding: .ycbcr420, depth: 8)),
+                      colour(87, .ycbcr444, 8, dsc: 0, downstream: DisplayDownstreamFormat(encoding: .ycbcr420, depth: 8)),
+                      colour(85, .ycbcr444, 8, dsc: 0, downstream: DisplayDownstreamFormat(encoding: .ycbcr420, depth: 8)),
+                      colour(10, .ycbcr422, 12, dsc: 0, virtual: true), colour(11, .ycbcr422DPTunneling, 12, dsc: 0, virtual: true)],
+        dscRequiredList: [], unsafeList: [77, 76, 78, 79, 10, 11], validPixelEncodings: 0x1b4f, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+    private static let statementS2721QS = DisplayTimingStatement(driven: listsS2721QS, allTimings: [listing(3840, 2160, 60.0, 594_000_000, listsS2721QS, id: 57)])
+    private static let liveS2721QS = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 594_000_000)
+
+    /// A Studio Display EDID with its real 5120x2880 top (the tiled composite the parser reads, 964.8 MHz), so `meetsTopMode` has the true top to meet and the node's 936 MHz timing matches it at the same refresh.
+    private let studio5K = EDIDInfo.fixture(
+        name: "StudioDisplay",
+        version: (1, 4),
+        preferred: EDIDInfo.mode(5120, 2880, hTotal: 5360, vTotal: 3000, pixelClockHz: 964_800_000)
+    )
+
     // MARK: - Widget display path
 
     @Test("Widget path: dp current mode surfaces as a short label")
@@ -87,21 +178,33 @@ struct DisplayDiagnosticTests {
 
     // MARK: - Core verdicts
 
-    @Test("4-lane HBR2 carries the G34w-10's 100Hz mode: fine")
-    func fourLaneFits() throws {
-        // delivered = 4 x 5.4 x 0.8 = 17.28 Gbps usable >= 14.4 needed.
-        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4), edid: g34w))
-        #expect(diag.bottleneck == .fine)
-        #expect(diag.isWarning == false)
+    @Test("4-lane HBR2, the node lists the G34w-10's 100Hz top: belowMonitorMax, the statement clears the cable")
+    func fourLaneOffersTheTopMode() throws {
+        // Driven at 60 Hz; the node lists the 100 Hz top uncompressed, so the
+        // selected mode or this Mac is what holds the picture below it.
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60, Self.g34wAt100])), edid: g34w))
+        #expect(diag.bottleneck == .belowMonitorMax)
+        #expect(diag.isWarning == true)
+        #expect(diag.summary == "Monitor can do more than it is set to")
+        #expect(diag.detail.contains("as available on this link, uncompressed"), "\(diag.detail)")
+        #expect(diag.detail.contains("is running uncompressed."), "\(diag.detail)")
+        #expect(diag.cableAssessment == .unlikelyTheCable, "the statement's reason")
+        #expect(diag.facts.statementOffersTopMode == true)
+        #expect(diag.facts.topModeAvailability == .offeredUncompressed)
+        #expect(diag.facts.topModeMatch == .exact)
+        #expect(diag.facts.topModeTiming?.id == 12)
         #expect(diag.facts.deliveredGbps.map { $0 > 17 } == true)
     }
 
-    @Test("2-lane HBR2 falls short of the 100Hz mode: belowMonitorMax")
-    func twoLaneShortfall() throws {
-        // delivered = 2 x 5.4 x 0.8 = 8.64 Gbps usable < 14.4 needed.
-        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2), edid: g34w))
+    @Test("2-lane HBR2, the node lists the picture at 60Hz only: belowMonitorMax, top not offered")
+    func twoLaneTopModeNotOffered() throws {
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w))
         #expect(diag.bottleneck == .belowMonitorMax)
         #expect(diag.isWarning == true)
+        #expect(diag.summary == "Monitor can do more than the link is carrying")
+        #expect(diag.detail.contains("macOS does not offer your LEN G34w-10's top mode (up to 100Hz) on this link as it is now."), "\(diag.detail)")
+        #expect(diag.facts.topModeAvailability == .notOffered)
+        #expect(diag.facts.topModeMatch == .pictureOnly)
         #expect(diag.facts.lanes == 2)
         #expect(diag.facts.maxLanes == 4)
         // 2 of 4 lanes, not tunneled: we can't exonerate the cable.
@@ -116,7 +219,7 @@ struct DisplayDiagnosticTests {
     func tunneledExonerates() throws {
         // DP tunneled over TB/USB4: the cable carries far more than DP needs.
         let diag = try #require(
-            DisplayDiagnostic(dp: makeDP(lanes: 2, tunneled: true), edid: g34w)
+            DisplayDiagnostic(dp: makeDP(lanes: 2, tunneled: true, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w)
         )
         #expect(diag.bottleneck == .belowMonitorMax)
         #expect(diag.cableAssessment == .unlikelyTheCable)
@@ -126,9 +229,9 @@ struct DisplayDiagnosticTests {
 
     @Test("All host lanes in use on a passive cable exonerates it")
     func allLanesExonerates() throws {
-        // 4 of 4 lanes but a low rate (RBR) leaves the 100Hz mode short.
-        // The cable carries every lane, so it isn't lane-limiting.
-        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "1.62 Gbps (RBR)")
+        // 4 of 4 lanes but a low rate (RBR), and the node lists the picture
+        // at 60 Hz only. The cable carries every lane, so it isn't lane-limiting.
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "1.62 Gbps (RBR)", currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: g34w, cable: cable(active: false)))
         #expect(diag.bottleneck == .belowMonitorMax)
         #expect(diag.cableAssessment == .unlikelyTheCable)
@@ -139,7 +242,7 @@ struct DisplayDiagnosticTests {
     func activeCableNotExonerated() throws {
         // Same all-lanes shortfall, but the cable is active. Active cables can
         // misreport, so the lane signal alone must not exonerate them.
-        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "1.62 Gbps (RBR)")
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "1.62 Gbps (RBR)", currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: g34w, cable: cable(active: true)))
         #expect(diag.bottleneck == .belowMonitorMax)
         #expect(diag.cableAssessment == .inconclusive)
@@ -152,6 +255,7 @@ struct DisplayDiagnosticTests {
         // the link), so the lane signal alone must not exonerate it.
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "1.62 Gbps (RBR)")
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: g34w, cable: nil))
+        #expect(diag.bottleneck == .unknownMode, "no statement, live mode absent: nothing to judge the top mode with")
         #expect(diag.cableAssessment == .inconclusive)
     }
 
@@ -164,22 +268,30 @@ struct DisplayDiagnosticTests {
         #expect(diag.cableAssessment == .unlikelyTheCable)
     }
 
-    @Test("Shortfall behind an HDMI adapter: adapterLimit, not cable blame")
+    @Test("Top mode not offered behind an HDMI adapter: adapterLimit, not cable blame")
     func adapterShortfall() throws {
         let diag = try #require(
-            DisplayDiagnostic(dp: makeDP(lanes: 2, dfpType: "HDMI"), edid: g34w)
+            DisplayDiagnostic(dp: makeDP(lanes: 2, dfpType: "HDMI", currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w)
         )
         #expect(diag.bottleneck == .adapterLimit)
         #expect(diag.facts.sinkType == "HDMI")
         #expect(diag.summary.contains("HDMI"))
     }
 
-    @Test("An HDMI adapter that still fits is fine, no adapter blame")
-    func adapterButFits() throws {
-        let diag = try #require(
-            DisplayDiagnostic(dp: makeDP(lanes: 4, dfpType: "HDMI"), edid: g34w)
+    @Test("An HDMI adapter through which the node offers the top mode is not blamed")
+    func adapterWithTheTopModeOfferedIsNotBlamed() throws {
+        // Offered: the adapter is not the limit, so the verdict names the
+        // selected mode rather than the adapter.
+        let below = try #require(
+            DisplayDiagnostic(dp: makeDP(lanes: 4, dfpType: "HDMI", currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60, Self.g34wAt100])), edid: g34w)
         )
-        #expect(diag.bottleneck == .fine)
+        #expect(below.bottleneck == .belowMonitorMax)
+        #expect(below.facts.sinkType == "HDMI")
+        // And at the top mode it is fine.
+        let atTop = try #require(
+            DisplayDiagnostic(dp: makeDP(lanes: 4, dfpType: "HDMI", currentMode: Self.liveG34w100, drivenTiming: Self.offering([Self.g34wAt60, Self.g34wAt100])), edid: g34w)
+        )
+        #expect(atTop.bottleneck == .fine)
     }
 
     @Test("Live link with no readable EDID: unknownMode, blames nothing")
@@ -214,7 +326,8 @@ struct DisplayDiagnosticTests {
         let edidData = Data(EDIDInfoTests.g34wBaseBlock
             + EDIDInfoTests.hexBytes(EDIDInfoTests.g34wExtensionHex))
         let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, edidData: edidData)))
-        #expect(diag.bottleneck == .fine)
+        // The verdict is unknown without the node; this test is about the EDID parse.
+        #expect(diag.bottleneck == .unknownMode)
         #expect(diag.facts.monitorName == "LEN G34w-10")
         // 100 Hz now comes from the real 3440x1440@100 detailed timing.
         #expect(diag.facts.maxRefreshHz == 100)
@@ -244,7 +357,7 @@ struct DisplayDiagnosticTests {
     @Test("Names the adapter's reported DisplayPort version in the verdict")
     func adapterNamesBranchDevice() throws {
         // The real G34w case: HDMI adapter reporting "Dp1.2", 2 of 4 lanes.
-        let dp = makeDP(lanes: 2, dfpType: "HDMI", branchDeviceId: "Dp1.2")
+        let dp = makeDP(lanes: 2, dfpType: "HDMI", branchDeviceId: "Dp1.2", currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: g34w))
         #expect(diag.bottleneck == .adapterLimit)
         #expect(diag.facts.branchDevice == "DisplayPort 1.2")
@@ -253,7 +366,7 @@ struct DisplayDiagnosticTests {
 
     @Test("Adapter with no branch device keeps the plain wording")
     func adapterNoBranchDevice() throws {
-        let dp = makeDP(lanes: 2, dfpType: "HDMI", branchDeviceId: nil)
+        let dp = makeDP(lanes: 2, dfpType: "HDMI", branchDeviceId: nil, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: g34w))
         #expect(diag.bottleneck == .adapterLimit)
         #expect(diag.facts.branchDevice == nil)
@@ -282,22 +395,22 @@ struct DisplayDiagnosticTests {
 
     // MARK: - Live sample: LG UltraFine 4K over a tunnelled DP link
 
-    @Test("Live LG UltraFine 4K on tunnelled 4-lane HBR2: fine, cable exonerated")
+    @Test("Live LG UltraFine 4K on tunnelled 4-lane HBR2: probe 33 alone reads unknown, cable exonerated")
     func liveLGUltraFineTunnelled() throws {
         // Real capture (M3 Max, Test Kit probe 33, 2026-05-30): a native-DP LG
         // UltraFine 4K reached over a Thunderbolt/USB4 tunnel at 4 lanes HBR2.
-        // End to end from the real EDID bytes: 600 MHz x 24bpp = 14.4 Gbps
-        // needed, 4 x 5.4 x 0.8 = 17.3 delivered, so the link carries the top
-        // mode. The first live tunnelled sample, so it also exercises the
-        // tunnelled cable-exoneration path that only synthetic tests hit before.
+        // Probe 33 alone carries no display-node statement, so the top mode's
+        // availability cannot be read (issue #664); the tunnel still exercises
+        // the cable-exoneration path that only synthetic tests hit before.
         let edid = Data(EDIDInfoTests.hexBytes(EDIDInfoTests.lgUltraFineHex))
         let diag = try #require(
             DisplayDiagnostic(dp: makeDP(lanes: 4, tunneled: true, edidData: edid))
         )
-        #expect(diag.bottleneck == .fine)
+        #expect(diag.bottleneck == .unknownMode)
         #expect(diag.cableAssessment == .unlikelyTheCable)
         #expect(diag.facts.monitorName == "LG UltraFine")
         #expect(diag.facts.lanes == 4)
+        #expect(diag.detail.contains("could not be matched"))
     }
 
     // MARK: - DSC / compression at the DisplayPort ceiling (issue #246)
@@ -313,25 +426,26 @@ struct DisplayDiagnosticTests {
             maxPixelClockHz: 2_340_000_000, timingSupport: .rangeLimitsOnly)
     )
 
-    @Test("4K240 at the DP ceiling (4-lane HBR3) reads as compression, not a warning")
-    func ceilingCompressionPlausible() throws {
+    @Test("4K240 at the DP ceiling (4-lane HBR3) without a statement reads unknown, not a warning")
+    func ceilingWithoutStatementIsUnknown() throws {
         // 56.16 Gbps uncompressed needed, 4 x 8.1 x 0.8 = 25.92 delivered. The
-        // link is at every lane and HBR3, so the gap is most likely covered by
-        // DSC, not a link the user can widen. (Issue #246.)
+        // figure decides nothing (issue #664): without the display node the
+        // top mode's availability cannot be read, and the verdict says so.
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fo32))
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
         #expect(diag.isWarning == false)
+        #expect(diag.summary == "Display connected")
+        #expect(diag.detail.contains("could not be matched to your AORUS FO32U2P"), "\(diag.detail)")
         // No "monitor can do more" headline, no "change your resolution" advice.
         #expect(!diag.summary.lowercased().contains("can do more"))
-        #expect(diag.detail.lowercased().contains("compression"))
     }
 
-    @Test("At the ceiling, even a mode DSC can't fully cover stays compressionPlausible")
+    @Test("At the ceiling, even a mode DSC can't fully cover reads unknown without a statement")
     func ceilingTriggersRegardlessOfDSCHeadroom() throws {
-        // ~100 Gbps uncompressed need over 25.92 delivered is more than a 3:1
-        // DSC ratio could carry, but the trigger is the link being at the
-        // ceiling, not DSC feasibility: there is still no wider link to select.
+        // ~100 Gbps uncompressed need over 25.92 delivered: the figure is a
+        // receipt and nothing branches on it, so this is unknown like any
+        // other no-statement shortfall.
         let huge = EDIDInfo.fixture(
             name: "8K panel",
             version: (1, 4),
@@ -342,39 +456,39 @@ struct DisplayDiagnosticTests {
         )
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: huge))
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
     }
 
-    @Test("HBR3 but not all lanes stays belowMonitorMax (ceiling needs every lane)")
+    @Test("HBR3 but not all lanes, the node lists the picture at 60Hz only: belowMonitorMax")
     func hbr3PartialLanesStillWarns() throws {
-        // 2 of 4 lanes at HBR3 = 12.96 delivered, short of the FO32's 56 Gbps.
-        // The link isn't at the ceiling (lanes < maxLanes), so the ordinary
-        // shortfall verdict stands and still warns.
-        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
+        // 2 of 4 lanes at HBR3, driven at 4K60 with the node listing 4K60
+        // only: the 240 Hz top is not listed at that picture (pictureOnly),
+        // so the ordinary shortfall verdict stands and still warns.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_250_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: Self.offering([Self.listing(3840, 2160, 60.0, 533_250_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fo32))
         #expect(diag.bottleneck == .belowMonitorMax)
         #expect(diag.isWarning == true)
     }
 
-    @Test("All lanes but a low rate stays belowMonitorMax (ceiling needs HBR3+)")
+    @Test("All lanes but a low rate, the node lists the picture at 60Hz only: belowMonitorMax")
     func allLanesLowRateStillWarns() throws {
-        // 4 of 4 lanes but HBR2 (5.4 < 8.0): not the ceiling. A display needing
-        // more than the 17.28 delivered still gets the ordinary verdict.
-        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)")
+        // 4 of 4 lanes at HBR2, the same live mode and statement: the 240 Hz
+        // top is pictureOnly, so the ordinary verdict.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_250_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", currentMode: live, drivenTiming: Self.offering([Self.listing(3840, 2160, 60.0, 533_250_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fo32))
         #expect(diag.bottleneck == .belowMonitorMax)
     }
 
-    @Test("Tunneled DP at the ceiling also reads as compression, cable still exonerated")
-    func tunneledAtCeilingCompressionPlausible() throws {
-        // A tunnelled DP link (TB/USB4 dock) at 4/4 HBR3 short of the FO32's top
-        // mode. The adapter branch only returns for HDMI/DVI/VGA, so tunnels
-        // reach the ceiling guard: at 4 lanes HBR3 the DP link is maxed whether
-        // tunnelled or not, so "change your resolution" is the wrong advice here
-        // too. The tunnel still exonerates the cable in the structured verdict.
+    @Test("Tunneled DP at the ceiling without a statement reads unknown, cable still exonerated")
+    func tunneledAtCeilingWithoutStatementIsUnknown() throws {
+        // A tunnelled DP link (TB/USB4 dock) at 4/4 HBR3 with the FO32 and no
+        // statement. The tunnel still exonerates the cable in the structured
+        // verdict; the verdict itself is unknown without the node.
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true)
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fo32))
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
         #expect(diag.isWarning == false)
         #expect(diag.cableAssessment == .unlikelyTheCable)
     }
@@ -393,23 +507,24 @@ struct DisplayDiagnosticTests {
         #expect(diag.detail.contains("3840 x 2160 @ 240Hz"))
     }
 
-    @Test("Live mode below the top mode keeps today's compressionPlausible verdict")
+    @Test("Live mode below the top mode with no statement is unknown")
     func liveModeBelowTopDoesNotUpgrade() throws {
-        // The display is actually running 4K60, short of its 240Hz top mode, so
-        // there is no certainty to upgrade with: stays compressionPlausible.
+        // The display is actually running 4K60, short of its 240Hz top mode,
+        // and there is no statement to say whether the top is offered.
         let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live)
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fo32))
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
     }
 
-    @Test("No live mode is the regression guard: behaviour is exactly today's verdict")
-    func noLiveModeKeepsShippedVerdict() throws {
-        // The shipped Option A path must never change when currentMode is nil.
+    @Test("No live mode and no statement is unknown")
+    func noLiveModeNoStatementIsUnknown() throws {
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fo32))
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
         #expect(diag.facts.currentMode == nil)
+        #expect(diag.facts.dscReading == nil)
+        #expect(diag.facts.topModeAvailability == nil)
     }
 
     @Test("A 5K live mode surfaces in the facts even when the EDID under-reads it (issue #249)")
@@ -480,30 +595,28 @@ struct DisplayDiagnosticTests {
         #expect(Self.fo32RealEDID[10] == 0x15 && Self.fo32RealEDID[11] == 0x32)
     }
 
-    @Test("Real corpus EDID at the DP ceiling without a live mode stays compressionPlausible")
-    func corpusEDIDCompressionPlausible() throws {
+    @Test("Real corpus EDID at the DP ceiling without a statement is unknown")
+    func corpusEDIDWithoutStatementIsUnknown() throws {
         // CoreGraphics supplies the 4K240 top mode, exactly as it does on the
-        // live app path. The EDID cannot: see
-        // `corpusEDIDWithoutCoreGraphicsReadsItsParsedTimings` below.
+        // live app path. Without the display node's statement the top mode's
+        // availability cannot be read.
         let top = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 240)
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)",
                         edidData: Self.fo32RealEDID, maxMode: top)
         let diag = try #require(DisplayDiagnostic(dp: dp))
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
     }
 
-    @Test("Real corpus EDID with no CoreGraphics data still reaches the DisplayPort ceiling verdict")
+    @Test("Real corpus EDID with no CoreGraphics data reads its parsed timings; the verdict is unknown without a statement")
     func corpusEDIDWithoutCoreGraphicsReadsItsParsedTimings() throws {
         // The FO32U2P's 240 Hz modes live in a DisplayID extension block,
         // now parsed, so its highest detailed timing is the real 3840x2160
-        // @240 at 2291.12 MHz rather than an understated 4K60. With every
-        // lane at HBR3 and no CoreGraphics live mode to confirm it, the
-        // DisplayPort-ceiling branch gives `.compressionPlausible`.
-        // `corpusEDIDCompressionPlausible` above is the same EDID WITH the
-        // CoreGraphics top mode, which is the live app's usual path.
+        // @240 at 2291.12 MHz rather than an understated 4K60. The figure is
+        // still computed as a receipt; the verdict is unknown without the
+        // display node (issue #664).
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", edidData: Self.fo32RealEDID)
         let diag = try #require(DisplayDiagnostic(dp: dp))
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
         #expect(diag.isWarning == false)
         let edid = try #require(EDIDInfo(Data(Self.fo32RealEDID)))
         let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: edid))
@@ -554,14 +667,14 @@ struct DisplayDiagnosticTests {
         #expect(diag.bottleneck == .fine)
     }
 
-    @Test("A CG max mode above every declared entry is macOS only, whatever the live mode says")
+    @Test("A CG max mode above every declared entry is macOS only; the live mode at it is fine, below it unknown")
     func cgMaxModeAboveDeclaredListIsMacOSOnly() throws {
         // Same understated EDID, and CoreGraphics names 4K240 as the top mode.
         // No declared entry is 4K240 and no tiled composite explains it, so
-        // its pixel clock is nowhere we can read: the diagnostic names the
-        // mode and computes nothing, whether the live mode is below it (a) or
-        // at it (b). Reassuring on (b) would need a bandwidth figure the EDID
-        // never gave us.
+        // its pixel clock is nowhere we can read and the receipt is nil. With
+        // no statement, a live mode below it (a) is unknown; a live mode at
+        // macOS's own top (b) is the picture at the top mode (ruling 18: the
+        // guard that said unknown here is gone; nothing branches on the figure).
         let top = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 240)
         let below = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120)
         let a = try #require(DisplayDiagnostic(
@@ -570,12 +683,13 @@ struct DisplayDiagnosticTests {
         #expect(a.bottleneck == .unknownMode, "got \(a.bottleneck)")
         #expect(a.facts.topModeSource == "macOS only")
         #expect(a.facts.neededGbps == nil)
+        #expect(a.detail.contains("could not be matched"))
         let b = try #require(DisplayDiagnostic(
             dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: top, maxMode: top),
             edid: understatedEdid))
-        #expect(b.bottleneck == .unknownMode, "got \(b.bottleneck)")
+        #expect(b.bottleneck == .fine, "got \(b.bottleneck)")
         #expect(b.facts.maxRefreshHz == 240)
-        #expect(b.detail.contains("\(3840.formatted()) × \(2160.formatted()) mode at 240Hz"), "got \(b.detail)")
+        #expect(b.detail.contains("at its top mode (3840 x 2160 @ 240Hz)"), "got \(b.detail)")
     }
 
     @Test("The CG max mode is carried in the facts for the capability label")
@@ -587,15 +701,15 @@ struct DisplayDiagnosticTests {
         #expect(diag.facts.maxMode?.height == 2880)
     }
 
-    @Test("No Billboard note when the link is at the ceiling (can't claim below best mode)")
-    func noBillboardNoteWhenCompressionPlausible() throws {
-        // At the ceiling we can't say the link is below the monitor's best mode
-        // (it may be at it via DSC), so the corroborating signal the Billboard
-        // diagnosis needs is absent and the note must stay silent, even with a
-        // Billboard device present.
+    @Test("No Billboard note when the link is at the ceiling and the verdict is unknown")
+    func noBillboardNoteAtCeilingUnknown() throws {
+        // Without a statement we can't say the link is below the monitor's
+        // best mode, so the corroborating signal the Billboard diagnosis needs
+        // is absent and the note must stay silent, even with a Billboard
+        // device present.
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fo32, billboardPresent: true))
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
         #expect(diag.billboardNote == nil)
     }
 
@@ -616,155 +730,74 @@ struct DisplayDiagnosticTests {
             maxPixelClockHz: 1_100_000_000, timingSupport: .rangeLimitsOnly)
     )
 
-    @Test("4K120 over a 2-lane HBR3 link with DSC active reads as compressionActive, not a shortfall")
-    func liveModeNeedsDSCIsCompressionActive() throws {
-        // Link: 2 of 4 lanes at HBR3 = 12.96 Gbps usable. Live mode: 4K120 =
-        // ~19.91 Gbps uncompressed (3840 x 2160 x 120 x 24 / 1e9). Picture is on
-        // the screen, so DSC has to be carrying it. Not at the DP ceiling
-        // (lanes < maxLanes), so the existing .compressionPlausible block does
-        // not fire; the new branch catches this.
+    @Test("4K120 over a 2-lane HBR3 link at the top mode without a statement reads fine, hedged")
+    func liveModeAtTopWithoutStatementIsFineHedged() throws {
+        // Link: 2 of 4 lanes at HBR3. Live mode: 4K120, the panel's top. With
+        // no statement the picture at the top mode is the answer, hedged (S18):
+        // nothing here says whether DSC carries it.
         let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120)
         let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live)
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: dellU2725QE))
-        #expect(diag.bottleneck == .compressionActive)
+        #expect(diag.bottleneck == .fine)
         #expect(diag.isWarning == false)
-        #expect(diag.detail.lowercased().contains("compression"))
         #expect(diag.detail.contains("3840 x 2160 @ 120Hz"))
+        #expect(diag.detail.contains("link rate alone can't show it"))
         // The old "monitor can do more / change your resolution" wording must
         // not appear here: that's the whole point of the fix.
         #expect(!diag.summary.lowercased().contains("can do more"))
     }
 
-    @Test("Live mode within the link's capacity falls through to belowMonitorMax (no false DSC claim)")
+    @Test("Live mode below the top with the node listing the picture at 60Hz only: belowMonitorMax, uncompressed")
     func liveModeWithinLinkDoesNotClaimDSC() throws {
-        // Same DELL panel, but the user is actually at 4K60 (= ~5.97 Gbps
-        // uncompressed) over a 2-lane HBR3 link (12.96 Gbps delivered). The
-        // live mode fits comfortably, so DSC is NOT proven active and the
-        // verdict stays as today's shortfall verdict.
-        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
-        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live)
+        // Same DELL panel, driven at 4K60 over a 2-lane HBR3 link, the node
+        // listing 4K60 only: the 4K120 top is pictureOnly, and the driven
+        // lists say uncompressed.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_000_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: Self.offering([Self.listing(3840, 2160, 60.0, 533_000_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: dellU2725QE))
         #expect(diag.bottleneck == .belowMonitorMax)
+        #expect(diag.facts.dscReading == .uncompressed)
     }
 
-    @Test("No current mode keeps today's belowMonitorMax behaviour (regression guard)")
-    func noCurrentModeKeepsShippedBehaviour() throws {
-        // A 2-lane HBR3 link short of the DELL's top mode without a live mode:
-        // the new branch must not fire (no evidence), so the verdict stays as
-        // it was on main before this change.
+    @Test("No current mode and no statement below the top is unknown")
+    func noCurrentModeNoStatementIsUnknown() throws {
+        // A 2-lane HBR3 link with the DELL's top mode above it, no live mode
+        // and no statement: nothing to judge the top mode with.
         let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: dellU2725QE))
-        #expect(diag.bottleneck == .belowMonitorMax)
+        #expect(diag.bottleneck == .unknownMode)
     }
 
     @Test("compressionActive is not a warning and silences the Billboard note")
     func compressionActiveSilencesBillboardNote() throws {
-        // Billboard-note gate is `isWarning`. Provably-active DSC is the link
-        // doing its job, not a degraded link, so the note must stay silent.
-        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120)
-        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live)
+        // Billboard-note gate is `isWarning`. DSC on, as macOS states it, is
+        // the link doing its job, not a degraded link, so the note stays silent.
+        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: Self.liveU3225QE, drivenTiming: Self.statementU3225QE)
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: dellU2725QE, billboardPresent: true))
         #expect(diag.bottleneck == .compressionActive)
         #expect(diag.billboardNote == nil)
     }
 
-    @Test("At-ceiling shortfall still prefers compressionPlausible/fine (no regression)")
-    func compressionPlausibleStillWinsAtCeiling() throws {
-        // 4-lane HBR3 with the FO32U2P: the at-ceiling block (above the new
-        // branch) must still claim this first. A matching live mode upgrades
-        // to .fine; no live mode keeps .compressionPlausible. .compressionActive
-        // must not appear here.
-        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
-        let diag = try #require(DisplayDiagnostic(dp: dp, edid: fo32))
-        #expect(diag.bottleneck == .compressionPlausible)
-    }
-
-    @Test("Adapter limit still wins over compressionActive (HDMI/DVI/VGA branch first)")
-    func adapterStillWins() throws {
-        // Even when the live mode would otherwise satisfy compressionActive's
-        // condition, an HDMI/DVI/VGA adapter in the chain reroutes to
-        // .adapterLimit above the new branch. DSC reasoning doesn't carry
-        // through a converter, so this ordering matters.
+    @Test("A live mode at the top mode beats the adapter verdict (ruling 17)")
+    func liveModeAtTopBeatsTheAdapterVerdict() throws {
+        // An HDMI adapter in the chain, no statement, the live mode at the
+        // panel's top: the picture at the top mode is the answer.
         let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120)
         let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", currentMode: live)
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: dellU2725QE))
-        #expect(diag.bottleneck == .adapterLimit)
-    }
-
-    @Test("Helper: a zero-refresh live mode is rejected (never a positive claim)")
-    func liveModeNeedsCompressionRejectsZeroRefresh() {
-        let zeroHz = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 0)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(zeroHz, deliveredGbps: 1.0) == false)
-    }
-
-    @Test("10bpc catches the DSC case 24bpp would miss (Codex review false-negative)")
-    func tenBpcCatchesUnderestimatedDSC() {
-        // 4K60 over a 12 Gbps link. With the old 24bpp assumption the need is
-        // 3840 x 2160 x 60 x 24 / 1e9 = 11.94 Gbps, under the 12 x 1.15 = 13.8
-        // threshold, so the helper would NOT call DSC. But the live mode is
-        // 10bpc HDR, which truly needs 3840 x 2160 x 60 x 30 / 1e9 = 14.93
-        // Gbps, comfortably over the threshold: DSC IS on, and the bpc plumbing
-        // catches what the bare 24bpp path misses. Codex flagged this as the
-        // false-negative case worth covering.
-        let live8bpc = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8)
-        let live10bpc = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 10)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(live8bpc, deliveredGbps: 12.0) == false)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(live10bpc, deliveredGbps: 12.0) == true)
-    }
-
-    @Test("10bpc adds bandwidth budget when delivered headroom is large (no false trigger)")
-    func tenBpcDoesNotFalseTriggerWithHeadroom() {
-        // 4K60 at 10bpc (14.93 Gbps) over a 25 Gbps tunnel: comfortably within
-        // capacity, DSC should not be claimed. Sanity check that lifting bpc
-        // doesn't push every HDR mode into the .compressionActive bucket.
-        let live10bpc = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 10)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(live10bpc, deliveredGbps: 25.0) == false)
-    }
-
-    @Test("nil bpc falls back to the 24bpp default (backwards compatible)")
-    func nilBpcFallsBackTo24bpp() {
-        // Pre-bpc-plumbing path. Same numbers as the original .compressionActive
-        // case must still fire so older snapshots without bpc behave identically.
-        let liveNoBpc = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120)
-        #expect(liveNoBpc.bitsPerComponent == nil)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(liveNoBpc, deliveredGbps: 12.96) == true)
-    }
-
-    @Test("5% noise margin: a mode just over the link does not yet claim DSC")
-    func toleranceAbsorbsEstimationNoise() {
-        // 5% is an estimation-noise margin, not a blanking adjustment: when the
-        // active estimate is within 5% of delivered, treat it as "could go
-        // either way" rather than calling DSC. The mode here is 3440 x 1440 at
-        // 110Hz x 24bpp = 13.07 Gbps active, ~0.9% over the 12.96 Gbps link but
-        // within the 5% threshold (13.61 Gbps). Must NOT call this DSC; the
-        // active estimate is too close to the link to draw a confident
-        // conclusion either way.
-        let near = DisplayCurrentMode(width: 3440, height: 1440, refreshHz: 110, bitsPerComponent: 8)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(near, deliveredGbps: 12.96) == false)
-    }
-
-    @Test("Past the 5% margin but within the old 15% band trips compressionActive")
-    func toleranceGuardsAgainstFalseNegative() {
-        // The earlier code widened the margin to 15%, creating a real false-
-        // negative band: 13.58 Gbps to 14.87 Gbps over a 12.93 Gbps link sat
-        // inside the old 15% margin and was being silently read as fine. Pin
-        // the recovery with a mode that lands squarely in that band: 3440 x
-        // 1440 at 95Hz x 30bpp (10bpc) = 14.12 Gbps. Over 12.93 x 1.05 = 13.58
-        // (so the corrected 5% margin trips it), but under 12.93 x 1.15 = 14.87
-        // (so the old 15% margin missed it). MUST fire on .compressionActive
-        // with the corrected tolerance.
-        let live = DisplayCurrentMode(width: 3440, height: 1440, refreshHz: 95, bitsPerComponent: 10)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(live, deliveredGbps: 12.93) == true)
+        #expect(diag.bottleneck == .fine)
+        #expect(diag.detail.contains("at its top mode"))
     }
 
     // MARK: - Billboard-device note (gated on a degraded link)
 
     @Test("Billboard note fires only with a below-best-mode link present")
     func billboardNoteOnShortfall() throws {
-        // 2-lane HBR2 falls short of the G34w's 100Hz mode -> belowMonitorMax,
-        // and a Billboard device is on the port: the note should appear.
+        // 2-lane HBR2, the node lists the G34w's picture at 60Hz only (top not
+        // offered) -> belowMonitorMax, and a Billboard device is on the port:
+        // the note should appear.
         let diag = try #require(
-            DisplayDiagnostic(dp: makeDP(lanes: 2), edid: g34w, billboardPresent: true)
+            DisplayDiagnostic(dp: makeDP(lanes: 2, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w, billboardPresent: true)
         )
         #expect(diag.bottleneck == .belowMonitorMax)
         #expect(diag.billboardNote != nil)
@@ -773,7 +806,7 @@ struct DisplayDiagnosticTests {
     @Test("Billboard note fires behind a degraded adapter link too")
     func billboardNoteOnAdapterShortfall() throws {
         let diag = try #require(
-            DisplayDiagnostic(dp: makeDP(lanes: 2, dfpType: "HDMI"), edid: g34w, billboardPresent: true)
+            DisplayDiagnostic(dp: makeDP(lanes: 2, dfpType: "HDMI", currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w, billboardPresent: true)
         )
         #expect(diag.bottleneck == .adapterLimit)
         #expect(diag.billboardNote != nil)
@@ -781,11 +814,11 @@ struct DisplayDiagnosticTests {
 
     @Test("No Billboard note when the link already carries the top mode")
     func noBillboardNoteWhenFine() throws {
-        // 4-lane HBR2 carries the full 100Hz mode -> .fine. Even with a
-        // Billboard device present, the diagnosis must not fire: a Billboard
-        // device on a healthy link is benign.
+        // 4-lane HBR2 driven at the 100Hz top, stated uncompressed -> .fine.
+        // Even with a Billboard device present, the diagnosis must not fire: a
+        // Billboard device on a healthy link is benign.
         let diag = try #require(
-            DisplayDiagnostic(dp: makeDP(lanes: 4), edid: g34w, billboardPresent: true)
+            DisplayDiagnostic(dp: makeDP(lanes: 4, currentMode: Self.liveG34w100, drivenTiming: Self.offering([Self.g34wAt60, Self.g34wAt100])), edid: g34w, billboardPresent: true)
         )
         #expect(diag.bottleneck == .fine)
         #expect(diag.billboardNote == nil)
@@ -806,7 +839,7 @@ struct DisplayDiagnosticTests {
     func noBillboardNoteWhenAbsent() throws {
         // Degraded link, but billboardPresent defaults to false: no note. This
         // is also the inline path's behaviour (it never passes the flag).
-        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2), edid: g34w))
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w))
         #expect(diag.bottleneck == .belowMonitorMax)
         #expect(diag.billboardNote == nil)
     }
@@ -824,7 +857,8 @@ struct DisplayDiagnosticTests {
         dfpType: String? = "HDMI",
         edidData: Data? = nil,
         currentMode: DisplayCurrentMode? = nil,
-        maxMode: DisplayCurrentMode? = nil
+        maxMode: DisplayCurrentMode? = nil,
+        drivenTiming: DisplayTimingStatement? = nil
     ) -> IOPortTransportStateDisplayPort {
         // Matches the corpus shape for an M-series MBP / Mac mini / Studio
         // native HDMI port: `ParentPortType = 6`, `ParentPortTypeDescription
@@ -852,7 +886,8 @@ struct DisplayDiagnosticTests {
             parentPortTypeDescription: "HDMI",
             parentPortNumber: 1,
             currentMode: currentMode,
-            maxMode: maxMode
+            maxMode: maxMode,
+            drivenTiming: drivenTiming
         )
     }
 
@@ -879,14 +914,12 @@ struct DisplayDiagnosticTests {
         #expect(!diag.summary.contains("HDMI adapter"))
     }
 
-    @Test("Native HDMI port at HBR3 4/4 lanes below uncompressed top: DSC carve-out, not adapter blame")
-    func nativeHDMIPortReachesDSCCarveOut() throws {
+    @Test("Native HDMI port at HBR3 4/4 lanes without a statement: unknown, not adapter blame")
+    func nativeHDMIPortWithoutStatementIsUnknown() throws {
         // Same shape as the reporter's case: native HDMI port, HBR3 4/4 lanes,
-        // delivered ~25.9 Gbps, panel needs ~31 Gbps uncompressed. Pre-fix the
-        // adapter branch swallowed this case before the DSC plausibility logic
-        // could run. Post-fix sinkType is nil so the link falls through to the
-        // ceiling check; HBR3 + max lanes hits the compressionPlausible verdict
-        // when no live mode is supplied.
+        // no live mode and no statement. sinkType is nil (the SoC drives HDMI
+        // directly), so the adapter verdict cannot fire; with nothing to
+        // judge the top mode against the verdict is unknown.
         let panel = EDIDInfo.fixture(
             name: "PG42UQ",
             version: (1, 4),
@@ -897,9 +930,8 @@ struct DisplayDiagnosticTests {
         )
         let dp = makeHDMIPortDP()
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel))
-        // delivered = 4 * 8.1 * 0.8 = 25.9 Gbps, needed ~31 Gbps. Without an
-        // adapter heuristic and at the link ceiling, DSC carve-out fires.
-        #expect(diag.bottleneck == .compressionPlausible)
+        #expect(diag.bottleneck == .unknownMode)
+        #expect(diag.facts.sinkType == nil)
     }
 
     @Test("USB-C-to-HDMI dongle keeps the adapter verdict")
@@ -917,7 +949,9 @@ struct DisplayDiagnosticTests {
             dfpType: "HDMI",
             parentPortType: 2,
             parentPortTypeDescription: "USB-C",
-            parentPortNumber: 1
+            parentPortNumber: 1,
+            currentMode: Self.liveG34w60,
+            drivenTiming: Self.offering([Self.g34wAt60])
         )
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: g34w))
         #expect(diag.bottleneck == .adapterLimit)
@@ -997,11 +1031,11 @@ struct DisplayDiagnosticTests {
 
     @Test("Issue #596: a 4K60 panel is never told it can run the 75Hz its 0xFD envelope declares")
     func envelopeRefreshIsNotClaimedAsAMode() throws {
-        // 2 of 4 lanes at HBR3: delivered = 2 x 8.1 x 0.8 = 12.96 Gbps. The
-        // envelope route asks for 600 MHz x 24bpp = 14.4 Gbps and warns. The
-        // panel's real 4K60 timing asks for 533.25 MHz x 24bpp = 12.80 Gbps,
-        // which this link carries, so the correct verdict is silence.
-        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
+        // 2 of 4 lanes at HBR3, driven at the panel's real 4K60 timing with
+        // the node listing it: the live mode meets the top, so the correct
+        // verdict is the all-clear (K1). The 75 Hz envelope is never a mode.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_250_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: Self.offering([Self.listing(3840, 2160, 59.99, 533_250_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: aocU24P10R))
         #expect(diag.bottleneck == .fine)
         #expect(diag.isWarning == false)
@@ -1037,11 +1071,11 @@ struct DisplayDiagnosticTests {
         // leaves out; a fixture that omits them is a panel that lacks them.)
         let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: pg27AQDP))
         let clock = try #require(top.pixelClockHz)
-        let needed = Double(clock) * Double(DisplayDiagnostic.assumedBitsPerPixel) / 1_000_000_000
+        let needed = Double(clock) * Double(DisplayDiagnostic.topModeBitsPerPixel) / 1_000_000_000
         #expect(abs(needed - 5.973) < 0.05, "expected ~6.0 Gbps, got \(needed)")
         let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: pg27AQDP))
-        #expect(diag.bottleneck == .fine, "25.92 Gbps carries the 5.97 Gbps declared top, got \(diag.bottleneck)")
+        #expect(diag.bottleneck == .unknownMode, "the figure is a receipt: `neededGbps` still reads 5.97; no statement, so the verdict is unknown, got \(diag.bottleneck)")
         #expect(diag.facts.neededGbps.map { abs($0 - 5.973) < 0.05 } == true,
                 "got \(String(describing: diag.facts.neededGbps))")
         #expect(diag.facts.topModeSource == "detailed timing 1 (block 1)")
@@ -1064,7 +1098,10 @@ struct DisplayDiagnosticTests {
                 minVerticalHz: 0, maxVerticalHz: 144, minHorizontalKHz: 0, maxHorizontalKHz: 0,
                 maxPixelClockHz: 1_200_000_000, timingSupport: .rangeLimitsOnly)
         )
-        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)")
+        // Driven at 1440p60 with the node listing that picture at 60 Hz only:
+        // the 120 Hz top is pictureOnly, so the shortfall verdict stands.
+        let live = DisplayCurrentMode(width: 2560, height: 1440, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 241_500_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", currentMode: live, drivenTiming: Self.offering([Self.listing(2560, 1440, 60.0, 241_500_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel))
         #expect(diag.facts.maxMode == nil, "fixture guard: this path has no CoreGraphics data")
         #expect(diag.facts.maxRefreshHz == 120)
@@ -1075,7 +1112,10 @@ struct DisplayDiagnosticTests {
         #expect(diag.facts.declaredModeCount == 2)
         #expect(diag.bottleneck == .belowMonitorMax)
         #expect(diag.detail.contains("120Hz"))
-        #expect(!diag.detail.contains("144"), "the 144Hz envelope must never reach the user")
+        // "144Hz", not "144": the live mode's label "2560 x 1440 @ 60Hz" (K2)
+        // contains "144" as part of "1440", and the guard is about the
+        // envelope's refresh reaching the user as a mode.
+        #expect(!diag.detail.contains("144Hz"), "the 144Hz envelope must never reach the user")
     }
 
     // MARK: - Issue #596: the envelope is never consulted
@@ -1094,10 +1134,11 @@ struct DisplayDiagnosticTests {
 
     @Test("Issue #596's own reporter keeps the all-clear: the envelope is never consulted")
     func reporterEnvelopeIsNeverConsulted() throws {
-        // 4 of 4 lanes at HBR3 carries 25.92 Gbps; the panel's real 4K60 mode
-        // needs 533.16 MHz x 24bpp = 12.80 Gbps. The fix for his bug must leave
-        // him with the all-clear, not trade one wrong answer for another.
-        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
+        // 4 of 4 lanes at HBR3, driven at the panel's real 4K60 mode at 533.16
+        // MHz with the node listing it. The fix for his bug must leave him with
+        // the all-clear (K1), not trade one wrong answer for another.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_160_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: Self.offering([Self.listing(3840, 2160, 60.0, 533_160_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: reporterU24P10R))
         #expect(diag.facts.maxMode == nil, "fixture guard: this path has no CoreGraphics data")
         #expect(diag.bottleneck == .fine, "got \(diag.bottleneck)")
@@ -1115,15 +1156,16 @@ struct DisplayDiagnosticTests {
             version: (1, 4),
             preferred: EDIDInfo.mode(3840, 2160, hTotal: 4115, vTotal: 2160, pixelClockHz: 533_250_000)
         )
-        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)")
+        let live4K = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_250_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live4K, drivenTiming: Self.offering([Self.listing(3840, 2160, 60.0, 533_250_000)]))
         let a = try #require(DisplayDiagnostic(dp: dp, edid: noEnvelope))
         #expect(a.facts.maxMode == nil, "fixture guard: this path has no CoreGraphics data")
         #expect(a.bottleneck == .fine, "got \(a.bottleneck)")
 
         // (b) A 2.34 GHz / 240 Hz envelope on a panel that declares one
         // 1080p60 mode. The envelope is never read, so the single declared
-        // mode is the top mode (148.5 MHz x 24bpp = 3.56 Gbps, carried) and
-        // the verdict is the same fine, with no 240 anywhere in it.
+        // mode is the top mode, the live 1080p60 meets it, and the verdict is
+        // the same fine, with no 240 anywhere in it.
         let oneMode = EDIDInfo.fixture(
             name: "One declared mode",
             version: (1, 4),
@@ -1132,7 +1174,9 @@ struct DisplayDiagnosticTests {
                 minVerticalHz: 0, maxVerticalHz: 240, minHorizontalKHz: 0, maxHorizontalKHz: 0,
                 maxPixelClockHz: 2_340_000_000, timingSupport: .rangeLimitsOnly)
         )
-        let b = try #require(DisplayDiagnostic(dp: dp, edid: oneMode))
+        let live1080 = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
+        let dp1080 = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live1080, drivenTiming: Self.offering([Self.listing(1920, 1080, 60.0, 148_500_000)]))
+        let b = try #require(DisplayDiagnostic(dp: dp1080, edid: oneMode))
         #expect(b.facts.maxMode == nil, "fixture guard: this path has no CoreGraphics data")
         #expect(b.bottleneck == .fine, "got \(b.bottleneck)")
         #expect(b.facts.maxRefreshHz == 60)
@@ -1193,15 +1237,14 @@ struct DisplayDiagnosticTests {
         #expect(diag.facts.preferredHeight == nil)
         #expect(diag.facts.preferredRefreshHz == nil)
         #expect(diag.facts.declaredModeCount == diag.edid?.modes.count)
-        #expect(diag.bottleneck != .unknownMode)
     }
 
     // VIC 4 (1280x720p60, 74.25 MHz) and VIC 5 (1920x1080i60, 74.25 MHz), per the bundled
     // CTA-861 table. Same clock, so the larger picture wins the tie: the top mode is the
     // interlaced VIC 5. `EDIDMode.activePixelRate` halves for an interlaced entry (its
     // `refreshHz` is the field rate, and each field carries half the lines); the resolved
-    // `TopMode` must carry the same figure, or step 4's macOS-only threshold and
-    // `meetsTopMode` judge against double the panel's real pixel rate.
+    // `TopMode` must carry the same figure, or step 4's macOS-only threshold judges
+    // against double the panel's real pixel rate.
     @Test("An interlaced top mode's active pixel rate equals the entry it was built from")
     func interlacedTopModeActivePixelRateMatchesTheEntry() throws {
         let vic4 = EDIDInfo.mode(1280, 720, hTotal: 1650, vTotal: 750, pixelClockHz: 74_250_000,
@@ -1214,9 +1257,14 @@ struct DisplayDiagnosticTests {
         #expect(top.interlaced == true)
         #expect(top.activePixelRate == vic5.activePixelRate)
         #expect(vic5.activePixelRate == 62_208_000)
-        // A progressive 1920x1080 at 30 Hz carries the same active pixels as 1080i60.
+        // A progressive 1920x1080 at 30 Hz carries the same active pixels as
+        // 1080i60, and until PR #665's gate that was enough to "meet" it.
+        // `meetsTopMode` is a picture-and-refresh identity now (Codex 1: the
+        // throughput test called 1080p240 the same mode as 4K60), and 30 Hz
+        // is not the entry's 60 Hz field rate, so it does not meet it. The
+        // active-pixel figure above still matters to step 4.
         let live = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 30)
-        #expect(DisplayDiagnostic.meetsTopMode(live, top: top) == true)
+        #expect(DisplayDiagnostic.meetsTopMode(live, top: top) == false)
     }
 
     @Test("The top mode's resolution follows the entry that resolved it")
@@ -1279,7 +1327,9 @@ struct DisplayDiagnosticTests {
         // 6.4 Gbps figure and reassure the user about the exact cap they came
         // to ask about.
         let linkLimited = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 30)
-        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", maxMode: linkLimited)
+        // Driven at 4K30 with the node listing 4K30 only: the 60 Hz top is pictureOnly.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 266_625_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", currentMode: live, maxMode: linkLimited, drivenTiming: Self.offering([Self.listing(3840, 2160, 30.0, 266_625_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fourK60Panel))
         #expect(diag.bottleneck != .fine,
                 "a 4K60 panel on a link that carries 4K30 is not at full quality, got \(diag.bottleneck)")
@@ -1296,7 +1346,8 @@ struct DisplayDiagnosticTests {
         // 4 of 4 lanes at HBR3 carries 25.92 Gbps, so the all-clear stands,
         // with the timing's own pixel clock behind the figure.
         let cg60 = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
-        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", maxMode: cg60)
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_250_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, maxMode: cg60, drivenTiming: Self.offering([Self.listing(3840, 2160, 60.0, 533_250_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fourK60Panel))
         #expect(diag.bottleneck == .fine, "got \(diag.bottleneck)")
         #expect(diag.facts.maxRefreshHz == 60)
@@ -1320,6 +1371,36 @@ struct DisplayDiagnosticTests {
         let cg60 = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
         let top60 = try #require(DisplayDiagnostic.resolveTopMode(maxMode: cg60, edid: fourK60Panel))
         #expect(DisplayDiagnostic.meetsTopMode(cg60, top: top60) == true)
+    }
+
+    @Test("meetsTopMode is a picture-and-refresh identity: 1080p240 does not meet a 4K60 top, whatever the pixel throughput (PR #665 gate, Codex 1)")
+    func meetsTopModeNeedsTheSamePicture() throws {
+        // 1920 x 1080 x 240 and 3840 x 2160 x 60 are the same 497.7 Mpx/s; the
+        // user is getting a quarter of the pixels. Identity is the picture and
+        // the refresh (within CoreGraphics' rounding or the CTA alternate),
+        // never a throughput figure.
+        let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: fourK60Panel))
+        let quarter = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 240, bitsPerComponent: 8, pixelClockHz: 594_000_000, pixelEncoding: .rgb444)
+        #expect(DisplayDiagnostic.meetsTopMode(quarter, top: top) == false)
+        // Through the verdict: driven at 1080p240 uncompressed with the node
+        // listing that timing only, the 4K60 top is not listed (K26), never
+        // "running at full quality".
+        let statement = Self.offering([Self.listing(1920, 1080, 240.0, 594_000_000)])
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: quarter, drivenTiming: statement), edid: fourK60Panel))
+        #expect(diag.bottleneck != .fine, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.bottleneck == .unknownMode)
+        #expect(diag.facts.topModeMatch == .notListed)
+        // Same picture, refresh within CoreGraphics' whole-hertz rounding
+        // (0.5 Hz of the DTD's 59.99): at the top. A whole hertz off is
+        // another mode.
+        #expect(DisplayDiagnostic.meetsTopMode(DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 59.94005994), top: top) == true)
+        #expect(DisplayDiagnostic.meetsTopMode(DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60.4), top: top) == true)
+        #expect(DisplayDiagnostic.meetsTopMode(DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 61), top: top) == false)
+        // The CTA alternate (top / 1.001) counts as the same mode even where
+        // it falls outside the rounding window, which needs a top above 500 Hz.
+        let fast = DisplayDiagnostic.TopMode(width: 1920, height: 1080, refreshHz: 1000, pixelClockHz: nil, interlaced: false, source: .reportedByMacOSOnly)
+        #expect(DisplayDiagnostic.meetsTopMode(DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 1000 / 1.001), top: fast) == true)
+        #expect(DisplayDiagnostic.meetsTopMode(DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 998), top: fast) == false)
     }
 
     // MARK: - The diagnostic reads the declared list and derives nothing
@@ -1369,7 +1450,9 @@ struct DisplayDiagnosticTests {
         #expect(top.source == .declared(.displayID(block: 2, type: .typeI, index: 0, embeddedInCTA: false)),
                 "got \(top.source)")
         #expect(top.refreshHz.rounded() == 144)
-        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", maxMode: cg30)
+        // Driven at 4K30 with the node listing 4K30 only: the 144 Hz top is pictureOnly.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 266_625_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 2, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", currentMode: live, maxMode: cg30, drivenTiming: Self.offering([Self.listing(3840, 2160, 30.0, 266_625_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: fourK144Panel))
         #expect(diag.facts.maxRefreshHz == 144,
                 "the top mode is the panel's 144 Hz, not the link's 30, got \(String(describing: diag.facts.maxRefreshHz))")
@@ -1402,10 +1485,10 @@ struct DisplayDiagnosticTests {
         #expect(diag.facts.topModeSource == "macOS only", "got \(String(describing: diag.facts.topModeSource))")
         #expect(diag.facts.topModeWidth == 5120)
         #expect(diag.facts.maxRefreshHz == 60)
-        #expect(diag.detail.contains("doesn't describe"), "got \(diag.detail)")
-        // Int interpolation in `String(localized:)` groups digits by locale
-        // ("5,120" in en_US), as the Pro heading's own "\(w) × \(h)" key does.
-        #expect(diag.detail.contains("\(5120.formatted()) × \(2880.formatted()) mode at 60Hz"), "got \(diag.detail)")
+        // No statement: the node is named as unmatched (K27) and the top mode
+        // is named through `canDo`; the macOS-only guard sentence is retired.
+        #expect(diag.detail.contains("could not be matched"), "got \(diag.detail)")
+        #expect(diag.detail.contains("top mode (up to 60Hz)"), "got \(diag.detail)")
         #expect(diag.detail.contains("Studio Display"), "got \(diag.detail)")
         #expect(diag.detail.contains("25.9 Gbps"), "the link sentence still reports the link, got \(diag.detail)")
 
@@ -1450,14 +1533,22 @@ struct DisplayDiagnosticTests {
         let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: cg5K, edid: tiled))
         #expect(top.source == .declared(.tiledComposite(tiles: 2, from: nil)), "got \(top.source)")
         #expect(top.pixelClockHz == 964_800_000, "got \(String(describing: top.pixelClockHz))")
-        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, maxMode: cg5K)
+        // The panel driven at 4K60 on the tunnelled HBR2 link, its node
+        // listing no 5120x2880 picture (neither the composite's nor the
+        // tile's), so step 1b keeps the declared top and it is genuinely not
+        // listed (K26).
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_250_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, currentMode: live, maxMode: cg5K,
+                        drivenTiming: Self.offering([Self.listing(3840, 2160, 60.0, 533_250_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: tiled))
         let needed = try #require(diag.facts.neededGbps)
         #expect(abs(needed - 23.155) < 0.001, "expected 964.8 MHz x 24bpp, got \(needed)")
         #expect(diag.facts.topModeSource == "tiled composite of 2 tiles",
                 "got \(String(describing: diag.facts.topModeSource))")
         #expect(diag.facts.topModeWidth == 5120)
-        #expect(diag.bottleneck == .belowMonitorMax, "23.16 Gbps needed over 17.28 carried, got \(diag.bottleneck)")
+        #expect(diag.bottleneck == .unknownMode)
+        #expect(diag.facts.topModeMatch == .notListed)
+        #expect(diag.facts.topModeListedByNode == false)
         #expect(diag.cableAssessment == .unlikelyTheCable)
     }
 
@@ -1499,9 +1590,11 @@ struct DisplayDiagnosticTests {
         // Fixture guard: on pixel clock alone the 4:2:0 VIC is the EDID's top.
         let edidTop = try #require(panel27C1UL.topMode)
         #expect(edidTop.sourceDescription == "CTA VIC 97 4:2:0 (block 1)")
-        // 2 of 2 lanes at HBR3 = 12.96 Gbps usable. The DTD needs 527.85e6 x
-        // 24 = 12.668 Gbps; the 4:2:0 VIC would have needed 14.256.
-        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2")
+        // 2 of 2 lanes at HBR3, driven at the DTD (timing 45, stated
+        // uncompressed). The receipt is the DTD's 527.85e6 x 24 = 12.668
+        // Gbps; the 4:2:0 VIC would have read 14.256.
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2",
+                        currentMode: Self.live27C1UL, drivenTiming: Self.statement27C1UL)
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
         #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
         #expect(diag.isWarning == false)
@@ -1512,8 +1605,8 @@ struct DisplayDiagnosticTests {
         #expect(diag.facts.declaredModeCount == 2, "the 4:2:0 entry stays a declared fact")
         #expect(diag.facts.declared420OnlyModes == 1)
         // Int interpolation in `String(localized:)` groups digits by locale
-        // ("3,840" in en_US), as the "macOS reports a %lld × %lld mode" key does.
-        #expect(diag.detail.contains("Its EDID also lists \(3840.formatted()) × \(2160.formatted()) at 60Hz in 4:2:0 only, a mode macOS does not use."), "detail: \(diag.detail)")
+        // ("3,840" in en_US), as the Pro heading's own "\(w) × \(h)" key does.
+        #expect(diag.detail.contains("Its EDID also lists \(3840.formatted()) × \(2160.formatted()) at 60Hz in 4:2:0 only, a mode macOS does not send over the DisplayPort link."), "detail: \(diag.detail)")
         #expect(!diag.detail.contains("14.3"), "the 4:2:0 entry's bandwidth must never reach the user")
     }
 
@@ -1521,8 +1614,11 @@ struct DisplayDiagnosticTests {
     func ycbcr420OnlyTopIsSkippedOnHBR2Adapter() throws {
         let edidTop = try #require(panelUGREEN.topMode)
         #expect(edidTop.sourceDescription == "CTA VIC 97 4:2:0 (block 1)")
-        // 2 of 2 lanes at HBR2 = 8.64 Gbps usable. VIC 95 needs 297e6 x 24 = 7.128 Gbps.
-        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "5.4 Gbps (HBR2)", dfpType: "HDMI", branchDeviceId: "176GB0")
+        // 2 of 2 lanes at HBR2, driven at VIC 95 (4K30, 297 MHz) with the node
+        // listing it. The receipt is 297e6 x 24 = 7.128 Gbps.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 297_000_000, pixelEncoding: .rgb444)
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "5.4 Gbps (HBR2)", dfpType: "HDMI", branchDeviceId: "176GB0",
+                        currentMode: live, drivenTiming: Self.offering([Self.listing(3840, 2160, 30.0, 297_000_000)]))
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: panelUGREEN))
         #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
         let needed = try #require(diag.facts.neededGbps)
@@ -1534,7 +1630,7 @@ struct DisplayDiagnosticTests {
         #expect(diag.facts.declared420OnlyModes == 2)
         // The named entry is the highest 4:2:0-only one: 4K60 over 4K50
         // (same clock and area, higher refresh).
-        #expect(diag.detail.contains("Its EDID also lists \(3840.formatted()) × \(2160.formatted()) at 60Hz in 4:2:0 only, a mode macOS does not use."), "detail: \(diag.detail)")
+        #expect(diag.detail.contains("Its EDID also lists \(3840.formatted()) × \(2160.formatted()) at 60Hz in 4:2:0 only, a mode macOS does not send over the DisplayPort link."), "detail: \(diag.detail)")
     }
 
     @Test("A CoreGraphics max mode that matches only a 4:2:0-only entry is macOS's fact alone, never costed at 24 bpp")
@@ -1577,46 +1673,28 @@ struct DisplayDiagnosticTests {
         #expect(top == DisplayDiagnostic.TopMode(declared: edidTop))
     }
 
-    // MARK: - The driven timing's own clock feeds the DSC-active check
+    // MARK: - The driven timing's own clock
 
-    @Test("liveModeNeedsCompression uses the timing's pixel clock when the display node supplied one")
-    func liveModeNeedsCompressionUsesThePixelClock() {
-        // 4K60 whose active pixels (497.7 Mpx/s x 24 = 11.95 Gbps) fit a
-        // 12.16 Gbps link, but whose timing clock (VIC 97, 594 MHz x 24 =
-        // 14.256 Gbps) does not: the wire carries the clock, so DSC is on.
-        let activeOnly = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(activeOnly, deliveredGbps: 12.16) == false)
-        let withClock = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, pixelClockHz: 594_000_000)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(withClock, deliveredGbps: 12.16) == true)
-        // And a clock that fits with room to spare is not compression.
-        let fits = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, pixelClockHz: 527_850_000)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(fits, deliveredGbps: 12.96) == false)
-        // 10 bpc scales the clock, not the active estimate: 594e6 x 30 = 17.82 Gbps.
-        let tenBit = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 10, pixelClockHz: 594_000_000)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(tenBit, deliveredGbps: 16.0) == true)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(tenBit, deliveredGbps: 17.82 / 1.05 + 0.01) == false)
-    }
-
-    @Test("A driven 4K60 at the DTD's clock over a 2-lane HBR3 link reads as fine, not compressed")
+    @Test("A driven 4K60 at the DTD's clock over a 2-lane HBR3 link reads as fine without a statement (hedged)")
     func drivenTimingAtTheTopClockIsFine() throws {
-        // The 27C1U-L over 2 of 2 lanes at HBR3 (12.96 Gbps) with the node
-        // reporting timing 45: 3840x2160 at 60.0 Hz, 527.85 MHz, 8 bit.
-        // needed 12.668 <= 12.96: fine on the first comparison, and the
-        // live mode's clock agrees the link carries it uncompressed.
+        // The 27C1U-L over 2 of 2 lanes at HBR3 with the live mode at the
+        // DTD: 3840x2160 at 60.0 Hz, 527.85 MHz, 8 bit. The live mode meets
+        // the top, so fine (S18); with no statement there is no cross-check.
         let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 527_850_000)
         let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2", currentMode: live)
         let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
         #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
         #expect(diag.facts.currentMode?.pixelClockHz == 527_850_000)
-        #expect(DisplayDiagnostic.liveModeNeedsCompression(live, deliveredGbps: 12.96) == false)
+        #expect(diag.facts.liveNeededGbps == nil, "no statement, no cross-check")
     }
 
-    @Test("meetsTopMode stays an active-pixel identity test: a lower-clock timing of the top picture still meets it")
+    @Test("meetsTopMode never compares the clock: a lower-clock timing of the top picture and refresh still meets it")
     func meetsTopModeIgnoresBlankingOnBothSides() throws {
         // A panel that declares 4K60 twice, VIC 97 at 594 MHz on top and a
         // reduced-blanking 533.25 MHz DTD below it. macOS drives the DTD (17
         // corpus nodes do exactly this). The display IS at its top picture
-        // and refresh, so it meets the top even though its clock is 10% lower.
+        // and refresh, so it meets the top even though its clock is 10% lower
+        // (ruling 36: the driven timing's clock is not compared).
         let panel = EDIDInfo.fixture(
             name: "4K60 twice",
             version: (1, 4),
@@ -1630,5 +1708,662 @@ struct DisplayDiagnosticTests {
         #expect(DisplayDiagnostic.meetsTopMode(driven, top: top) == true)
         let below = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 297_000_000)
         #expect(DisplayDiagnostic.meetsTopMode(below, top: top) == false)
+    }
+
+    // MARK: - Verdicts from macOS's statement (issue #664, Design 3 and ruling 37)
+
+    @Test("(b) Empty DSC list, live mode at the top: fine, named uncompressed, unsafe list a fact (27C1U-L, m3_macos26.6.2)")
+    func emptyListAtTopIsFineUncompressed() throws {
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2",
+                        currentMode: Self.live27C1UL, drivenTiming: Self.statement27C1UL)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
+        #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.isWarning == false)
+        #expect(diag.facts.dscReading == .uncompressed)
+        #expect(diag.facts.isAppleDisplay == false)
+        #expect(diag.facts.drivenTiming?.unsafeIDs == [89, 90, 91, 92], "a fact, never a verdict (ruling 1)")
+        #expect(diag.detail.contains("states it is running uncompressed"), "\(diag.detail)")
+        #expect(diag.detail.contains("a mode macOS does not send over the DisplayPort link"), "no 4:2:0 downstream format: sentence K17")
+        #expect(diag.facts.topModeMatch == .exact)
+        #expect(diag.facts.topModeAvailability == .offeredUncompressed)
+        #expect(diag.facts.statementOffersTopMode == true)
+        #expect(diag.facts.topModeListedByNode == true)
+        #expect(diag.cableAssessment == .unlikelyTheCable, "the statement lists the top mode on this link")
+        let need = try #require(diag.facts.liveNeededGbps)
+        #expect(abs(need - 12.6684) < 0.001, "527.85 MHz x 24 (RGB and 4:4:4 at 8 bits both cost 24)")
+        let usable = try #require(diag.facts.usableGbpsRange)
+        #expect(abs(usable.upperBound - 12.96) < 1e-9)
+        #expect(abs(usable.lowerBound - 12.96 * 0.9765625) < 1e-9)
+        #expect(diag.facts.statementContradiction == false, "12.668 is inside 12.656...12.96")
+        let needed = try #require(diag.facts.neededGbps)
+        #expect(abs(needed - 12.6684) < 0.001, "the top-mode figure keeps its 8-bit RGB basis, as a receipt")
+    }
+
+    @Test("(b) Live below the top, top offered uncompressed: belowMonitorMax, the selected mode named, the cable exonerated by the statement")
+    func topOfferedUncompressedBelowTop() throws {
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60, Self.g34wAt100])), edid: g34w))
+        #expect(diag.bottleneck == .belowMonitorMax)
+        #expect(diag.isWarning == true)
+        #expect(diag.summary == "Monitor can do more than it is set to")
+        #expect(diag.detail.contains("macOS lists your LEN G34w-10's top mode (up to 100Hz) as available on this link, uncompressed."), "\(diag.detail)")
+        #expect(diag.detail.contains("macOS states the current mode, 3440 x 1440 @ 60Hz, is running uncompressed."), "\(diag.detail)")
+        #expect(diag.detail.contains("The link is carrying about"), "S3 follows")
+        #expect(diag.cableAssessment == .unlikelyTheCable, "2 of 4 lanes on no known cable, but macOS lists the top mode on this link")
+        #expect(diag.facts.statementOffersTopMode == true)
+        #expect(diag.facts.topModeAvailability == .offeredUncompressed)
+        #expect(diag.facts.topModeTiming?.id == 12)
+        #expect(diag.billboardNote == nil, "ruling 39: no re-plug advice when the link already carries the top mode")
+    }
+
+    @Test("(b) Top offered with DSC, and top offered with compression not named")
+    func topOfferedWithDSCAndUnresolved() throws {
+        let dsc = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60, Self.g34wAt100DSC])), edid: g34w))
+        #expect(dsc.bottleneck == .belowMonitorMax)
+        #expect(dsc.detail.contains("as available on this link with compression (DSC)."), "\(dsc.detail)")
+        #expect(dsc.facts.topModeAvailability == .offeredWithDSC)
+        let mixedTop = Self.listing(3440, 1440, 99.992, 600_000_000, Self.listsMixed, id: 12)
+        let unresolved = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60, mixedTop])), edid: g34w))
+        #expect(unresolved.bottleneck == .belowMonitorMax)
+        #expect(unresolved.detail.contains("as available on this link. The mode selected"), "\(unresolved.detail)")
+        #expect(!unresolved.detail.contains("with compression (DSC)"))
+        #expect(unresolved.facts.topModeAvailability == .offeredUnresolved)
+    }
+
+    @Test("(b) Top not offered: picture at a lower refresh only, and a listing with no colour modes")
+    func topNotOffered() throws {
+        let lowerRefresh = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w))
+        #expect(lowerRefresh.bottleneck == .belowMonitorMax)
+        #expect(lowerRefresh.summary == "Monitor can do more than the link is carrying")
+        #expect(lowerRefresh.detail.contains("macOS does not offer your LEN G34w-10's top mode (up to 100Hz) on this link as it is now."), "\(lowerRefresh.detail)")
+        #expect(lowerRefresh.detail.contains("selecting it would retrain the link and show whether it is offered"), "K23: the otherwise wording")
+        #expect(lowerRefresh.facts.topModeMatch == .pictureOnly)
+        #expect(lowerRefresh.facts.topModeAvailability == .notOffered)
+        #expect(lowerRefresh.cableAssessment == .inconclusive)
+        #expect(!lowerRefresh.detail.contains("needs about"), "the arithmetic figure is a receipt, never the reason (the link line describes the link, that is all)")
+        let emptyTop = Self.listing(3440, 1440, 99.992, 600_000_000, Self.emptyLists, id: 12)
+        let noColour = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60, emptyTop])), edid: g34w))
+        #expect(noColour.bottleneck == .belowMonitorMax)
+        #expect(noColour.facts.topModeMatch == .exact)
+        #expect(noColour.facts.topModeAvailability == .notOffered, "listed with no colour mode validated is not an offer")
+        #expect(noColour.facts.topModeTiming?.id == 12)
+    }
+
+    @Test("(b) Top not offered behind a converter: adapterLimit, with and without a branch device")
+    func topNotOfferedBehindAdapter() throws {
+        let branch = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, dfpType: "HDMI", branchDeviceId: "Dp1.2", currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w))
+        #expect(branch.bottleneck == .adapterLimit)
+        #expect(branch.summary == "Video is going through a HDMI adapter")
+        #expect(branch.detail.contains("that reports as DisplayPort 1.2, and macOS does not offer the monitor's top mode (up to 100Hz) on this link as it is now."), "\(branch.detail)")
+        let plain = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, dfpType: "HDMI", currentMode: Self.liveG34w60, drivenTiming: Self.offering([Self.g34wAt60])), edid: g34w))
+        #expect(plain.bottleneck == .adapterLimit)
+        #expect(plain.detail.contains("adapter, and macOS does not offer the monitor's top mode (up to 100Hz) on this link as it is now."), "\(plain.detail)")
+        #expect(!plain.detail.contains("reports as"))
+    }
+
+    @Test("Ruling 41: a scaler entry the node never lists is skipped and the listed entry below it is the top (the 1600x1200 DMT on a 1080p Dell)")
+    func scalerTopIsSkippedForTheEntryTheNodeLists() throws {
+        // A 1080p panel whose EDID's highest-clock entry is a 1600x1200 standard timing; the node lists 1080p only.
+        let panel = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
+                                     preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
+                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000, source: .detailedTiming(block: 0, index: 1))])
+        // (On the real panel the 1600x1200 is a standard timing; the source plays no part in the resolver, which reads the clock.)
+        let live = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(1920, 1080, 60.0, 148_500_000)])
+        // Without the statement the resolver still picks the 162 MHz entry (as today).
+        let declaredOnly = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel))
+        #expect(declaredOnly.width == 1600, "fixture guard: the declared top is the scaler entry")
+        // With it, step 1b walks past the entry the node never lists.
+        let resolved = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel, statement: statement))
+        #expect(resolved.width == 1920 && resolved.height == 1080)
+        #expect(resolved.pixelClockHz == 148_500_000)
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: statement), edid: panel))
+        #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.facts.topModeWidth == 1920)
+        #expect(diag.facts.topModeSource == "detailed timing 1 (block 0)")
+        #expect(diag.facts.topModeMatch == .exact)
+        #expect(diag.facts.topModeListedByNode == true)
+        #expect(diag.detail.contains("at its top mode (1920 x 1080 @ 60Hz)"), "K1 names the resolved top, not the scaler entry: \(diag.detail)")
+        let needed = try #require(diag.facts.neededGbps)
+        #expect(abs(needed - 3.564) < 0.001, "148.5 MHz x 24, the receipt follows the resolved top")
+    }
+
+    @Test("Ruling 41: no declared entry listed at all is the genuine not-listed case: unknownMode, K26")
+    func nothingListedIsUnknown() throws {
+        // The node lists a picture the EDID does not declare at all (nothing pairs), so every candidate is skipped and the declared top stands.
+        let statement = Self.offering([Self.listing(800, 600, 60.0, 40_000_000)])
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, currentMode: Self.liveG34w60, drivenTiming: statement), edid: g34w))
+        #expect(diag.facts.topModeWidth == 3440 && diag.facts.maxRefreshHz == 100, "the declared top stands")
+        #expect(diag.bottleneck == .unknownMode, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.isWarning == false)
+        #expect(diag.summary == "Display connected")
+        #expect(diag.detail.contains("has no entry matching its top mode (up to 100Hz)"), "\(diag.detail)")
+        #expect(diag.facts.topModeMatch == .notListed)
+        #expect(diag.facts.topModeAvailability == .notListed)
+        #expect(diag.facts.topModeListedByNode == false)
+        #expect(diag.facts.statementOffersTopMode == false)
+    }
+
+    @Test("Ruling 41: a native picture listed only at lower refreshes stays the top, so the link's limit still shows (the LG 4K144 at 4K60)")
+    func nativePictureAtLowerRefreshStaysTheTop() throws {
+        // The panel's preferred picture is 3840x2160; its top is 4K120 at 1188 MHz; the node lists 3840x2160 at 60 Hz only.
+        let panel = EDIDInfo.fixture(name: "LG 4K144", version: (1, 4),
+                                     preferred: EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 594_000_000),
+                                     modes: [EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 1_188_000_000, source: .detailedTiming(block: 1, index: 0))])
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 594_000_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(3840, 2160, 60.0, 594_000_000)])
+        let resolved = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel, statement: statement))
+        #expect(resolved.pixelClockHz == 1_188_000_000, "the 120 Hz entry is kept: its picture is the preferred one, so the missing refresh is the link's fact")
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: statement), edid: panel))
+        #expect(diag.bottleneck == .belowMonitorMax, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.facts.topModeMatch == .pictureOnly)
+        #expect(diag.facts.topModeAvailability == .notOffered)
+        #expect(diag.facts.topModeListedByNode == true, "the node lists the picture, at other refreshes")
+        #expect(diag.detail.contains("macOS does not offer your LG 4K144's top mode (up to 120Hz) on this link as it is now."), "\(diag.detail)")
+    }
+
+    @Test("Ruling 41: a non-preferred picture listed only at lower refreshes is a scaler entry and is skipped (the 5120x1440 panel with a 4K120 VIC)")
+    func nonPreferredPictureAtLowerRefreshIsSkipped() throws {
+        // Preferred (native) 5120x1440 at 120 Hz; the EDID also carries 4K120 (1188 MHz, outranking the native on clock) and 4K60 VICs; the node lists the native and 4K60.
+        let native = EDIDInfo.mode(5120, 1440, hTotal: 5280, vTotal: 1480, pixelClockHz: 937_728_000)
+        let panel = EDIDInfo.fixture(name: "Odyssey G9", version: (1, 4),
+                                     preferred: native,
+                                     modes: [EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 1_188_000_000,
+                                                           source: .ctaVIC(block: 1, vic: 118, native: false, ycbcr420Only: false)),
+                                             EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 594_000_000,
+                                                           source: .ctaVIC(block: 1, vic: 97, native: false, ycbcr420Only: false))])
+        let live = DisplayCurrentMode(width: 5120, height: 1440, refreshHz: 120, bitsPerComponent: 8, pixelClockHz: 937_728_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(5120, 1440, 120.0, 937_728_000), Self.listing(3840, 2160, 60.0, 594_000_000, id: 101)])
+        let declaredOnly = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel))
+        #expect(declaredOnly.width == 3840 && declaredOnly.pixelClockHz == 1_188_000_000, "fixture guard: the 4K120 VIC outranks the native on clock")
+        let resolved = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel, statement: statement))
+        #expect(resolved.width == 5120 && resolved.height == 1440, "4K120 is a non-preferred picture the node lists only at 60 Hz: skipped; the native is listed exactly")
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: statement), edid: panel))
+        #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.facts.topModeWidth == 5120)
+        #expect(diag.facts.topModeListedByNode == true)
+        // Without the statement nothing changes from today: the 4K120 VIC is the top.
+        let plain = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live), edid: panel))
+        #expect(plain.facts.topModeWidth == 3840)
+        #expect(plain.facts.topModeListedByNode == nil)
+    }
+
+    // MARK: - PR #665 gate rerun, Claude F1: a link-limited native picture above the preferred DTD
+
+    /// The Studio Display as the parser reads it: the base DTD is a 4K60 compatibility mode,
+    /// the native 5120x2880 is the tiled composite (964.8 MHz). A link that cannot carry the
+    /// native mode lists it at 30 Hz only beside 4K60.
+    private let studioLinkLimited = EDIDInfo.fixture(
+        name: "StudioDisplay", version: (1, 4),
+        preferred: EDIDInfo.mode(3840, 2160, hTotal: 4115, vTotal: 2160, pixelClockHz: 533_250_000),
+        modes: [EDIDInfo.mode(5120, 2880, hTotal: 5360, vTotal: 3000, pixelClockHz: 964_800_000, source: .tiledComposite(tiles: 2, from: nil))])
+
+    @Test("F1: a Studio Display whose node lists its native 5K only at 30 Hz keeps 5K60 as the top and reads not offered, never 'not the cable'")
+    func linkLimitedStudioDisplayKeepsItsNativeTop() throws {
+        let live = DisplayCurrentMode(width: 5120, height: 2880, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 468_000_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(3840, 2160, 60.0, 533_250_000, id: 37), Self.listing(5120, 2880, 30.0, 468_000_000, id: 43)])
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", manufacturerName: "APP", currentMode: live, drivenTiming: statement), edid: studioLinkLimited))
+        #expect(diag.facts.topModeWidth == 5120 && diag.facts.maxRefreshHz == 60, "the native picture stays the top: got \(String(describing: diag.facts.topModeWidth)) @ \(String(describing: diag.facts.maxRefreshHz))")
+        #expect(diag.facts.topModeMatch == .pictureOnly)
+        #expect(diag.facts.topModeAvailability == .notOffered)
+        #expect(diag.bottleneck == .belowMonitorMax, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.summary == "Monitor can do more than the link is carrying")
+        #expect(diag.detail.contains("macOS does not offer your StudioDisplay's top mode (up to 60Hz) on this link as it is now."), "\(diag.detail)")
+        #expect(!diag.detail.contains("not the cable or adapter"))
+        #expect(diag.cableAssessment == .inconclusive)
+    }
+
+    @Test("F1: a Pro Display XDR (DisplayID-native 6K) whose node lists 6K only at 30 Hz keeps 6K60 as the top and reads not offered")
+    func linkLimitedProDisplayXDRKeepsItsNativeTop() throws {
+        let xdr = EDIDInfo.fixture(
+            name: "ProDisplayXDR", version: (1, 4),
+            preferred: EDIDInfo.mode(3840, 2160, hTotal: 4115, vTotal: 2160, pixelClockHz: 533_250_000),
+            modes: [EDIDInfo.mode(6016, 3384, hTotal: 6176, vTotal: 3472, pixelClockHz: 1_286_000_000,
+                                  source: .displayID(block: 1, type: .typeI, index: 0, embeddedInCTA: false))])
+        let live = DisplayCurrentMode(width: 6016, height: 3384, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 643_000_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(3840, 2160, 60.0, 533_250_000, id: 37), Self.listing(6016, 3384, 30.0, 643_000_000, id: 44)])
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, manufacturerName: "APP", currentMode: live, drivenTiming: statement), edid: xdr))
+        #expect(diag.facts.topModeWidth == 6016 && diag.facts.maxRefreshHz == 60, "got \(String(describing: diag.facts.topModeWidth)) @ \(String(describing: diag.facts.maxRefreshHz))")
+        #expect(diag.facts.topModeAvailability == .notOffered)
+        #expect(diag.bottleneck == .belowMonitorMax, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.detail.contains("macOS does not offer your ProDisplayXDR's top mode (up to 60Hz) on this link as it is now. The video is tunneled"), "K21: \(diag.detail)")
+    }
+
+    @Test("F1: a PA32QCV (6K panel that also declares 6K at 30) held to 30 Hz keeps 6K60 as the top and reads not offered, never full quality")
+    func linkLimitedPA32QCVKeepsItsNativeTop() throws {
+        let pa32 = EDIDInfo.fixture(
+            name: "PA32QCV", version: (1, 4),
+            preferred: EDIDInfo.mode(3008, 1692, hTotal: 3168, vTotal: 1750, pixelClockHz: 332_640_000),
+            modes: [EDIDInfo.mode(6016, 3384, hTotal: 6176, vTotal: 3472, pixelClockHz: 1_286_000_000,
+                                  source: .displayID(block: 1, type: .typeI, index: 0, embeddedInCTA: false)),
+                    EDIDInfo.mode(6016, 3384, hTotal: 6176, vTotal: 3472, pixelClockHz: 643_000_000,
+                                  source: .displayID(block: 1, type: .typeI, index: 1, embeddedInCTA: false))])
+        let live = DisplayCurrentMode(width: 6016, height: 3384, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 643_000_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(3008, 1692, 60.0, 332_640_000, id: 37), Self.listing(6016, 3384, 30.0, 643_000_000, id: 44)])
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", currentMode: live, drivenTiming: statement), edid: pa32))
+        #expect(diag.facts.topModeWidth == 6016 && diag.facts.maxRefreshHz == 60, "got \(String(describing: diag.facts.topModeWidth)) @ \(String(describing: diag.facts.maxRefreshHz))")
+        #expect(diag.facts.topModeAvailability == .notOffered)
+        #expect(diag.bottleneck == .belowMonitorMax, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.detail.contains("macOS does not offer your PA32QCV's top mode (up to 60Hz) on this link as it is now. The cable is already carrying every DisplayPort lane") == false, "4 of 4 lanes on no known passive cable: K23, not K22")
+        #expect(diag.detail.contains("macOS does not offer your PA32QCV's top mode (up to 60Hz) on this link as it is now. If you've selected the higher mode"), "K23: \(diag.detail)")
+    }
+
+    @Test("DisplayID Type IV and Type VIII entries are code lists, like the two bitmap tags: a picture-only one is skipped, not kept as a link-limited native mode (PR #665 gate fix round 4, item 1)")
+    func displayIDCodeListTypesAreNotNativeDeclarations() throws {
+        // A 1080p panel whose EDID carries a 1600x1200@60 entry through a DisplayID code list; the node
+        // lists 1600x1200 at 30 Hz only beside the native 1080p60. A Type I entry of that shape is the
+        // ruling's accepted cost (it stays, not offered); the four code-list types must be skipped and
+        // the top must stay the listed 1080p60.
+        let live = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(1920, 1080, 60.0, 148_500_000), Self.listing(1600, 1200, 30.0, 81_000_000, id: 101)])
+        for type in [EDIDMode.DisplayIDTimingType.typeIV, .typeVIII, .vesaDMTBitmap, .ctaVICBitmap] {
+            let panel = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
+                                         preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
+                                         modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000,
+                                                               source: .displayID(block: 1, type: type, index: 0, embeddedInCTA: false))])
+            let codeList = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel, statement: statement))
+            #expect(codeList.width == 1920 && codeList.height == 1080, "\(type): a code-list entry listed at 30 only is a scaler entry, got \(codeList.width)x\(codeList.height)")
+            let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: statement), edid: panel))
+            #expect(diag.bottleneck == .fine, "\(type): got \(diag.bottleneck): \(diag.detail)")
+        }
+        // The same entry as a Type I timing stays the top and reads not offered (the ruling's accepted cost).
+        let typeI = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
+                                     preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
+                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000,
+                                                           source: .displayID(block: 1, type: .typeI, index: 0, embeddedInCTA: false))])
+        #expect(try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: typeI, statement: statement)).width == 1600)
+    }
+
+    @Test("A native declaration the node lists nowhere stays the top and reads not listed (K26), never a compatibility mode at full quality (PR #665 gate fix round 4, item 2)")
+    func unlistedNativeDeclarationStaysTheTop() throws {
+        // The rerun's case (b): a Studio Display whose node lists no 5K entry at all, driven 4K60.
+        // The composite is the panel's native mode; a scaler entry never carries that source, so an
+        // unlisted one is the link's fact to report as not listed, not a reason to judge the 4K DTD.
+        let live4K = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 533_250_000, pixelEncoding: .rgb444)
+        let fourKOnly = Self.offering([Self.listing(3840, 2160, 60.0, 533_250_000, id: 37)])
+        let studio = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, manufacturerName: "APP", currentMode: live4K, drivenTiming: fourKOnly), edid: studioLinkLimited))
+        #expect(studio.facts.topModeWidth == 5120 && studio.facts.maxRefreshHz == 60, "got \(String(describing: studio.facts.topModeWidth)) @ \(String(describing: studio.facts.maxRefreshHz))")
+        #expect(studio.facts.topModeMatch == .notListed)
+        #expect(studio.facts.topModeAvailability == .notListed)
+        #expect(studio.facts.topModeListedByNode == false)
+        #expect(studio.bottleneck == .unknownMode, "got \(studio.bottleneck): \(studio.detail)")
+        #expect(studio.detail.contains("macOS's list of modes for your StudioDisplay has no entry matching its top mode (up to 60Hz)"), "K26: \(studio.detail)")
+        #expect(!studio.detail.contains("full quality"))
+        // The same for a DisplayID-native 6K (the Pro Display XDR shape) with no 6K entry listed.
+        let xdr = EDIDInfo.fixture(
+            name: "ProDisplayXDR", version: (1, 4),
+            preferred: EDIDInfo.mode(3840, 2160, hTotal: 4115, vTotal: 2160, pixelClockHz: 533_250_000),
+            modes: [EDIDInfo.mode(6016, 3384, hTotal: 6176, vTotal: 3472, pixelClockHz: 1_286_000_000,
+                                  source: .displayID(block: 1, type: .typeI, index: 0, embeddedInCTA: false))])
+        let unlistedXDR = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, manufacturerName: "APP", currentMode: live4K, drivenTiming: fourKOnly), edid: xdr))
+        #expect(unlistedXDR.facts.topModeWidth == 6016)
+        #expect(unlistedXDR.facts.topModeMatch == .notListed && unlistedXDR.bottleneck == .unknownMode, "got \(unlistedXDR.bottleneck): \(unlistedXDR.detail)")
+        // An unlisted DMT standard timing is still a scaler entry: it falls through to the next
+        // listed candidate, so the 1080p Dell resolves to 1080p60 and reads fine.
+        let dell = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
+                                    preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
+                                    modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000,
+                                                          source: .standardTiming(index: 2, derivation: .dmt, dmtID: 0x33))])
+        let live1080 = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
+        let only1080 = Self.offering([Self.listing(1920, 1080, 60.0, 148_500_000)])
+        let resolved = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: dell, statement: only1080))
+        #expect(resolved.width == 1920 && resolved.height == 1080)
+        let dellDiag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live1080, drivenTiming: only1080), edid: dell))
+        #expect(dellDiag.bottleneck == .fine, "got \(dellDiag.bottleneck): \(dellDiag.detail)")
+        // The EDID's preferred picture is a native declaration too (round-4 re-review, LOW): a
+        // 1080p panel whose preferred 1080p60 DTD the node lists nowhere, beside a 720p VIC the node
+        // does list, driven 720p. Without the preferred clause the 720p VIC becomes the top and the
+        // panel reads full quality at 720p; with it the top stays 1080p60, not listed, unknown.
+        let panel1080 = EDIDInfo.fixture(name: "1080p panel", version: (1, 4),
+                                         preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
+                                         modes: [EDIDInfo.mode(1280, 720, hTotal: 1650, vTotal: 750, pixelClockHz: 74_250_000,
+                                                               source: .ctaVIC(block: 1, vic: 4, native: false, ycbcr420Only: false))])
+        let live720 = DisplayCurrentMode(width: 1280, height: 720, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 74_250_000, pixelEncoding: .rgb444)
+        let only720 = Self.offering([Self.listing(1280, 720, 60.0, 74_250_000)])
+        let preferredUnlisted = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live720, drivenTiming: only720), edid: panel1080))
+        #expect(preferredUnlisted.facts.topModeWidth == 1920 && preferredUnlisted.facts.topModeHeight == 1080, "got \(String(describing: preferredUnlisted.facts.topModeWidth))x\(String(describing: preferredUnlisted.facts.topModeHeight))")
+        #expect(preferredUnlisted.facts.topModeMatch == .notListed)
+        #expect(preferredUnlisted.bottleneck == .unknownMode, "got \(preferredUnlisted.bottleneck): \(preferredUnlisted.detail)")
+        #expect(!preferredUnlisted.detail.contains("full quality"))
+    }
+
+    @Test("(b) Same picture and refresh at another blanking counts as offered (the Studio Display's 936 MHz against the 964.8 MHz composite)")
+    func sameRefreshMatchIsOffered() throws {
+        // Driven below the top on purpose: the Studio Display at 4K60 with its 5K timing listed uncompressed.
+        let studioAt4K = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 529_190_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(3840, 2160, 59.999, 529_190_000), Self.listing(5120, 2880, 60.0, 936_000_000, id: 43)])
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true, manufacturerName: "APP", currentMode: studioAt4K, drivenTiming: statement), edid: studio5K))
+        #expect(diag.facts.topModeMatch == .sameRefresh, "964.8 MHz declared against 936 MHz listed: same picture and refresh, another blanking")
+        #expect(diag.facts.topModeAvailability == .offeredUncompressed)
+        #expect(diag.bottleneck == .belowMonitorMax)
+        #expect(diag.summary == "Monitor can do more than it is set to")
+    }
+
+    @Test("(c) Every non-virtual mode listed: compressionActive from the statement, no arithmetic (DELL U3225QE, m4pro_macos26.6.1_b)")
+    func fullListIsCompressionActive() throws {
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, currentMode: Self.liveU3225QE, drivenTiming: Self.statementU3225QE)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: dellU2725QE))
+        #expect(diag.bottleneck == .compressionActive, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.isWarning == false)
+        #expect(diag.summary == "Display running compressed (DSC) to fit through the link")
+        #expect(diag.detail.contains("states that this link needs compression (DSC) to carry it"), "\(diag.detail)")
+        #expect(!diag.detail.contains("Apple"))
+        #expect(diag.facts.dscReading == .dscOn)
+        #expect(diag.facts.liveNeededGbps == nil, "8 and 10 bit on one timing and no live depth: no cross-check figure")
+        #expect(diag.facts.statementContradiction == false)
+        #expect(diag.facts.topModeAvailability == .offeredWithDSC, "reported beside the verdict, deciding nothing here")
+    }
+
+    @Test("(c) On an Apple display the DSC-on verdict blames no link (Studio Display, m5_macos26.6.1_e)")
+    func fullListOnAppleDisplayHasNoLinkBlame() throws {
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true, manufacturerName: "APP",
+                        currentMode: Self.liveStudio, drivenTiming: Self.statementStudio)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: studio5K))
+        #expect(diag.bottleneck == .compressionActive, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.facts.isAppleDisplay == true)
+        #expect(diag.summary == "Display running compressed (DSC)")
+        #expect(diag.detail.contains("Apple displays run compressed whenever the link supports it"), "\(diag.detail)")
+        #expect(!diag.detail.contains("needs compression"), "no link blame")
+        #expect(!diag.summary.contains("to fit through the link"))
+        #expect(diag.cableAssessment == .unlikelyTheCable)
+        // The cross-check is reported beside the statement and decides nothing:
+        // 936 MHz x 30 bpp (the live 10-bit depth, RGB) = 28.08 Gbps against a
+        // usable 25.31 to 25.92, which agrees with DSC on.
+        let need = try #require(diag.facts.liveNeededGbps)
+        #expect(abs(need - 28.08) < 0.001, "936 MHz x 30 bpp at the live 10-bit depth")
+        #expect(diag.facts.statementContradiction == false, "28.08 is above the bottom of the usable range, so DSC on is not contradicted")
+        #expect(diag.facts.topModeMatch == .sameRefresh)
+    }
+
+    @Test("(c) The Apple gate reads EDID bytes 8-9 when the node carries the blob")
+    func appleGateReadsEDIDBytes() throws {
+        var bytes = [UInt8](repeating: 0, count: 128)
+        bytes[8] = 0x06; bytes[9] = 0x10
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true, edidData: Data(bytes),
+                        currentMode: Self.liveStudio, drivenTiming: Self.statementStudio)
+        // The injected EDID is the parsed fixture; the raw blob on the monitor only feeds the gate.
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: studio5K))
+        #expect(diag.facts.isAppleDisplay == true)
+        #expect(diag.summary == "Display running compressed (DSC)")
+    }
+
+    @Test("(d) A proper subset reads unknownMode: the node does not name the live colour mode")
+    func properSubsetIsUnknownMode() throws {
+        let subset = DisplayTimingStatement(driven: DisplayTimingLists(colourModes: Self.listsStudio.colourModes, dscRequiredList: [46], unsafeList: [], validPixelEncodings: 0x1b4d, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true),
+                                            allTimings: Self.statementStudio.allTimings)
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true, currentMode: Self.liveStudio, drivenTiming: subset)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: studio5K))
+        #expect(diag.bottleneck == .unknownMode)
+        #expect(diag.isWarning == false)
+        #expect(diag.summary == "Display connected")
+        #expect(diag.detail.contains("does not name the colour format in use"), "\(diag.detail)")
+        #expect(diag.detail.contains("The link is carrying about"), "the link is still described")
+        #expect(diag.facts.dscReading == .unresolved)
+    }
+
+    @Test("(d) A timing listing DSC-capable and non-capable modes together is unknown until the live depth resolves it")
+    func mixedTimingResolvesOnlyThroughTheLiveMode() throws {
+        // 4K144 at 1328 MHz over 4 lanes HBR3. The EDID top is the same mode, so only the statement decides.
+        let panel = EDIDInfo.fixture(name: "LG 4K144", version: (1, 4),
+                                     preferred: EDIDInfo.mode(3840, 2160, hTotal: 4000, vTotal: 2306, pixelClockHz: 1_328_250_000))
+        let unresolved = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: Self.liveMixed, drivenTiming: Self.statementMixed), edid: panel))
+        #expect(unresolved.bottleneck == .unknownMode, "no live depth: RGB (capable) or 4:2:2 (not)")
+        #expect(unresolved.facts.dscReading == .unresolved)
+        #expect(unresolved.facts.liveNeededGbps == nil)
+        let tenBit = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 143.999, bitsPerComponent: 10, pixelClockHz: 1_328_249_948)
+        let resolved = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: tenBit, drivenTiming: Self.statementMixed), edid: panel))
+        #expect(resolved.bottleneck == .compressionActive, "every 10-bit mode is RGB, capable and listed")
+        let need = try #require(resolved.facts.liveNeededGbps)
+        #expect(abs(need - 39.847) < 0.01, "1328.25 MHz x 30")
+        let plain = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 143.999, bitsPerComponent: 8, pixelClockHz: 1_328_249_948, pixelEncoding: .ycbcr422)
+        let uncompressed = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: plain, drivenTiming: Self.statementMixed), edid: panel))
+        #expect(uncompressed.facts.dscReading == .uncompressed, "a SupportsDSC = 0 mode is never in the list")
+        #expect(uncompressed.bottleneck == .fine, "the live mode meets the top: (b)")
+        #expect(uncompressed.facts.statementContradiction == false, "1328.25 MHz x 16 = 21.25 Gbps fits 25.92")
+    }
+
+    @Test("(d) Unreadable lists read unknownMode, whatever the arithmetic says")
+    func incompleteListsAreUnknown() throws {
+        let incomplete = DisplayTimingStatement(driven: DisplayTimingLists(colourModes: Self.lists27C1UL.colourModes, dscRequiredList: [], unsafeList: [], validPixelEncodings: nil,
+                                                                           colourModesComplete: true, dscListComplete: false, unsafeListComplete: true),
+                                                allTimings: Self.statement27C1UL.allTimings)
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", currentMode: Self.live27C1UL, drivenTiming: incomplete)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
+        #expect(diag.bottleneck == .unknownMode)
+        #expect(diag.facts.dscReading == .unresolved)
+        // Claude F2 (gate rerun): an incomplete colour table gives no cross-check figure and no K13
+        // line beside "Not named"; the entry that failed to parse may be the live one.
+        let tableIncomplete = DisplayTimingStatement(driven: DisplayTimingLists(colourModes: [Self.colour(90, .rgb444, 8, dsc: 0)], dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1b4d,
+                                                                                colourModesComplete: false, dscListComplete: true, unsafeListComplete: true),
+                                                     allTimings: Self.statement27C1UL.allTimings)
+        let noFigure = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", currentMode: Self.live27C1UL, drivenTiming: tableIncomplete), edid: panel27C1UL))
+        #expect(noFigure.facts.dscReading == .unresolved)
+        #expect(noFigure.facts.liveNeededGbps == nil, "got \(String(describing: noFigure.facts.liveNeededGbps))")
+        #expect(!noFigure.statementReceipts().contains { $0.contains("Live mode needs about") }, "\(noFigure.statementReceipts())")
+        #expect(noFigure.statementReceipts().contains { $0.contains("Not named") })
+        // Ruling 42: an unreadable unsafe list alone leaves the DSC statement, and the verdict, untouched.
+        let unsafeOnly = DisplayTimingStatement(driven: DisplayTimingLists(colourModes: Self.lists27C1UL.colourModes, dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1b4d,
+                                                                           colourModesComplete: true, dscListComplete: true, unsafeListComplete: false),
+                                                allTimings: Self.statement27C1UL.allTimings)
+        let stillFine = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", currentMode: Self.live27C1UL, drivenTiming: unsafeOnly), edid: panel27C1UL))
+        #expect(stillFine.bottleneck == .fine, "got \(stillFine.bottleneck): \(stillFine.detail)")
+        #expect(stillFine.facts.dscReading == .uncompressed)
+        #expect(stillFine.facts.drivenTiming?.unsafeListComplete == false, "the receipt (Task 8, K38) says so; the verdict does not")
+    }
+
+    @Test("A statement without a live mode is treated as no statement for the verdict (ruling 21)")
+    func statementWithoutCurrentModeIsIgnored() throws {
+        let with = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", drivenTiming: Self.statementStudio), edid: fo32))
+        let without = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)"), edid: fo32))
+        #expect(with.bottleneck == without.bottleneck)
+        #expect(with.bottleneck == .unknownMode)
+        #expect(with.facts.dscReading == .dscOn, "the reading is still reported as a fact")
+        #expect(with.facts.topModeAvailability == .notListed, "the match still runs as a fact: the Studio Display node lists no 4K240, and step 1b finds no declared entry it does list, so the declared top stands")
+        #expect(with.facts.topModeListedByNode == false)
+    }
+
+    @Test("Design 6 and ruling 44: behind a converter recording 4:2:0 output, the 4:2:0-only entry is not 'a mode macOS does not use'; some modes converting says so without naming the live one, all converting names the picture")
+    func converterWith420DownstreamNarrowsTheSentence() throws {
+        // The 27C1U-L EDID (its VIC 97 is 4:2:0-only) with the S2721QS statement's shape: a 4K60 driven timing on which 3 of 6 non-virtual modes carry a 4:2:0 downstream format.
+        let dp = makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, dfpType: "HDMI", branchDeviceId: "cHDMIb",
+                        currentMode: Self.liveS2721QS, drivenTiming: Self.statementS2721QS)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
+        #expect(diag.bottleneck == .fine, "got \(diag.bottleneck): \(diag.detail)")
+        #expect(diag.facts.downstream420 == .someModes)
+        #expect(diag.detail.contains("The current timing includes a colour mode the adapter sends to the display as 4:2:0; macOS does not name which of the timing's modes is in use."), "\(diag.detail)")
+        #expect(!diag.detail.contains("converting the picture"), "K8 claims the live picture is converted; the node does not name the live mode (finding 4)")
+        #expect(!diag.detail.contains("does not use"))
+        #expect(!diag.detail.contains("does not send over the DisplayPort link"))
+        #expect(diag.facts.drivenTiming?.unsafeIDs == [76, 77, 78, 79])
+        #expect(diag.facts.declared420OnlyModes == 1)
+        #expect(diag.facts.currentMode?.downstreamFormat == nil, "ruling 15: not every non-virtual mode carries one")
+        // Every non-virtual mode converting (the m1_macos26.5_o entry alone): K8, and the current mode carries the format (ruling 15 and ruling 44 agree by construction).
+        let allLists = DisplayTimingLists(colourModes: [Self.colour(5, .ycbcr444, 8, dsc: 0, downstream: DisplayDownstreamFormat(encoding: .ycbcr420, depth: 8))],
+                                          dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1b4f, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+        let allStatement = DisplayTimingStatement(driven: allLists, allTimings: [Self.listing(3840, 2160, 60.0, 594_000_000, allLists)])
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 594_000_000,
+                                      pixelEncoding: .ycbcr444, downstreamFormat: DisplayDownstreamFormat(encoding: .ycbcr420, depth: 8))
+        let all = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, dfpType: "HDMI", branchDeviceId: "cHDMIb",
+                                                             currentMode: live, drivenTiming: allStatement), edid: panel27C1UL))
+        #expect(all.facts.downstream420 == .everyMode)
+        #expect(all.detail.contains("macOS records the adapter converting the picture to 4:2:0 on its way to the display."), "\(all.detail)")
+        #expect(!all.detail.contains("does not name which"))
+    }
+
+    @Test("Spec Design 3: the list decides on an Apple display too; the Apple clause only changes attribution when the list reads DSC on")
+    func appleDisplayReadsTheListLikeAnyOther() throws {
+        // The general rule on an Apple panel: DSC-capable modes, empty list. The vendor never overrides the
+        // producer's statement, so at the top this is fine, K1, no Apple sentence.
+        let emptyOnCapable = DisplayTimingLists(colourModes: Self.listsStudio.colourModes, dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1b4d,
+                                                colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+        let plain = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true, manufacturerName: "APP",
+                                                               currentMode: Self.liveStudio, drivenTiming: DisplayTimingStatement(driven: emptyOnCapable, allTimings: [Self.listing(5120, 2880, 60.0, 936_000_000, emptyOnCapable)])), edid: studio5K))
+        #expect(plain.facts.isAppleDisplay == true)
+        #expect(plain.facts.dscReading == .uncompressed)
+        #expect(plain.bottleneck == .fine, "got \(plain.bottleneck): \(plain.detail)")
+        #expect(plain.detail.contains("states it is running uncompressed"), "\(plain.detail)")
+        #expect(!plain.detail.contains("Apple") && !plain.summary.contains("compressed"), "the Apple clause changes attribution only, and only when the list reads DSC on")
+        // A proper subset on an Apple panel: unknown, K6, no Apple sentence.
+        let subset = DisplayTimingLists(colourModes: Self.listsStudio.colourModes, dscRequiredList: [46], unsafeList: [], validPixelEncodings: 0x1b4d,
+                                        colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+        let unknown = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true, manufacturerName: "APP",
+                                                                 currentMode: Self.liveStudio, drivenTiming: DisplayTimingStatement(driven: subset, allTimings: Self.statementStudio.allTimings)), edid: studio5K))
+        #expect(unknown.facts.isAppleDisplay == true)
+        #expect(unknown.bottleneck == .unknownMode)
+        #expect(unknown.detail.contains("does not name the colour format in use"), "\(unknown.detail)")
+        #expect(!unknown.detail.contains("Apple"))
+        // The Thunderbolt Display shape (06102792-): no mode DSC-capable, empty list: uncompressed by the general rule.
+        let thunderbolt = DisplayTimingLists(colourModes: [Self.colour(46, .rgb444, 8, dsc: 0), Self.colour(48, .rgb444, 10, dsc: 0)], dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1b4d,
+                                             colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+        let tb = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true, manufacturerName: "APP",
+                                                            currentMode: Self.liveStudio, drivenTiming: DisplayTimingStatement(driven: thunderbolt, allTimings: [Self.listing(5120, 2880, 60.0, 936_000_000, thunderbolt)])), edid: studio5K))
+        #expect(tb.facts.dscReading == .uncompressed)
+        #expect(tb.bottleneck == .fine)
+        #expect(!tb.detail.contains("Apple"))
+    }
+
+    @Test("The cross-check flags a contradiction and decides nothing")
+    func contradictionIsFlaggedButDecidesNothing() throws {
+        // Statement says uncompressed; the live 4K120 at 8-bit RGB needs 28.5 Gbps against 12.96: contradiction, verdict still follows the statement.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120, bitsPerComponent: 8, pixelClockHz: 1_188_000_000, pixelEncoding: .rgb444)
+        let says = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live, drivenTiming: Self.offering([Self.listing(3840, 2160, 120.0, 1_188_000_000)])), edid: dellU2725QE))
+        #expect(says.facts.statementContradiction == true)
+        #expect(says.facts.dscReading == .uncompressed)
+        #expect(says.bottleneck == .fine, "the live mode meets the top; the statement stands")
+        // Statement says DSC on; a 1080p60 at 8-bit RGB needs 3.56 Gbps, below the bottom of 25.31...25.92: contradiction, verdict still .compressionActive.
+        let small = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
+        let listed = DisplayTimingStatement(driven: Self.dscLists(), allTimings: [Self.listing(1920, 1080, 60.0, 148_500_000, Self.dscLists())])
+        let on = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: small, drivenTiming: listed), edid: g34w))
+        #expect(on.facts.statementContradiction == true)
+        #expect(on.bottleneck == .compressionActive)
+        #expect(on.statementReceipts().contains { $0.contains("disagrees with macOS's statement") }, "the K14 receipt follows the flag")
+    }
+
+    @Test("On an Apple display reading DSC on, a live need under the usable floor is not a contradiction (PR #665 gate fix round 2, L2)")
+    func appleDSCOnBelowTheFloorIsNotAContradiction() throws {
+        // The live check on a Studio Display (M5, macOS 26.6, 4 lanes HBR3, run at 65a6a5fa) printed
+        // K14 under the 25.3 Gbps floor with DSC on. The node lists DSC on every timing whatever the
+        // link (the Apple clause: the list is not a link statement), so that is the expected state and
+        // the line was noise. At HEAD a two-depth Apple timing yields no figure at all, so this
+        // single-depth fixture is the shape the exemption decides. Same statement and live mode on a
+        // non-Apple EDID: informative, stays.
+        let small = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
+        let listed = DisplayTimingStatement(driven: Self.dscLists(), allTimings: [Self.listing(1920, 1080, 60.0, 148_500_000, Self.dscLists())])
+        let apple = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", manufacturerName: "APP", currentMode: small, drivenTiming: listed), edid: g34w))
+        #expect(apple.facts.isAppleDisplay == true)
+        #expect(apple.facts.dscReading == .dscOn)
+        let need = try #require(apple.facts.liveNeededGbps)
+        let usable = try #require(apple.facts.usableGbpsRange)
+        #expect(need < usable.lowerBound, "fixture guard: 3.56 Gbps is under the 25.3 Gbps floor")
+        #expect(apple.facts.statementContradiction == false)
+        #expect(apple.bottleneck == .compressionActive && apple.summary == "Display running compressed (DSC)")
+        #expect(!apple.statementReceipts().contains { $0.contains("disagrees with macOS's statement") }, "the receipt follows the flag")
+        let nonApple = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: small, drivenTiming: listed), edid: g34w))
+        #expect(nonApple.facts.statementContradiction == true, "unchanged on a non-Apple display")
+        // The helper itself: Apple exempts DSC on under the floor and nothing else.
+        let range = 25.3125...25.92
+        #expect(DisplayDiagnostic.statementContradiction(reading: .dscOn, liveNeededGbps: 3.564, usable: range, isAppleDisplay: true) == false)
+        #expect(DisplayDiagnostic.statementContradiction(reading: .dscOn, liveNeededGbps: 3.564, usable: range, isAppleDisplay: false) == true)
+        #expect(DisplayDiagnostic.statementContradiction(reading: .uncompressed, liveNeededGbps: 30, usable: range, isAppleDisplay: true) == true, "uncompressed above the ceiling on an Apple display still contradicts")
+        #expect(DisplayDiagnostic.statementContradiction(reading: .unresolved, liveNeededGbps: 3.564, usable: range, isAppleDisplay: true) == false)
+    }
+
+    @Test("Facts carry the statement on every path, the no-EDID path included")
+    func factsCarryTheStatementWithoutAnEDID() throws {
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", currentMode: Self.live27C1UL, drivenTiming: Self.statement27C1UL), edid: nil))
+        #expect(diag.bottleneck == .unknownMode)
+        #expect(diag.facts.dscReading == .uncompressed)
+        #expect(diag.facts.drivenTiming == Self.statement27C1UL)
+        #expect(diag.facts.liveNeededGbps != nil)
+        #expect(diag.facts.usableGbpsRange != nil)
+        #expect(diag.facts.topModeAvailability == nil, "no EDID, no top mode to match")
+        #expect(diag.facts.statementOffersTopMode == false)
+        #expect(diag.facts.topModeListedByNode == nil)
+        #expect(diag.facts.downstream420 == .noMode, "the reading is never nil with a statement; no mode converts")
+    }
+
+    @Test("(e) No statement, live mode below the top: unknownMode with the node named as unmatched, never an arithmetic verdict")
+    func noStatementBelowTopIsUnknown() throws {
+        // FO32 top 4K240; live 4K120 on 2 of 4 lanes HBR3. Today this was .compressionActive by arithmetic; 4 of 4 lanes was .compressionPlausible.
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120)
+        for lanes in [2, 4] {
+            let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: lanes, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: live), edid: fo32))
+            #expect(diag.bottleneck == .unknownMode, "\(lanes) lanes: got \(diag.bottleneck)")
+            #expect(diag.isWarning == false)
+            #expect(diag.detail.contains("macOS's display node could not be matched to your AORUS FO32U2P"), "\(diag.detail)")
+            #expect(diag.detail.contains("top mode (up to 240Hz)"))
+            #expect(diag.facts.dscReading == nil)
+            #expect(!diag.detail.lowercased().contains("compressed (dsc)"), "no DSC claim without the statement")
+        }
+    }
+
+    @Test("A macOS-only top mode matches the node by picture and refresh; nothing branches on the figure")
+    func macOSOnlyTopMatchesWithoutAClock() throws {
+        // The UGREEN's 4K60 is declared only from the Y420VDB, so CoreGraphics naming 4K60 is macOS's fact alone (no declared clock).
+        let cg = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
+        let live = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 297_000_000, pixelEncoding: .rgb444)
+        let statement = Self.offering([Self.listing(3840, 2160, 30.0, 297_000_000), Self.listing(3840, 2160, 60.0, 594_000_000, id: 97)])
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "5.4 Gbps (HBR2)", dfpType: "HDMI", currentMode: live, maxMode: cg, drivenTiming: statement)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panelUGREEN))
+        #expect(diag.topMode?.source == .reportedByMacOSOnly, "fixture guard")
+        #expect(diag.facts.neededGbps == nil, "no declared clock: the receipt is empty, and nothing needed it")
+        #expect(diag.facts.topModeMatch == .sameRefresh, "the exact step needs a clock; the same-refresh step matched the node's 594 MHz 4K60")
+        #expect(diag.facts.topModeAvailability == .offeredUncompressed)
+        #expect(diag.bottleneck == .belowMonitorMax)
+        #expect(!diag.detail.contains("4:2:0"), "the 4:2:0 sentence stays off when the top is macOS's own report")
+    }
+
+    @Test("The top-mode figure is the declared clock at 8-bit RGB, a receipt, whatever the live mode's depth")
+    func topModeFigureKeepsEightBitRGB() throws {
+        let diag = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", tunneled: true, manufacturerName: "APP", currentMode: Self.liveStudio, drivenTiming: Self.statementStudio), edid: studio5K))
+        let needed = try #require(diag.facts.neededGbps)
+        #expect(abs(needed - 964.8e6 * 24 / 1e9) < 1e-9)
+        #expect(DisplayDiagnostic.topModeBitsPerPixel == 24)
+    }
+
+    @Test("Receipts: the converter's unsafe line names the count when the list read, and says so when it did not (rulings 1 and 42)")
+    func receiptsNameTheUnsafeListState() throws {
+        let dp = makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2", currentMode: Self.live27C1UL, drivenTiming: Self.statement27C1UL)
+        let read = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
+        #expect(read.statementReceipts().contains("macOS rates 4 of 4 colour modes on this timing as above the HDMI adapter's TMDS rate limit."), "\(read.statementReceipts())")
+        let unsafeUnread = DisplayTimingStatement(driven: DisplayTimingLists(colourModes: Self.lists27C1UL.colourModes, dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1b4d,
+                                                                             colourModesComplete: true, dscListComplete: true, unsafeListComplete: false),
+                                                  allTimings: Self.statement27C1UL.allTimings)
+        let unread = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2", currentMode: Self.live27C1UL, drivenTiming: unsafeUnread), edid: panel27C1UL))
+        #expect(unread.statementReceipts().contains("macOS's list of colour modes above the HDMI adapter's TMDS rate limit could not be read for this timing."), "\(unread.statementReceipts())")
+        #expect(!unread.statementReceipts().contains { $0.hasPrefix("macOS rates") })
+        #expect(unread.statementReceipts().first == "macOS states: Uncompressed", "the DSC statement is untouched by the unsafe list")
+        #expect(unread.bottleneck == .fine)
+        // Native DisplayPort never shows either line, read or not.
+        let native = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", currentMode: Self.live27C1UL, drivenTiming: unsafeUnread), edid: panel27C1UL))
+        #expect(!native.statementReceipts().contains { $0.contains("TMDS") })
+    }
+
+    @Test("Receipts: on the Mac's own HDMI port the unsafe line names the port, not an adapter (PR #665 gate rerun, note 4 ruled)")
+    func nativeHDMIPortPrintsThePortTMDSReceipt() throws {
+        // Dump A1: the SoC's HDMI transport is itself the DP-to-HDMI stage, so the unsafe list is
+        // meaningful on a native HDMI port; sinkType is nil there by design (issue #352), so K15's
+        // "adapter" wording cannot be used. K39 names the port. 23 of 38 native-HDMI corpus nodes
+        // carry unsafe members on the driven timing and printed nothing.
+        let dp = makeHDMIPortDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: Self.live27C1UL, drivenTiming: Self.statement27C1UL)
+        let diag = try #require(DisplayDiagnostic(dp: dp, edid: panel27C1UL))
+        #expect(diag.facts.sinkType == nil, "fixture guard: a native HDMI port is not an adapter")
+        #expect(diag.facts.isNativeHDMIPort == true)
+        #expect(diag.statementReceipts().contains("macOS rates 4 of 4 colour modes on this timing as above the HDMI port's TMDS rate limit."), "\(diag.statementReceipts())")
+        #expect(!diag.statementReceipts().contains { $0.contains("adapter") })
+        #expect(diag.bottleneck == .fine, "the receipt is a fact, never a verdict (ruling 1)")
+        // The unreadable list on a native port: K40, the port wording of K38.
+        let unsafeUnread = DisplayTimingStatement(driven: DisplayTimingLists(colourModes: Self.lists27C1UL.colourModes, dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1b4d,
+                                                                             colourModesComplete: true, dscListComplete: true, unsafeListComplete: false),
+                                                  allTimings: Self.statement27C1UL.allTimings)
+        let unread = try #require(DisplayDiagnostic(dp: makeHDMIPortDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: Self.live27C1UL, drivenTiming: unsafeUnread), edid: panel27C1UL))
+        #expect(unread.statementReceipts().contains("macOS's list of colour modes above the HDMI port's TMDS rate limit could not be read for this timing."), "\(unread.statementReceipts())")
+        #expect(!unread.statementReceipts().contains { $0.contains("adapter") })
+        // An empty unsafe list on a native port prints nothing, as on a converter.
+        let none = try #require(DisplayDiagnostic(dp: makeHDMIPortDP(lanes: 4, maxLanes: 4, rateDesc: "8.1 Gbps (HBR3)", currentMode: Self.liveU3225QE, drivenTiming: Self.statementU3225QE), edid: dellU2725QE))
+        #expect(!none.statementReceipts().contains { $0.contains("TMDS") })
+        // A converter still prints K15 (the m3 anchor's line), and native DisplayPort nothing.
+        let converter = try #require(DisplayDiagnostic(dp: makeDP(lanes: 2, maxLanes: 2, rateDesc: "8.1 Gbps (HBR3)", dfpType: "HDMI", branchDeviceId: "Dp1.2", currentMode: Self.live27C1UL, drivenTiming: Self.statement27C1UL), edid: panel27C1UL))
+        #expect(converter.facts.isNativeHDMIPort == false)
+        #expect(converter.statementReceipts().contains("macOS rates 4 of 4 colour modes on this timing as above the HDMI adapter's TMDS rate limit."))
     }
 }

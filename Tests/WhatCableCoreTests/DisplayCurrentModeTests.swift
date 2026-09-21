@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import WhatCableCore
 
@@ -27,5 +28,22 @@ struct DisplayCurrentModeTests {
         #expect(node.pixelClockHz == 527_850_000)
         #expect(node.pixelThroughput == 3840 * 2160 * 60, "the active-pixel figure is unchanged by the clock")
         #expect(node.label == "3840 x 2160 @ 60Hz")
+    }
+
+    @Test("pixelEncoding and downstreamFormat are nil unless a reader supplied them, and round-trip")
+    func encodingFieldsDefaultNilAndRoundTrip() throws {
+        let cg = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60)
+        #expect(cg.pixelEncoding == nil)
+        #expect(cg.downstreamFormat == nil)
+        let node = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 594_000_000,
+                                      pixelEncoding: .ycbcr444, downstreamFormat: DisplayDownstreamFormat(encoding: .ycbcr420, depth: 8))
+        #expect(node.pixelEncoding == .ycbcr444)
+        #expect(node.downstreamFormat?.encoding == .ycbcr420)
+        #expect(node.downstreamFormat?.depth == 8)
+        let back = try JSONDecoder().decode(DisplayCurrentMode.self, from: try JSONEncoder().encode(node))
+        #expect(back == node)
+        // A cached widget snapshot written before the fields existed still decodes.
+        let legacy = try JSONDecoder().decode(DisplayCurrentMode.self, from: Data(#"{"width":3840,"height":2160,"refreshHz":60}"#.utf8))
+        #expect(legacy.pixelEncoding == nil && legacy.downstreamFormat == nil)
     }
 }

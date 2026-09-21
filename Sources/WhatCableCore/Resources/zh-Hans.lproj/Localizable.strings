@@ -376,16 +376,10 @@
 "display" = "显示器";
 "Your %@ is connected, but the link rate isn't readable, so there's nothing to compare its capability against." = "您的 %@ 已连接，但链路速率无法读取，因此无可比对的能力参数。";
 "Display running at full quality" = "显示器运行在最高画质";
-"Your %@ is connected and the link has the bandwidth for its top mode. Nothing is holding the picture back." = "您的 %@ 已连接，且链路带宽足够支持其最高模式。画面未受任何限制。";
-"%lld of %lld lanes at %@" = "%1$lld/%2$lld 通道，速率为 %3$@";
-"%lld of %lld lanes" = "%1$lld/%2$lld 通道";
 "up to %lldHz" = "最高 %lldHz";
 "a higher mode than the link is carrying" = "高于链路当前承载的模式";
-"High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally." = "High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally.";
 "Video is going through a %@ adapter" = "视频正在通过 %@ 适配器传输";
-"Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "您的 %1$@ 是通过 USB-C 转 %2$@ 适配器连接的，且链路当前未承载显示器的最高模式（%3$@，约 %4$@）；当前仅承载约 %5$@（%6$@）。由于连接中存在适配器，限制瓶颈可能是适配器本身而非线缆。尝试通过原生 DisplayPort 连接显示器，或使用更高规格的适配器，将可以判断是哪一个导致的限制。";
 "Monitor can do more than the link is carrying" = "显示器支持高于当前链路所能承载的模式";
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate." = "您的 %1$@ 可以运行 %2$@，这大约需要 %3$@，但链路当前仅承载约 %4$@（%5$@）。如果您已选择了更高的模式但未能生效，则线缆或适配器可能是瓶颈；如果您尚未尝试选择它，请尝试选择以重新训练链路至更高的速率。";
 "Display Diagnostics" = "显示诊断";
 "What your monitor can do, and what the link is carrying." = "查看显示器能力以及当前链路承载的内容。";
 "No Displays" = "未连接显示器";
@@ -396,26 +390,14 @@
 "Display: %@ · video output %lld" = "显示器：%1$@ · 视频输出 %2$lld";
 "%lld × %lld" = "%lld × %lld";
 "native %lldHz" = "原生 %lldHz";
-"Top mode needs" = "最高模式需要";
 "Link carries" = "链路承载";
 "Rate" = "速率";
 "See whether the link is carrying your monitor's full resolution and refresh." = "查看链路是否达到了显示器的最高分辨率和刷新率。";
 "Display links have their own screen: Display Diagnostics." = "显示器链路有独立的查看页面：显示诊断。";
 
-/* Display dimension: cable attribution. English; community-refined. */
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "您的 %1$@ 可以运行 %2$@，这大约需要 %3$@，但链路当前仅承载约 %4$@（%5$@）。由于视频是通过 Thunderbolt 或 USB4 隧道传输的，线缆承载的带宽远大于显示器所需，因此这不太可能是线缆的问题。极有可能是“系统设置 > 显示器”中选择的分辨率/刷新率限制，或是这台 Mac 对该显示器的输出限制。";
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings." = "您的 %1$@ 可以运行 %2$@，这大约需要 %3$@，但链路当前仅承载约 %4$@（%5$@）。线缆已承载这台 Mac 提供的所有 DisplayPort 通道，因此这不太可能是线缆的问题。极有可能是“系统设置 > 显示器”中选择的分辨率或刷新率。";
-
-/* Display dimension: branch device. English; community-refined. */
-"Your %@ is reached through a USB-C to %@ adapter that reports as %@, currently carrying about %@ (%@), short of the monitor's top mode (%@, about %@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "您的 %1$@ 是通过 USB-C 转 %2$@ 适配器（识别为 %3$@）连接的，当前仅承载约 %4$@（%5$@），低于显示器的最高模式（%6$@，约 %7$@）。由于连接中存在适配器，限制瓶颈可能是适配器本身而非线缆。使用原生 DisplayPort 连接或更高规格的适配器将可以验证是哪一个导致的限制。";
-
 /* Billboard device (display dimension). English; community-refined. */
 "Billboard device present" = "存在 Billboard 设备";
 "A Billboard device is present on this port. That usually appears when an Alt Mode like DisplayPort was set up but didn't fully come up. Your display is below its best mode, so a re-plug, a different cable, or a different adapter may bring it up. Some docks show a Billboard device normally, so this isn't always a fault." = "此端口上存在 Billboard 设备。这通常表示类似 DisplayPort 的 Alt 模式在设置时未能完全启用。您的显示器可能未处于最佳显示模式，尝试重新插拔、更换线缆或适配器可能会解决此问题。另外，某些扩展坞会正常显示 Billboard 设备，因此这并不一定代表存在故障。";
-
-/* Display dimension: compression at the link ceiling (issue #246). */
-"Display may be using compression to reach its top mode" = "显示器可能正在使用压缩来达到其最高模式";
-"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可以运行 %@，未压缩时大约需要 %@。此链路已经以高速率使用每条通道，传输约 %@（%@）。许多高分辨率显示器使用压缩（DSC）让最高模式通过这样的链路，因此仅凭链路速率无法判断您是否已处于最佳模式。如果画面看起来正常，那很可能就是最佳模式。";
 
 /* Display dimension: confirmed full quality via CoreGraphics live mode (issue #246 Option B). */
 "macOS reports your %@ at its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "macOS 报告您的 %@ 正处于最高模式（%@），链路正在传输它。许多高分辨率显示器使用压缩（DSC）让这样的模式通过链路传输；仅凭链路速率无法显示这一点。您的显示器正以全质量运行。";
@@ -547,11 +529,50 @@
 "%lld displays connected" = "已连接 %lld 台显示器";
 "Built-in %1$@ port %2$lld" = "内置 %1$@ 端口 %2$lld";
 
-"Display running compressed (DSC) to fit through the link" = "Display running compressed (DSC) to fit through the link";
+"Display running compressed (DSC) to fit through the link" = "显示器以压缩（DSC）方式运行，以适配此链路的带宽";
 
-"macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS 报告您的 %@ 当前模式为 %@，若不压缩，所需带宽将超过此链路的承载能力。高分辨率显示器使用压缩（DSC）让这样的模式通过这样的链路传输。画面已正常传输至显示器，因此这是预期的工作方式。";
-"macOS reports a %lld × %lld mode at %lldHz that your %@'s EDID doesn't describe, so the bandwidth it needs can't be computed." = "macOS 报告了一个 %1$lld × %2$lld、%3$lld Hz 的模式，但您的 %4$@ 的 EDID 中没有描述该模式，因此无法计算其所需带宽。";
-"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only, a mode macOS does not use." = "其 EDID 还列出了一个仅支持 4:2:0 的 %1$lld × %2$lld、%3$lld Hz 模式，macOS 不使用该模式。";
+/* Issue #664: the display verdict reads macOS's display-node statement. English; community-refined. */
+"macOS reports your %@ at its top mode (%@) and states it is running uncompressed. The link is carrying it in full; nothing is holding the picture back." = "macOS 报告您的 %@ 正处于最高模式（%@），并声明它以未压缩方式运行。链路正在完整传输它；没有任何东西在限制画面。";
+"macOS states the current mode, %@, is running uncompressed." = "macOS 声明当前模式（%@）以未压缩方式运行。";
+"macOS reports your %@'s current mode as %@ and states that this link needs compression (DSC) to carry it. High-resolution displays use DSC to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS 报告您的 %@ 当前模式为 %@，并声明此链路需要压缩（DSC）才能承载它。高分辨率显示器使用 DSC 让这样的模式通过这样的链路传输。画面已正常传输至显示器，因此这是预期的工作方式。";
+"Display running compressed (DSC)" = "显示器以压缩（DSC）方式运行";
+"macOS reports your %@'s current mode as %@ with compression (DSC) on. Apple displays run compressed whenever the link supports it, so this says nothing about the link's capacity. The picture is reaching the display, so this is working as intended." = "macOS 报告您的 %@ 当前模式为 %@，且压缩（DSC）已开启。Apple 显示器只要链路支持就会以压缩方式运行，因此这不能说明链路的承载能力。画面已正常传输至显示器，因此这是预期的工作方式。";
+"macOS reports your %@'s current mode as %@ but does not name the colour format in use, so whether the link is compressing it can't be read from here." = "macOS 报告您的 %@ 当前模式为 %@，但未说明所使用的色彩格式，因此无法从这里读出链路是否正在对其压缩。";
+"macOS lists your %@'s top mode (%@) as available on this link, uncompressed. The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 将您的 %@ 的最高模式（%@）列为在此链路上可用，且不压缩。让画面低于该模式的是“系统设置 > 显示器”中选择的模式，或这台 Mac 对该显示器的选择，而不是线缆或适配器。";
+"macOS lists your %@'s top mode (%@) as available on this link with compression (DSC). The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 将您的 %@ 的最高模式（%@）列为在此链路上可用，需使用压缩（DSC）。让画面低于该模式的是“系统设置 > 显示器”中选择的模式，或这台 Mac 对该显示器的选择，而不是线缆或适配器。";
+"macOS lists your %@'s top mode (%@) as available on this link. The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 将您的 %@ 的最高模式（%@）列为在此链路上可用。让画面低于该模式的是“系统设置 > 显示器”中选择的模式，或这台 Mac 对该显示器的选择，而不是线缆或适配器。";
+"macOS does not offer your %@'s top mode (%@) on this link as it is now. The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display; selecting the higher mode would retrain the link and show whether it is offered." = "在此链路的当前状态下，macOS 未提供您的 %@ 的最高模式（%@）。由于视频是通过 Thunderbolt 或 USB4 隧道传输的，线缆承载的带宽远大于显示器所需，因此这不太可能是线缆的问题。极有可能是“系统设置 > 显示器”中选择的分辨率或刷新率，或是这台 Mac 对该显示器的输出限制；选择更高的模式会重新训练链路，并显示该模式是否被提供。";
+"macOS does not offer your %@'s top mode (%@) on this link as it is now. The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. Selecting the higher mode in Display settings would retrain the link and show whether it is offered." = "在此链路的当前状态下，macOS 未提供您的 %@ 的最高模式（%@）。线缆已承载这台 Mac 提供的所有 DisplayPort 通道，因此这不太可能是线缆的问题。在“系统设置 > 显示器”中选择更高的模式会重新训练链路，并显示该模式是否被提供。";
+"macOS does not offer your %@'s top mode (%@) on this link as it is now. If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it would retrain the link and show whether it is offered." = "在此链路的当前状态下，macOS 未提供您的 %@ 的最高模式（%@）。如果您已选择了更高的模式但未能生效，则线缆或适配器可能是瓶颈；如果您尚未尝试，选择它会重新训练链路，并显示该模式是否被提供。";
+"Your %@ is reached through a USB-C to %@ adapter that reports as %@, and macOS does not offer the monitor's top mode (%@) on this link as it is now. With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "您的 %1$@ 是通过 USB-C 转 %2$@ 适配器（识别为 %3$@）连接的，而在此链路的当前状态下，macOS 未提供显示器的最高模式（%4$@）。由于连接中存在适配器，限制瓶颈可能是适配器本身而非线缆。使用原生 DisplayPort 连接或更高规格的适配器将可以验证是哪一个导致的限制。";
+"Your %@ is reached through a USB-C to %@ adapter, and macOS does not offer the monitor's top mode (%@) on this link as it is now. With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "您的 %1$@ 是通过 USB-C 转 %2$@ 适配器连接的，而在此链路的当前状态下，macOS 未提供显示器的最高模式（%3$@）。由于连接中存在适配器，限制瓶颈可能是适配器本身而非线缆。尝试通过原生 DisplayPort 连接显示器，或使用更高规格的适配器，将可以判断是哪一个导致的限制。";
+"macOS's list of modes for your %@ has no entry matching its top mode (%@), so whether this link could carry it can't be read from here." = "macOS 为您的 %@ 列出的模式中没有与其最高模式（%@）匹配的条目，因此无法从这里读出此链路能否承载它。";
+"macOS's display node could not be matched to your %@, so whether this link could carry its top mode (%@) can't be read from here. If the picture looks right, it most likely is." = "无法将 macOS 的显示节点与您的 %@ 匹配，因此无法从这里读出此链路能否承载其最高模式（%@）。如果画面看起来正常，那很可能就是正常的。";
+"Monitor can do more than it is set to" = "显示器支持高于当前设置的模式";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only. On the current timing, macOS records the adapter converting the picture to 4:2:0 on its way to the display." = "其 EDID 还列出了一个仅支持 4:2:0 的 %1$lld × %2$lld、%3$lld Hz 模式。在当前时序下，macOS 记录到适配器在画面送往显示器的途中将其转换为 4:2:0。";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only. The current timing includes a colour mode the adapter sends to the display as 4:2:0; macOS does not name which of the timing's modes is in use." = "其 EDID 还列出了一个仅支持 4:2:0 的 %1$lld × %2$lld、%3$lld Hz 模式。当前时序包含一个适配器以 4:2:0 发送至显示器的色彩模式；macOS 未说明该时序的哪个模式正在使用。";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only, a mode macOS does not send over the DisplayPort link." = "其 EDID 还列出了一个仅支持 4:2:0 的 %1$lld × %2$lld、%3$lld Hz 模式，macOS 不会通过 DisplayPort 链路发送该模式。";
+
+/* Issue #664: statement receipts, shared by the CLI text output and the Pro Display screen. */
+"macOS states: %@" = "macOS 声明：%@";
+"DSC on" = "DSC 开启";
+"Uncompressed" = "未压缩";
+"Not named" = "未说明";
+"Live mode needs about %@; the link's usable rate is %@ to %@." = "当前模式大约需要 %@；链路的可用速率为 %@ 到 %@。";
+"The bandwidth arithmetic disagrees with macOS's statement for this mode. The statement is what is shown." = "带宽计算与 macOS 对此模式的声明不一致。显示的是 macOS 的声明。";
+"macOS rates %lld of %lld colour modes on this timing as above the %@ adapter's TMDS rate limit." = "macOS 将此时序的 %2$lld 个色彩模式中的 %1$lld 个评定为超过 %3$@ 适配器的 TMDS 速率限制。";
+"macOS rates %lld of %lld colour modes on this timing as above the HDMI port's TMDS rate limit." = "macOS 将此时序的 %2$lld 个色彩模式中的 %1$lld 个评定为超过 HDMI 端口的 TMDS 速率限制。";
+"macOS's list of colour modes above the %@ adapter's TMDS rate limit could not be read for this timing." = "无法为此时序读取 macOS 列出的超过 %@ 适配器 TMDS 速率限制的色彩模式。";
+"macOS's list of colour modes above the HDMI port's TMDS rate limit could not be read for this timing." = "无法为此时序读取 macOS 列出的超过 HDMI 端口 TMDS 速率限制的色彩模式。";
+"Top mode needs at 8-bit RGB" = "最高模式需要（8 位 RGB）";
+"Top mode needs about %@ at 8-bit RGB; the link carries about %@." = "最高模式在 8 位 RGB 下大约需要 %@；链路承载约 %@。";
+"Top mode on this link: %@" = "此链路上的最高模式：%@";
+"available, uncompressed" = "可用，未压缩";
+"available, with DSC" = "可用，需 DSC";
+"available" = "可用";
+"not offered" = "未提供";
+"no matching entry" = "无匹配条目";
+"The cable is not the limit: macOS lists the top mode on this link." = "线缆不是限制：macOS 在此链路上列出了最高模式。";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). Translated; nuance is community-refinable. */
 "Controller confirms Thunderbolt cable (%@)" = "控制器已确认 Thunderbolt 线缆（%@）";

@@ -471,19 +471,41 @@ struct TextFormatterTests {
 
     /// Same order-independence property, but through the display verdict:
     /// a readable EDID (the real G34w-10 base block from `EDIDInfoTests`) on
-    /// a link that falls short of the monitor's ceiling with every host lane
-    /// in use on a passive cable. This is `DisplayDiagnostic`'s
-    /// `cableUnlikely` branch, which the golden net cannot reach (every
+    /// a link driven below the monitor's top mode with every host lane in
+    /// use on a passive cable. This is `DisplayDiagnostic`'s all-lanes
+    /// passive-cable exoneration, which the golden net cannot reach (every
     /// golden fixture's display port has `monitor: nil`).
+    ///
+    /// The fixture carries macOS's display-node statement (issue #664):
+    /// since the verdict tree reads the top mode's availability from the
+    /// node, a port with no statement is the no-statement path and reads
+    /// `.unknownMode`, which names no cable at all. So the node lists the
+    /// panel's picture at 30 Hz only (the top is `pictureOnly`, hence not
+    /// offered) and the driven timing reads uncompressed, which is the
+    /// `.belowMonitorMax` shape whose K22 wording carries the exoneration.
     @Test("Cable e-marker selection is order independent: display verdict with a readable EDID and a link shortfall")
     func displayVerdictSelectionIsOrderIndependent() {
         let port = makePort()
         let bare = bareCableIdentity(portNumber: port.portNumber ?? 1)
         let populated = populatedDoublePrimeIdentity(portNumber: port.portNumber ?? 1)
-        // 4 of 4 lanes in use, but at RBR (1.62 Gbps/lane): falls short of
-        // the G34w-10's 100 Hz / 600 MHz ceiling. All host lanes in use on a
-        // cable positively identified as passive is the one signal that
-        // exonerates it (DisplayDiagnostic.swift's cableKnownPassive).
+        // 4 of 4 lanes in use at RBR (1.62 Gbps/lane), driven at 3440x1440 at
+        // 30 Hz while the base block's top is the 60 Hz preferred DTD. All
+        // host lanes in use on a cable positively identified as passive is
+        // the one link signal that exonerates it (DisplayDiagnostic.swift's
+        // cableKnownPassive).
+        // One 8-bit RGB colour mode, not DSC-capable, DSC list empty: the
+        // driven timing reads uncompressed. The node lists the picture at
+        // 30 Hz only, so the 60 Hz top is not offered on this link.
+        let lists = DisplayTimingLists(
+            colourModes: [DisplayColourMode(id: 1, encoding: .rgb444, depth: 8, supportsDSC: 0, isVirtual: false, downstreamFormat: nil)],
+            dscRequiredList: [], unsafeList: [], validPixelEncodings: 0x1ffd,
+            colourModesComplete: true, dscListComplete: true, unsafeListComplete: true
+        )
+        let statement = DisplayTimingStatement(
+            driven: lists,
+            allTimings: [DisplayNodeTiming(id: 11, width: 3440, height: 1440, refreshHz: 30.0, pixelClockHz: 159_945_000, lists: lists)]
+        )
+        let live = DisplayCurrentMode(width: 3440, height: 1440, refreshHz: 30, bitsPerComponent: 8, pixelClockHz: 159_945_000, pixelEncoding: .rgb444)
         let displayPort = IOPortTransportStateDisplayPort(
             link: DisplayPortLink(
                 active: true, laneCount: 4, maxLaneCount: 4, linkRate: 3,
@@ -493,7 +515,9 @@ struct TextFormatterTests {
                 manufacturerName: nil, productName: nil, productId: nil,
                 yearOfManufacture: nil, edid: Data(EDIDInfoTests.g34wBaseBlock)
             ),
-            parentPortType: 2, parentPortNumber: port.portNumber ?? 1
+            parentPortType: 2, parentPortNumber: port.portNumber ?? 1,
+            currentMode: live,
+            drivenTiming: statement
         )
 
         let bareFirst = TextFormatter.render(
@@ -506,8 +530,8 @@ struct TextFormatterTests {
         )
 
         #expect(bareFirst == populatedFirst)
-        // Confirm the cableUnlikely branch was actually reached, not just
-        // "no display block at all".
+        // Confirm the passive-cable exoneration (K22) was actually reached,
+        // not just "no display block at all".
         #expect(bareFirst.lowercased().contains("unlikely to be the cable"))
     }
 
