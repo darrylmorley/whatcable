@@ -531,12 +531,12 @@
 "Display running compressed (DSC) to fit through the link" = "顯示器正使用影像串流壓縮 (DSC)，以配合此連線的頻寬";
 
 /* Issue #664: the display verdict reads macOS's display-node statement. English; community-refined. */
-"macOS reports your %@ at its top mode (%@) and states it is running uncompressed. The link is carrying it in full; nothing is holding the picture back." = "macOS 回報您的 %@ 正以最高模式 (%@) 運作，並回報目前為未壓縮傳輸。連線正完整承載此模式；畫面沒有受到任何限制。";
-"macOS states the current mode, %@, is running uncompressed." = "macOS 回報目前模式 %@ 正以未壓縮方式運作。";
+"macOS reports your %@ at its top mode (%@) and states it is running uncompressed. The link is carrying it in full; nothing is holding the picture back." = "macOS 回報您的 %@ 正以最高模式 (%@) 運作，且目前未使用壓縮方式傳輸。連線正完整承載此模式；畫面沒有受到任何限制。";
+"macOS states the current mode, %@, is running uncompressed." = "macOS 回報目前模式 %@ 未使用壓縮方式傳輸。";
 "macOS reports your %@'s current mode as %@ and states that this link needs compression (DSC) to carry it. High-resolution displays use DSC to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS 回報您的 %@ 目前模式為 %@，也回報此連線需要影像串流壓縮 (DSC) 才能承載此模式。高解析度顯示器會使用 DSC，讓這種顯示模式能在這類連線上正常傳輸。畫面已正常傳輸至顯示器，因此這是預期中的運作方式。";
-"Display running compressed (DSC)" = "顯示器正以影像串流壓縮 (DSC) 運作";
-"macOS reports your %@'s current mode as %@ with compression (DSC) on. Apple displays run compressed whenever the link supports it, so this says nothing about the link's capacity. The picture is reaching the display, so this is working as intended." = "macOS 回報您的 %@ 目前模式為 %@，且影像串流壓縮 (DSC) 已開啟。只要連線支援，Apple 顯示器就會以壓縮方式運作，因此這無法說明連線的承載能力。畫面已正常傳輸至顯示器，因此這是預期中的運作方式。";
-"macOS reports your %@'s current mode as %@ but does not name the colour format in use, so whether the link is compressing it can't be read from here." = "macOS 回報您的 %@ 目前模式為 %@，但未指明使用中的色彩格式，因此無法從這裡判斷此連線是否正以壓縮方式傳輸此模式。";
+"Display running compressed (DSC)" = "顯示器正使用影像串流壓縮 (DSC)";
+"macOS reports your %@'s current mode as %@ with compression (DSC) on. Apple displays run compressed whenever the link supports it, so this says nothing about the link's capacity. The picture is reaching the display, so this is working as intended." = "macOS 回報您的 %@ 目前模式為 %@，且影像串流壓縮 (DSC) 已開啟。只要連線支援，Apple 顯示器就會使用壓縮方式傳輸，因此這無法說明連線的承載能力。畫面已正常傳輸至顯示器，因此這是預期中的運作方式。";
+"macOS reports your %@'s current mode as %@ but does not name the colour format in use, so whether the link is compressing it can't be read from here." = "macOS 回報您的 %@ 目前模式為 %@，但未指明使用中的色彩格式，因此無法從這裡判斷此連線是否正使用壓縮方式傳輸此模式。";
 "macOS lists your %@'s top mode (%@) as available on this link, uncompressed. The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 將您的 %@ 的最高模式 (%@) 列為可在此連線上使用，且無需壓縮。目前畫面未達該模式，是因為「顯示器」設定中所選的模式，或這台 Mac 為此顯示器選擇的模式，而非線材或轉接器。";
 "macOS lists your %@'s top mode (%@) as available on this link with compression (DSC). The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 將您的 %@ 的最高模式 (%@) 列為可在此連線上使用，需搭配影像串流壓縮 (DSC)。目前畫面未達該模式，是因為「顯示器」設定中所選的模式，或這台 Mac 為此顯示器選擇的模式，而非線材或轉接器。";
 "macOS lists your %@'s top mode (%@) as available on this link. The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 將您的 %@ 的最高模式 (%@) 列為可在此連線上使用。目前畫面未達該模式，是因為「顯示器」設定中所選的模式，或這台 Mac 為此顯示器選擇的模式，而非線材或轉接器。";
