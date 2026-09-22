@@ -122,11 +122,12 @@ public enum CableReport {
         }
 
         /// Builds a `SystemInfo` for a report. `macModel` is passed in rather
-        /// than read here: getting the Mac model string needs `sysctlbyname`,
-        /// a Darwin-only call, and Core stays free of platform imports (see
-        /// CLAUDE.md). Callers fetch it via `DarwinSystemInfo.fetchMacModel()`
-        /// in `WhatCableDarwinBackend` and pass it in. `macOSVersion` stays
-        /// here because `ProcessInfo` is portable Foundation, not Darwin-only.
+        /// than read here: this function decides how to shape a report, and
+        /// has to stay callable in tests with any model string, so the live
+        /// `sysctlbyname` read is somebody else's job. Callers fetch it via
+        /// `DarwinSystemInfo.fetchMacModel()` in `WhatCableDarwinBackend` and
+        /// pass it in. `macOSVersion` stays here because `ProcessInfo` is
+        /// portable Foundation, not Darwin-only.
         public static func current(macModel: String) -> SystemInfo {
             SystemInfo(macModel: macModel, macOSVersion: fetchOSVersion())
         }

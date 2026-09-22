@@ -1,0 +1,634 @@
+{
+  "isDesktopMac" : false,
+  "ports" : [
+    {
+      "billboardDevicePresent" : false,
+      "bulletGroups" : [
+
+      ],
+      "bullets" : [
+
+      ],
+      "className" : "AppleHPMInterfaceType10",
+      "connectionActive" : true,
+      "displays" : [
+        {
+          "bottleneck" : "fine",
+          "branchDevice" : "DisplayPort 1.2",
+          "cableAssessment" : "unlikelyTheCable",
+          "crossCheck" : {
+            "liveNeededGbps" : 12.6684,
+            "statementContradiction" : false,
+            "usableGbpsMax" : 12.96,
+            "usableGbpsMin" : 12.65625
+          },
+          "currentMode" : {
+            "bitsPerComponent" : 8,
+            "height" : 2160,
+            "pixelClockHz" : 527850000,
+            "refreshHz" : 60,
+            "width" : 3840
+          },
+          "deliveredGbps" : 12.96,
+          "detail" : "macOS reports your 27C1U-L at its top mode (3840 x 2160 @ 60Hz) and states it is running uncompressed. The link is carrying it in full; nothing is holding the picture back. Its EDID also lists 3,840 × 2,160 at 60Hz in 4:2:0 only, a mode macOS does not send over the DisplayPort link.",
+          "drivenTiming" : {
+            "colourModes" : [
+              {
+                "depth" : 8,
+                "encoding" : 0,
+                "encodingName" : "RGB 4:4:4",
+                "id" : 90,
+                "isVirtual" : false,
+                "supportsDSC" : 0
+              },
+              {
+                "depth" : 8,
+                "encoding" : 0,
+                "encodingName" : "RGB 4:4:4",
+                "id" : 89,
+                "isVirtual" : false,
+                "supportsDSC" : 0
+              },
+              {
+                "depth" : 8,
+                "encoding" : 3,
+                "encodingName" : "YCbCr 4:4:4",
+                "id" : 91,
+                "isVirtual" : false,
+                "supportsDSC" : 0
+              },
+              {
+                "depth" : 8,
+                "encoding" : 3,
+                "encodingName" : "YCbCr 4:4:4",
+                "id" : 92,
+                "isVirtual" : false,
+                "supportsDSC" : 0
+              },
+              {
+                "depth" : 12,
+                "encoding" : 2,
+                "encodingName" : "YCbCr 4:2:2",
+                "id" : 10,
+                "isVirtual" : true,
+                "supportsDSC" : 0
+              },
+              {
+                "depth" : 12,
+                "encoding" : 6,
+                "encodingName" : "YCbCr 4:2:2 (DP tunneling)",
+                "id" : 11,
+                "isVirtual" : true,
+                "supportsDSC" : 0
+              }
+            ],
+            "colourModesComplete" : true,
+            "downstream420" : "none",
+            "dscCapableIDs" : [
+
+            ],
+            "dscListComplete" : true,
+            "dscReading" : "uncompressed",
+            "dscRequiredIDs" : [
+
+            ],
+            "dscRequiredIDsRaw" : [
+
+            ],
+            "unsafeIDs" : [
+              89,
+              90,
+              91,
+              92
+            ],
+            "unsafeIDsRaw" : [
+              10,
+              11,
+              89,
+              90,
+              91,
+              92
+            ],
+            "unsafeListComplete" : true,
+            "validPixelEncodings" : 6989
+          },
+          "edid" : {
+            "blocks" : [
+              {
+                "checksumValid" : true,
+                "index" : 0,
+                "kind" : "base"
+              },
+              {
+                "checksumValid" : true,
+                "index" : 1,
+                "kind" : "cta861"
+              }
+            ],
+            "declaredExtensionCount" : 1,
+            "modes" : [
+              {
+                "hTotal" : 800,
+                "height" : 480,
+                "interlaced" : false,
+                "pixelClockHz" : 25175000,
+                "refreshHz" : 59.94047619047619,
+                "source" : "established timing (DMT 0x4)",
+                "vTotal" : 525,
+                "width" : 640
+              },
+              {
+                "hTotal" : 832,
+                "height" : 480,
+                "interlaced" : false,
+                "pixelClockHz" : 31500000,
+                "refreshHz" : 72.80880177514793,
+                "source" : "established timing (DMT 0x5)",
+                "vTotal" : 520,
+                "width" : 640
+              },
+              {
+                "hTotal" : 840,
+                "height" : 480,
+                "interlaced" : false,
+                "pixelClockHz" : 31500000,
+                "refreshHz" : 75,
+                "source" : "established timing (DMT 0x6)",
+                "vTotal" : 500,
+                "width" : 640
+              },
+              {
+                "hTotal" : 1056,
+                "height" : 600,
+                "interlaced" : false,
+                "pixelClockHz" : 40000000,
+                "refreshHz" : 60.31654120826095,
+                "source" : "established timing (DMT 0x9)",
+                "vTotal" : 628,
+                "width" : 800
+              },
+              {
+                "hTotal" : 1056,
+                "height" : 600,
+                "interlaced" : false,
+                "pixelClockHz" : 49500000,
+                "refreshHz" : 75,
+                "source" : "established timing (DMT 0xB)",
+                "vTotal" : 625,
+                "width" : 800
+              },
+              {
+                "hTotal" : 1152,
+                "height" : 624,
+                "interlaced" : false,
+                "pixelClockHz" : 57284000,
+                "refreshHz" : 74.55126603364984,
+                "source" : "established timing (legacy)",
+                "vTotal" : 667,
+                "width" : 832
+              },
+              {
+                "hTotal" : 1344,
+                "height" : 768,
+                "interlaced" : false,
+                "pixelClockHz" : 65000000,
+                "refreshHz" : 60.00384024577573,
+                "source" : "established timing (DMT 0x10)",
+                "vTotal" : 806,
+                "width" : 1024
+              },
+              {
+                "hTotal" : 1312,
+                "height" : 768,
+                "interlaced" : false,
+                "pixelClockHz" : 78750000,
+                "refreshHz" : 75.02858231707317,
+                "source" : "established timing (DMT 0x12)",
+                "vTotal" : 800,
+                "width" : 1024
+              },
+              {
+                "hTotal" : 1688,
+                "height" : 1024,
+                "interlaced" : false,
+                "pixelClockHz" : 135000000,
+                "refreshHz" : 75.02467478192828,
+                "source" : "established timing (DMT 0x24)",
+                "vTotal" : 1066,
+                "width" : 1280
+              },
+              {
+                "hTotal" : 1456,
+                "height" : 870,
+                "interlaced" : false,
+                "pixelClockHz" : 100000000,
+                "refreshHz" : 75.06155047138654,
+                "source" : "established timing (legacy)",
+                "vTotal" : 915,
+                "width" : 1152
+              },
+              {
+                "hTotal" : 3910,
+                "height" : 2160,
+                "interlaced" : false,
+                "pixelClockHz" : 527850000,
+                "refreshHz" : 60,
+                "source" : "detailed timing 1 (block 0)",
+                "vTotal" : 2250,
+                "width" : 3840
+              },
+              {
+                "hTotal" : 2200,
+                "height" : 1080,
+                "interlaced" : false,
+                "pixelClockHz" : 148500000,
+                "refreshHz" : 60,
+                "source" : "standard timing 1 (DMT 0x52)",
+                "vTotal" : 1125,
+                "width" : 1920
+              },
+              {
+                "hTotal" : 2240,
+                "height" : 1050,
+                "interlaced" : false,
+                "pixelClockHz" : 146250000,
+                "refreshHz" : 59.95425029515938,
+                "source" : "standard timing 2 (DMT 0x3A)",
+                "vTotal" : 1089,
+                "width" : 1680
+              },
+              {
+                "hTotal" : 1904,
+                "height" : 900,
+                "interlaced" : false,
+                "pixelClockHz" : 106500000,
+                "refreshHz" : 59.88744534216256,
+                "source" : "standard timing 3 (DMT 0x2F)",
+                "vTotal" : 934,
+                "width" : 1440
+              },
+              {
+                "hTotal" : 1688,
+                "height" : 1024,
+                "interlaced" : false,
+                "pixelClockHz" : 108000000,
+                "refreshHz" : 60.01973982554262,
+                "source" : "standard timing 4 (DMT 0x23)",
+                "vTotal" : 1066,
+                "width" : 1280
+              },
+              {
+                "hTotal" : 1600,
+                "height" : 864,
+                "interlaced" : false,
+                "pixelClockHz" : 108000000,
+                "refreshHz" : 75,
+                "source" : "standard timing 5 (DMT 0x15)",
+                "vTotal" : 900,
+                "width" : 1152
+              },
+              {
+                "hTotal" : 1650,
+                "height" : 720,
+                "interlaced" : false,
+                "pixelClockHz" : 74250000,
+                "refreshHz" : 60,
+                "source" : "standard timing 6 (DMT 0x55)",
+                "vTotal" : 750,
+                "width" : 1280
+              },
+              {
+                "hTotal" : 1800,
+                "height" : 960,
+                "interlaced" : false,
+                "pixelClockHz" : 108000000,
+                "refreshHz" : 60,
+                "source" : "standard timing 7 (DMT 0x20)",
+                "vTotal" : 1000,
+                "width" : 1280
+              },
+              {
+                "hTotal" : 1800,
+                "height" : 900,
+                "interlaced" : false,
+                "pixelClockHz" : 108000000,
+                "refreshHz" : 60,
+                "source" : "standard timing 8 (DMT 0x53)",
+                "vTotal" : 1000,
+                "width" : 1600
+              },
+              {
+                "hTotal" : 800,
+                "height" : 480,
+                "interlaced" : false,
+                "pixelClockHz" : 25175000,
+                "refreshHz" : 59.94047619047619,
+                "source" : "CTA VIC 1 (block 1)",
+                "vTotal" : 525,
+                "width" : 640
+              },
+              {
+                "hTotal" : 858,
+                "height" : 480,
+                "interlaced" : false,
+                "pixelClockHz" : 27000000,
+                "refreshHz" : 59.94005994005994,
+                "source" : "CTA VIC 2 (block 1)",
+                "vTotal" : 525,
+                "width" : 720
+              },
+              {
+                "hTotal" : 858,
+                "height" : 480,
+                "interlaced" : false,
+                "pixelClockHz" : 27000000,
+                "refreshHz" : 59.94005994005994,
+                "source" : "CTA VIC 3 (block 1)",
+                "vTotal" : 525,
+                "width" : 720
+              },
+              {
+                "hTotal" : 1650,
+                "height" : 720,
+                "interlaced" : false,
+                "pixelClockHz" : 74250000,
+                "refreshHz" : 60,
+                "source" : "CTA VIC 4 (block 1)",
+                "vTotal" : 750,
+                "width" : 1280
+              },
+              {
+                "hTotal" : 2200,
+                "height" : 1080,
+                "interlaced" : true,
+                "pixelClockHz" : 74250000,
+                "refreshHz" : 60,
+                "source" : "CTA VIC 5 (block 1)",
+                "vTotal" : 1125,
+                "width" : 1920
+              },
+              {
+                "hTotal" : 864,
+                "height" : 576,
+                "interlaced" : false,
+                "pixelClockHz" : 27000000,
+                "refreshHz" : 50,
+                "source" : "CTA VIC 17 (block 1)",
+                "vTotal" : 625,
+                "width" : 720
+              },
+              {
+                "hTotal" : 864,
+                "height" : 576,
+                "interlaced" : false,
+                "pixelClockHz" : 27000000,
+                "refreshHz" : 50,
+                "source" : "CTA VIC 18 (block 1)",
+                "vTotal" : 625,
+                "width" : 720
+              },
+              {
+                "hTotal" : 1980,
+                "height" : 720,
+                "interlaced" : false,
+                "pixelClockHz" : 74250000,
+                "refreshHz" : 50,
+                "source" : "CTA VIC 19 (block 1)",
+                "vTotal" : 750,
+                "width" : 1280
+              },
+              {
+                "hTotal" : 2640,
+                "height" : 1080,
+                "interlaced" : true,
+                "pixelClockHz" : 74250000,
+                "refreshHz" : 50,
+                "source" : "CTA VIC 20 (block 1)",
+                "vTotal" : 1125,
+                "width" : 1920
+              },
+              {
+                "hTotal" : 2640,
+                "height" : 1080,
+                "interlaced" : false,
+                "pixelClockHz" : 148500000,
+                "refreshHz" : 50,
+                "source" : "CTA VIC 31 (block 1)",
+                "vTotal" : 1125,
+                "width" : 1920
+              },
+              {
+                "hTotal" : 800,
+                "height" : 480,
+                "interlaced" : false,
+                "pixelClockHz" : 25175000,
+                "refreshHz" : 59.94047619047619,
+                "source" : "CTA VIC 1 (block 1)",
+                "vTotal" : 525,
+                "width" : 640
+              },
+              {
+                "hTotal" : 2200,
+                "height" : 1080,
+                "interlaced" : false,
+                "pixelClockHz" : 148500000,
+                "refreshHz" : 60,
+                "source" : "CTA VIC 16 (block 1)",
+                "vTotal" : 1125,
+                "width" : 1920
+              },
+              {
+                "hTotal" : 4400,
+                "height" : 2160,
+                "interlaced" : false,
+                "pixelClockHz" : 594000000,
+                "refreshHz" : 60,
+                "source" : "CTA VIC 97 4:2:0 (block 1)",
+                "vTotal" : 2250,
+                "width" : 3840
+              },
+              {
+                "hTotal" : 2720,
+                "height" : 1440,
+                "interlaced" : false,
+                "pixelClockHz" : 241500000,
+                "refreshHz" : 59.9505501052548,
+                "source" : "detailed timing 1 (block 1)",
+                "vTotal" : 1481,
+                "width" : 2560
+              },
+              {
+                "hTotal" : 2200,
+                "height" : 1080,
+                "interlaced" : false,
+                "pixelClockHz" : 148500000,
+                "refreshHz" : 60,
+                "source" : "detailed timing 2 (block 1)",
+                "vTotal" : 1125,
+                "width" : 1920
+              }
+            ],
+            "monitorName" : "27C1U-L",
+            "preferredMode" : {
+              "hTotal" : 3910,
+              "height" : 2160,
+              "interlaced" : false,
+              "pixelClockHz" : 527850000,
+              "refreshHz" : 60,
+              "source" : "detailed timing 1 (block 0)",
+              "vTotal" : 2250,
+              "width" : 3840
+            },
+            "rangeLimits" : {
+              "maxHorizontalKHz" : 132,
+              "maxPixelClockHz" : 600000000,
+              "maxVerticalHz" : 75,
+              "minHorizontalKHz" : 40,
+              "minVerticalHz" : 40,
+              "timingSupport" : "defaultGTF"
+            },
+            "undecodedStandardTimings" : [
+
+            ],
+            "version" : "1.3"
+          },
+          "isAppleDisplay" : false,
+          "isWarning" : false,
+          "lanes" : 2,
+          "maxLanes" : 2,
+          "monitorName" : "27C1U-L",
+          "neededGbps" : 12.6684,
+          "rate" : "8.1 Gbps (HBR3)",
+          "sinkType" : "HDMI",
+          "summary" : "Display running at full quality",
+          "topMode" : {
+            "height" : 2160,
+            "pixelClockHz" : 527850000,
+            "refreshHz" : 60,
+            "source" : "detailed timing 1 (block 0)",
+            "width" : 3840
+          },
+          "topModeOnLink" : {
+            "availability" : "offeredUncompressed",
+            "match" : "exact",
+            "statementOffersTopMode" : true,
+            "timing" : {
+              "height" : 2160,
+              "id" : 45,
+              "interlaced" : false,
+              "lists" : {
+                "colourModes" : [
+                  {
+                    "depth" : 8,
+                    "encoding" : 0,
+                    "encodingName" : "RGB 4:4:4",
+                    "id" : 90,
+                    "isVirtual" : false,
+                    "supportsDSC" : 0
+                  },
+                  {
+                    "depth" : 8,
+                    "encoding" : 0,
+                    "encodingName" : "RGB 4:4:4",
+                    "id" : 89,
+                    "isVirtual" : false,
+                    "supportsDSC" : 0
+                  },
+                  {
+                    "depth" : 8,
+                    "encoding" : 3,
+                    "encodingName" : "YCbCr 4:4:4",
+                    "id" : 91,
+                    "isVirtual" : false,
+                    "supportsDSC" : 0
+                  },
+                  {
+                    "depth" : 8,
+                    "encoding" : 3,
+                    "encodingName" : "YCbCr 4:4:4",
+                    "id" : 92,
+                    "isVirtual" : false,
+                    "supportsDSC" : 0
+                  },
+                  {
+                    "depth" : 12,
+                    "encoding" : 2,
+                    "encodingName" : "YCbCr 4:2:2",
+                    "id" : 10,
+                    "isVirtual" : true,
+                    "supportsDSC" : 0
+                  },
+                  {
+                    "depth" : 12,
+                    "encoding" : 6,
+                    "encodingName" : "YCbCr 4:2:2 (DP tunneling)",
+                    "id" : 11,
+                    "isVirtual" : true,
+                    "supportsDSC" : 0
+                  }
+                ],
+                "colourModesComplete" : true,
+                "downstream420" : "none",
+                "dscCapableIDs" : [
+
+                ],
+                "dscListComplete" : true,
+                "dscReading" : "uncompressed",
+                "dscRequiredIDs" : [
+
+                ],
+                "dscRequiredIDsRaw" : [
+
+                ],
+                "unsafeIDs" : [
+                  89,
+                  90,
+                  91,
+                  92
+                ],
+                "unsafeIDsRaw" : [
+                  10,
+                  11,
+                  89,
+                  90,
+                  91,
+                  92
+                ],
+                "unsafeListComplete" : true,
+                "validPixelEncodings" : 6989
+              },
+              "pixelClockHz" : 527850000,
+              "refreshHz" : 60,
+              "width" : 3840
+            },
+            "topModeListedByNode" : true
+          }
+        }
+      ],
+      "headline" : "Connected",
+      "name" : "Port-USB-C@1",
+      "pdCapable" : false,
+      "powerSources" : [
+
+      ],
+      "status" : "unknown",
+      "subtitle" : "Try a higher-wattage charger to identify the cable.",
+      "transports" : {
+        "active" : [
+
+        ],
+        "provisioned" : [
+
+        ],
+        "supported" : [
+
+        ]
+      },
+      "type" : "USB-C"
+    }
+  ],
+  "thunderboltSwitches" : [
+
+  ],
+  "version" : "<version>"
+}

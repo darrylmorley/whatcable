@@ -27,8 +27,7 @@ public enum PortVisibilityState: Equatable, Sendable {
 /// Tracks, per port, whether its most recent loss of signal should hide it
 /// immediately or fade it out over a short grace window.
 ///
-/// Pure: no IOKit, no platform imports (this lives in `WhatCableCore`, which
-/// stays free of `import Darwin` / `import IOKit`, CI-tripwired). The caller
+/// Pure: no IOKit, which is why this is directly unit-testable. The caller
 /// supplies `now` on every evaluation so tests can advance time without a
 /// real clock.
 ///

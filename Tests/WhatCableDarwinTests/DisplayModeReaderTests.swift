@@ -8,13 +8,14 @@ import Testing
 /// fail-closed rules are all unit-testable with injected data.
 struct DisplayModeReaderTests {
 
-    private func dpNode(productId: Int?, vendor: String?, serial: Int? = nil) -> IOPortTransportStateDisplayPort {
+    private func dpNode(productId: Int?, vendor: String?, serial: Int? = nil, hpmControllerUUID: String? = nil) -> IOPortTransportStateDisplayPort {
         IOPortTransportStateDisplayPort(
             link: DisplayPortLink(active: true, laneCount: 4, maxLaneCount: 4, linkRate: 4, tunneled: false, hpdState: 1),
             monitor: MonitorInfo(
                 manufacturerName: vendor, productName: nil, productId: productId,
                 serialNumber: serial, yearOfManufacture: nil, edid: nil
-            )
+            ),
+            hpmControllerUUID: hpmControllerUUID
         )
     }
 
@@ -43,6 +44,17 @@ struct DisplayModeReaderTests {
         let out = DisplayModeReader.match(ports: ports, displays: displays)
         #expect(out[0].currentMode == DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 120))
         #expect(out[0].maxMode == DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 240))
+    }
+
+    @Test("The HPM controller UUID survives enrichment (issue #664: the join key was dropped by with(currentMode:maxMode:))")
+    func hpmControllerUUIDSurvivesMatch() {
+        let uuid = "12345678-90AB-CDEF-1234-567890ABCDEF"
+        let ports = [dpNode(productId: 12821, vendor: "GBT", hpmControllerUUID: uuid)]
+        let displays = [resolved(vendor: 0x1C54, model: 12821, hz: 120, maxHz: 240)]
+        let out = DisplayModeReader.match(ports: ports, displays: displays)
+        #expect(out[0].currentMode != nil, "fixture guard: the match attached")
+        #expect(out[0].hpmControllerUUID == uuid)
+        #expect(out[0].canonicalJoinKey == "1234567890abcdef1234567890abcdef", "the canonical key is still the UUID, not the portKey fallback")
     }
 
     @Test("The built-in panel is never matched to a DisplayPort node")

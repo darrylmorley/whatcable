@@ -84,7 +84,7 @@
 "Supports %@." = "支援 %@。";
 "The cable's e-marker advertises EPR Capable, but reports its Max VBUS Voltage as 20V. EPR operation needs 48V or 50V VBUS, so the two fields contradict each other." = "線材的 e-marker 宣告支援 EPR，但 Max VBUS Voltage 回報為 20V。EPR 運作需要 48V 或 50V VBUS，因此這兩個欄位互相矛盾。";
 "The cable's e-marker reports VDO version %lld, which is reserved or marked Invalid by the USB-PD spec for this cable type. Real e-marker silicon should not emit Invalid version values." = "線材的 e-marker 回報 VDO 版本 %lld；對於此線材類型，該值由 USB-PD 規範保留或標示為無效。真正的 e-marker 晶片不應輸出無效的版本值。";
-"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "線材的 e-marker 回報線材端接 %lld；USB-PD 規範將其標示為此線材類型的無效值。刷寫錯誤的 e-marker 常會在這裡與線材實際物理接線不一致。";
+"The cable's e-marker reports cable termination %lld, which the USB-PD spec marks as Invalid for this cable type. Mis-flashed e-markers commonly disagree with the cable's actual physical wiring here." = "線材的 e-marker 回報線材端接 %lld；USB-PD 規範將其標示為此線材類型的無效值。程式設定錯誤的 e-marker 在這個欄位常會與線材的實際物理接線不一致。";
 "The cable's e-marker reports cable-latency value %lld, which is reserved by the USB-PD spec for this cable type. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報線材延遲值 %lld；對於此線材類型，該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports current value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報電流值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
 "The cable's e-marker reports speed value %lld, which is reserved by the USB-PD spec. Real e-marker chips should not emit reserved values." = "線材的 e-marker 回報速度值 %lld；該值由 USB-PD 規範保留。真正的 e-marker 晶片不應輸出保留值。";
@@ -110,7 +110,7 @@
 "Unknown generation (raw speed code 0x2, inferred TB5)" = "未知世代（原始速度代碼 0x2，推測為 TB5）";
 "Unspecified" = "未指定";
 "Up to %lld Gb/s %@" = "最高 %1$lld Gb/s %2$@";
-"Up to %lld Gb/s out, %lld Gb/s in" = "最高 %1$lld Gb/s 輸出，%2$lld Gb/s 輸入";
+"Up to %lld Gb/s out, %lld Gb/s in" = "傳送最高 %1$lld Gb/s，接收最高 %2$lld Gb/s";
 "VCONN-powered device" = "VCONN 供電裝置";
 "Vendor ID isn't in USB-IF's published list" = "Vendor ID 不在 USB-IF 已公布清單中";
 "What can this USB-C cable actually do?" = "這條 USB-C 線材到底能做什麼？";
@@ -137,7 +137,7 @@
 "Carrying DisplayPort video (%@)" = "正在傳輸 DisplayPort 影像 (%@)";
 "Connected device: %@" = "已連接裝置：%@";
 "Connected device: another Mac" = "已連接裝置：另一台 Mac";
-"USB link only" = "僅 USB 連結";
+"USB link only" = "僅 USB 連線";
 "Connected device: %@, %@ (%@)" = "已連接裝置：%1$@，%2$@ (%3$@)";
 "Data" = "資料";
 "DisplayPort Alt Mode" = "DisplayPort Alt Mode";
@@ -317,13 +317,13 @@
 "The cable's e-marker and the Thunderbolt controller disagree on its speed. The controller measured a higher, confirmed rate, so that figure is used." = "線材的 e-marker 與 Thunderbolt 控制器對速度的判定不一致。控制器測得更高且已確認的速率，因此會使用該數值。";
 "Running at %@" = "正在以 %@ 運作";
 "There's no cable e-marker or controller data, and no port or device capability to compare against, so we can't tell whether the cable is the limit." = "沒有線材 e-marker 或控制器資料，也沒有可用來比較的連接埠或裝置規格，因此無法判斷線材是否為限制因素。";
-"This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "這條線材沒有 e-marker，也沒有控制器資料，因此無法判斷上限是否來自這條線材。";
+"This cable has no e-marker and no controller data, so we can't tell whether it is the limit." = "這條線材沒有 e-marker，也沒有控制器資料，因此無法判斷限制因素是否來自這條線材。";
 "Running slower than expected (%@)" = "運作速度低於預期 (%@)";
 "The parts we can see all support %@ or more, but the link came up slower. Reseating the cable or trying another port may help." = "目前偵測到的裝置都支援 %@ 或更高速度，但連線建立時速度較低。重新插拔線材或嘗試其它連接埠可能會有幫助。";
 "Running at full data speed (%@)" = "正在以最高資料速度運作 (%@)";
 "Nothing is being held back: the parts we can see all support this speed." = "沒有任何限制：目前偵測到的裝置都支援此速度。";
-"Linked to another Mac at %@" = "以 %@ 連結至另一台 Mac";
-"Thunderbolt networking runs over this link. The 480 Mbps USB connection alongside it is normal and does not carry your data." = "Thunderbolt 網路透過此連結運作。旁邊的 480 Mbps USB 連線屬正常現象，不會傳輸您的資料。";
+"Linked to another Mac at %@" = "已以 %@ 連線至另一台 Mac";
+"Thunderbolt networking runs over this link. The 480 Mbps USB connection alongside it is normal and does not carry your data." = "Thunderbolt 網路透過此連線運作。同時存在的 480 Mbps USB 連線屬正常現象，不會承載您的資料。";
 "Cable is limiting data speed" = "線材限制了資料傳輸速度";
 "The Mac and device can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac 和裝置都支援 %@，但線材僅能承載 %@。改用速度更高的線材即可發揮最高速度。";
 "The Mac can do %@, but the cable only carries %@. A faster cable would unlock full speed." = "Mac 支援 %1$@，但線材僅能承載 %2$@。改用速度更高的線材即可發揮最高速度。";
@@ -375,16 +375,10 @@
 "display" = "顯示器";
 "Your %@ is connected, but the link rate isn't readable, so there's nothing to compare its capability against." = "您的 %@ 已連接，但無法讀取連線速率，因此沒有可用來與其規格比較的連線資料。";
 "Display running at full quality" = "顯示器以最佳畫質運作";
-"Your %@ is connected and the link has the bandwidth for its top mode. Nothing is holding the picture back." = "您的 %@ 已連接，且目前連線頻寬足以支援其最高模式。顯示畫面沒有受到任何限制。";
-"%lld of %lld lanes at %@" = "%lld/%lld 條通道 (%@)";
-"%lld of %lld lanes" = "%lld/%lld 條通道";
 "up to %lldHz" = "最高 %lldHz";
 "a higher mode than the link is carrying" = "比目前連線承載更高的模式";
-"High-resolution displays often use compression (DSC) to fit their top mode through a link like this, so selecting the higher mode in Display settings may reach it normally." = "高解析度顯示器通常會使用影像串流壓縮 (DSC)，讓最高模式能在這類連線上正常傳輸，因此在「顯示器」設定中選擇較高的顯示模式後，可能就能正常使用該模式。";
 "Video is going through a %@ adapter" = "影像訊號正透過 %@ 轉接器傳輸";
-"Your %@ is reached through a USB-C to %@ adapter, and the link isn't currently carrying the monitor's top mode (%@, about %@); it's carrying about %@ (%@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，而目前連線尚未承載顯示器的最高模式（%@，約需 %@）；目前約承載 %@ (%@)。在有轉接器的情況下，上限可能來自轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
 "Monitor can do more than the link is carrying" = "顯示器可支援比目前連線更高的模式";
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it may retrain the link to a higher rate." = "您的 %@ 可支援 %@，該模式約需 %@，但目前連線僅承載約 %@ (%@)。若已選擇較高的顯示模式卻無法使用該模式，上限很可能來自線材或轉接器；若尚未嘗試，選擇該模式可能會讓連線重新協商至更高速率。";
 "Display Diagnostics" = "顯示器診斷";
 "What your monitor can do, and what the link is carrying." = "查看顯示器的規格，以及目前連線實際承載的內容。";
 "No Displays" = "沒有顯示器";
@@ -395,26 +389,14 @@
 "Display: %@ · video output %lld" = "顯示器：%1$@ · 影像輸出 %2$lld";
 "%lld × %lld" = "%lld × %lld";
 "native %lldHz" = "原生 %lldHz";
-"Top mode needs" = "最高模式需求";
 "Link carries" = "連線承載";
 "Rate" = "速率";
 "See whether the link is carrying your monitor's full resolution and refresh." = "查看連線是否承載顯示器支援的最高解析度與更新率。";
 "Display links have their own screen: Display Diagnostics." = "顯示器連線有專屬頁面：「顯示器診斷」。";
 
-/* Display dimension: cable attribution. */
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display." = "您的 %@ 可支援 %@，該模式約需 %@，但目前連線僅承載約 %@ (%@)。由於影像是透過 Thunderbolt 或 USB4 傳輸，線材可提供的頻寬遠高於顯示器需求，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項，或是這台 Mac 對此顯示器的限制。";
-"Your %@ can run %@, which needs about %@, but the link is currently carrying about %@ (%@). The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings." = "您的 %@ 可支援 %@，該模式約需 %@，但目前連線僅承載約 %@ (%@)。線材已承載這台 Mac 提供的所有 DisplayPort 通道，因此問題不太可能出在線材。更可能是「顯示器」設定中的解析度或更新率選項。";
-
-/* Display dimension: branch device. */
-"Your %@ is reached through a USB-C to %@ adapter that reports as %@, currently carrying about %@ (%@), short of the monitor's top mode (%@, about %@). With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，該轉接器回報為 %@。目前約承載 %@ (%@)，尚未承載顯示器的最高模式（%@，約需 %@）。在有轉接器的情況下，上限可能來自轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，有助於判斷原因。";
-
 /* Billboard device (display dimension). */
 "Billboard device present" = "偵測到 Billboard 裝置";
 "A Billboard device is present on this port. That usually appears when an Alt Mode like DisplayPort was set up but didn't fully come up. Your display is below its best mode, so a re-plug, a different cable, or a different adapter may bring it up. Some docks show a Billboard device normally, so this isn't always a fault." = "此連接埠偵測到 Billboard 裝置。這通常表示 DisplayPort 等 Alt Mode 雖已開始設定，但未能完全啟用。您的顯示器目前尚未使用最佳模式，重新插拔、改用其它線材，或更換轉接器可能有助於恢復正常。有些 Dock 本來就會顯示 Billboard 裝置，因此這不一定代表故障。";
-
-/* Display dimension: compression at the link ceiling (issue #246). */
-"Display may be using compression to reach its top mode" = "顯示器可能透過壓縮來啟用最高模式";
-"Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可支援 %@，若不使用壓縮約需 %@。目前連線的所有通道都已經以高速運作，承載約 %@ (%@)。許多高解析度顯示器會使用影像串流壓縮 (DSC)，讓最高模式能在這類連線上正常傳輸，因此僅憑連線速率無法判斷是否已使用最佳模式。若畫面顯示正常，很可能就已經是最佳模式。";
 
 /* Display dimension: confirmed full quality via CoreGraphics live mode (issue #246 Option B). */
 "macOS reports your %@ at its top mode (%@), and the link is carrying it. Many high-resolution displays use compression (DSC) to fit a mode like this through the link, so the link rate alone can't show it; your display is at full quality." = "macOS 回報您的 %@ 正以最高模式 (%@) 運作，且連線已承載此模式。許多高解析度顯示器會使用影像串流壓縮 (DSC)，讓這種顯示模式能在這類連線上正常傳輸，因此僅憑連線速率無法判斷這一點；您的顯示器正以最佳畫質運作。";
@@ -548,13 +530,54 @@
 
 "Display running compressed (DSC) to fit through the link" = "顯示器正使用影像串流壓縮 (DSC)，以配合此連線的頻寬";
 
-"macOS reports your %@'s current mode as %@, which would need more bandwidth than this link carries uncompressed. High-resolution displays use compression (DSC) to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS 回報您的 %@ 目前模式為 %@，若不使用壓縮，所需頻寬會超過此連線可承載的範圍。高解析度顯示器會使用影像串流壓縮 (DSC)，讓這種顯示模式能在這類連線上正常傳輸。畫面已正常傳輸至顯示器，因此這是預期中的運作方式。";
+/* Issue #664: the display verdict reads macOS's display-node statement. English; community-refined. */
+"macOS reports your %@ at its top mode (%@) and states it is running uncompressed. The link is carrying it in full; nothing is holding the picture back." = "macOS 回報您的 %@ 正以最高模式 (%@) 運作，且目前未使用壓縮方式傳輸。連線正完整承載此模式；畫面沒有受到任何限制。";
+"macOS states the current mode, %@, is running uncompressed." = "macOS 回報目前模式 %@ 未使用壓縮方式傳輸。";
+"macOS reports your %@'s current mode as %@ and states that this link needs compression (DSC) to carry it. High-resolution displays use DSC to fit a mode like this through a link like this. The picture is reaching the display, so this is working as intended." = "macOS 回報您的 %@ 目前模式為 %@，也回報此連線需要影像串流壓縮 (DSC) 才能承載此模式。高解析度顯示器會使用 DSC，讓這種顯示模式能在這類連線上正常傳輸。畫面已正常傳輸至顯示器，因此這是預期中的運作方式。";
+"Display running compressed (DSC)" = "顯示器正使用影像串流壓縮 (DSC)";
+"macOS reports your %@'s current mode as %@ with compression (DSC) on. Apple displays run compressed whenever the link supports it, so this says nothing about the link's capacity. The picture is reaching the display, so this is working as intended." = "macOS 回報您的 %@ 目前模式為 %@，且影像串流壓縮 (DSC) 已開啟。只要連線支援，Apple 顯示器就會使用壓縮方式傳輸，因此這無法說明連線的承載能力。畫面已正常傳輸至顯示器，因此這是預期中的運作方式。";
+"macOS reports your %@'s current mode as %@ but does not name the colour format in use, so whether the link is compressing it can't be read from here." = "macOS 回報您的 %@ 目前模式為 %@，但未指明使用中的色彩格式，因此無法從這裡判斷此連線是否正使用壓縮方式傳輸此模式。";
+"macOS lists your %@'s top mode (%@) as available on this link, uncompressed. The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 將您的 %@ 的最高模式 (%@) 列為可在此連線上使用，且無需壓縮。目前畫面未達該模式，是因為「顯示器」設定中所選的模式，或這台 Mac 為此顯示器選擇的模式，而非線材或轉接器。";
+"macOS lists your %@'s top mode (%@) as available on this link with compression (DSC). The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 將您的 %@ 的最高模式 (%@) 列為可在此連線上使用，需搭配影像串流壓縮 (DSC)。目前畫面未達該模式，是因為「顯示器」設定中所選的模式，或這台 Mac 為此顯示器選擇的模式，而非線材或轉接器。";
+"macOS lists your %@'s top mode (%@) as available on this link. The mode selected in Display settings, or this Mac's choice for this display, is what is holding the picture below it, not the cable or adapter." = "macOS 將您的 %@ 的最高模式 (%@) 列為可在此連線上使用。目前畫面未達該模式，是因為「顯示器」設定中所選的模式，或這台 Mac 為此顯示器選擇的模式，而非線材或轉接器。";
+"macOS does not offer your %@'s top mode (%@) on this link as it is now. The video is tunneled over Thunderbolt or USB4, so the cable carries far more than the display needs: this is unlikely to be the cable. It's most likely the resolution or refresh rate selected in Display settings, or this Mac's limit for this display; selecting the higher mode would retrain the link and show whether it is offered." = "在此連線目前的狀態下，macOS 未提供您的 %@ 的最高模式 (%@)。由於影像是透過 Thunderbolt 或 USB4 傳輸，線材可提供的頻寬遠高於顯示器需求，因此問題不太可能出在線材。更可能是「顯示器」設定中所選的解析度或更新率，或這台 Mac 對此顯示器的限制；選擇較高的模式會讓連線重新協商，以確認 macOS 是否提供該模式。";
+"macOS does not offer your %@'s top mode (%@) on this link as it is now. The cable is already carrying every DisplayPort lane this Mac provides, so this is unlikely to be the cable. Selecting the higher mode in Display settings would retrain the link and show whether it is offered." = "在此連線目前的狀態下，macOS 未提供您的 %@ 的最高模式 (%@)。線材已承載這台 Mac 提供的所有 DisplayPort 通道，因此問題不太可能出在線材。在「顯示器」設定中選擇較高的模式會讓連線重新協商，以確認 macOS 是否提供該模式。";
+"macOS does not offer your %@'s top mode (%@) on this link as it is now. If you've selected the higher mode and aren't getting it, the cable or adapter is the likely limit; if you haven't tried it, selecting it would retrain the link and show whether it is offered." = "在此連線目前的狀態下，macOS 未提供您的 %@ 的最高模式 (%@)。若已選擇較高的顯示模式卻無法使用該模式，限制因素很可能是線材或轉接器；若尚未嘗試，選擇該模式會讓連線重新協商，以確認 macOS 是否提供該模式。";
+"Your %@ is reached through a USB-C to %@ adapter that reports as %@, and macOS does not offer the monitor's top mode (%@) on this link as it is now. With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. A native DisplayPort connection, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，該轉接器回報為 %@，而在此連線目前的狀態下，macOS 未提供顯示器的最高模式 (%@)。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，即可判斷限制來自轉接器還是線材。";
+"Your %@ is reached through a USB-C to %@ adapter, and macOS does not offer the monitor's top mode (%@) on this link as it is now. With an adapter in the chain, the adapter's own limit may be the cap rather than the cable. Trying the monitor over native DisplayPort, or a higher-spec adapter, would tell you which." = "您的 %@ 是透過 USB-C 轉 %@ 轉接器連接，而在此連線目前的狀態下，macOS 未提供顯示器的最高模式 (%@)。在有轉接器的情況下，限制因素可能是轉接器本身，而非線材。改用原生 DisplayPort 連接，或使用規格更高的轉接器，即可判斷限制來自轉接器還是線材。";
+"macOS's list of modes for your %@ has no entry matching its top mode (%@), so whether this link could carry it can't be read from here." = "macOS 為您的 %@ 列出的模式中沒有與其最高模式 (%@) 相符的項目，因此無法從這裡判斷此連線能否承載它。";
+"macOS's display node could not be matched to your %@, so whether this link could carry its top mode (%@) can't be read from here. If the picture looks right, it most likely is." = "無法將 macOS 的顯示器節點與您的 %@ 對應，因此無法從這裡判斷此連線能否承載其最高模式 (%@)。若畫面顯示正常，很可能就沒有問題。";
+"Monitor can do more than it is set to" = "顯示器可支援比目前設定更高的模式";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only. On the current timing, macOS records the adapter converting the picture to 4:2:0 on its way to the display." = "其 EDID 還列出了一個僅支援 4:2:0 的 %1$lld × %2$lld、%3$lldHz 模式。在目前的時序下，macOS 記錄到轉接器在畫面送往顯示器的途中將其轉換為 4:2:0。";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only. The current timing includes a colour mode the adapter sends to the display as 4:2:0; macOS does not name which of the timing's modes is in use." = "其 EDID 還列出了一個僅支援 4:2:0 的 %1$lld × %2$lld、%3$lldHz 模式。目前的時序包含一個轉接器以 4:2:0 傳送至顯示器的色彩模式；macOS 未指明目前使用的是該時序中的哪個色彩模式。";
+"Its EDID also lists %lld × %lld at %lldHz in 4:2:0 only, a mode macOS does not send over the DisplayPort link." = "其 EDID 還列出了一個僅支援 4:2:0 的 %1$lld × %2$lld、%3$lldHz 模式，macOS 不會透過 DisplayPort 連線傳送該模式。";
+
+/* Issue #664: statement receipts, shared by the CLI text output and the Pro Display screen. */
+"macOS states: %@" = "macOS 回報：%@";
+"DSC on" = "DSC 開啟";
+"Uncompressed" = "未壓縮";
+"Not named" = "未指明";
+"Live mode needs about %@; the link's usable rate is %@ to %@." = "目前模式約需 %@；連線的可用速率為 %@ 到 %@。";
+"The bandwidth arithmetic disagrees with macOS's statement for this mode. The statement is what is shown." = "頻寬計算與 macOS 對此模式的回報不一致。顯示時以 macOS 的回報為準。";
+"macOS rates %lld of %lld colour modes on this timing as above the %@ adapter's TMDS rate limit." = "macOS 將此時序的 %2$lld 個色彩模式中的 %1$lld 個評定為超過 %3$@ 轉接器的 TMDS 速率上限。";
+"macOS rates %lld of %lld colour modes on this timing as above the HDMI port's TMDS rate limit." = "macOS 將此時序的 %2$lld 個色彩模式中的 %1$lld 個評定為超過 HDMI 連接埠的 TMDS 速率上限。";
+"macOS's list of colour modes above the %@ adapter's TMDS rate limit could not be read for this timing." = "無法為此時序讀取 macOS 所列超過 %@ 轉接器 TMDS 速率上限的色彩模式。";
+"macOS's list of colour modes above the HDMI port's TMDS rate limit could not be read for this timing." = "無法為此時序讀取 macOS 所列超過 HDMI 連接埠 TMDS 速率上限的色彩模式。";
+"Top mode needs at 8-bit RGB" = "最高模式所需頻寬（8 位元 RGB）";
+"Top mode needs about %@ at 8-bit RGB; the link carries about %@." = "最高模式在 8 位元 RGB 下約需 %@；連線承載約 %@。";
+"Top mode on this link: %@" = "此連線上的最高模式：%@";
+"available, uncompressed" = "可用，未壓縮";
+"available, with DSC" = "可用，需 DSC";
+"available" = "可用";
+"not offered" = "未提供";
+"no matching entry" = "無相符項目";
+"The cable is not the limit: macOS lists the top mode on this link." = "線材不是限制因素：macOS 在此連線上列出了最高模式。";
 
 /* Issue #393: CIO is a floor on cable capability, not a cap (negotiated-rate resolution). */
 "Controller confirms Thunderbolt cable (%@)" = "控制器確認為 Thunderbolt 線材 (%@)";
 "Thunderbolt link active at %@" = "Thunderbolt 連線正以 %@ 運作";
 "The cable claims %@, and the link has run at least %@. There's no host or device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有主機或裝置資料可供比對，因此無法判斷是否還有其它因素限制它。";
-"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有裝置資料可供比對，因此無法判斷是否還有其它因素限制它。";
+"The cable claims %@, and the link has run at least %@. There's no device data to compare against, so we can't tell if anything else is limiting it." = "線材宣告為 %1$@，且連線至少曾以 %2$@ 運作。由於沒有裝置資料可供比對，因此無法判斷是否還有其它限制因素。";
 
 "Shared controller port" = "共用控制器連接埠";
 
@@ -597,37 +620,37 @@
 /* PD event log: opcode-plus-argument decode of PortControllerEvtBuffer */
 "Plug attached" = "插頭已接上";
 "Plug detached" = "插頭已拔除";
-"Plug event" = "插頭事件";
-"Source capabilities received (%lld PDOs)" = "已收到 Source Capabilities (%lld 個 PDO)";
+"Plug event" = "插拔事件";
+"Source capabilities received (%lld PDOs)" = "已收到 Source Capabilities（%lld 個 PDO）";
 "Request sent" = "已送出請求";
-"Source ready" = "來源就緒";
-"Source ready rejected" = "來源就緒遭拒";
-"Partner identity received" = "已收到對端身分";
+"Source ready" = "電源就緒";
+"Source ready rejected" = "電源未就緒（請求遭拒）";
+"Partner identity received" = "已收到對端識別資訊";
 "Mac became power source" = "Mac 成為供電來源";
-"The Mac asked the source for one of the power levels it had offered." = "Mac 向來源要求其提供的其中一種電力等級。";
-"The source reported whether the requested power level is now in place." = "來源回報所要求的電力等級是否已生效。";
+"The Mac asked the source for one of the power levels it had offered." = "Mac 向電源請求其提供的其中一種供電等級。";
+"The source reported whether the requested power level is now in place." = "電源回報所請求的供電等級是否已生效。";
 "The Mac started supplying power to the device on this port." = "Mac 開始為此連接埠上的裝置供電。";
 "This event code has not been decoded yet." = "此事件代碼尚未解讀。";
-"The port's attach and detach counters move with this event, so it lines up with what Port Health shows." = "連接埠的接上與拔除計數會隨此事件變動，因此與連接埠健康狀況所顯示的一致。";
-"The source sent its list of power data objects. The argument byte is how many it offered." = "來源送出了它的 Power Data Objects 清單。參數位元組表示它提供了多少個。";
-"The Mac sent a request picking one of the advertised power levels. It always follows a source capabilities event." = "Mac 送出請求，選擇了已公布的其中一種電力等級。它一定接在來源能力事件之後。";
-"The outcome of the request. An argument of 0x81 means the source turned it down and the old power level stayed." = "請求的結果。參數為 0x81 表示來源拒絕了請求，維持原本的電力等級。";
+"The port's attach and detach counters move with this event, so it lines up with what Port Health shows." = "連接埠的連接次數與中斷連接次數會隨此事件變動，因此與連接埠健康狀況所顯示的一致。";
+"The source sent its list of power data objects. The argument byte is how many it offered." = "電源送出了 PDO 清單。參數位元組表示其中包含的 PDO 數量。";
+"The Mac sent a request picking one of the advertised power levels. It always follows a source capabilities event." = "Mac 送出請求，選擇了其中一種已宣告的供電等級。此事件一定接在 Source Capabilities 事件之後。";
+"The outcome of the request. An argument of 0x81 means the source turned it down and the old power level stayed." = "請求的結果。參數為 0x81 表示電源拒絕了請求，並維持原本的供電等級。";
 "The Mac switched to supplying power on this port, for example when it charges an attached device." = "Mac 在此連接埠改為供電，例如為已連接的裝置充電時。";
 "This code turns up in the buffer but we have not yet matched it to a behaviour." = "此代碼出現在緩衝區中，但我們尚未將它對應到任何行為。";
 "Argument %@" = "參數 %@";
-"Arguments %@" = "參數 %@ (多個)";
-"Source ready (result unknown)" = "來源就緒 (結果未知)";
+"Arguments %@" = "多個參數 %@";
+"Source ready (result unknown)" = "電源就緒（結果未知）";
 
 /* Cable plug type, Cable VDO bits 19..18. Type-A and Type-B are deprecated by the USB-PD spec. */
-"USB Type-A plug (deprecated)" = "USB Type-A 插頭（已淘汰）";
-"USB Type-B plug (deprecated)" = "USB Type-B 插頭（已淘汰）";
-"USB Type-C plug" = "USB Type-C 插頭";
-"Captive cable (built into the device)" = "固定式連接線（內建於裝置）";
+"USB Type-A plug (deprecated)" = "USB Type-A 接頭（已棄用）";
+"USB Type-B plug (deprecated)" = "USB Type-B 接頭（已棄用）";
+"USB Type-C plug" = "USB Type-C 接頭";
+"Captive cable (built into the device)" = "固定式線材（內建於裝置）";
 
 /* Cable type source: the port controller's own ActiveCable reading, and the
    e-marker silicon vendor hint. */
-"E-marker reports passive, but the port controller detects an active cable" = "E-marker 回報為被動式，但連接埠控制器偵測到主動式連接線";
-"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker 使用其晶片製造商的預設廠商 ID (%@)，連接線品牌未被記錄";
+"E-marker reports passive, but the port controller detects an active cable" = "E-marker 回報為被動式，但連接埠控制器偵測到主動式線材";
+"E-marker carries its chip maker's default vendor ID (%@); the cable brand is not recorded" = "E-marker 帶有其晶片製造商的預設 Vendor ID (%@)，未記錄線材品牌";
 "USB accessory (audio or adapter)" = "USB 配件（音訊或轉接器）";
-"This accessory has its own USB-C plug. It is not a cable and does not charge." = "此配件自帶 USB-C 插頭。它不是連接線，也不會充電。";
-"This plug is part of the accessory, not a cable, so there is no cable rating." = "此插頭是配件的一部分，不是連接線，因此沒有連接線規格。";
+"This accessory has its own USB-C plug. It is not a cable and does not charge." = "此配件本身帶有 USB-C 接頭。它不是線材，也不會為 Mac 充電。";
+"This plug is part of the accessory, not a cable, so there is no cable rating." = "此接頭是配件的一部分，並非線材，因此沒有線材額定規格。";

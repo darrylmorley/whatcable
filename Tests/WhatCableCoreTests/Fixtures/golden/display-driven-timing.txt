@@ -1,0 +1,12 @@
+=== Port-USB-C@1 (USB-C) ===
+Connected
+Try a higher-wattage charger to identify the cable.
+
+Display: Display running at full quality
+  macOS reports your 27C1U-L at its top mode (3840 x 2160 @ 60Hz) and states it is running uncompressed. The link is carrying it in full; nothing is holding the picture back. Its EDID also lists 3,840 × 2,160 at 60Hz in 4:2:0 only, a mode macOS does not send over the DisplayPort link.
+  macOS states: Uncompressed
+  Live mode needs about 12.7 Gbps; the link's usable rate is 12.7 Gbps to 13.0 Gbps.
+  Top mode needs about 12.7 Gbps at 8-bit RGB; the link carries about 13.0 Gbps.
+  Top mode on this link: available, uncompressed
+  The cable is not the limit: macOS lists the top mode on this link.
+  macOS rates 4 of 4 colour modes on this timing as above the HDMI adapter's TMDS rate limit.

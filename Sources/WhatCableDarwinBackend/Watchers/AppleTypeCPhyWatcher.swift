@@ -3,28 +3,25 @@ import IOKit
 import WhatCableCore
 import os.log
 
-/// Watches `AppleT8132TypeCPhy` services for per-lane physical layer state.
-/// One instance per physical USB-C port. Provides the only way to see which
-/// transport protocol (CIO, DisplayPort, or idle) is assigned to each lane.
+/// Watches `AppleTypeCPhy` services for per-lane physical layer state.
+/// One instance per PHY (`atc-phyN`, four on an M4 Pro). Provides the only
+/// way to see which transport (CIO, DisplayPort, USB3, or idle) is assigned
+/// to each lane.
 ///
-/// The IOKit class name varies by chip generation:
-/// - M3/M4: AppleT8132TypeCPhy
-/// - Future chips may use different suffixes.
+/// Matched on the base class. Every chip ships its own leaf
+/// (`AppleT8132TypeCPhy` on M4 and M5, `AppleT6040TypeCPhy` on M4 Pro, eight
+/// in the corpus so far) and IOServiceMatching on the parent reaches all of
+/// them, so a new chip needs no change here. `AppleTypeCPhyClassCoverageTests`
+/// checks that against the corpus.
 ///
 /// Updates instantly on mode change (notification-driven).
 @MainActor
 public final class AppleTypeCPhyWatcher: ObservableObject {
     @Published public private(set) var phys: [AppleTypeCPhy] = []
 
-    nonisolated static let candidateClasses = [
-        "AppleT8132TypeCPhy",
-        "AppleT8122TypeCPhy",
-        "AppleT8112TypeCPhy",
-        "AppleT6042TypeCPhy",
-        "AppleT6022TypeCPhy",
-        "AppleT6002TypeCPhy",
-        "AppleT6000TypeCPhy",
-    ]
+    /// Kept as a list, mirroring `IOIOThunderboltSwitchWatcher.matchClasses`,
+    /// in case Apple ever renames the base the way it did there.
+    nonisolated static let candidateClasses = ["AppleTypeCPhy"]
 
     private var notifyPort: IONotificationPortRef?
     private var iterators: [io_iterator_t] = []

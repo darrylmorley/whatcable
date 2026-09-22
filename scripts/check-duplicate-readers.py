@@ -113,6 +113,12 @@ DYNAMIC_MATCHERS = {
         {"cls"},
         "Loops over its own candidate class list.",
     ),
+    "WhatCableDarwinBackend/Reading/DisplayTimingReader.swift": (
+        {"className"},
+        "Loops over nodeClassNames: AppleCLCD2 and IOMobileFramebufferShim, the two "
+        "display-node classes (split by chip). No other reader in Sources matches "
+        "either class (checked 2026-09-17).",
+    ),
     "WhatCableDarwinBackend/Watchers/TRMTransportWatcher.swift": (
         {"cls"},
         "Loops over the four transport-state classes. Splitting this watcher is step 4 of the layering refactor.",
@@ -181,6 +187,16 @@ ALLOWED = {
         {
             "WhatCableCore/Thunderbolt/IOThunderboltLink.swift",
             "WhatCableDarwinBackend/Debug/ThunderboltProbe.swift",
+        },
+    ),
+    "AppleTypeCPhy": (
+        "Core names it only in the `renamed:` attribute on the deprecated "
+        "`TypeCPhy` typealias, a Swift type name and not a matcher. The "
+        "watcher matches the IOKit base class of that name so every chip's "
+        "leaf is found (issue #651).",
+        {
+            "WhatCableCore/Port/AppleTypeCPhy.swift",
+            "WhatCableDarwinBackend/Watchers/AppleTypeCPhyWatcher.swift",
         },
     ),
     "IOPlatformUUID": (

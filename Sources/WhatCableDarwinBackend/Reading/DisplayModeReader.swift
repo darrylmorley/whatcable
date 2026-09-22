@@ -242,9 +242,14 @@ public enum DisplayModeReader {
 }
 
 extension IOPortTransportStateDisplayPort {
-    /// Copy this node with the matched CoreGraphics modes attached. Kept local
-    /// to the backend because only the CoreGraphics matcher sets them.
-    fileprivate func with(currentMode: DisplayCurrentMode, maxMode: DisplayCurrentMode?) -> IOPortTransportStateDisplayPort {
+    /// Copy this node with the matched modes attached. Kept in the backend
+    /// because only the two readers (CoreGraphics here, the display node in
+    /// `DisplayTimingReader`) set them. `drivenTiming` is set only by
+    /// `DisplayTimingReader.match`; a nil argument keeps whatever the port
+    /// already carries. `hpmControllerUUID` is carried across so the port
+    /// keeps its canonical join key through enrichment (issue #664, Finding
+    /// "The join key is dropped").
+    func with(currentMode: DisplayCurrentMode, maxMode: DisplayCurrentMode?, drivenTiming: DisplayTimingStatement? = nil) -> IOPortTransportStateDisplayPort {
         IOPortTransportStateDisplayPort(
             link: link, monitor: monitor, dfpType: dfpType,
             branchDeviceId: branchDeviceId, branchDeviceOUI: branchDeviceOUI,
@@ -264,7 +269,9 @@ extension IOPortTransportStateDisplayPort {
             parentBuiltInPortTypeDescription: parentBuiltInPortTypeDescription,
             parentBuiltInPortNumber: parentBuiltInPortNumber,
             edidChanged: edidChanged, nominalSignalingFrequenciesHz: nominalSignalingFrequenciesHz,
-            index: index, currentMode: currentMode, maxMode: maxMode
+            index: index, currentMode: currentMode, maxMode: maxMode,
+            drivenTiming: drivenTiming ?? self.drivenTiming,
+            hpmControllerUUID: hpmControllerUUID
         )
     }
 }

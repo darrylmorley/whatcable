@@ -1007,6 +1007,26 @@ private struct DisplayDTO: Codable {
     let currentMode: CurrentModeDTO?
     /// The display's highest mode from CoreGraphics, EDID-free.
     let maxMode: CurrentModeDTO?
+    /// The display's top mode as `DisplayDiagnostic.resolveTopMode` resolved
+    /// it: the highest-clock declared entry, or the CoreGraphics-only mode
+    /// when nothing declared matches. nil exactly when `edid` is nil.
+    let topMode: TopModeDTO?
+    /// The full parsed EDID: every declared mode, in every format the EDID
+    /// carries one in, plus the range-limits envelope, per-block checksums
+    /// and the tiled topology. nil when there is no readable EDID.
+    let edid: EDIDDTO?
+    /// EDID manufacturer 0x0610 or PNP name APP: the display is Apple's own,
+    /// so a DSC-on verdict blames no link. Always present.
+    let isAppleDisplay: Bool
+    /// macOS's statement about the driven timing, from the display node.
+    /// Omitted when the node did not match this display.
+    let drivenTiming: TimingListsDTO?
+    /// The bandwidth arithmetic beside the statement. Decides nothing.
+    /// Omitted with `drivenTiming`.
+    let crossCheck: CrossCheckDTO?
+    /// The node's own timing for the panel's top mode and what it says
+    /// (ruling 37). Omitted without a statement or a resolved top mode.
+    let topModeOnLink: TopModeOnLinkDTO?
 
     init(diagnostic: DisplayDiagnostic) {
         self.summary = diagnostic.summary
@@ -1017,7 +1037,6 @@ private struct DisplayDTO: Codable {
         case .belowMonitorMax: self.bottleneck = "belowMonitorMax"
         case .adapterLimit: self.bottleneck = "adapterLimit"
         case .unknownMode: self.bottleneck = "unknownMode"
-        case .compressionPlausible: self.bottleneck = "compressionPlausible"
         case .compressionActive: self.bottleneck = "compressionActive"
         }
         switch diagnostic.cableAssessment {
@@ -1035,6 +1054,308 @@ private struct DisplayDTO: Codable {
         self.branchDevice = facts.branchDevice
         self.currentMode = facts.currentMode.map(CurrentModeDTO.init)
         self.maxMode = facts.maxMode.map(CurrentModeDTO.init)
+        self.topMode = diagnostic.topMode.map(TopModeDTO.init)
+        self.edid = diagnostic.edid.map(EDIDDTO.init)
+        self.isAppleDisplay = facts.isAppleDisplay
+        if let statement = facts.drivenTiming, let reading = facts.dscReading {
+            self.drivenTiming = TimingListsDTO(statement.driven, reading: reading)
+            self.crossCheck = CrossCheckDTO(
+                liveNeededGbps: facts.liveNeededGbps,
+                usableGbpsMin: facts.usableGbpsRange?.lowerBound,
+                usableGbpsMax: facts.usableGbpsRange?.upperBound,
+                statementContradiction: facts.statementContradiction)
+        } else {
+            self.drivenTiming = nil
+            self.crossCheck = nil
+        }
+        if let match = facts.topModeMatch, let availability = facts.topModeAvailability {
+            self.topModeOnLink = TopModeOnLinkDTO(
+                match: match.rawValue,
+                availability: availability.rawValue,
+                statementOffersTopMode: facts.statementOffersTopMode,
+                topModeListedByNode: facts.topModeListedByNode ?? false,
+                timing: facts.topModeTiming.map(NodeTimingDTO.init))
+        } else {
+            self.topModeOnLink = nil
+        }
+    }
+}
+
+private struct TopModeDTO: Codable {
+    let width: Int
+    let height: Int
+    let refreshHz: Double
+    let pixelClockHz: Int?
+    let source: String
+
+    init(_ top: DisplayDiagnostic.TopMode) {
+        self.width = top.width
+        self.height = top.height
+        self.refreshHz = top.refreshHz
+        self.pixelClockHz = top.pixelClockHz
+        self.source = top.sourceDescription
+    }
+}
+
+private struct TimingListsDTO: Codable {
+    /// "uncompressed" | "dscOn" | "unresolved". For the driven timing, the
+    /// reading against the live mode; for the top-mode timing, the reading
+    /// with every non-virtual mode a candidate.
+    let dscReading: String
+    /// The three sets, each resolved against the timing's non-virtual colour
+    /// modes and sorted: an ID the node lists for a virtual entry (the Studio
+    /// Display's DSCRequiredColorElementIDs prints (1, 46, 48), mode 1 virtual)
+    /// is not in them. It is in `colourModes` and in the raw lists below.
+    let dscCapableIDs: [Int]
+    let dscRequiredIDs: [Int]
+    let unsafeIDs: [Int]
+    /// The two ID lists as the node printed them, sorted, virtual and unknown
+    /// IDs included (PR #665 gate fix round 2, L1): what `ioreg` shows.
+    let dscRequiredIDsRaw: [Int]
+    let unsafeIDsRaw: [Int]
+    let validPixelEncodings: UInt32?
+    /// Ruling 42: one flag per list, never a conjunction.
+    let colourModesComplete: Bool
+    let dscListComplete: Bool
+    let unsafeListComplete: Bool
+    /// "all" | "some" | "none" (ruling 44).
+    let downstream420: String
+    let colourModes: [ColourModeDTO]
+
+    init(_ lists: DisplayTimingLists, reading: DisplayTimingLists.DSCReading) {
+        self.dscReading = reading.rawValue
+        self.dscCapableIDs = lists.dscCapableIDs.sorted()
+        self.dscRequiredIDs = lists.dscRequiredIDs.sorted()
+        self.unsafeIDs = lists.unsafeIDs.sorted()
+        self.dscRequiredIDsRaw = lists.dscRequiredIDsRaw.sorted()
+        self.unsafeIDsRaw = lists.unsafeIDsRaw.sorted()
+        self.validPixelEncodings = lists.validPixelEncodings
+        self.colourModesComplete = lists.colourModesComplete
+        self.dscListComplete = lists.dscListComplete
+        self.unsafeListComplete = lists.unsafeListComplete
+        self.downstream420 = lists.downstream420.rawValue
+        self.colourModes = lists.colourModes.map(ColourModeDTO.init)
+    }
+}
+
+private struct NodeTimingDTO: Codable {
+    let id: Int
+    let width: Int
+    let height: Int
+    let refreshHz: Double
+    /// The node's own `IsInterlaced`; an interlaced timing has no clock.
+    let interlaced: Bool
+    let pixelClockHz: Int?
+    let lists: TimingListsDTO
+
+    init(_ timing: DisplayNodeTiming) {
+        self.id = timing.id
+        self.width = timing.width
+        self.height = timing.height
+        self.refreshHz = timing.refreshHz
+        self.interlaced = timing.interlaced
+        self.pixelClockHz = timing.pixelClockHz
+        self.lists = TimingListsDTO(timing.lists, reading: timing.lists.dscReading(for: nil))
+    }
+}
+
+private struct TopModeOnLinkDTO: Codable {
+    /// "exact" | "sameRefresh" | "pictureOnly" | "notListed"
+    let match: String
+    /// "offeredUncompressed" | "offeredWithDSC" | "offeredUnresolved" | "notOffered" | "notListed"
+    let availability: String
+    let statementOffersTopMode: Bool
+    /// Ruling 41: the resolved top is an entry the node lists (its picture at
+    /// least); false when the top is a native declaration the node lists
+    /// nowhere, or when no declared entry qualified.
+    let topModeListedByNode: Bool
+    /// The matched timing; omitted for pictureOnly and notListed.
+    let timing: NodeTimingDTO?
+}
+
+private struct ColourModeDTO: Codable {
+    let id: Int
+    let encoding: Int
+    /// The kernel's name for `encoding`; omitted outside the 15-entry table.
+    let encodingName: String?
+    let depth: Int
+    let supportsDSC: Int
+    let isVirtual: Bool
+    let downstreamFormat: DownstreamFormatDTO?
+
+    init(_ mode: DisplayColourMode) {
+        self.id = mode.id
+        self.encoding = mode.encoding.rawValue
+        self.encodingName = mode.encoding.name
+        self.depth = mode.depth
+        self.supportsDSC = mode.supportsDSC
+        self.isVirtual = mode.isVirtual
+        self.downstreamFormat = mode.downstreamFormat.map(DownstreamFormatDTO.init)
+    }
+}
+
+private struct DownstreamFormatDTO: Codable {
+    let encoding: Int
+    let encodingName: String?
+    let depth: Int
+
+    init(_ format: DisplayDownstreamFormat) {
+        self.encoding = format.encoding.rawValue
+        self.encodingName = format.encoding.name
+        self.depth = format.depth
+    }
+}
+
+private struct CrossCheckDTO: Codable {
+    let liveNeededGbps: Double?
+    let usableGbpsMin: Double?
+    let usableGbpsMax: Double?
+    let statementContradiction: Bool
+}
+
+private struct ModeDTO: Codable {
+    let width: Int
+    let height: Int
+    let refreshHz: Double
+    let pixelClockHz: Int
+    let hTotal: Int
+    let vTotal: Int
+    let interlaced: Bool
+    let source: String
+
+    init(_ mode: EDIDMode) {
+        self.width = mode.width
+        self.height = mode.height
+        self.refreshHz = mode.refreshHz
+        self.pixelClockHz = mode.pixelClockHz
+        self.hTotal = mode.hTotal
+        self.vTotal = mode.vTotal
+        self.interlaced = mode.interlaced
+        self.source = mode.sourceDescription
+    }
+}
+
+private struct StdIDDTO: Codable {
+    let width: Int
+    let height: Int
+    let refreshHz: Int
+
+    init(_ standard: EDIDInfo.StandardTimingID) {
+        self.width = standard.width
+        self.height = standard.height
+        self.refreshHz = standard.refreshHz
+    }
+}
+
+private struct RangeLimitsDTO: Codable {
+    let minVerticalHz: Int
+    let maxVerticalHz: Int
+    let minHorizontalKHz: Int
+    let maxHorizontalKHz: Int
+    let maxPixelClockHz: Int?
+    /// "defaultGTF" | "rangeLimitsOnly" | "secondaryGTF" | "cvt" | "unknown(0xNN)"
+    let timingSupport: String
+
+    init(_ limits: EDIDInfo.RangeLimits) {
+        self.minVerticalHz = limits.minVerticalHz
+        self.maxVerticalHz = limits.maxVerticalHz
+        self.minHorizontalKHz = limits.minHorizontalKHz
+        self.maxHorizontalKHz = limits.maxHorizontalKHz
+        self.maxPixelClockHz = limits.maxPixelClockHz
+        switch limits.timingSupport {
+        case .defaultGTF: self.timingSupport = "defaultGTF"
+        case .rangeLimitsOnly: self.timingSupport = "rangeLimitsOnly"
+        case .secondaryGTF: self.timingSupport = "secondaryGTF"
+        case .cvt: self.timingSupport = "cvt"
+        case .unknown(let raw): self.timingSupport = "unknown(0x" + String(format: "%02X", raw) + ")"
+        }
+    }
+}
+
+private struct DynamicRangeDTO: Codable {
+    let minPixelClockKHz: Int
+    let maxPixelClockKHz: Int
+    let minRefreshHz: Int
+    let maxRefreshHz: Int
+
+    init(_ limits: EDIDInfo.DynamicRangeLimits) {
+        self.minPixelClockKHz = limits.minPixelClockKHz
+        self.maxPixelClockKHz = limits.maxPixelClockKHz
+        self.minRefreshHz = limits.minRefreshHz
+        self.maxRefreshHz = limits.maxRefreshHz
+    }
+}
+
+private struct TiledDTO: Codable {
+    let hTiles: Int
+    let vTiles: Int
+    let tileWidth: Int
+    let tileHeight: Int
+    let hLocation: Int
+    let vLocation: Int
+
+    init(_ tiled: EDIDInfo.TiledTopology) {
+        self.hTiles = tiled.hTiles
+        self.vTiles = tiled.vTiles
+        self.tileWidth = tiled.tileWidth
+        self.tileHeight = tiled.tileHeight
+        self.hLocation = tiled.hLocation
+        self.vLocation = tiled.vLocation
+    }
+}
+
+private struct BlockDTO: Codable {
+    let index: Int
+    /// "base" | "cta861" | "displayID X.Y" | "vtb" | "blockMap" | "padding" | "unknown(0xNN)"
+    let kind: String
+    let checksumValid: Bool
+
+    init(_ block: EDIDInfo.BlockInfo) {
+        self.index = block.index
+        self.checksumValid = block.checksumValid
+        switch block.kind {
+        case .base: self.kind = "base"
+        case .cta861: self.kind = "cta861"
+        case .displayID(let version):
+            let major = (version & 0xF0) >> 4
+            let minor = version & 0x0F
+            self.kind = "displayID \(major).\(minor)"
+        case .vtb: self.kind = "vtb"
+        case .blockMap: self.kind = "blockMap"
+        case .padding: self.kind = "padding"
+        case .unknown(let tag): self.kind = "unknown(0x" + String(format: "%02X", tag) + ")"
+        }
+    }
+}
+
+private struct EDIDDTO: Codable {
+    let version: String   // "\(major).\(minor)"
+    let monitorName: String?
+    let continuousFrequency: Bool?
+    let declaredExtensionCount: Int
+    /// Omitted when the EDID marks no mode preferred (no base DTD, no flagged DisplayID record).
+    let preferredMode: ModeDTO?
+    let modes: [ModeDTO]
+    let undecodedStandardTimings: [StdIDDTO]
+    let rangeLimits: RangeLimitsDTO?
+    let displayIDRangeLimits: RangeLimitsDTO?
+    let dynamicRangeLimits: DynamicRangeDTO?
+    let tiledTopology: TiledDTO?
+    let blocks: [BlockDTO]
+
+    init(_ edid: EDIDInfo) {
+        self.version = "\(edid.versionMajor).\(edid.versionMinor)"
+        self.monitorName = edid.monitorName
+        self.continuousFrequency = edid.continuousFrequency
+        self.declaredExtensionCount = edid.declaredExtensionCount
+        self.preferredMode = edid.preferredMode.map(ModeDTO.init)
+        self.modes = edid.modes.map(ModeDTO.init)
+        self.undecodedStandardTimings = edid.undecodedStandardTimings.map(StdIDDTO.init)
+        self.rangeLimits = edid.rangeLimits.map(RangeLimitsDTO.init)
+        self.displayIDRangeLimits = edid.displayIDRangeLimits.map(RangeLimitsDTO.init)
+        self.dynamicRangeLimits = edid.dynamicRangeLimits.map(DynamicRangeDTO.init)
+        self.tiledTopology = edid.tiledTopology.map(TiledDTO.init)
+        self.blocks = edid.blocks.map(BlockDTO.init)
     }
 }
 
@@ -1043,17 +1364,23 @@ private struct CurrentModeDTO: Codable {
     let height: Int
     let refreshHz: Double
     /// Bits per channel macOS is driving the framebuffer at (8 / 10 when read,
-    /// nil otherwise). Emitted so a `--json` consumer can see which bits-per-
-    /// pixel value the display diagnostic used: a `.compressionActive` verdict
-    /// reads as 8 -> 24bpp arithmetic, 10 -> 30bpp arithmetic, missing -> the
-    /// 24bpp fallback.
+    /// nil otherwise). Since issue #664 no verdict is computed from it; the
+    /// cross-check costs the live mode from the display node's statement.
     let bitsPerComponent: Int?
+    let pixelClockHz: Int?
+    let pixelEncoding: Int?
+    let pixelEncodingName: String?
+    let downstreamFormat: DownstreamFormatDTO?
 
     init(_ mode: DisplayCurrentMode) {
         self.width = mode.width
         self.height = mode.height
         self.refreshHz = mode.refreshHz
         self.bitsPerComponent = mode.bitsPerComponent
+        self.pixelClockHz = mode.pixelClockHz
+        self.pixelEncoding = mode.pixelEncoding?.rawValue
+        self.pixelEncodingName = mode.pixelEncoding?.name
+        self.downstreamFormat = mode.downstreamFormat.map(DownstreamFormatDTO.init)
     }
 }
 

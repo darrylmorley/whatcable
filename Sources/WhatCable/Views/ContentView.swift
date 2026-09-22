@@ -1715,7 +1715,7 @@ struct DisplayBanner: View {
         switch diagnostic.bottleneck {
         case .fine, .compressionActive: return .positive
         case .belowMonitorMax, .adapterLimit: return .warning
-        case .unknownMode, .compressionPlausible: return .neutral
+        case .unknownMode: return .neutral
         }
     }
 
@@ -1725,7 +1725,7 @@ struct DisplayBanner: View {
         case .belowMonitorMax: return "exclamationmark.triangle.fill"
         case .adapterLimit: return "arrow.triangle.swap"
         case .unknownMode: return "questionmark.circle"
-        case .compressionPlausible, .compressionActive: return "info.circle"
+        case .compressionActive: return "info.circle"
         }
     }
 

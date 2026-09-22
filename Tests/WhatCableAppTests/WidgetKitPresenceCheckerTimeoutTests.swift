@@ -48,11 +48,14 @@ struct WidgetKitPresenceCheckerTimeoutTests {
         #expect(result == true)
     }
 
-    @Test("The fallback value is returned verbatim, not hardcoded to true")
+    @Test("The fallback value is returned verbatim, not hardcoded to true", .timeLimit(.minutes(1)))
     func fallbackValueIsUsedVerbatim() async {
         let result = await withTimeout(.milliseconds(20), fallback: 42) {
-            try? await Task.sleep(for: .seconds(30))
-            return 0
+            // Simulates an operation that never completes, ensuring the
+            // timeout always fires regardless of how long the test stalls.
+            await withCheckedContinuation { (_: CheckedContinuation<Int, Never>) in
+                // Deliberately left unresumed.
+            }
         }
         #expect(result == 42)
     }

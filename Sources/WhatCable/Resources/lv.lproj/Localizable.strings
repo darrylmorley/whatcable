@@ -152,7 +152,7 @@
 "Built-in USB-A ports" = "Iebūvētie USB-A porti";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Vienkārši USB porti aiz Mac iekšējā centrmezgla, tāpēc par tiem nav kabeļa, jaudas vai Thunderbolt datu.";
 
-/* Built-in display port card (issue #352) */
+/* Built-in display port card (issue #352). English placeholders, community can refine. */
 "Display connected" = "Displejs pievienots";
 "%lld displays connected" = "%lld displeji pievienoti";
 "Built-in %1$@ port %2$lld" = "Iebūvētais %1$@ ports %2$lld";

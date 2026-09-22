@@ -136,7 +136,7 @@ struct FormatterGoldenOutputTests {
     /// doc comment stays true of what it checks.
     @Test("Golden: the fixture set is non-empty and every golden file has content")
     func fixtureSetIsNotVacuous() throws {
-        #expect(Self.fixtures.count == 5)
+        #expect(Self.fixtures.count == 6)
         for fixture in Self.fixtures {
             #expect(!fixture.snapshot.ports.isEmpty, "\(fixture.name): fixture has no ports")
             guard !Self.isRegenerating else { continue }
@@ -171,7 +171,8 @@ struct FormatterGoldenOutputTests {
         Fixture(name: "two-port-standby-charger", snapshot: twoPortStandbyCharger()),
         Fixture(name: "bare-emarker-shadowing", snapshot: bareEmarkerShadowing()),
         Fixture(name: "magsafe-and-usbc", snapshot: magSafeAndUSBC()),
-        Fixture(name: "thunderbolt-dock-with-devices", snapshot: thunderboltDockWithDevices(), showRaw: true)
+        Fixture(name: "thunderbolt-dock-with-devices", snapshot: thunderboltDockWithDevices(), showRaw: true),
+        Fixture(name: "display-driven-timing", snapshot: displayDrivenTiming())
     ]
 
     /// One active USB-C port, a 140W adapter, a populated cable e-marker
@@ -416,6 +417,53 @@ struct FormatterGoldenOutputTests {
             monitor: nil,
             parentPortType: parentPortType,
             parentPortNumber: parentPortNumber,
+            hpmControllerUUID: nil
+        )
+    }
+
+    /// The corpus's 27C1U-L (m3_macos26.6.2) on a USB-C port through a
+    /// DisplayPort 1.2 HDMI converter, 2 lanes at HBR3, with macOS's statement
+    /// about the driven timing attached: DSC list empty, all four link-side
+    /// modes rated unsafe. Exercises the statement receipts, the cross-check
+    /// and the `drivenTiming` JSON block end to end from the real EDID bytes.
+    private static func displayDrivenTiming() -> CableSnapshot {
+        CableSnapshot(
+            ports: [makePort(portNumber: 1, portType: "USB-C", connectionActive: true)],
+            powerSources: [],
+            identities: [],
+            usbDevices: [],
+            adapter: nil,
+            displayPorts: [makeDrivenDisplayPort(parentPortType: 2, parentPortNumber: 1)],
+            batteryFullyCharged: nil,
+            batteryIsCharging: nil
+        )
+    }
+
+    /// `Metadata.EDID` of m3_macos26.6.2 block 0, 256 bytes.
+    private static let edid27C1UL: [UInt8] = EDIDInfoTests.hexBytes(
+        "00ffffffffffff0025e3ffff0000000022210103803c22782e7885ad4f3bb3260e50542d6b80d1c0b30095008180714f81c08140a9c031ce0046f0705a8008204a0055502100001a000000fd00284b28843c000a202020202020000000fc0032374331552d4c002020202020000000ff003030303030303030303030303101ae"
+        + "020332f24c0102030405111213141f019023097f07830100006a030c001000384220000067d85dc401788003e20f00e20e61565e00a0a0a029503020350055502100001a023a801871382d403020350055502100001a0000000000000000000000000000000000000000000000000000000000000000000000000000000000ca")
+
+    private static func makeDrivenDisplayPort(parentPortType: Int, parentPortNumber: Int) -> IOPortTransportStateDisplayPort {
+        func colour(_ id: Int, _ encoding: DisplayPixelEncoding, _ depth: Int, virtual: Bool = false) -> DisplayColourMode {
+            DisplayColourMode(id: id, encoding: encoding, depth: depth, supportsDSC: 0, isVirtual: virtual, downstreamFormat: nil)
+        }
+        let lists = DisplayTimingLists(
+            colourModes: [colour(90, .rgb444, 8), colour(89, .rgb444, 8), colour(91, .ycbcr444, 8), colour(92, .ycbcr444, 8),
+                          colour(10, .ycbcr422, 12, virtual: true), colour(11, .ycbcr422DPTunneling, 12, virtual: true)],
+            dscRequiredList: [], unsafeList: [90, 89, 91, 92, 10, 11], validPixelEncodings: 0x1b4d, colourModesComplete: true, dscListComplete: true, unsafeListComplete: true)
+        let statement = DisplayTimingStatement(
+            driven: lists,
+            allTimings: [DisplayNodeTiming(id: 45, width: 3840, height: 2160, refreshHz: 60.0, pixelClockHz: 527_850_000, lists: lists)])
+        return IOPortTransportStateDisplayPort(
+            link: DisplayPortLink(active: true, laneCount: 2, maxLaneCount: 2, linkRate: 4,
+                                  linkRateDescription: "8.1 Gbps (HBR3)", tunneled: false, hpdState: 1),
+            monitor: MonitorInfo(manufacturerName: "IOC", productName: "27C1U-L", productId: 65535, serialNumber: 0,
+                                 yearOfManufacture: 2023, edid: Data(edid27C1UL)),
+            dfpType: "HDMI", branchDeviceId: "Dp1.2",
+            parentPortType: parentPortType, parentPortNumber: parentPortNumber,
+            currentMode: DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 527_850_000),
+            drivenTiming: statement,
             hpmControllerUUID: nil
         )
     }

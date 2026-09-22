@@ -9,14 +9,6 @@ import WhatCablePlugins
 struct WhatCableCLI {
     @MainActor
     static func main() async {
-        // Tell Core whether stdout is a real terminal, so ANSI.isEnabled
-        // knows whether to color output. Must happen before any printing:
-        // Core can't check this itself (isatty is Darwin-only), so this is
-        // the one place the CLI answers on Core's behalf. isatty(3) returns
-        // 0 (false) when stdout is piped or redirected to a file, which is
-        // exactly when colour should stay off.
-        ANSI.configure(isTTY: isatty(fileno(stdout)) != 0)
-
         bootstrapPlugins(registry: .shared)
 
         let args = Array(CommandLine.arguments.dropFirst())

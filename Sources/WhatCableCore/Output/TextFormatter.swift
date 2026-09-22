@@ -146,6 +146,9 @@ public enum TextFormatter {
             let displayColor = diag.isWarning ? ANSI.yellow : ANSI.green
             out += "\n" + ANSI.wrap(ANSI.bold, "Display: ") + ANSI.wrap(displayColor, terminalField(diag.summary)) + "\n"
             out += "  " + ANSI.wrap(ANSI.dim, terminalField(diag.detail)) + "\n"
+            for line in diag.statementReceipts() {
+                out += "  " + ANSI.wrap(ANSI.dim, terminalField(line)) + "\n"
+            }
         }
         return out
     }
@@ -331,6 +334,9 @@ public enum TextFormatter {
             let displayColor = displayDiag.isWarning ? ANSI.yellow : ANSI.green
             out += "\n" + ANSI.wrap(ANSI.bold, "Display: ") + ANSI.wrap(displayColor, terminalField(displayDiag.summary)) + "\n"
             out += "  " + ANSI.wrap(ANSI.dim, terminalField(displayDiag.detail)) + "\n"
+            for line in displayDiag.statementReceipts() {
+                out += "  " + ANSI.wrap(ANSI.dim, terminalField(line)) + "\n"
+            }
         }
 
         // Name only, no diagnosis (a Billboard device is often benign). The

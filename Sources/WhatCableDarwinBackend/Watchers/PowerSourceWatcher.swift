@@ -28,8 +28,12 @@ public struct PowerSourceSynthesisContext {
     }
 }
 
-/// Watches `IOPortFeaturePowerSource` services. These appear under each port's
-/// `Power In` feature when something that advertises PD is connected.
+/// Watches `IOPortFeaturePowerSource` services. These appear under a laptop
+/// port's `Power In` feature once a source is attached, one node per candidate
+/// source (`Brick ID`, `TypeC`, `USB-PD`), PD or not; the one that won the
+/// port's election carries `WinningPowerSourceOption` and a ` [*]` name
+/// suffix. Desktops never publish them. See
+/// research/classes/_meaning/IOPortFeaturePowerSource.md (2026-09-16).
 @MainActor
 public final class PowerSourceWatcher: ObservableObject {
     @Published public private(set) var sources: [PowerSource] = []
