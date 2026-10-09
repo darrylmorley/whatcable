@@ -140,7 +140,7 @@
 "Connected device: %@" = "已連接裝置：%@";
 "Connected device: another Mac" = "已連接裝置：另一台 Mac";
 "USB link only" = "僅 USB 連線";
-"Other USB devices on this port" = "此連接埠上的其他 USB 裝置";
+"Other USB devices on this port" = "此連接埠上的其它 USB 裝置";
 "Connected device: %@, %@ (%@)" = "已連接裝置：%1$@，%2$@ (%3$@)";
 "Data" = "資料";
 "DisplayPort Alt Mode" = "DisplayPort Alt Mode";
