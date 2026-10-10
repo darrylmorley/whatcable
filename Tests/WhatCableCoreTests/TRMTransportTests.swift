@@ -149,7 +149,7 @@ struct TRMTransportTests {
         #expect(snapshot.trmTransports.isEmpty)
     }
 
-    // MARK: - canonicallyMatches (DAR-29)
+    // MARK: - canonicallyMatches
 
     /// UUID match: both transport and port carry the same UUID. Must match.
     @Test("canonicallyMatches uses UUID when both sides have matching UUID")
@@ -178,7 +178,7 @@ struct TRMTransportTests {
         #expect(!t.canonicallyMatches(port: magSafePort))
     }
 
-    // MARK: - canonicalJoinKey (DAR-29)
+    // MARK: - canonicalJoinKey
 
     @Test("canonicalJoinKey returns normalised UUID when UUID is present")
     func canonicalJoinKeyNormalisedUUID() {

@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableCore
 
 /// Corpus-replay sweep for `ConnectionCounters.init(port:)` and the
-/// `ConnectionDiagnostic` tiers built on it (DAR-230).
+/// `ConnectionDiagnostic` tiers built on it.
 ///
 /// `research/corpus-test-coverage.md` lists `ConnectionCounters.init(port:)`
 /// as REPLAYABLE from probe 01 with no covering suite. This is that suite.
@@ -23,7 +23,7 @@ import Testing
 ///
 /// Probe 01 is git-tracked for every corpus folder, so this runs on a fresh
 /// clone with no re-fetch from KV.
-@Suite("Connection counters - corpus sweep (DAR-230)")
+@Suite("Connection counters - corpus sweep")
 struct ConnectionCountersProbeSweepTests {
 
     private static let probeRoot: URL = {

@@ -350,7 +350,7 @@ struct USBCPortFromTests {
         #expect(port.portKey == nil)
     }
 
-    // MARK: - Private key redaction (DAR-148)
+    // MARK: - Private key redaction
 
     /// redactedRawProperties must strip ConnectionUUID (an internal per-machine
     /// join key that must never reach --raw or --json output) while keeping
@@ -395,7 +395,7 @@ struct USBCPortFromTests {
         #expect(port.rawProperties["ConnectionUUID"] != nil, "rawProperties must be unmodified")
     }
 
-    // MARK: - HPM controller UUID (DAR-29)
+    // MARK: - HPM controller UUID
 
     /// The factory must thread `hpmControllerUUID` through to the model
     /// unchanged. The watcher passes the UUID it reads from the HPM controller
@@ -474,12 +474,12 @@ struct USBCPortFromTests {
         #expect(usbC.portKey == "2/1")
     }
 
-    // MARK: - Privacy regression (DAR-29)
+    // MARK: - Privacy regression
 
     /// The HPM controller UUID is an internal join key. It must never appear in
     /// `redactedRawProperties` (the boundary used by --raw and --json), even if
     /// a future readAll path inadvertently captures a "UUID" key.
-    @Test("redactedRawProperties strips the UUID key (DAR-29 privacy guard)")
+    @Test("redactedRawProperties strips the UUID key (privacy guard)")
     func redactedRawPropertiesStripsUUIDKey() {
         let port = USBCPort(
             id: 1, serviceName: "Port-USB-C@1",
@@ -510,7 +510,7 @@ struct USBCPortFromTests {
         #expect(port.rawProperties["UUID"] != nil, "rawProperties must be unmodified")
     }
 
-    // MARK: - canonicalJoinKey (DAR-29 wiring)
+    // MARK: - canonicalJoinKey (wiring)
 
     /// When a port has a UUID, `canonicalJoinKey` returns the normalised UUID
     /// (32 lowercase hex chars, dashes stripped). Two ports that share the same

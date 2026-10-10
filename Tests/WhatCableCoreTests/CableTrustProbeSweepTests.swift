@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import WhatCableCore
 
-/// Empirical guard for DAR-140 / issue #250, run against the committed
+/// Empirical guard for issue #250, run against the committed
 /// `01_walk_pd_tree.json` probe fixtures rather than synthetic identities.
 /// The unit tests in `CableTrustReportTests` prove the softening *logic*
 /// given a correctly-shaped partner; this proves the real-world ID-header
@@ -16,7 +16,7 @@ import Testing
 /// - Folders where the zeroed e-marker sits next to a registered *device*
 ///   plug (a dock / SSD / phone) must still produce `zeroVendorID`: the
 ///   device's identity says nothing about the cable.
-@Suite("Cable Trust — probe sweep (DAR-140)")
+@Suite("Cable Trust — probe sweep")
 struct CableTrustProbeSweepTests {
 
     private static let probeRoot: URL = {

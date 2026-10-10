@@ -2,11 +2,11 @@ import Testing
 import WhatCableCore
 
 /// `[PortPowerSample].droppingStaleContracted(externalPowerAbsent:)` is the
-/// DAR-219 gate: when no external power is coming in it drops a lingering
+/// battery gate: when no external power is coming in it drops a lingering
 /// incoming charging contract but keeps genuine throughput (SMC-measured and
 /// PowerOutDetails power-out, both of which carry `isContractedFallback ==
 /// false`).
-@Suite("PortPowerSample stale-contract filter (DAR-219)")
+@Suite("PortPowerSample stale-contract filter")
 struct PortPowerSampleFilterTests {
 
     private func sample(_ key: String, watts: Int, contracted: Bool = false, smc: Bool = false) -> PortPowerSample {

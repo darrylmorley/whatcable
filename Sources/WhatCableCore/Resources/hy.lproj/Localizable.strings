@@ -420,14 +420,14 @@
 "Negotiating…" = "Համաձայնեցում…";
 "Waiting for live reading…" = "Սպասում է կենդանի ցուցմունքի…";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker-ի արտադրողի ID-ն դատարկ է, սակայն մալուխը նույնականացվում է միակցիչի մոտ";
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Մալուխի E-marker չիպը հայտնում է դատարկ արտադրողի ID, սակայն միակցիչը մալուխը նույնականացնում է որպես %1$@ (%2$@)՝ USB-IF-ում գրանցված արտադրող: Դատարկ E-marker VID-ն ինքնին սովորական է իսկական պասիվ մալուխների համար, ուստի դա խնդրի նշան չէ:";
 "Cable note:" = "Մալուխի նշում.";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "Արտադրողը ճանաչված է, բայց WhatCable-ի հետ ներառված USB-IF ցանկում չկա";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Արտադրողի ID %1$@ (%2$@)-ը ճանաչված արտադրող է համայնքային USB ցանկում, սակայն բացակայում է WhatCable-ի հետ մատակարարվող USB-IF ցանկից:";
 
-/* DFP product type labels (DAR-24) */
+/* DFP product type labels */
 "Host" = "Հոստ";
 "Power Brick" = "Հոսանքի բլոկ";
 
@@ -453,7 +453,7 @@
 "PCIe data" = "PCIe տվյալներ";
 "adapter %lld" = "ադապտեր %lld";
 
-/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+/* Active-layout contradiction note - placeholder, see en.lproj */
 "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
 
 "Plugged in, charging on hold" = "Միացված է, լիցքավորումը կասեցված է";
@@ -472,7 +472,7 @@
 "Built-in USB-A ports" = "Ներկառուցված USB-A միացքներ";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Պարզ USB միացքներ՝ Mac-ի ներքին հանգույցի հետևում, ուստի դրանց համար չկան մալուխի, սնման կամ Thunderbolt տվյալներ։";
 
-/* Cable history (DAR-52) */
+/* Cable history */
 "Add this cable" = "Ավելացնել այս մալուխը";
 "Track what this cable delivers over time" = "Հետևել, թե ինչ է ապահովում այս մալուխը ժամանակի ընթացքում";
 "Track what this cable delivers over time (Pro)" = "Հետևել, թե ինչ է ապահովում այս մալուխը ժամանակի ընթացքում (Pro)";
@@ -589,7 +589,7 @@
 
 "Shared controller port" = "Կարգավորիչի ընդհանուր պորտ";
 
-/* USB-IF certification (DAR-215) */
+/* USB-IF certification */
 "USB-IF certified. Manufacturer: %@, model %@ (%@)" = "USB-IF հավաստագրված։ Արտադրող: %1$@, մոդել %2$@ (%3$@)";
 "USB-IF certified. Manufacturer: %@, model %@" = "USB-IF հավաստագրված։ Արտադրող: %1$@, մոդել %2$@";
 "USB-IF certified. Manufacturer: %@ (%@)" = "USB-IF հավաստագրված։ Արտադրող: %1$@ (%2$@)";

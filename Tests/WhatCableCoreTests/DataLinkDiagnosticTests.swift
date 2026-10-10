@@ -2864,9 +2864,9 @@ struct DataLinkDiagnosticTests {
         #expect(diag?.facts.activeGbps == 10)
     }
 
-    // MARK: - TRM blocked-by-security verdict (DAR-134)
+    // MARK: - TRM blocked-by-security verdict
 
-    @Test("TRM-restricted USB3 transport yields .blockedBySecurity (DAR-134)")
+    @Test("TRM-restricted USB3 transport yields .blockedBySecurity")
     func trmRestrictedYieldsBlockedBySecurity() {
         // When TRM_TransportRestricted is true on the USB3 transport the link
         // is physically capable but macOS is withholding data. The old behaviour

@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableDarwinBackend
 import WhatCableCore
 
-/// Corpus-replay tests for PowerService's pure parsing helpers (DAR-77).
+/// Corpus-replay tests for PowerService's pure parsing helpers.
 ///
 /// Coverage is two-layered:
 ///
@@ -21,7 +21,7 @@ import WhatCableCore
 ///   - `rdoSelectedPdoType(rdo:pdoList:)`
 ///   - `portPowerSamples(from:portKeys:)`
 ///   - `portPowerSamplesFromControllerInfo(_:sources:)`
-@Suite("PowerTelemetry parsing (DAR-77)")
+@Suite("PowerTelemetry parsing")
 struct PowerTelemetryParsingTests {
 
     // MARK: - Probe root

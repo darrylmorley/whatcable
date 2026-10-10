@@ -419,14 +419,14 @@
 "Negotiating…" = "Negocjowanie…";
 "Waiting for live reading…" = "Oczekiwanie na odczyt na żywo…";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "E-marker vendor ID is blank, but the cable is identified at the connector" = "ID producenta e-markera jest pusty, ale kabel jest identyfikowany przy złączu";
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Układ e-markera kabla zgłasza pusty ID producenta, ale złącze identyfikuje kabel jako %1$@ (%2$@), producenta zarejestrowanego w USB-IF. Sam pusty VID e-markera jest częsty w autentycznych kablach pasywnych, więc nie jest oznaką problemu.";
 "Cable note:" = "Uwaga o kablu:";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "Producent jest rozpoznany, ale nie ma go na liście USB-IF dołączonej do WhatCable";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Identyfikator producenta %1$@ (%2$@) należy do rozpoznanego producenta na społecznościowej liście USB, ale nie ma go na liście USB-IF dołączonej do WhatCable.";
 
-/* DFP product type labels (DAR-24) */
+/* DFP product type labels */
 "Host" = "Host";
 "Power Brick" = "Zasilacz";
 
@@ -452,7 +452,7 @@
 "PCIe data" = "dane PCIe";
 "adapter %lld" = "adapter %lld";
 
-/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+/* Active-layout contradiction note - placeholder, see en.lproj */
 "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
 
 "Plugged in, charging on hold" = "Podłączony, ładowanie wstrzymane";
@@ -471,7 +471,7 @@
 "Built-in USB-A ports" = "Wbudowane porty USB-A";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Zwykłe porty USB podłączone do wewnętrznego koncentratora Maca, więc nie ma dla nich danych o kablu, zasilaniu ani Thunderbolt.";
 
-/* Cable history (DAR-52) */
+/* Cable history */
 "Add this cable" = "Dodaj ten kabel";
 "Track what this cable delivers over time" = "Śledź, co ten kabel zapewnia z czasem";
 "Track what this cable delivers over time (Pro)" = "Śledź, co ten kabel zapewnia z czasem (Pro)";
@@ -588,7 +588,7 @@
 
 "Shared controller port" = "Współdzielony port kontrolera";
 
-/* USB-IF certification (DAR-215) */
+/* USB-IF certification */
 "USB-IF certified. Manufacturer: %@, model %@ (%@)" = "Certyfikat USB-IF. Producent: %1$@, model %2$@ (%3$@)";
 "USB-IF certified. Manufacturer: %@, model %@" = "Certyfikat USB-IF. Producent: %1$@, model %2$@";
 "USB-IF certified. Manufacturer: %@ (%@)" = "Certyfikat USB-IF. Producent: %1$@ (%2$@)";

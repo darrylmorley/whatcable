@@ -419,14 +419,14 @@
 "Negotiating…" = "समझौता हो रहा है…";
 "Waiting for live reading…" = "लाइव रीडिंग की प्रतीक्षा…";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "E-marker vendor ID is blank, but the cable is identified at the connector" = "e-marker की वेंडर ID खाली है, लेकिन कनेक्टर पर केबल की पहचान होती है";
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "केबल का e-marker चिप खाली वेंडर ID रिपोर्ट करता है, लेकिन कनेक्टर केबल को %1$@ (%2$@) के रूप में पहचानता है, जो USB-IF में पंजीकृत वेंडर है। केवल खाली e-marker VID असली पैसिव केबलों में आम है, इसलिए यह किसी समस्या का संकेत नहीं है।";
 "Cable note:" = "केबल नोट:";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "वेंडर पहचाना गया, लेकिन WhatCable में शामिल USB-IF सूची में नहीं";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "वेंडर आईडी %1$@ (%2$@) कम्युनिटी USB वेंडर सूची में एक पहचाना हुआ निर्माता है, लेकिन WhatCable में शामिल USB-IF सूची में नहीं है।";
 
-/* DFP product type labels (DAR-24) */
+/* DFP product type labels */
 "Host" = "होस्ट";
 "Power Brick" = "पावर ब्रिक";
 
@@ -452,7 +452,7 @@
 "PCIe data" = "PCIe डेटा";
 "adapter %lld" = "अडैप्टर %lld";
 
-/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+/* Active-layout contradiction note - placeholder, see en.lproj */
 "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
 
 "Plugged in, charging on hold" = "प्लग इन, चार्जिंग रुकी हुई है";
@@ -471,7 +471,7 @@
 "Built-in USB-A ports" = "अंतर्निहित USB-A पोर्ट";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "ये Mac के आंतरिक हब से जुड़े साधारण USB पोर्ट हैं, इसलिए इनके लिए कोई केबल, पावर या Thunderbolt डेटा नहीं है।";
 
-/* Cable history (DAR-52) */
+/* Cable history */
 "Add this cable" = "यह केबल जोड़ें";
 "Track what this cable delivers over time" = "समय के साथ यह केबल क्या प्रदान करता है, ट्रैक करें";
 "Track what this cable delivers over time (Pro)" = "समय के साथ यह केबल क्या प्रदान करता है, ट्रैक करें (Pro)";
@@ -588,7 +588,7 @@
 
 "Shared controller port" = "साझा नियंत्रक पोर्ट";
 
-/* USB-IF certification (DAR-215) */
+/* USB-IF certification */
 "USB-IF certified. Manufacturer: %@, model %@ (%@)" = "USB-IF प्रमाणित। निर्माता: %1$@, मॉडल %2$@ (%3$@)";
 "USB-IF certified. Manufacturer: %@, model %@" = "USB-IF प्रमाणित। निर्माता: %1$@, मॉडल %2$@";
 "USB-IF certified. Manufacturer: %@ (%@)" = "USB-IF प्रमाणित। निर्माता: %1$@ (%2$@)";

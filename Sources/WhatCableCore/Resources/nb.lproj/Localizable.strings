@@ -420,14 +420,14 @@
 "Negotiating…" = "Forhandler…";
 "Waiting for live reading…" = "Venter på sanntidsavlesning…";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "E-marker vendor ID is blank, but the cable is identified at the connector" = "e-markerens produsent-ID er tom, men kabelen identifiseres ved kontakten";
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Kabelens e-marker-brikke rapporterer en tom produsent-ID, men kontakten identifiserer kabelen som %1$@ (%2$@), en USB-IF-registrert produsent. En tom e-marker-VID alene er vanlig på ekte passive kabler og er derfor ikke et tegn på et problem.";
 "Cable note:" = "Kabelmerknad:";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "Produsenten er gjenkjent, men står ikke i USB-IF-listen som følger med WhatCable";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Produsent-ID-en %1$@ (%2$@) tilhører en gjenkjent produsent i den fellesskapsbaserte USB-listen, men ikke i USB-IF-listen som følger med WhatCable.";
 
-/* DFP product type labels (DAR-24) */
+/* DFP product type labels */
 "Host" = "Vert";
 "Power Brick" = "Strømforsyning";
 
@@ -453,7 +453,7 @@
 "PCIe data" = "PCIe-data";
 "adapter %lld" = "adapter %lld";
 
-/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+/* Active-layout contradiction note - placeholder, see en.lproj */
 "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
 
 "Plugged in, charging on hold" = "Tilkoblet, lading satt på pause";
@@ -472,7 +472,7 @@
 "Built-in USB-A ports" = "Innebygde USB-A-porter";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Enkle USB-porter bak Macens interne hub, så det finnes ingen kabel-, strøm- eller Thunderbolt-data for dem.";
 
-/* Cable history (DAR-52) */
+/* Cable history */
 "Add this cable" = "Legg til denne kabelen";
 "Track what this cable delivers over time" = "Spor hva denne kabelen leverer over tid";
 "Track what this cable delivers over time (Pro)" = "Spor hva denne kabelen leverer over tid (Pro)";
@@ -589,7 +589,7 @@
 
 "Shared controller port" = "Delt kontrollerport";
 
-/* USB-IF certification (DAR-215) */
+/* USB-IF certification */
 "USB-IF certified. Manufacturer: %@, model %@ (%@)" = "USB-IF-sertifisert. Produsent: %1$@, modell %2$@ (%3$@)";
 "USB-IF certified. Manufacturer: %@, model %@" = "USB-IF-sertifisert. Produsent: %1$@, modell %2$@";
 "USB-IF certified. Manufacturer: %@ (%@)" = "USB-IF-sertifisert. Produsent: %1$@ (%2$@)";

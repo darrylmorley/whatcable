@@ -491,7 +491,7 @@ struct DeviceIdentityOracleCrosscheckTests {
 // `.zeroVendorID` for a blank VID, UNLESS the SOP partner (the connector)
 // identifies the same cable as a USB-IF-registered vendor, in which case it
 // raises the softer `.eMarkerVIDBlankRegisteredPartner` note instead
-// (DAR-140 / issue #250). Python's definition does not distinguish this
+// (issue #250). Python's definition does not distinguish this
 // case at all: it is purely a text-level "vid == 0x0000" check with no
 // notion of the partner's identity. So this check treats either Swift flag
 // as satisfying Python's "zeroed" condition, and documents the split rather
@@ -924,7 +924,7 @@ struct CIOBlockCountOracleCrosscheckTests {
 
         // Gate at 20, not 50, so this check still ASSERTS on a tracked-only
         // clone. Probe 17/19 are gitignored in general, but 27 probe-17 and 15
-        // probe-19 files are committed as replay fixtures (DAR-138, #383), which
+        // probe-19 files are committed as replay fixtures (#383), which
         // is enough to run a real comparison anywhere. At the old floor of 50 a
         // fresh clone fell short, the assertion never ran, and the check passed
         // vacuously -- and a silently-agreeable check is precisely what let the

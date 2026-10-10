@@ -19,7 +19,7 @@ import Testing
 ///   bits  6:0  = Operating Current in 50 mA units
 ///
 /// The Fixed suite guards the pre-existing decode (regression). Battery and
-/// PPS/AVS suites verify the new type-aware paths added in DAR-20.
+/// PPS/AVS suites verify the new type-aware paths.
 @Suite("RDO Decoding")
 struct RDODecodingTests {
     @Test("5V 3A contract: operating 2A, max 3A, PDO position 1")

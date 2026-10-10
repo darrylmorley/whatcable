@@ -4,7 +4,7 @@ import Testing
 @testable import WhatCableCore
 
 /// Corpus-back tests for CIO cable capability parsing and DataLink diagnostic
-/// inputs from probes 17 and 19. Covers (DAR-138):
+/// inputs from probes 17 and 19. Covers:
 ///
 /// (a) CIO verdict-level assertions: per-machine CableSpeed values cross-checked
 ///     against `research/cio-value-mappings.md`. `cableSpeed` is asserted against
@@ -12,15 +12,15 @@ import Testing
 ///     invariant is asserted across the corpus (settled 2026-07-22: the two are
 ///     distinct fields, a capability ceiling and the trained-link result, not the
 ///     "same value" once believed). Their exact 1/2 value encoding stays
-///     unconfirmed pending the DAR-185 cable swap, so semantic meaning is not
+///     unconfirmed pending the cable swap, so semantic meaning is not
 ///     asserted; `generation` is likewise stored raw and not asserted.
 ///
 /// (b) DataLink diagnostic: USB3/TRM inputs from probes 17/19 joined with port
 ///     data from probe 01. Verifies that TRM-restricted ports do not produce a
-///     `.fine` verdict (the DAR-134 regression class).
+///     `.fine` verdict (the TRM regression class).
 ///
 /// Helpers are file-private; no shared ProbeCorpus.swift dependency.
-@Suite("CIO capability and DataLink input paths -- corpus sweep (DAR-138)")
+@Suite("CIO capability and DataLink input paths -- corpus sweep")
 struct CIOAndDataLinkCorpusTests {
 
     // MARK: - Probe root
@@ -833,9 +833,9 @@ struct CIOAndDataLinkCorpusTests {
 
     // MARK: (b1) TRM-restricted ports: DataLink must return .blockedBySecurity
 
-    @Test("DataLink TRM-restricted: restricted USB3 ports yield .blockedBySecurity verdict (DAR-134)")
+    @Test("DataLink TRM-restricted: restricted USB3 ports yield .blockedBySecurity verdict")
     func dataLinkTRMRestrictedBlockedBySecurity() {
-        // DAR-134 fix: when macOS TRM blocks a port's USB3 transport,
+        // The fix: when macOS TRM blocks a port's USB3 transport,
         // DataLinkDiagnostic must now emit .blockedBySecurity instead of .fine.
         // USB3Transport now carries `transportRestricted` (from TRM_TransportRestricted)
         // and DataLinkDiagnostic short-circuits to the new verdict when it is true.
@@ -896,7 +896,7 @@ struct CIOAndDataLinkCorpusTests {
                 )
 
                 if let diag {
-                    // After the DAR-134 fix: restricted ports with a resolvable USB3
+                    // After the fix: restricted ports with a resolvable USB3
                     // signaling rate must produce .blockedBySecurity, not .fine.
                     guard case .blockedBySecurity = diag.bottleneck else {
                         Issue.record("Expected .blockedBySecurity on TRM-restricted port \(portKey) in \(folder), got \(diag.bottleneck)")

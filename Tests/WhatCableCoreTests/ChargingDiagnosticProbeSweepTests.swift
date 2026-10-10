@@ -17,7 +17,7 @@ import Testing
 ///
 /// Fixtures in this branch: 12 machines committed under research/customer-probes/.
 /// See the test/dar138-charging branch for the fixture selection rationale.
-@Suite("ChargingDiagnostic -- customer probe sweep (DAR-138)")
+@Suite("ChargingDiagnostic -- customer probe sweep")
 struct ChargingDiagnosticProbeSweepTests {
 
     // MARK: - Parsing helpers

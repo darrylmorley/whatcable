@@ -39,7 +39,7 @@ struct PDVDOTests {
         #expect(header.usbCommDevice)
     }
 
-    // MARK: DFP product type (DAR-24 regression guard)
+    // MARK: DFP product type (regression guard)
     // These tests verify that the DFP field (bits 25..23) is decoded with
     // DFP semantics, not UFP semantics. Per Table 6.34 of the USB PD R3.2
     // spec, the same raw value means different things in the two fields:
@@ -182,11 +182,11 @@ struct PDVDOTests {
         #expect(cable.decodeWarnings.isEmpty)
     }
 
-    // MARK: - VBUS Through Cable (DAR-26)
+    // MARK: - VBUS Through Cable
     // Bit 4 is "VBUS Through Cable" only in Active Cable VDO1 (Table 6.43).
     // For passive cables (Table 6.42) bits 4..3 are Reserved and have no meaning.
 
-    @Test("Passive cable with bit 4 set reports vbusThroughCable = false (DAR-26)")
+    @Test("Passive cable with bit 4 set reports vbusThroughCable = false")
     func passiveCable_Bit4Set_VBUSThroughIsFalse() {
         // VDO with bit 4 = 1, otherwise a plain passive cable.
         // Per Table 6.42 the bit is Reserved for passive cables, so the
@@ -196,7 +196,7 @@ struct PDVDOTests {
         #expect(!cable.vbusThroughCable, "bit 4 is Reserved for passive cables and must not be interpreted as VBUS Through")
     }
 
-    @Test("Active cable with bit 4 set reports vbusThroughCable = true (DAR-26)")
+    @Test("Active cable with bit 4 set reports vbusThroughCable = true")
     func activeCable_Bit4Set_VBUSThroughIsTrue() {
         // VDO with bit 4 = 1 for an active cable.
         // Per Table 6.43 bit 4 is "VBUS Through Cable" for active cables.
@@ -716,7 +716,7 @@ struct PDVDOTests {
         #expect(active.activeCableVDO2 == nil)
     }
 
-    // MARK: - SOP'' Controller Present / Active Layout Contradiction (DAR-30)
+    // MARK: - SOP'' Controller Present / Active Layout Contradiction
 
     @Test("Passive cable with bit 3 clear: sopDoubleControllerPresent is false")
     func passiveCableNoBit3_sopDoubleControllerPresentFalse() {

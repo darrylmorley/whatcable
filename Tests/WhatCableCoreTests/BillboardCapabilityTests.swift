@@ -7,7 +7,7 @@ struct BillboardCapabilityTests {
 
     // Real BOS descriptor bytes captured by the Test Kit probe
     // (research/customer-probes/.../25_usb_bos_descriptor.json). Using verbatim
-    // corpus samples is the acceptance check for DAR-141.
+    // corpus samples is the acceptance check.
 
     /// m2max_macos26.5: a dock advertising Thunderbolt then DisplayPort, both
     /// configured. Has SuperSpeed + Container ID caps ahead of the Billboard cap.

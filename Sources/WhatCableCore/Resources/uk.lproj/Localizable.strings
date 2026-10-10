@@ -419,14 +419,14 @@
 "Negotiating…" = "Узгодження…";
 "Waiting for live reading…" = "Очікування показань у реальному часі…";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "E-marker vendor ID is blank, but the cable is identified at the connector" = "Ідентифікатор виробника e-marker порожній, але кабель ідентифікований на роз'ємі";
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Чіп e-marker кабелю повідомляє порожній ідентифікатор виробника, але роз'єм ідентифікує кабель як %1$@ (%2$@), виробника, зареєстрованого в USB-IF. Порожній VID e-marker сам по собі є звичайним для справжніх пасивних кабелів, тому це не є ознакою проблеми.";
 "Cable note:" = "Примітка щодо кабелю:";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "Виробника розпізнано, але його немає у вбудованому списку USB-IF WhatCable";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Ідентифікатор виробника %1$@ (%2$@) є відомим виробником у спільнотному списку USB, але відсутній у списку USB-IF, вбудованому в WhatCable.";
 
-/* DFP product type labels (DAR-24) */
+/* DFP product type labels */
 "Host" = "Хост";
 "Power Brick" = "Блок живлення";
 
@@ -452,7 +452,7 @@
 "PCIe data" = "дані PCIe";
 "adapter %lld" = "адаптер %lld";
 
-/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+/* Active-layout contradiction note - placeholder, see en.lproj */
 "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
 
 "Plugged in, charging on hold" = "Підключено, заряджання призупинено";
@@ -471,7 +471,7 @@
 "Built-in USB-A ports" = "Вбудовані порти USB-A";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Звичайні порти USB за внутрішнім концентратором Mac, тому для них немає даних про кабель, живлення чи Thunderbolt.";
 
-/* Cable history (DAR-52) */
+/* Cable history */
 "Add this cable" = "Додати цей кабель";
 "Track what this cable delivers over time" = "Відстежувати показники кабелю з часом";
 "Track what this cable delivers over time (Pro)" = "Відстежувати показники кабелю з часом (Pro)";
@@ -588,7 +588,7 @@
 
 "Shared controller port" = "Спільний порт контролера";
 
-/* USB-IF certification (DAR-215) */
+/* USB-IF certification */
 "USB-IF certified. Manufacturer: %@, model %@ (%@)" = "Сертифіковано USB-IF. Виробник: %1$@, модель %2$@ (%3$@)";
 "USB-IF certified. Manufacturer: %@, model %@" = "Сертифіковано USB-IF. Виробник: %1$@, модель %2$@";
 "USB-IF certified. Manufacturer: %@ (%@)" = "Сертифіковано USB-IF. Виробник: %1$@ (%2$@)";

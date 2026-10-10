@@ -14,7 +14,7 @@ import Testing
 /// only probe 01 is committed) will trivially pass because missing-file guards
 /// return empty collections and the minimum-count assertions are skipped when
 /// the corpus root is empty.
-@Suite("Transport and power-source watcher -- customer probe sweep (DAR-77)")
+@Suite("Transport and power-source watcher -- customer probe sweep")
 struct TransportWatcherSweepTests {
 
     // MARK: - Corpus root

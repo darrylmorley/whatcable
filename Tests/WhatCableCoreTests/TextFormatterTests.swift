@@ -638,7 +638,7 @@ struct TextFormatterTests {
         #expect(output.contains("Cable trust signals") == false)
     }
 
-    // MARK: - Private key redaction (DAR-148)
+    // MARK: - Private key redaction
 
     /// --raw text output must not print ConnectionUUID but must print
     /// legitimate keys like PortType.
@@ -675,9 +675,9 @@ struct TextFormatterTests {
         #expect(output.contains("VendorID"), "VendorID must appear in text output")
     }
 
-    /// DAR-29 privacy regression: the HPM controller UUID must never appear in
+    /// Privacy regression: the HPM controller UUID must never appear in
     /// text output, even when a future readAll path captures a raw "UUID" key.
-    @Test("--raw text output omits UUID key and value (DAR-29 privacy guard)")
+    @Test("--raw text output omits UUID key and value (privacy guard)")
     func rawTextOmitsHPMControllerUUID() {
         let port = USBCPort(
             id: 1, serviceName: "Port-USB-C@1",

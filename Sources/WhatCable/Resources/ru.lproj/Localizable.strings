@@ -118,7 +118,7 @@
 /* Billboard device (display dimension). English; community-refined. */
 "Billboard device present" = "Обнаружено устройство Billboard";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "Cable note" = "Примечание о кабеле";
 "Cable details" = "Сведения о кабеле";
 

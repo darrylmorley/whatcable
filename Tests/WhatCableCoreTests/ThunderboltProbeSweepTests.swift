@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import WhatCableCore
 
-/// Corpus-replay tests for Thunderbolt switch and port parsing (DAR-77).
+/// Corpus-replay tests for Thunderbolt switch and port parsing.
 ///
 /// Two sources of coverage here:
 ///
@@ -23,7 +23,7 @@ import Testing
 ///   nested inside switch blocks). Key-value lines use "  KEY =     N (0xHEX)"
 ///   with multiple spaces between "=" and the value. String values appear as
 ///   "  KEY =     \"value\"".
-@Suite("Thunderbolt probe sweep (DAR-77)")
+@Suite("Thunderbolt probe sweep")
 struct ThunderboltProbeSweepTests {
 
     // MARK: - Probe root

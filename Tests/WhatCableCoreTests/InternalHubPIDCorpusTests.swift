@@ -31,7 +31,7 @@ import Testing
 /// Reads `04_raw_registry_dump.json`, which is not committed (only
 /// `01_walk_pd_tree.json` + distillations are). On a tree without the raw
 /// probes (fresh clone, worktree) the sweep finds nothing and skips, matching
-/// the other DAR-77 corpus sweeps. It runs for real in the local pre-push CI,
+/// the other corpus sweeps. It runs for real in the local pre-push CI,
 /// where the raw probes are present on disk.
 @Suite("Internal-hub PID corpus sweep (issue #348)")
 struct InternalHubPIDCorpusTests {

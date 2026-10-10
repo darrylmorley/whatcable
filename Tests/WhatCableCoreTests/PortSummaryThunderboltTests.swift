@@ -245,7 +245,7 @@ struct PortSummaryThunderboltTests {
         )
     }
 
-    // MARK: - DAR-27: step-down label must compare total throughput, not label strings
+    // MARK: - Step-down label must compare total throughput, not label strings
 
     /// 20 Gb/s x 1 vs 20 Gb/s x 2 are different label strings but the same
     /// per-lane speed. The last leg here is wider (more lanes) than the host,

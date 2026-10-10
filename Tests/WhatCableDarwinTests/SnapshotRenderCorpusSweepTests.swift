@@ -5,7 +5,7 @@ import WhatCableCore
 
 // MARK: - SnapshotRenderCorpusSweepTests
 //
-// The end-to-end release-confidence sweep (DAR-77 follow-on): for every
+// The end-to-end release-confidence sweep: for every
 // corpus folder that has probe 01, assemble the fullest `CableSnapshot` the
 // on-disk probes for that folder allow, using ONLY production factory
 // functions (`AppleHPMInterface.from`, `USBPDSOPWatcher.parseIdentity`,

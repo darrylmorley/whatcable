@@ -96,7 +96,7 @@ struct ConnectionDiagnosticTests {
             "the headline carries a raw event count again: \(diag.summary)")
     }
 
-    // MARK: The bar (DAR-230)
+    // MARK: The bar
     //
     // The corpus says a port logs roughly two plug events per connection, so
     // the old bar of 2 sat at exactly one ordinary unplug-and-replug. Both
@@ -119,7 +119,7 @@ struct ConnectionDiagnosticTests {
         #expect(ConnectionDiagnostic.eventThreshold == 4)
     }
 
-    // MARK: Wording (DAR-230)
+    // MARK: Wording
 
     @Test("The banner never claims the user did or did not touch the cable")
     func wordingAssertsNoCause() throws {
@@ -145,7 +145,7 @@ struct ConnectionDiagnosticTests {
         #expect(diag.detail.localizedCaseInsensitiveContains("if it keeps happening"))
     }
 
-    // MARK: MagSafe (DAR-230, found alongside issue #460)
+    // MARK: MagSafe (found alongside issue #460)
 
     @Test("MagSafe never shows the connection-events banner")
     func magSafeSuppressesEventsTier() {

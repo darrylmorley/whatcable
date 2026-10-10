@@ -2091,7 +2091,7 @@ struct PortSummaryTests {
         )
     }
 
-    // MARK: - Active-layout contradiction (DAR-30)
+    // MARK: - Active-layout contradiction
 
     /// Builds the CalDigit-style fixture: passive ID Header (Product Type 3)
     /// but VDO[3] has bit 3 set (SOP'' Controller Present, active-cable layout).

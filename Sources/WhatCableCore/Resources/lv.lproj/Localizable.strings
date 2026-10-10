@@ -419,14 +419,14 @@
 "Negotiating…" = "Notiek vienošanās…";
 "Waiting for live reading…" = "Gaida tiešo rādījumu…";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker ražotāja ID ir tukšs, taču kabelis tiek identificēts pie savienotāja";
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "Kabeļa e-marker mikroshēma ziņo tukšu ražotāja ID, taču savienotājs identificē kabeli kā %1$@ (%2$@) — USB-IF reģistrētu ražotāju. Tukšs e-marker VID pats par sevi ir izplatīts īstiem pasīvajiem kabeļiem, tāpēc tas nav problēmas pazīme.";
 "Cable note:" = "Piezīme par kabeli:";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "Ražotājs ir atpazīts, bet nav WhatCable iekļautajā USB-IF sarakstā";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Ražotāja ID %1$@ (%2$@) pieder atpazītam ražotājam kopienas USB sarakstā, bet ne USB-IF sarakstā, kas iekļauts WhatCable.";
 
-/* DFP product type labels (DAR-24) */
+/* DFP product type labels */
 "Host" = "Resursdators";
 "Power Brick" = "Barošanas bloks";
 
@@ -452,7 +452,7 @@
 "PCIe data" = "PCIe dati";
 "adapter %lld" = "adapteris %lld";
 
-/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+/* Active-layout contradiction note - placeholder, see en.lproj */
 "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker ziņo par pasīvu, bet satur aktīvā kabeļa struktūru (iespējams, nepareizi ieprogrammēts e-marker)";
 
 "Plugged in, charging on hold" = "Pievienots, uzlāde apturēta";
@@ -471,7 +471,7 @@
 "Built-in USB-A ports" = "Iebūvētie USB-A porti";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Vienkārši USB porti aiz Mac iekšējā centrmezgla, tāpēc par tiem nav kabeļa, jaudas vai Thunderbolt datu.";
 
-/* Cable history (DAR-52) */
+/* Cable history */
 "Add this cable" = "Pievienot šo kabeli";
 "Track what this cable delivers over time" = "Izsekot, ko šis kabelis sniedz laika gaitā";
 "Track what this cable delivers over time (Pro)" = "Izsekot, ko šis kabelis sniedz laika gaitā (Pro)";
@@ -588,7 +588,7 @@
 
 "Shared controller port" = "Koplietots kontroliera ports";
 
-/* USB-IF certification (DAR-215) */
+/* USB-IF certification */
 "USB-IF certified. Manufacturer: %@, model %@ (%@)" = "USB-IF sertificēts. Ražotājs: %1$@, modelis %2$@ (%3$@)";
 "USB-IF certified. Manufacturer: %@, model %@" = "USB-IF sertificēts. Ražotājs: %1$@, modelis %2$@";
 "USB-IF certified. Manufacturer: %@ (%@)" = "USB-IF sertificēts. Ražotājs: %1$@ (%2$@)";

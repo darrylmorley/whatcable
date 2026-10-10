@@ -74,7 +74,7 @@ struct USB3TransportTests {
         #expect(t.id == 42)
     }
 
-    // MARK: - canonicallyMatches (DAR-29)
+    // MARK: - canonicallyMatches
 
     /// When both the transport and the port carry matching UUIDs, the match
     /// must use UUID comparison, not portKey. This is the collision-proof
@@ -122,7 +122,7 @@ struct USB3TransportTests {
         #expect(!transport.canonicallyMatches(port: magSafePort))
     }
 
-    // MARK: - canonicalJoinKey (DAR-29)
+    // MARK: - canonicalJoinKey
 
     @Test("canonicalJoinKey returns normalised UUID when UUID is present")
     func canonicalJoinKeyNormalisedUUID() {

@@ -682,7 +682,7 @@ struct JSONFormatterTests {
 
     // MARK: - Raw properties gating
 
-    // MARK: - Active-layout contradiction field (DAR-30)
+    // MARK: - Active-layout contradiction field
 
     /// Contradiction fixture: passive ID Header (Product Type 3) but VDO[3] bit 3 set.
     /// Matches the CalDigit 2M TB4 cable from corpus.
@@ -1623,7 +1623,7 @@ struct JSONFormatterTests {
         #expect(displays.count == 2, "both monitors should appear; got \(displays.count)")
     }
 
-    // MARK: - Private key redaction (DAR-148)
+    // MARK: - Private key redaction
 
     /// --json --raw must omit ConnectionUUID from rawProperties output but keep
     /// legitimate keys like PortType intact.
@@ -1662,11 +1662,11 @@ struct JSONFormatterTests {
         #expect(raw["VendorID"] as? String == "0x05AC", "VendorID must appear in JSON output")
     }
 
-    /// DAR-29 privacy regression: the HPM controller UUID must never appear in
+    /// Privacy regression: the HPM controller UUID must never appear in
     /// JSON output, even when a future readAll path captures a raw "UUID" key.
     /// The UUID is an internal SMC join key; exposing it would uniquely identify
     /// the machine on every shared ioreg dump.
-    @Test("--raw JSON output omits UUID (DAR-29 privacy guard)")
+    @Test("--raw JSON output omits UUID (privacy guard)")
     func rawJSONOmitsHPMControllerUUID() throws {
         let port = USBCPort(
             id: 1, serviceName: "Port-USB-C@1",

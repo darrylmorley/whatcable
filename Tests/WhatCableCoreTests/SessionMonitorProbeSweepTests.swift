@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import WhatCableCore
 
-/// Corpus guard for DAR-51 / issue #10: no machine in the customer-probe
+/// Corpus guard for issue #10: no machine in the customer-probe
 /// corpus should produce a `caution` or `notPerforming` verdict from its
 /// real single-snapshot data.
 ///
@@ -17,7 +17,7 @@ import Testing
 /// 2. Stable session (10 identical observations): repeating the same
 ///    healthy snapshot 10 times must still stay `performing`. This rules
 ///    out any accidental accumulation path for consistently-neutral evidence.
-@Suite("Session Monitor - corpus sweep (DAR-51)")
+@Suite("Session Monitor - corpus sweep")
 struct SessionMonitorProbeSweepTests {
 
     // MARK: - Corpus root

@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import WhatCableCore
 
-/// Stress test for the DAR-60 fix: many concurrent reads of the localized
+/// Stress test for the race fix: many concurrent reads of the localized
 /// bundle while other tasks flip the locale. Run under ThreadSanitizer to prove
 /// there is no data race on the shared global.
 ///

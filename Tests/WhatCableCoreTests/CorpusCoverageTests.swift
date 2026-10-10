@@ -3,8 +3,8 @@ import Testing
 
 /// Guards the customer-probe corpus's queryable index (`corpus.jsonl`) so the
 /// audit fixtures cannot silently vanish. The post-redesign diagnostic audit
-/// (and the work it spawned: TRM/DAR-134, advanced-PD/DAR-136, cable-trust/
-/// DAR-137) leans on these signals being present in the corpus. A bad
+/// (and the work it spawned: TRM, advanced-PD, cable-trust
+/// checks) leans on these signals being present in the corpus. A bad
 /// regeneration or an accidental edit that drops records or strips a signal
 /// would quietly remove the fixtures those tasks and their regression tests
 /// depend on. This catches that.
@@ -54,12 +54,12 @@ struct CorpusCoverageTests {
             "corpus.jsonl should hold the full corpus (350+ folders); found \(recs.count). A drop means records were lost in regeneration.")
     }
 
-    @Test("TRM-restriction fixtures present (DAR-134)")
+    @Test("TRM-restriction fixtures present")
     func trmFixtures() throws {
         let n = try Self.records().filter { ((Self.signals($0)["trm_restricted"] as? Int) ?? 0) > 0 }.count
         // Actual 89 as of 2026-07. Floor set to ~90% of actual (80), not the
         // stale 30 (34% of actual, wide enough to hide a real regression).
-        #expect(n >= 80, "expected 80+ TRM-restricted folders as fixtures for DAR-134; found \(n)")
+        #expect(n >= 80, "expected 80+ TRM-restricted folders as fixtures; found \(n)")
     }
 
     @Test("CIO / connected-Thunderbolt fixtures present")
@@ -70,7 +70,7 @@ struct CorpusCoverageTests {
         #expect(n >= 65, "expected 65+ CIO folders (mine-cio + port-key fixtures); found \(n)")
     }
 
-    @Test("advanced-PD fixtures present (DAR-136)")
+    @Test("advanced-PD fixtures present")
     func advancedPDFixtures() throws {
         let n = try Self.records().filter { ((Self.signals($0)["advanced_pd"] as? [Any]) ?? []).isEmpty == false }.count
         // Actual 226 (pre-fix) dropped to 117 (2026-07) after correcting a
@@ -88,17 +88,17 @@ struct CorpusCoverageTests {
         // corrected actual: 0.85 * 117 = 99.45, floor set to 100 (85.5% of
         // actual), same margin-not-brittleness standard as the other rows
         // in this file.
-        #expect(n >= 100, "expected 100+ advanced-PD folders as fixtures for DAR-136; found \(n)")
+        #expect(n >= 100, "expected 100+ advanced-PD folders as fixtures; found \(n)")
     }
 
-    @Test("zeroed-VID cable-trust fixtures present (DAR-137)")
+    @Test("zeroed-VID cable-trust fixtures present")
     func zeroedVIDFixtures() throws {
         let n = try Self.records().filter {
             (($0["trust"] as? [String: Any])?["zeroed_vid_cables"] as? [Any] ?? []).isEmpty == false
         }.count
         // Actual 70 as of 2026-07. Floor set to ~86% of actual (60), not the
         // stale 20 (29% of actual).
-        #expect(n >= 60, "expected 60+ zeroed-VID cable folders as fixtures for DAR-137; found \(n)")
+        #expect(n >= 60, "expected 60+ zeroed-VID cable folders as fixtures; found \(n)")
     }
 
     @Test("Billboard fixtures present")
@@ -139,7 +139,7 @@ struct CorpusCoverageTests {
         "m1_macos26.5_n",
     ]
 
-    @Test("ChargingDiagnostic fixture probes load (DAR-138 skip-not-fail canary)")
+    @Test("ChargingDiagnostic fixture probes load (skip-not-fail canary)")
     func chargingFixtureProbesLoad() throws {
         // Same corpus-present guard convention as the sweep suites: skip
         // entirely in a checkout with no raw probe corpus on disk at all

@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableDarwinBackend
 @testable import WhatCableCore
 
-// MARK: - DisplayDiagnosticProbeSweepTests (DAR-138)
+// MARK: - DisplayDiagnosticProbeSweepTests
 //
 // Corpus-backed tests for DisplayDiagnostic. Each test loads a real probe-33
 // file from `research/customer-probes/`, parses it into a
@@ -26,7 +26,7 @@ import Testing
 // All helpers in this file are file-private; there is no shared
 // Support/ProbeCorpus.swift dependency.
 
-@Suite("DisplayDiagnostic -- customer probe sweep (DAR-138)")
+@Suite("DisplayDiagnostic -- customer probe sweep")
 struct DisplayDiagnosticProbeSweepTests {
 
     // MARK: - Corpus root

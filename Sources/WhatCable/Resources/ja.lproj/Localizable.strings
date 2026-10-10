@@ -119,7 +119,7 @@
 /* Billboard device (display dimension). English; community-refined. */
 "Billboard device present" = "Billboard デバイスが存在します";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "Cable note" = "ケーブルに関する注記";
 "Cable details" = "ケーブルの詳細";
 

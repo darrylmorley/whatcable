@@ -289,7 +289,7 @@ struct CableTrustReportTests {
         #expect(detail.contains("0xABCD"))
     }
 
-    // MARK: - DAR-140: blank e-marker softened by a registered cable plug
+    // MARK: - Blank e-marker softened by a registered cable plug
 
     /// Build a synthetic SOP partner identity. `productType` is the ID
     /// Header's UFP product type (3 = passive cable, 2 = peripheral). When

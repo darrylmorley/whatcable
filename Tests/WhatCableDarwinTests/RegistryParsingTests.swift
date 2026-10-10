@@ -262,7 +262,7 @@ struct RegistryParsingTests {
         #expect(priorityParent.number == 1)
     }
 
-    // MARK: - HPMPortUUIDMap.from(ports:) (DAR-29)
+    // MARK: - HPMPortUUIDMap.from(ports:)
 
     /// `from(ports:)` must build the same UUID -> portKey map that `current()`
     /// builds from IOKit, just from already-captured ports instead of a second

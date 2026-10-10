@@ -419,14 +419,14 @@
 "Negotiating…" = "正在協商…";
 "Waiting for live reading…" = "正在等待即時讀數…";
 
-/* Softened blank e-marker note (DAR-140) */
+/* Softened blank e-marker note */
 "E-marker vendor ID is blank, but the cable is identified at the connector" = "E-marker Vendor ID 為空白，但可透過接頭識別線材";
 "The cable's e-marker chip reports a blank vendor ID, but the connector identifies the cable as %@ (%@), a USB-IF-registered vendor. A blank e-marker VID by itself is common on genuine passive cables, so it isn't a sign of a problem." = "線材的 e-marker 晶片回報空白的 Vendor ID，但接頭將線材識別為 %1$@ (%2$@)，這是一家已向 USB-IF 註冊的廠商。e-marker VID 為空白本身在正規的被動式線材上相當常見，因此不代表有任何問題。";
 "Cable note:" = "線材備註：";
 "Vendor is recognised but not in WhatCable's bundled USB-IF list" = "廠商已識別，但不在 WhatCable 內建的 USB-IF 清單中";
 "The vendor ID %@ (%@) is a recognised maker in the community USB vendor list, but not in the USB-IF list WhatCable bundles." = "Vendor ID %@ (%@) 可在社群維護的 USB 廠商清單中找到，但不在 WhatCable 內建的 USB-IF 清單中。";
 
-/* DFP product type labels (DAR-24) */
+/* DFP product type labels */
 "Host" = "主機";
 "Power Brick" = "電源供應器";
 
@@ -452,7 +452,7 @@
 "PCIe data" = "PCIe 資料";
 "adapter %lld" = "轉接器 %lld";
 
-/* Active-layout contradiction note (DAR-30) */
+/* Active-layout contradiction note */
 "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker 回報為被動式，但帶有主動式線材結構（可能是 e-marker 程式設定錯誤）";
 
 "Plugged in, charging on hold" = "已接上電源，充電暫停";
@@ -471,7 +471,7 @@
 "Built-in USB-A ports" = "內建 USB-A 連接埠";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "這些是透過 Mac 內部 Hub 連接的一般 USB 連接埠，因此沒有可顯示的線材、電源或 Thunderbolt 資料。";
 
-/* Cable history (DAR-52) */
+/* Cable history */
 "Add this cable" = "新增此線材";
 "Track what this cable delivers over time" = "追蹤此線材的長期表現";
 "Track what this cable delivers over time (Pro)" = "追蹤此線材的長期表現 (Pro)";
@@ -588,7 +588,7 @@
 
 "Shared controller port" = "共用控制器連接埠";
 
-/* USB-IF certification (DAR-215) */
+/* USB-IF certification */
 "USB-IF certified. Manufacturer: %@, model %@ (%@)" = "已通過 USB-IF 認證。製造商：%1$@，型號：%2$@ (%3$@)";
 "USB-IF certified. Manufacturer: %@, model %@" = "已通過 USB-IF 認證。製造商：%1$@，型號：%2$@";
 "USB-IF certified. Manufacturer: %@ (%@)" = "已通過 USB-IF 認證。製造商：%1$@ (%2$@)";

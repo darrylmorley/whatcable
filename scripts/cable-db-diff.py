@@ -16,7 +16,7 @@ Two things worth knowing before reading the output:
   pid:) requires both VID and PID to be nonzero (see
   Sources/WhatCableCore/Database/CableDB.swift); a zero PID means the app can
   never match that cable to a brand no matter how well it's catalogued. This
-  is the DAR-39 structural finding: cheap/generic cable silicon overwhelmingly
+  is the structural finding: cheap/generic cable silicon overwhelmingly
   ships with PID=0, so a big chunk of "uncatalogued" fingerprints are
   unfixable under the current (VID,PID) identity schema, not a coverage gap.
   Still counted here for visibility, but don't spend curation effort on them.

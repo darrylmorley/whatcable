@@ -3,7 +3,7 @@ import Testing
 @testable import WhatCableCore
 @testable import WhatCableDarwinBackend
 
-// MARK: - Corpus sweep tests for HPM, PD identity, and liquid-detection watchers (DAR-77)
+// MARK: - Corpus sweep tests for HPM, PD identity, and liquid-detection watchers
 //
 // Each suite replays the real IOKit property data captured in the customer-probe
 // corpus (research/customer-probes/) through the parse-logic extracted from the
@@ -449,7 +449,7 @@ private func loadSOPBlocks(probe: String) -> [SOPBlock] {
 
 // MARK: - HPM Interface sweep
 
-@Suite("Watcher corpus sweep (DAR-77) - HPM Interface")
+@Suite("Watcher corpus sweep - HPM Interface")
 struct HPMInterfaceProbeSweepTests {
 
     @Test("Every AppleHPMInterface block in probe-17 yields a model with correct fields")
@@ -527,14 +527,14 @@ struct HPMInterfaceProbeSweepTests {
         }
 
         // Guard: the corpus is non-trivial. When probe-17 files are absent
-        // (fresh clone) or only DAR-138 fixture subsets are present (~30
-        // folders), skip the absolute floor; the per-fixture DAR-138 tests
+        // (fresh clone) or only fixture subsets are present (~30
+        // folders), skip the absolute floor; the per-fixture tests
         // carry their own assertions there. The floor below is calibrated
         // for the full on-disk corpus (222 probe-17 folders as of 2026-07;
         // see corpus.jsonl for the current total folder count).
         if foldersScanned >= 100 {
             // Actual as of 2026-07: 222 folders scanned, 789 blocks, 789 models
-            // (every real-port block now resolves; the DAR-138-era gap between
+            // (every real-port block now resolves; the earlier gap between
             // blocks and models has closed). Floor set to ~89% of actual (700),
             // not the stale 100 (13% of actual).
             #expect(
@@ -547,7 +547,7 @@ struct HPMInterfaceProbeSweepTests {
 
 // MARK: - PD identity (SOP / SOP' / SOP'') sweep
 
-@Suite("Watcher corpus sweep (DAR-77) - PD SOP identity")
+@Suite("Watcher corpus sweep - PD SOP identity")
 struct PDSOPIdentitySweepTests {
 
     @Test("Every SOP/SOP' block in probe-01 yields an identity with correct endpoint and VDO bytes")
@@ -684,7 +684,7 @@ struct PDSOPIdentitySweepTests {
 
 // MARK: - VDM identity (Pro watcher) sweep
 
-@Suite("Watcher corpus sweep (DAR-77) - VDM identity")
+@Suite("Watcher corpus sweep - VDM identity")
 struct VDMIdentitySweepTests {
 
     @Test("VDMIdentityWatcher.parseUpdate produces matching identity from probe-01 SOP blocks")
@@ -758,7 +758,7 @@ struct VDMIdentitySweepTests {
 
 // MARK: - Liquid detection sweep
 
-@Suite("Watcher corpus sweep (DAR-77) - Liquid detection")
+@Suite("Watcher corpus sweep - Liquid detection")
 struct LiquidDetectionSweepTests {
 
     @Test("Every AppleHPMLDCMType2 sub-block in probe-17 yields a LiquidDetectionUpdate with matching fields")
@@ -829,7 +829,7 @@ struct LiquidDetectionSweepTests {
             // 169 folders. Floor set to ~88% of actual (400), not the stale 50
             // (11% of actual). Absolute floor only when the full corpus is on
             // disk; fixture-only checkouts are covered by the per-fixture
-            // DAR-138 tests.
+            // tests.
             //
             // `loadLDCMBlocks`'s body-boundary search was made indentation-
             // tolerant (see `ldcmNextSectionHeaderIndex`) after the sibling
@@ -881,7 +881,7 @@ struct LiquidDetectionSweepTests {
 //      watcher falls back to PowerOutDetails rather than guessing a port.
 //
 // Both probe-34 and probe-17 are on-disk only (not committed), so this skips
-// trivially on a fresh clone, like the other DAR-77 sweeps.
+// trivially on a fresh clone, like the other sweeps.
 
 /// One D-channel parsed from probe-34's flat SMC key dump.
 private struct Probe34Channel {

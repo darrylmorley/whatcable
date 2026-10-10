@@ -25,7 +25,7 @@ import Testing
 /// Fresh clones without the corpus trivially pass: probe 17 and 33 are gitignored raw
 /// data (only `01_walk_pd_tree.json` is committed), so the missing-file guards return
 /// empty collections and the guarded minimum-count assertions are skipped.
-@Suite("DisplayPortTransportWatcher -- customer probe sweep (DAR-77)")
+@Suite("DisplayPortTransportWatcher -- customer probe sweep")
 struct DisplayPortTransportWatcherSweepTests {
 
     // MARK: - Corpus root
