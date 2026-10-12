@@ -470,7 +470,7 @@
 "Built-in USB ports" = "內建 USB 連接埠";
 "Built-in USB-A ports" = "內建 USB-A 連接埠";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "這些是透過 Mac 內部 Hub 連接的一般 USB 連接埠，因此沒有可顯示的線材、電源或 Thunderbolt 資料。";
-"Move these devices to a Thunderbolt port to see more about them." = "將這些裝置移到 Thunderbolt 連接埠，即可查看更多資訊。";
+"Move these devices to a Thunderbolt port to see more about them." = "將這些裝置改接到 Thunderbolt 連接埠，即可查看更多資訊。";
 
 /* Cable history */
 "Add this cable" = "新增此線材";
@@ -606,7 +606,7 @@
 "Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "已偵測到 e-marker，但本次連線未能讀取其資料。請嘗試重新插拔線材；某些充電器和 Dock 會阻止讀取 e-marker。";
 "Present, but not read on this connection. macOS usually reads it above 3A or over Thunderbolt." = "已偵測到 e-marker，但本次連線未能讀取其資料。macOS 通常會在超過 3A 或透過 Thunderbolt 連線時讀取 e-marker。";
 "This port can't read cable details: USB-only, no Power Delivery." = "此連接埠無法讀取線材資訊：僅支援 USB，不支援 Power Delivery。";
-"Plug the cable into a Thunderbolt port to see its details." = "將線材插入 Thunderbolt 連接埠即可查看其資訊。";
+"Plug the cable into a Thunderbolt port to see its details." = "將線材接到 Thunderbolt 連接埠，即可查看線材資訊。";
 "The %@ contract shows the charger treated this as an e-marked, 5A-capable cable, so charging isn't limited by the cable. This Mac couldn't get its own read here. Connect the cable to another device to see its details." = "%@ 的協商結果顯示，充電器將此線材視為帶有 e-marker 且支援 5A，因此充電不受線材限制。這台 Mac 無法在此連線自行讀取 e-marker。請將線材連接到其它裝置來查看線材資訊。";
 "No e-marker response. Cable details aren't available on this connection. Try another device to read it." = "e-marker 無回應。此連線無法取得線材資訊。請嘗試使用其它裝置讀取 e-marker。";
 "Reading cable details…" = "正在讀取線材資訊…";
