@@ -52,7 +52,7 @@ Click the **gear icon** in the popover header to open Settings, where you can:
 - Adjust the font size and the window opacity
 - Show technical details (the same raw IOKit data that ⌥-click reveals)
 - Skip deep USB probing, a compatibility switch for the few KVM switches and hubs that misbehave when WhatCable reads capability info from the devices behind them
-- Switch language (English, Armenian, Brazilian Portuguese, Dutch, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Polish, Russian, Simplified Chinese, Spanish, Traditional Chinese, Turkish, Ukrainian, or follow your system default)
+- Switch language (English, Armenian, Brazilian Portuguese, Dutch, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Persian, Polish, Russian, Simplified Chinese, Spanish, Traditional Chinese, Turkish, Ukrainian, or follow your system default)
 - Get notifications when cables are connected or disconnected, and when an app update is available
 - Contribute anonymised port and power diagnostics to improve hardware coverage (opt-in, manual)
 
