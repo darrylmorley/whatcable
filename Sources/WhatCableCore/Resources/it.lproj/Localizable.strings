@@ -475,7 +475,7 @@
 "Built-in USB ports" = "Porte USB integrate";
 "Built-in USB-A ports" = "Porte USB-A integrate";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Porte USB semplici collegate all'hub interno del Mac, quindi non ci sono dati sul cavo, alimentazione o Thunderbolt.";
-"Move these devices to a Thunderbolt port to see more about them." = "Sposta questi dispositivi su una porta Thunderbolt per vedere più informazioni su di essi.";
+"Move these devices to a Thunderbolt port to see more about them." = "Per visualizzare maggiori informazioni su questi dispositivi spostali su una porta Thunderbolt.";
 
 /* Cable history */
 "Add this cable" = "Aggiungi questo cavo";
@@ -612,7 +612,7 @@
 "Present, but not read on this connection. Try reconnecting; some chargers and docks block the read." = "Presente, ma non letto in questa connessione. Prova a ricollegare il cavo; alcuni caricatori e dock bloccano la lettura.";
 "Present, but not read on this connection. macOS usually reads it above 3A or over Thunderbolt." = "Presente, ma non letto in questa connessione. macOS di norma lo legge solo sopra i 3 A o tramite Thunderbolt.";
 "This port can't read cable details: USB-only, no Power Delivery." = "Questa porta non può leggere i dettagli del cavo: solo USB, senza Power Delivery.";
-"Plug the cable into a Thunderbolt port to see its details." = "Collega il cavo a una porta Thunderbolt per vederne i dettagli.";
+"Plug the cable into a Thunderbolt port to see its details." = "Per visualizzare i dettagli collega il cavo a una porta Thunderbolt.";
 "The %@ contract shows the charger treated this as an e-marked, 5A-capable cable, so charging isn't limited by the cable. This Mac couldn't get its own read here. Connect the cable to another device to see its details." = "Il contratto %@ indica che il caricatore ha trattato questo cavo come un cavo con e-marker da 5 A, quindi la ricarica non è limitata dal cavo. Questo Mac non è riuscito a leggerlo qui. Per vedere i dettagli collega il cavo a un altro dispositivo.";
 "No e-marker response. Cable details aren't available on this connection. Try another device to read it." = "Nessuna risposta dall'e-marker. In questa connessione i dettagli del cavo non sono disponibili. Per vedere i dettagli prova con un altro dispositivo.";
 "Reading cable details…" = "Lettura dei dettagli del cavo…";
