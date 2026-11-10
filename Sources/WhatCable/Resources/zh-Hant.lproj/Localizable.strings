@@ -87,7 +87,7 @@
 "Contribute Diagnostic Data" = "提供診斷資料";
 "Contribute Diagnostic Data…" = "提供診斷資料…";
 "Before you start" = "開始之前";
-"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "請接上您想納入的線材和裝置，並在執行完成前保持全部連接。執行期間插拔可能會讓結果出現缺漏。";
+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "請先接上您想納入診斷的線材和裝置，並在診斷完成前保持連接。診斷期間插拔線材或裝置，可能導致結果出現缺漏。";
 "Privacy" = "隱私權";
 "Pro" = "Pro";
 "Proceed" = "繼續";
