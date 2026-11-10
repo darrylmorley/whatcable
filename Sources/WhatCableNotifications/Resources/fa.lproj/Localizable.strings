@@ -12,4 +12,4 @@
 "System reports charger at %lldW" = "سیستم شارژر را با توان %lldW گزارش می‌دهد";
 "Charger advertises up to %lldW" = "شارژر تا %lldW را اعلام می‌کند";
 "Wattage not reported" = "توان گزارش نشده است";
-"%@ (%@)" = "%@ (%@)";
+"%@ (%@)" = "%1$@ (%2$@)";

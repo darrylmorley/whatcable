@@ -1,6 +1,6 @@
 # Translations
 
-WhatCable ships in 19 languages. Community translations are welcome and
+WhatCable ships in 20 languages. Community translations are welcome and
 credited in the release notes. A few ground rules keep them mergeable.
 
 ## The one rule that matters

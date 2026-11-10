@@ -88,6 +88,8 @@
 "COMMUNITY" = "جامعه";
 "Contribute Diagnostic Data" = "مشارکت در ارسال داده‌های تشخیصی";
 "Contribute Diagnostic Data…" = "مشارکت در ارسال داده‌های تشخیصی…";
+"Before you start" = "پیش از شروع";
+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "کابل‌ها و دستگاه‌هایی را که می‌خواهید در نتایج باشند وصل کنید، سپس تا پایان کار همه را متصل نگه دارید. وصل یا جدا کردن دستگاه‌ها در حین اجرا ممکن است باعث ناقص شدن نتایج شود.";
 "Privacy" = "حریم خصوصی";
 "Pro" = "Pro";
 "Proceed" = "ادامه";
