@@ -281,6 +281,7 @@ cat > "${CONTENTS_DIR}/Info.plist" <<PLIST
         <string>en</string>
         <string>de</string>
         <string>es</string>
+        <string>fa</string>
         <string>fr</string>
         <string>hi</string>
         <string>hy</string>

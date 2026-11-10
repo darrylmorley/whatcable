@@ -1,0 +1,15 @@
+"%@ negotiated" = "%@ توافق شد";
+"Charger connected" = "شارژر متصل شد";
+"Charger disconnected" = "شارژر جدا شد";
+"Connected: %@" = "متصل شد: %@";
+"Disconnected: %@" = "جدا شد: %@";
+"Reconnected: %@" = "اتصال مجدد برقرار شد: %@";
+"USB device" = "دستگاه USB";
+"USB devices connected" = "دستگاه‌های USB متصل شدند";
+"USB devices disconnected" = "دستگاه‌های USB جدا شدند";
+"Thunderbolt devices connected" = "دستگاه‌های Thunderbolt متصل شدند";
+"Thunderbolt devices disconnected" = "دستگاه‌های Thunderbolt جدا شدند";
+"System reports charger at %lldW" = "سیستم شارژر را با توان %lldW گزارش می‌دهد";
+"Charger advertises up to %lldW" = "شارژر تا %lldW را اعلام می‌کند";
+"Wattage not reported" = "توان گزارش نشده است";
+"%@ (%@)" = "%@ (%@)";

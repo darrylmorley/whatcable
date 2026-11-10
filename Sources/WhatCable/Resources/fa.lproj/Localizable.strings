@@ -1,0 +1,188 @@
+"%@ profiles" = "%@ پروفایل";
+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld درگاه USB-C و یک درگاه MagSafe شناسایی شد، اما در حال حاضر چیزی متصل نیست. برای دیدن آن‌ها، «پنهان کردن درگاه‌های خالی» را در تنظیمات خاموش کنید.";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld درگاه USB-C شناسایی شد، اما در حال حاضر چیزی متصل نیست. برای دیدن آن‌ها، «پنهان کردن درگاه‌های خالی» را در تنظیمات خاموش کنید.";
+"About %@" = "دربارهٔ %@";
+"Active" = "فعال";
+"Active cable electronics" = "الکترونیک فعال کابل";
+"All raw IOKit properties (%lld)" = "همهٔ ویژگی‌های خام IOKit (%lld)";
+"Behavior" = "رفتار";
+"Built by %@." = "ساخته‌شده توسط %@.";
+"Cable trust signals" = "سیگنال‌های اعتماد کابل";
+"Cancel" = "لغو";
+"Check for Updates…" = "بررسی به‌روزرسانی‌ها…";
+"Connected devices" = "دستگاه‌های متصل";
+"Connection" = "اتصال";
+"Display" = "نمایشگر";
+"Desktop Mac: charger identity (FedDetails) is not available." = "در Mac رومیزی: هویت شارژر (FedDetails) در دسترس نیست.";
+"Done" = "انجام شد";
+"Downloading…" = "در حال دانلود…";
+"Newer version found, installing it…" = "نسخهٔ جدیدتر پیدا شد، در حال نصب…";
+"Checking for the latest version…" = "در حال بررسی آخرین نسخه…";
+"File a GitHub issue with this cable's e-marker fingerprint" = "ثبت یک issue در GitHub با اثر انگشت e-marker این کابل";
+"Font size" = "اندازهٔ قلم";
+"Opacity" = "میزان کدری";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "به توسعه‌دهنده کمک می‌کند رفتار شارژر / کابل وابسته به سخت‌افزار خاص را بازتولید کند.";
+"Hide empty ports" = "پنهان کردن درگاه‌های خالی";
+"Host (%@)" = "میزبان (%@)";
+"Include Mac model and macOS version" = "شامل مدل Mac و نسخهٔ macOS";
+"Install failed: %@" = "نصب ناموفق بود: %@";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "این حساب کاربری نمی‌تواند برنامه‌ها را در این مکان به‌روزرسانی کند. نسخهٔ جدید را از whatcable.uk دانلود کنید یا با Homebrew به‌روزرسانی نمایید.";
+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "برنامهٔ WhatCable نمی‌تواند خود را از پوشهٔ فعلی‌اش به‌روزرسانی کند. WhatCable را به پوشهٔ Applications منتقل کنید، آن را دوباره باز کنید و مجدداً تلاش کنید، یا آخرین نسخه را از whatcable.uk دانلود نمایید.";
+"Install update" = "نصب به‌روزرسانی";
+"Installing, WhatCable will relaunch" = "در حال نصب، WhatCable دوباره راه‌اندازی خواهد شد";
+"Keep window open" = "باز نگه داشتن پنجره";
+"Language" = "زبان";
+"Launch at login" = "اجرا هنگام ورود به سیستم";
+"Lives in the menu bar with no Dock icon." = "بدون نماد Dock در نوار منو قرار می‌گیرد.";
+"Menu bar icon" = "نماد نوار منو";
+"Show charging watts in the menu bar" = "نمایش وات شارژ در نوار منو";
+"Watts display" = "نمایش وات";
+"Number" = "عدد";
+"Bar" = "نوار";
+/* Menu bar icon choices */
+"Cable" = "کابل";
+"Cable, horizontal" = "کابل، افقی";
+"Bolt" = "صاعقه";
+"Power plug" = "دوشاخه برق";
+"Power cord" = "کابل برق";
+"No" = "خیر";
+"No USB-C ports detected" = "هیچ درگاه USB-C شناسایی نشد";
+"Nothing connected" = "چیزی متصل نیست";
+"Notifications" = "اعلان‌ها";
+"Notify on cable changes" = "اعلان هنگام تغییر کابل";
+"Notify on app updates" = "اعلان هنگام به‌روزرسانی برنامه";
+"Open in GitHub" = "باز کردن در GitHub";
+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "یک issue از پیش پرشده در GitHub را در مرورگر شما باز می‌کند. تا زمانی که آنجا ارسال نکنید، چیزی فرستاده نمی‌شود.";
+"Optical" = "نوری";
+"Plug events" = "رویدادهای اتصال";
+"Preview of what will be included:" = "پیش‌نمایش مواردی که شامل خواهد شد:";
+"Provisioned" = "پیکربندی‌شده";
+"Quit" = "خروج";
+"Quit %@" = "خروج از %@";
+"Refresh" = "تازه‌سازی";
+"Report this cable" = "گزارش این کابل";
+"Runs as a regular Dock app with a window." = "به‌عنوان یک برنامهٔ معمولی Dock همراه با پنجره اجرا می‌شود.";
+"System Default" = "پیش‌فرض سیستم";
+"Settings" = "تنظیمات";
+"Settings…" = "تنظیمات…";
+"Show in menu bar" = "نمایش در نوار منو";
+"Show technical details" = "نمایش جزئیات فنی";
+"SuperSpeed" = "SuperSpeed";
+"Supported" = "پشتیبانی می‌شود";
+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "به نظر می‌رسد این Mac سرویس‌های کنترل‌کنندهٔ درگاه خود را ارائه نمی‌دهد. تازه‌سازی را بزنید یا System Information > USB را بررسی کنید.";
+"Thunderbolt fabric" = "بستر Thunderbolt";
+"Transports" = "پروتکل‌های انتقال";
+"Unknown" = "نامشخص";
+"Verifying signature…" = "در حال تأیید امضا…";
+"View release" = "مشاهدهٔ نسخه";
+"What gets shared?" = "چه مواردی به اشتراک گذاشته می‌شود؟";
+"WhatCable %@ is available" = "نسخهٔ %@ از WhatCable در دسترس است";
+"WhatCable on GitHub" = "\U200FWhatCable در GitHub";
+"Yes" = "بله";
+"You're on %@" = "شما در %@ هستید";
+"%lld USB devices" = "%lld دستگاه USB";
+"active" = "فعال";
+"no active link" = "بدون لینک فعال";
+
+/* Test Kit / Contribute Diagnostic Data consent + notifications (previously missing keys) */
+"COMMUNITY" = "جامعه";
+"Contribute Diagnostic Data" = "مشارکت در ارسال داده‌های تشخیصی";
+"Contribute Diagnostic Data…" = "مشارکت در ارسال داده‌های تشخیصی…";
+"Privacy" = "حریم خصوصی";
+"Pro" = "Pro";
+"Proceed" = "ادامه";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac." = "ویژگی‌های خام رجیستری IOKit، فهرستی از کلاس‌های درایور موجود در Mac شما، به‌علاوهٔ نسخهٔ macOS، نوع تراشه و شناسهٔ مدل Mac (برای مثال، Mac14,3). این‌ها داده‌هایی هستند که macOS از قبل در Mac شما ارائه می‌دهد.";
+"What happens" = "چه اتفاقی می‌افتد";
+"What is collected" = "چه اطلاعاتی جمع‌آوری می‌شود";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "تعداد %lld بررسی IOKit توسط WhatCable اجرا می‌شود که داده‌های سخت‌افزاری منتشرشده توسط Mac شما را می‌خوانند. نتایج به یک سرور امن ارسال می‌شوند تا به بهبود شناسایی کابل و درگاه کمک کنند.";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "شناسهٔ سخت‌افزاری (UUID) دستگاه شما قبل از ارسال با SHA-256 هش می‌شود. هیچ نام، حساب، شماره سریال Mac یا داده‌های شخصی جمع‌آوری یا ذخیره نمی‌شوند.";
+
+/* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
+"Back" = "بازگشت";
+"Unpin (popover closes when you click away)" = "برداشتن سنجاق (پنجرهٔ بازشو با کلیک در جای دیگر بسته می‌شود)";
+"Open in a separate window" = "باز کردن در پنجره‌ای جداگانه";
+"Power Monitor" = "پایشگر توان";
+"Negotiation Diagnostics" = "عیب‌یابی مذاکره";
+"Cable Diagnostics" = "عیب‌یابی کابل";
+"%@ Port %lld Diagnostics" = "%@ - عیب‌یابی درگاه %lld";
+
+/* Onboarding / welcome screen (first launch). */
+"Welcome to WhatCable" = "به WhatCable خوش آمدید";
+"See what your USB-C cables, chargers, and devices can actually do." = "ببینید کابل‌ها، شارژرها و دستگاه‌های USB-C شما واقعاً چه توانایی‌هایی دارند.";
+"How would you like to use WhatCable?" = "مایلید چگونه از WhatCable استفاده کنید؟";
+"Menu bar" = "نوار منو";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "در نوار منو در بالای صفحهٔ نمایش شما قرار می‌گیرد. هر زمان که بخواهید، برای بررسی اتصال روی نماد کابل کلیک کنید.";
+"Recommended" = "پیشنهادی";
+"Dock app" = "برنامهٔ Dock";
+"Opens as a regular window with a Dock icon, like most apps." = "مانند بیشتر برنامه‌ها، به‌صورت یک پنجرهٔ معمولی با نماد Dock باز می‌شود.";
+"Get Started" = "شروع کنید";
+"You can change this any time in Settings." = "می‌توانید این مورد را هر زمان در تنظیمات تغییر دهید.";
+
+/* Billboard device (display dimension). English; community-refined. */
+"Billboard device present" = "دستگاه Billboard موجود است";
+
+/* Softened blank e-marker note */
+"Cable note" = "یادداشت کابل";
+"Cable details" = "جزئیات کابل";
+
+/* Active Cable VDO 2 section (ActiveCableVDO2Section) */
+"Active cable (VDO 2)" = "کابل فعال (VDO 2)";
+"Physical connection" = "اتصال فیزیکی";
+"Active element" = "عنصر فعال";
+"Optically isolated" = "ایزوله‌شده به صورت نوری";
+"USB lanes" = "خطوط USB";
+"Two" = "دو";
+"One" = "یک";
+"USB Gen" = "نسل USB";
+"Gen 2 or higher" = "\U200FGen 2 یا بالاتر";
+"Gen 1" = "Gen 1";
+"USB4 supported" = "از USB4 پشتیبانی می‌شود";
+"USB 3.2 supported" = "از USB 3.2 پشتیبانی می‌شود";
+"USB 2.0 supported" = "از USB 2.0 پشتیبانی می‌شود";
+"USB 2.0 hub hops" = "گام‌های هاب USB 2.0";
+"USB4 asymmetric" = "\U200FUSB4 نامتقارن";
+"U3 to U0 transition" = "گذار از U3 به U0";
+"Through U3S" = "از طریق U3S";
+"Direct" = "مستقیم";
+"Idle power (U3/CLd)" = "توان در حالت بی‌کاری (U3/CLd)";
+"Max operating temp" = "حداکثر دمای کاری";
+"Shutdown temp" = "دمای خاموش‌شدن";
+"Connected over Thunderbolt" = "متصل از طریق Thunderbolt";
+"Other USB devices" = "سایر دستگاه‌های USB";
+"Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "از طریق یک داک یا نمایشگر Thunderbolt متصل شده‌اند، بنابراین هیچ داده‌ای دربارهٔ کابل، توان یا Thunderbolt برای آن‌ها وجود ندارد.";
+"Built-in USB ports" = "درگاه‌های USB داخلی";
+"Built-in USB-A ports" = "درگاه‌های USB-A داخلی";
+"Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "درگاه‌های USB ساده در پشت هاب داخلی Mac، بنابراین هیچ داده‌ای دربارهٔ کابل، توان یا Thunderbolt برای آن‌ها وجود ندارد.";
+"Move these devices to a Thunderbolt port to see more about them." = "برای مشاهدهٔ اطلاعات بیشتر دربارهٔ این دستگاه‌ها، آن‌ها را به یک درگاه Thunderbolt منتقل کنید.";
+
+/* Built-in display port card (issue #352). Used by the popover when a
+   native HDMI port is showing a display. */
+"Display connected" = "نمایشگر متصل است";
+"%lld displays connected" = "%lld نمایشگر متصل است";
+"Built-in %1$@ port %2$lld" = "درگاه %1$@ داخلی %2$lld";
+
+/* USB probing compatibility toggle (issue #429). */
+"Skip deep USB probing" = "صرف‌نظر از بررسی عمیق USB";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "از خواندن اطلاعات قابلیت‌ها از دستگاه‌های USB توسط WhatCable جلوگیری می‌کند. اگر هنگام اجرای WhatCable، یک هاب یا سوئیچ KVM دچار اختلال می‌شود (صدای کلیک رله، یا قطع شدن صفحه‌کلید و ماوس)، این گزینه را روشن کنید.";
+
+/* Intel Macs are unsupported; notice shown on every launch. */
+"WhatCable can't read cables on this Mac" = "در این Mac، WhatCable نمی‌تواند کابل‌ها را بخواند";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "این Mac پردازندهٔ Intel دارد. WhatCable داده‌های کابل و درگاه خود را از کنترل‌کنندهٔ درگاه Apple Silicon دریافت می‌کند و Macهای Intel آن را ارائه نمی‌دهند، بنابراین برنامه هیچ اطلاعات مفیدی نشان نخواهد داد.\n\nاگر بخواهید بررسی کنید برنامه باز می‌ماند، اما داده‌ای برای نمایش وجود ندارد.";
+"OK" = "تأیید";
+"Learn more" = "بیشتر بدانید";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "سازنده";
+"Serial" = "شماره سریال";
+"USB" = "USB";
+"Hide hubs" = "پنهان کردن هاب‌ها";
+
+/* Beta update channel (opt-in pre-release updates). */
+"Updates" = "به‌روزرسانی‌ها";
+"Include beta versions" = "شامل نسخه‌های بتا";
+"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "نسخه‌های پیش‌انتشار که چند روز پیش از نسخهٔ پایدار عرضه می‌شوند. احتمال وجود اشکالات جزئی وجود دارد.";
+"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "خاموش کردن این گزینه مانع دریافت نسخه‌های بتای بعدی می‌شود. اما نسخهٔ بتایی را که هم‌اکنون استفاده می‌کنید به نسخهٔ قبل برنمی‌گرداند؛ نسخهٔ پایدار بعدی این کار را انجام خواهد داد.";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "شما WhatCable را با Homebrew نصب کرده‌اید. اجرای brew upgrade ممکن است یک نسخهٔ بتا را با نسخهٔ پایدار فعلی جایگزین کند.";
+
+/* Brick ID analog charger identity note (issue #592) */
+"Analog charger identifier, no PD profiles" = "شناسهٔ شارژر آنالوگ، بدون پروفایل‌های PD";
