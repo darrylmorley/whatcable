@@ -12,7 +12,7 @@
 "Check for Updates…" = "Se etter oppdateringer…";
 "Connected devices" = "Tilkoblede enheter";
 "Connection" = "Tilkobling";
-"Display" = "Skjerm";
+"Appearance" = "Utseende";
 "Desktop Mac: charger identity (FedDetails) is not available." = "Stasjonær Mac: laderidentitet (FedDetails) er ikke tilgjengelig.";
 "Done" = "Ferdig";
 "Downloading…" = "Laster ned…";
@@ -101,7 +101,7 @@
 "Back" = "Tilbake";
 "Unpin (popover closes when you click away)" = "Løsne (vinduet lukkes når du klikker et annet sted)";
 "Open in a separate window" = "Åpne i et eget vindu";
-"Power Monitor" = "Strømovervåking";
+"Power Monitor" = "Strømmonitor";
 "Negotiation Diagnostics" = "Forhandlingsdiagnostikk";
 "Cable Diagnostics" = "Kabeldiagnostikk";
 "%@ Port %lld Diagnostics" = "%@ port %lld-diagnostikk";
@@ -156,7 +156,7 @@
 "Move these devices to a Thunderbolt port to see more about them." = "Flytt disse enhetene til en Thunderbolt-port for å se mer om dem.";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Display connected";
+"Display connected" = "Skjerm tilkoblet";
 "%lld displays connected" = "%lld displays connected";
 "Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
 

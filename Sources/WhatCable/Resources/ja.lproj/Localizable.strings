@@ -12,7 +12,7 @@
 "Check for Updates…" = "アップデートを確認…";
 "Connected devices" = "接続デバイス";
 "Connection" = "接続";
-"Display" = "ディスプレイ";
+"Appearance" = "外観";
 "Desktop Mac: charger identity (FedDetails) is not available." = "デスクトップMac: 充電器のID（FedDetails）は利用できません。";
 "Done" = "完了";
 "Downloading…" = "ダウンロード中…";
@@ -156,7 +156,7 @@
 "Move these devices to a Thunderbolt port to see more about them." = "これらのデバイスの詳細を確認するには、Thunderboltポートに接続し直してください。";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Display connected";
+"Display connected" = "ディスプレイ接続";
 "%lld displays connected" = "%lld displays connected";
 "Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
 

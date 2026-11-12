@@ -12,7 +12,7 @@
 "Check for Updates…" = "بررسی به‌روزرسانی‌ها…";
 "Connected devices" = "دستگاه‌های متصل";
 "Connection" = "اتصال";
-"Display" = "نمایشگر";
+"Appearance" = "ظاهر";
 "Desktop Mac: charger identity (FedDetails) is not available." = "در Mac رومیزی: هویت شارژر (FedDetails) در دسترس نیست.";
 "Done" = "انجام شد";
 "Downloading…" = "در حال دانلود…";
@@ -151,17 +151,17 @@
 "Shutdown temp" = "دمای خاموش‌شدن";
 "Connected over Thunderbolt" = "متصل از طریق Thunderbolt";
 "Other USB devices" = "سایر دستگاه‌های USB";
-"Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "از طریق یک داک یا نمایشگر Thunderbolt متصل شده‌اند، بنابراین هیچ داده‌ای دربارهٔ کابل، توان یا Thunderbolt برای آن‌ها وجود ندارد.";
-"Built-in USB ports" = "درگاه‌های USB داخلی";
-"Built-in USB-A ports" = "درگاه‌های USB-A داخلی";
-"Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "درگاه‌های USB ساده در پشت هاب داخلی Mac، بنابراین هیچ داده‌ای دربارهٔ کابل، توان یا Thunderbolt برای آن‌ها وجود ندارد.";
-"Move these devices to a Thunderbolt port to see more about them." = "برای مشاهدهٔ اطلاعات بیشتر دربارهٔ این دستگاه‌ها، آن‌ها را به یک درگاه Thunderbolt منتقل کنید.";
+"Reached through a Thunderbolt dock or display, so there's no cable, power, or Thunderbolt data for them." = "از طریق یک داک یا نمایشگر Thunderbolt متصل است، بنابراین اطلاعات کابل، توان یا دادهٔ Thunderbolt برای آن‌ها وجود ندارد.";
+"Built-in USB ports" = "درگاه‌های داخلی USB";
+"Built-in USB-A ports" = "درگاه‌های داخلی USB-A";
+"Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "درگاه‌های USB معمولی پشت هاب داخلی Mac، بنابراین اطلاعات کابل، توان یا دادهٔ Thunderbolt برای آن‌ها وجود ندارد.";
+"Move these devices to a Thunderbolt port to see more about them." = "این دستگاه‌ها را به یک درگاه Thunderbolt منتقل کنید تا اطلاعات بیشتری دربارهٔ آن‌ها ببینید.";
 
 /* Built-in display port card (issue #352). Used by the popover when a
    native HDMI port is showing a display. */
-"Display connected" = "نمایشگر متصل است";
+"Display connected" = "نمایشگر متصل";
 "%lld displays connected" = "%lld نمایشگر متصل است";
-"Built-in %1$@ port %2$lld" = "درگاه %1$@ داخلی %2$lld";
+"Built-in %1$@ port %2$lld" = "درگاه داخلی %1$@ %2$lld";
 
 /* USB probing compatibility toggle (issue #429). */
 "Skip deep USB probing" = "صرف‌نظر از بررسی عمیق USB";

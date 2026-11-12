@@ -236,7 +236,7 @@
 "Power" = "Живлення";
 "Power (W)" = "Живлення (W)";
 "Power Contract" = "Договір живлення";
-"Power Monitor" = "Power Monitor";
+"Power Monitor" = "Монітор живлення";
 "Power role swaps" = "Зміни ролі живлення";
 "Pro features unlocked." = "Pro-функції розблоковано.";
 "Pro features will be locked until you enter your key again." = "Pro-функції будуть заблоковані, доки ви знову не введете ключ.";
@@ -533,8 +533,8 @@
 "OK" = "Гаразд";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"%lld displays connected" = "%lld displays connected";
-"Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
+"%lld displays connected" = "Підключено %lld дисплеїв";
+"Built-in %1$@ port %2$lld" = "Вбудований %1$@-порт під номером %2$lld";
 
 "Display running compressed (DSC) to fit through the link" = "Дисплей працює зі стисненням (DSC), щоб уміститися в канал";
 

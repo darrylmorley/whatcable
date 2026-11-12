@@ -140,7 +140,7 @@ struct SettingsForm: View {
                 }
                 .pickerStyle(.menu)
             } header: {
-                sectionHeader("Display")
+                sectionHeader("Appearance")
             }
 
             Section {

@@ -12,7 +12,7 @@
 "Check for Updates…" = "업데이트 확인…";
 "Connected devices" = "연결된 기기";
 "Connection" = "연결";
-"Display" = "디스플레이";
+"Appearance" = "모양";
 "Desktop Mac: charger identity (FedDetails) is not available." = "데스크탑 Mac: 충전기 정보(FedDetails)를 사용할 수 없어요.";
 "Done" = "완료";
 "Downloading…" = "다운로드 중…";
@@ -50,13 +50,13 @@
 "Notify on app updates" = "앱 업데이트 시 알림";
 "Open in GitHub" = "GitHub에서 열기";
 "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "미리 작성된 GitHub 이슈를 브라우저에서 열어요. GitHub에서 제출하기 전까지는 아무것도 전송되지 않아요.";
-"Optical" = "광 케이블";
+"Optical" = "광";
 "Plug events" = "연결/분리 이벤트";
 "Preview of what will be included:" = "포함될 내용 미리보기:";
 "Provisioned" = "구성됨";
 "Quit" = "종료";
 "Quit %@" = "%@ 종료";
-"Refresh" = "새로 고침";
+"Refresh" = "새로고침";
 "Report this cable" = "이 케이블 보고";
 "Runs as a regular Dock app with a window." = "창이 있는 일반 Dock 앱으로 실행됩니다.";
 "System Default" = "시스템 기본값";
@@ -155,7 +155,7 @@
 "Move these devices to a Thunderbolt port to see more about them." = "이 기기들에 대해 더 자세히 보려면 Thunderbolt 포트로 옮겨 연결하세요.";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Display connected";
+"Display connected" = "디스플레이 연결됨";
 "%lld displays connected" = "%lld displays connected";
 "Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
 

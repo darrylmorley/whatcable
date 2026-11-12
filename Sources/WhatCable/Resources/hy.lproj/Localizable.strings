@@ -13,7 +13,7 @@
 "Connected devices" = "Միացված սարքեր";
 "Connection" = "Կապ";
 "Desktop Mac: charger identity (FedDetails) is not available." = "Աշխատասեղանային Mac. լիցքավորիչի ինքնությունը (FedDetails) հասանելի չէ:";
-"Display" = "Էկրան";
+"Appearance" = "Արտաքին տեսք";
 "Done" = "Կատարված է";
 "Downloading…" = "Ներբեռնվում է";
 "Newer version found, installing it…" = "Հայտնաբերվեց նոր տարբերակ, տեղադրվում է…";
@@ -101,8 +101,8 @@
 "Back" = "Հետ";
 "Unpin (popover closes when you click away)" = "Ապամագնիսել (ելնող պատուհանը փակվում է, երբ կտտացնում եք դրսում)";
 "Open in a separate window" = "Բացել առանձին պատուհանում";
-"Power Monitor" = "Հոսանքի մոնիտոր";
-"Negotiation Diagnostics" = "Բանակցությունների ախտորոշում";
+"Power Monitor" = "Սնուցման մոնիտոր";
+"Negotiation Diagnostics" = "Բանակցության ախտորոշում";
 "Cable Diagnostics" = "Մալուխի ախտորոշում";
 "%@ Port %lld Diagnostics" = "%@ Պորտ %lld ախտորոշում";
 
@@ -156,7 +156,7 @@
 "Move these devices to a Thunderbolt port to see more about them." = "Այս սարքերի մասին ավելին տեսնելու համար տեղափոխեք դրանք Thunderbolt նավահանգիստ։";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Display connected";
+"Display connected" = "Էկրանը միացված է";
 "%lld displays connected" = "%lld displays connected";
 "Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
 

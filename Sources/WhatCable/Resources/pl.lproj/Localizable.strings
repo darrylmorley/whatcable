@@ -12,7 +12,7 @@
 "Check for Updates…" = "Sprawdź aktualizacje…";
 "Connected devices" = "Podłączone urządzenia";
 "Connection" = "Połączenie";
-"Display" = "Monitor";
+"Appearance" = "Wygląd";
 "Desktop Mac: charger identity (FedDetails) is not available." = "Mac stacjonarny: dane identyfikacyjne ładowarki (FedDetails) są niedostępne.";
 "Done" = "Gotowe";
 "Downloading…" = "Pobieranie…";
@@ -155,7 +155,7 @@
 "Move these devices to a Thunderbolt port to see more about them." = "Przenieś te urządzenia do portu Thunderbolt, aby zobaczyć o nich więcej.";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Display connected";
+"Display connected" = "Monitor podłączony";
 "%lld displays connected" = "%lld displays connected";
 "Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
 

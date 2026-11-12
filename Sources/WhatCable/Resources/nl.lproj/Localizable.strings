@@ -8,11 +8,11 @@
 "Behavior" = "Gedrag";
 "Built by %@." = "Gemaakt door %@.";
 "Cable trust signals" = "Kabelvertrouwenssignalen";
-"Cancel" = "Annuleer";
+"Cancel" = "Annuleren";
 "Check for Updates…" = "Controleer op updates…";
 "Connected devices" = "Verbonden apparaten";
 "Connection" = "Verbinding";
-"Display" = "Scherm";
+"Appearance" = "Weergave";
 "Desktop Mac: charger identity (FedDetails) is not available." = "Desktop Mac: opladeridentiteit (FedDetails) is niet beschikbaar.";
 "Done" = "Gereed";
 "Downloading…" = "Downloaden…";
@@ -56,7 +56,7 @@
 "Provisioned" = "Ingericht";
 "Quit" = "Stop";
 "Quit %@" = "Stop %@";
-"Refresh" = "Vernieuw";
+"Refresh" = "Vernieuwen";
 "Report this cable" = "Meld deze kabel";
 "Runs as a regular Dock app with a window." = "Werkt als gewone Dock-app met een venster.";
 "System Default" = "Systeemstandaard";
@@ -101,8 +101,8 @@
 "Unpin (popover closes when you click away)" = "Losmaken (popover sluit wanneer je ergens anders klikt)";
 "Open in a separate window" = "Openen in apart venster";
 "Power Monitor" = "Energiemonitor";
-"Negotiation Diagnostics" = "Onderhandelingsdiagnose";
-"Cable Diagnostics" = "Kabeldiagnose";
+"Negotiation Diagnostics" = "Onderhandelingsdiagnostiek";
+"Cable Diagnostics" = "Kabeldiagnostiek";
 "%@ Port %lld Diagnostics" = "%@ Poort %lld Diagnose";
 
 /* Onboarding / welcome screen (first launch). */
@@ -155,7 +155,7 @@
 "Move these devices to a Thunderbolt port to see more about them." = "Verplaats deze apparaten naar een Thunderbolt-poort om er meer over te zien.";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Display connected";
+"Display connected" = "Scherm verbonden";
 "%lld displays connected" = "%lld displays connected";
 "Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
 

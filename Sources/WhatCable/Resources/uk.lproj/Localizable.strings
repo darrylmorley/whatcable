@@ -12,7 +12,7 @@
 "Check for Updates…" = "Перевірити оновлення…";
 "Connected devices" = "Підключені пристрої";
 "Connection" = "З'єднання";
-"Display" = "Дисплей";
+"Appearance" = "Вигляд";
 "Desktop Mac: charger identity (FedDetails) is not available." = "Mac (настільний): ідентифікатор зарядного пристрою (FedDetails) недоступний.";
 "Done" = "Готово";
 "Downloading…" = "Завантаження…";
@@ -118,7 +118,7 @@
 "You can change this any time in Settings." = "Ви можете змінити це будь-коли в Налаштуваннях.";
 
 /* Billboard device (display dimension). English; community-refined. */
-"Billboard device present" = "Billboard-пристрій підключено";
+"Billboard device present" = "Присутній пристрій Billboard";
 
 /* Softened blank e-marker note */
 "Cable note" = "Примітка про кабель";
@@ -155,7 +155,7 @@
 "Move these devices to a Thunderbolt port to see more about them." = "Перемкніть ці пристрої на порт Thunderbolt, щоб побачити більше інформації про них.";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Підключено дисплей";
+"Display connected" = "Дисплей підключено";
 "%lld displays connected" = "Підключено %lld дисплеїв";
 "Built-in %1$@ port %2$lld" = "Вбудований %1$@-порт під номером %2$lld";
 
@@ -170,7 +170,7 @@
 /* Intel Macs are unsupported; notice shown on every launch. */
 "WhatCable can't read cables on this Mac" = "WhatCable не може зчитати кабелі на цьому Mac";
 "This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "У цьому Mac встановлено процесор Intel. WhatCable отримує дані про кабелі та порти від контролера портів Apple Silicon, а Mac з процесором Intel його не надають, тож застосунок не покаже нічого корисного.\n\nВін залишиться відкритим, якщо хочете роздивитися, але за ним нічого немає.";
-"OK" = "ОК";
+"OK" = "Гаразд";
 "Learn more" = "Докладніше";
 /* USB device detail rows (downstream device enrichment). Labels for the
    per-device expander: vendor, serial and USB version. */

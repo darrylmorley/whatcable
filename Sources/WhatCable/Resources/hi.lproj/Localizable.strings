@@ -12,7 +12,7 @@
 "Check for Updates…" = "अपडेट की जाँच करें…";
 "Connected devices" = "कनेक्टेड डिवाइस";
 "Connection" = "कनेक्शन";
-"Display" = "डिस्प्ले";
+"Appearance" = "दिखावट";
 "Desktop Mac: charger identity (FedDetails) is not available." = "डेस्कटॉप Mac: चार्जर पहचान (FedDetails) उपलब्ध नहीं है।";
 "Done" = "हो गया";
 "Downloading…" = "डाउनलोड हो रहा है…";
@@ -56,7 +56,7 @@
 "Provisioned" = "प्रोविज़न किया गया";
 "Quit" = "बंद करें";
 "Quit %@" = "%@ बंद करें";
-"Refresh" = "रिफ़्रेश";
+"Refresh" = "रीफ़्रेश करें";
 "Report this cable" = "इस केबल की रिपोर्ट करें";
 "Runs as a regular Dock app with a window." = "एक सामान्य Dock ऐप के रूप में विंडो के साथ चलता है।";
 "System Default" = "सिस्टम डिफ़ॉल्ट";
@@ -155,7 +155,7 @@
 "Move these devices to a Thunderbolt port to see more about them." = "इनके बारे में और जानने के लिए इन डिवाइसों को Thunderbolt पोर्ट पर ले जाएँ।";
 
 /* Built-in display port card (issue #352). English placeholders, community can refine. */
-"Display connected" = "Display connected";
+"Display connected" = "डिस्प्ले कनेक्टेड";
 "%lld displays connected" = "%lld displays connected";
 "Built-in %1$@ port %2$lld" = "Built-in %1$@ port %2$lld";
 
