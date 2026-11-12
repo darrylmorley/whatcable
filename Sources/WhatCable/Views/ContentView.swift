@@ -122,6 +122,20 @@ struct ContentView: View {
             // The popover keeps its old alignment.
             alignment: settings.useMenuBarMode ? .center : .top
         )
+        // Opt-in solid popover background (issue #562). The popover's default
+        // backdrop is translucent and picks up a bright desktop behind it;
+        // this paints the same colour an NSWindow draws by default, which is
+        // what Dock app mode shows. Applied after the frame so it fills the
+        // whole content area, including the space the min-height adds. It
+        // covers the content area only: the popover's arrow is drawn by
+        // AppKit outside it and stays translucent. Window mode already has a
+        // solid background, so this is gated to menu-bar mode.
+        .background {
+            if settings.useMenuBarMode && settings.solidMenuBarBackground {
+                Color(nsColor: .windowBackgroundColor)
+                    .ignoresSafeArea()
+            }
+        }
         // `\.fontScale` is now injected at the NSHostingController root by
         // `ScaledHost`, which observes `FontScaleStore` so every SwiftUI
         // surface (popover, dock window, detached Pro windows, welcome,

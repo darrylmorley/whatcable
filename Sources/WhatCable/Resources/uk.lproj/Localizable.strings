@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "Повідомити про кабель через GitHub із відбитком e-marker";
 "Font size" = "Розмір шрифту";
 "Opacity" = "Непрозорість";
+"Solid window background" = "Непрозорий фон вікна";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Допомагає розробнику відтворити поведінку зарядного пристрою або кабелю на конкретному обладнанні.";
 "Hide empty ports" = "Приховати порожні порти";
 "Host (%@)" = "Хост (%@)";

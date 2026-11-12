@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "इस केबल के e-marker फ़िंगरप्रिंट के साथ GitHub issue दर्ज करें";
 "Font size" = "फ़ॉन्ट आकार";
 "Opacity" = "अपारदर्शिता";
+"Solid window background" = "ठोस विंडो पृष्ठभूमि";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "डेवलपर को विशिष्ट हार्डवेयर से जुड़े चार्जर/केबल व्यवहार को दोहराने में मदद करता है।";
 "Hide empty ports" = "खाली पोर्ट छुपाएँ";
 "Host (%@)" = "होस्ट (%@)";

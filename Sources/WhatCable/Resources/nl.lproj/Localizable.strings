@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "Dien een GitHub-melding in met de e-marker-vingerafdruk van deze kabel";
 "Font size" = "Lettergrootte";
 "Opacity" = "Dekking";
+"Solid window background" = "Dekkende vensterachtergrond";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Helpt de beheerder gedrag van oplader of kabel te reproduceren op specifieke hardware.";
 "Hide empty ports" = "Verberg lege poorten";
 "Host (%@)" = "Host (%@)";

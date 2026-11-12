@@ -22,6 +22,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "使用这条线缆的 e-marker 指纹提交 GitHub issue";
 "Font size" = "字体大小";
 "Opacity" = "不透明度";
+"Solid window background" = "不透明窗口背景";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "帮助维护者复现与特定硬件相关的充电器/线缆行为。";
 "Hide empty ports" = "隐藏空端口";
 "Host (%@)" = "主机（%@）";

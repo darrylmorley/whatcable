@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "이 케이블의 E-marker 핑거프린트로 GitHub 이슈 등록";
 "Font size" = "글자 크기";
 "Opacity" = "불투명도";
+"Solid window background" = "불투명한 창 배경";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "개발자가 특정 하드웨어에서 생기는 충전기/케이블 문제를 재현하는 데 도움이 됩니다.";
 "Hide empty ports" = "빈 포트 숨기기";
 "Host (%@)" = "호스트 (%@)";

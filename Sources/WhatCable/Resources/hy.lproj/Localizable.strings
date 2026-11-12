@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "Ստեղծել GitHub issue այս կաբելի e-marker մատնահետքով";
 "Font size" = "Տառատեսակի չափը";
 "Opacity" = "Անթափանցելիություն";
+"Solid window background" = "Պատուհանի անթափանց ֆոն";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Օգնում է մշակողին վերարտադրել լիցքավորիչի/կաբելի վարքագիծը՝ կապված կոնկրետ սարքակազմի հետ:";
 "Hide empty ports" = "Թաքցնել դատարկ պորտերը";
 "Host (%@)" = "Հոսթ (%@)";

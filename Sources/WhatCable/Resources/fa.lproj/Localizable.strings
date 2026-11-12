@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "ثبت یک issue در GitHub با اثر انگشت e-marker این کابل";
 "Font size" = "اندازهٔ قلم";
 "Opacity" = "میزان کدری";
+"Solid window background" = "پس‌زمینهٔ یکدست پنجره";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "به توسعه‌دهنده کمک می‌کند رفتار شارژر / کابل وابسته به سخت‌افزار خاص را بازتولید کند.";
 "Hide empty ports" = "پنهان کردن درگاه‌های خالی";
 "Host (%@)" = "میزبان (%@)";

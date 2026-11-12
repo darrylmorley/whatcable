@@ -111,6 +111,10 @@ struct SettingsForm: View {
                     }
                 }
 
+                if settings.useMenuBarMode {
+                    Toggle(String(localized: "Solid window background", bundle: _appLocalizedBundle), isOn: $settings.solidMenuBarBackground)
+                }
+
                 LabeledContent {
                     MenuBarIconPicker(selection: $settings.menuBarIcon)
                 } label: {

@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "Bu kablonun e-marker parmak iziyle bir GitHub sorunu bildirin";
 "Font size" = "Yazı tipi boyutu";
 "Opacity" = "Matlık";
+"Solid window background" = "Düz pencere arka planı";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Bakımcının belirli donanıma bağlı şarj aleti / kablo davranışını yeniden üretmesine yardımcı olur.";
 "Hide empty ports" = "Boş bağlantı noktalarını gizle";
 "Host (%@)" = "Barındırıcı (%@)";

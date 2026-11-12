@@ -39,6 +39,7 @@ final class AppSettings: ObservableObject {
         static let showTechnicalDetails = "showTechnicalDetails"
         static let fontSize = "fontSize"
         static let uiOpacity = "uiOpacity"
+        static let solidMenuBarBackground = "solidMenuBarBackground"
         static let menuBarIcon = "menuBarIcon"
         static let preferredLanguage = "preferredLanguage"
         static let testKitLastRunVersion = "testKitLastRunVersion"
@@ -272,6 +273,27 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Whether the menu bar popover draws a solid background instead of the
+    /// translucent (vibrant) one macOS gives popovers by default (issue #562).
+    /// Over a white or very light desktop the frosted backdrop picks up the
+    /// brightness behind it; this swaps it for the same solid window colour
+    /// Dock app mode already shows. Off by default, so nothing changes until
+    /// the user opts in. Independent of `uiOpacity`, which still fades the
+    /// whole surface, solid background included. App-only: the widget is a
+    /// separate process and draws its own background.
+    @Published var solidMenuBarBackground: Bool {
+        didSet {
+            guard solidMenuBarBackground != oldValue else { return }
+            defaults.set(solidMenuBarBackground, forKey: Keys.solidMenuBarBackground)
+        }
+    }
+
+    /// The saved `solidMenuBarBackground` value. An absent key reads as false
+    /// (off), which is the default.
+    static func storedSolidMenuBarBackground(in defaults: UserDefaults) -> Bool {
+        defaults.bool(forKey: Keys.solidMenuBarBackground)
+    }
+
     /// SF Symbol name shown in the menu bar status item. The curated list
     /// keeps users to glyphs we know render; an unknown stored value (e.g.
     /// a symbol dropped in a future macOS) falls back to the default.
@@ -439,6 +461,7 @@ final class AppSettings: ObservableObject {
         // Seed the AppKit-side store so the first surface opens at the saved
         // opacity, before the user touches the slider.
         OpacityStore.shared.opacity = initialOpacity
+        self.solidMenuBarBackground = Self.storedSolidMenuBarBackground(in: defaults)
         let savedIcon = defaults.string(forKey: Keys.menuBarIcon) ?? Self.defaultMenuBarIcon
         self.menuBarIcon = Self.validatedMenuBarIcon(savedIcon)
         self.showChargingWatts = defaults.bool(forKey: Keys.showChargingWatts)

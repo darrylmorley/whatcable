@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "Iesniegt GitHub ziņojumu ar šī kabeļa e-marker pirksta nospiedumu";
 "Font size" = "Fonta izmērs";
 "Opacity" = "Necaurredzamība";
+"Solid window background" = "Necaurredzams loga fons";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Palīdz uzturētājam reproducēt lādētāja / kabeļa darbību, kas saistīta ar konkrētu aparatūru.";
 "Hide empty ports" = "Slēpt tukšos portus";
 "Host (%@)" = "Resursdators (%@)";

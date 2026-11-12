@@ -49,7 +49,7 @@ Click the **gear icon** in the popover header to open Settings, where you can:
 - Launch at login
 - Run as a regular Dock app instead of a menu bar icon
 - Pick the menu bar icon, and show the live charging wattage next to it as either a number or a small fill bar
-- Adjust the font size and the window opacity
+- Adjust the font size and the window opacity, and give the menu bar window a solid background instead of the translucent one
 - Show technical details (the same raw IOKit data that ⌥-click reveals)
 - Skip deep USB probing, a compatibility switch for the few KVM switches and hubs that misbehave when WhatCable reads capability info from the devices behind them
 - Switch language (English, Armenian, Brazilian Portuguese, Dutch, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Persian, Polish, Russian, Simplified Chinese, Spanish, Traditional Chinese, Turkish, Ukrainian, or follow your system default)

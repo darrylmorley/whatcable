@@ -21,6 +21,7 @@
 "File a GitHub issue with this cable's e-marker fingerprint" = "このケーブルのe-markerフィンガープリントでGitHub issueを作成";
 "Font size" = "フォントサイズ";
 "Opacity" = "不透明度";
+"Solid window background" = "ウィンドウの背景を不透明にする";
 "Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "開発者が特定のハードウェアに関連する充電器/ケーブルの動作を再現する際に役立ちます。";
 "Hide empty ports" = "空きポートを非表示";
 "Host (%@)" = "ホスト (%@)";
