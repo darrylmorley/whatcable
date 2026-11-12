@@ -187,6 +187,7 @@ hand-maintained markdown table; format may change once the consumer exists.
 | Unbranded USB4 40 Gbps cable about 1 m, bundled with an enclosure (no USB-IF cert) | `0x315C` | `0x0000` | `0x450A4643` | Chengdu Convenientpower Semiconductor Co., LTD | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#640](https://github.com/darrylmorley/whatcable/issues/640) |
 | Fitee USB4 80 Gbps cable 5 ft, Amazon (Silkland silicon) | `0x3678` | `0x0000` | `0x000A4644` | (Silkland) Shenzhen Guanhai Technology Co., Ltd. | `0x281E` | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#649](https://github.com/darrylmorley/whatcable/issues/649) |
 | Cabletime right-angle USB-C cable 1 m, sold as 20 Gbps / 100 W (unregistered VID) | `0x7880` | `0x8010` | `0x320A4042` | Unregistered | `0x1518` | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#636](https://github.com/darrylmorley/whatcable/issues/636) |
+| mophie (ZAGG) 240 W USB-C to USB-C cable, zagg.com | `0x2943` | `0x3952` | `0xAA0A2640` | ZAGG Inc. | `0x2F48` | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#532](https://github.com/darrylmorley/whatcable/issues/532) |
 
 Sorted by VID. The zeroed-fingerprint entry is parked at the bottom because it
 is identity-less.

@@ -1428,6 +1428,20 @@
     "xid" : "0x38A7"
   },
   {
+    "brand" : "mophie (ZAGG) 240 W USB-C to USB-C cable, zagg.com",
+    "cableVDO" : "0xAA0A2640",
+    "issueNum" : "#532",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/532",
+    "pid" : "0x3952",
+    "power" : "5 A \/ 50 V (240 W)",
+    "registered" : true,
+    "speed" : "USB 2.0 (480 Mbps)",
+    "type" : "passive",
+    "vendor" : "ZAGG Inc.",
+    "vid" : "0x2943",
+    "xid" : "0x2F48"
+  },
+  {
     "brand" : "CUKTECH CTC615N 6A 240 W 1.5 m, USB-IF certified",
     "cableVDO" : "0x000A4640",
     "issueNum" : "#138",
