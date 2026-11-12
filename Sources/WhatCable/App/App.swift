@@ -1055,16 +1055,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     // MARK: - Status item handling (menu bar mode)
 
     @objc private func handleClick(_ sender: NSStatusBarButton) {
-        guard let event = NSApp.currentEvent else { return }
-        if event.type == .rightMouseUp {
+        // An Accessibility press (VoiceOver's VO-Space, or a menu bar manager
+        // sending AXPress) fires this action with no current event; the
+        // decision treats that as a plain left click (issue #632).
+        let event = NSApp.currentEvent
+        switch StatusItemClickAction.decide(
+            eventType: event?.type,
+            modifierFlags: event?.modifierFlags ?? []
+        ) {
+        case .showMenu:
             showMenu(from: sender)
-        } else {
+        case .togglePopover(let optionHeld):
             // ⌥-click momentarily reveals the technical-details view,
             // matching the macOS convention used by Wi-Fi / Volume /
             // Bluetooth menus. The flag is cleared when the popover closes
             // (see popoverDidClose), so the persistent preference in
             // AppSettings is what survives across opens.
-            Self.refreshSignal.optionHeld = event.modifierFlags.contains(.option)
+            Self.refreshSignal.optionHeld = optionHeld
             togglePopover(from: sender)
         }
     }
