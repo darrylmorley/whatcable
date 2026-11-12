@@ -249,7 +249,7 @@ cp .env.example .env
 
 ## Linux port
 
-[@abrauchli](https://github.com/abrauchli) built a Rust port for Linux called [usbeehive](https://github.com/abrauchli/usbeehive). Install it with `cargo install usbeehive`. It reads from the kernel's typec sysfs interface rather than IOKit, so it's an independent implementation rather than a fork. It started life as a `whatcable` crate on crates.io before being renamed to avoid confusion with this repo. He's also working on [usbee](https://github.com/abrauchli/usbee), a GNOME UI for it (early stage, but the basics work).
+[@abrauchli](https://github.com/abrauchli) built a Rust port for Linux called [usbeehive](https://github.com/abrauchli/usbeehive), which also (optionally) installs a D-Bus backend for the GNOME Shell extension [usbee](https://github.com/abrauchli/usbee). See the project repos for installation instructions. Usbeehive reads from the kernel's typec sysfs interface rather than IOKit, so it's an independent implementation rather than a fork. It started life as a `whatcable` crate on crates.io before being renamed to avoid confusion with this repo.
 
 ## The other half of the question
 
