@@ -114,20 +114,49 @@ struct SnapshotCorpusTests {
         #expect(throws: TypedValue.DecodeError.self) { try RegistrySnapshot(Self.file([other])) }
     }
 
-    @Test("Every linked run's snapshot loads complete")
+    @Test("Every linked run's snapshot loads complete, or stopped or missing as the contract allows")
     func linkedRunsLoad() throws {
         // No research-data link (private; absent on a fresh clone or the public repo) is a legitimate skip. A
         // runs folder that exists but holds no runs is a broken link, and must
         // fail rather than pass on nothing.
+        //
+        // Two shapes are not complete snapshots and are still correct
+        // (first met 2026-11-12):
+        // - stopped with `identifiers_incomplete`: FORMAT.md lets any probe
+        //   stop that way, header then footer, no records, `step` naming the
+        //   lookup that failed. Every probe on an Intel Mac with Bluetooth
+        //   does (an Intel iMac run, step `bluetooth`).
+        // - no snapshot file in a run the worker never confirmed (`run.json`
+        //   summary absent or not complete): the ingest writes such a run
+        //   once it is over 24 hours old, with whatever probes reached KV.
+        // A confirmed run without a snapshot, or any other stop, still fails.
         var isDir: ObjCBool = false
         guard FileManager.default.fileExists(atPath: SnapshotCorpus.root.path, isDirectory: &isDir), isDir.boolValue else { return }
         let runs = SnapshotCorpus.allRuns()
         #expect(!runs.isEmpty, "\(SnapshotCorpus.root.path) exists but holds no runs")
+        var complete = 0
         for run in runs {
-            let file = try #require(try SnapshotCorpus.load(run: run, probe: "50_registry_snapshot"),
-                                    "\(run.lastPathComponent) has no 50_registry_snapshot.jsonl")
-            #expect(file.isComplete, "\(run.lastPathComponent): snapshot was cut off")
-            #expect(try RegistrySnapshot(file).entries.count > 0, "\(run.lastPathComponent): no entries")
+            let name = run.lastPathComponent
+            guard let file = try SnapshotCorpus.load(run: run, probe: "50_registry_snapshot") else {
+                let meta = try? JSONSerialization.jsonObject(
+                    with: Data(contentsOf: run.appendingPathComponent("run.json"))) as? [String: Any]
+                let summary = meta?["summary"] as? [String: Any]
+                #expect(meta != nil, "\(name) has no 50_registry_snapshot.jsonl and no readable run.json")
+                #expect(summary?["complete"] as? Bool != true,
+                        "\(name) has no 50_registry_snapshot.jsonl though the worker confirmed the run complete")
+                continue
+            }
+            if file.footer?["status"] as? String == "stopped",
+               file.footer?["reason"] as? String == "identifiers_incomplete" {
+                #expect(file.records.isEmpty, "\(name): stopped for identifiers but holds records")
+                let step = file.footer?["step"] as? String ?? ""
+                #expect(step.count > 0, "\(name): stopped for identifiers with no step")
+                continue
+            }
+            #expect(file.isComplete, "\(name): snapshot was cut off")
+            #expect(try RegistrySnapshot(file).entries.count > 0, "\(name): no entries")
+            complete += 1
         }
+        #expect(runs.isEmpty || complete > 0, "no linked run has a complete snapshot: checked nothing")
     }
 }

@@ -33,9 +33,14 @@ import Testing
 // never report the leaf. Probe 41 still would, and its chain would no
 // longer contain the matched name, which is the miss this test is for.
 //
-// A leaf seen in probe 31 with no probe 41 row cannot be judged and is
-// reported as a miss too. Probe 41 has shipped in the test kit since
-// 2026-08-09, so a new chip arrives with both probes and a miss means "look".
+// A leaf seen in probe 31 with no probe 41 row is judged by probe 31 alone.
+// Probe 31 lists a leaf under its `AppleTypeCPhy[N]` headers only because
+// `IOServiceMatching("AppleTypeCPhy")` returned it, so the leaf is reached
+// exactly when the watcher still matches that base name. The renamed-base
+// miss above prints no such header, so it is still caught through probe 41.
+// This was a blanket miss until the first complete M3 Ultra capture
+// (`m3ultra_macos27.2`, 2026-11-12): an older client with no probe 41,
+// reporting `AppleT6032TypeCPhy` under the base header.
 @Suite("AppleTypeCPhy class coverage (probes 31 and 41)")
 struct AppleTypeCPhyClassCoverageTests {
 
@@ -106,6 +111,8 @@ struct AppleTypeCPhyClassCoverageTests {
         }
 
         let matched = Set(AppleTypeCPhyWatcher.candidateClasses)
+        // The class probe 31 matches (`31_typec_phy_properties.c:131`).
+        let probe31Base = "AppleTypeCPhy"
         // IOServiceMatching(X) returns X and every subclass of X. A leaf is
         // reached when the watcher matches it by name, or when every ancestry
         // chain the kernel has reported for it contains a matched class.
@@ -114,7 +121,11 @@ struct AppleTypeCPhyClassCoverageTests {
         // folder's older chain.
         func reached(_ leaf: String) -> Bool {
             if matched.contains(leaf) { return true }
-            guard let leafChains = chains[leaf], !leafChains.isEmpty else { return false }
+            guard let leafChains = chains[leaf], !leafChains.isEmpty else {
+                // No kernel chain: probe 31's base-class header is the
+                // evidence (see the header comment).
+                return observed[leaf] != nil && matched.contains(probe31Base)
+            }
             return leafChains.allSatisfy { chain in chain.contains(where: matched.contains) }
         }
         // Leaves from both probes. Probe 31 matches `AppleTypeCPhy` by the

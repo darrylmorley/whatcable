@@ -24,6 +24,15 @@ import Testing
 // EDID's one SVD covers both, so a driven timing at exactly refresh/1.001 of
 // a declared VIC counts as declared. Those nodes are named and counted apart.
 //
+// A node can also publish a declared timing at its nominal rate. The Dell
+// U3224KB on `m3ultra_macos27.2` (2026-11-12) declares 6144x3456 in a DisplayID
+// Type I block at 1378.80 MHz over 6464 x 3555 totals, which is 60.00125 Hz;
+// its node carries the same totals and porches with a vertical PreciseSyncRate
+// of exactly 0x3c0000 (60.000 Hz), so totals times refresh is 28.8 kHz short of
+// the declared clock. When the claimed node's totals equal a declared mode's
+// and the refreshes differ by under 0.01 Hz, it is the declared mode with the
+// rate rounded, not an undeclared one. Those are named and counted apart too.
+//
 // The parser and the probe-33 pairing are shared with DisplayDiagnosticProbeSweepTests through CorpusDisplayProbes.swift.
 
 @Suite("DisplayTimingReader -- probe-26 corpus sweep")
@@ -46,6 +55,7 @@ struct DisplayTimingReaderProbeSweepTests {
         var claimedNodes = 0
         var comparedExact = 0
         var alternateRate: [String] = []
+        var nominalRate: [String] = []
         var mismatches: [String] = []
         var singleDepth = 0
         var nodesWithTiming = 0
@@ -82,6 +92,7 @@ struct DisplayTimingReaderProbeSweepTests {
             // (a match defect) is recorded rather than counted.
             var pool = nodes
             for (entry, port) in zip(ports, matched) {
+                var claimedTiming: DisplayTimingReader.Timing?
                 guard let mode = port.currentMode, let clock = mode.pixelClockHz else { continue }
                 attachedPorts += 1
                 let key = DisplayTimingReader.edidKey(from: entry.port.monitor?.edid ?? Data())
@@ -90,7 +101,7 @@ struct DisplayTimingReaderProbeSweepTests {
                     $0.edidKey == key && $0.currentTiming?.pixelClockHz == clock
                         && (portSerial == 0 || ($0.serialNumber ?? 0) == 0 || $0.serialNumber == portSerial)
                 }) {
-                    pool.remove(at: index)
+                    claimedTiming = pool.remove(at: index).currentTiming
                     claimedNodes += 1
                 } else {
                     Issue.record("\(folder) block \(entry.block): attached a timing no unclaimed node explains (a node attached twice?)")
@@ -108,6 +119,14 @@ struct DisplayTimingReaderProbeSweepTests {
                         && abs(Double($0.pixelClockHz) / 1.001 - Double(clock)) <= 1000
                 }
                 if alternate { alternateRate.append(tag + " (declared at x1.001)"); continue }
+                if let timing = claimedTiming, entry.edid.modes.contains(where: {
+                    $0.width == mode.width && $0.height == mode.height
+                        && $0.hTotal == timing.hTotal && $0.vTotal == timing.vTotal
+                        && abs($0.refreshHz - mode.refreshHz) < 0.01
+                }) {
+                    nominalRate.append(tag + " (declared totals, rate rounded)")
+                    continue
+                }
                 mismatches.append(tag + " is not among the EDID's \(entry.edid.modes.count) declared modes")
             }
             for node in pool {
@@ -115,10 +134,11 @@ struct DisplayTimingReaderProbeSweepTests {
             }
         }
 
-        print("DisplayTimingReaderProbeSweep: \(foldersWithProbe26) folders with probe 26; \(nodesWithTables) external nodes with tables \(byClass); \(nodesWithTiming) with the current timing captured, \(notCaptured.count) not captured; \(attachedPorts) ports attached (\(claimedNodes) nodes claimed), \(unpaired.count) nodes unpaired; compared: \(comparedExact) exact, \(alternateRate.count) at the CTA alternate rate, \(mismatches.count) mismatches; \(singleDepth) timings with a single depth")
+        print("DisplayTimingReaderProbeSweep: \(foldersWithProbe26) folders with probe 26; \(nodesWithTables) external nodes with tables \(byClass); \(nodesWithTiming) with the current timing captured, \(notCaptured.count) not captured; \(attachedPorts) ports attached (\(claimedNodes) nodes claimed), \(unpaired.count) nodes unpaired; compared: \(comparedExact) exact, \(alternateRate.count) at the CTA alternate rate, \(nominalRate.count) at a rounded rate, \(mismatches.count) mismatches; \(singleDepth) timings with a single depth")
         for line in notCaptured { print("  NOT CAPTURED \(line)") }
         for line in unpaired { print("  UNPAIRED \(line)") }
         for line in alternateRate { print("  ALTERNATE RATE \(line)") }
+        for line in nominalRate { print("  ROUNDED RATE \(line)") }
         for line in mismatches { print("  MISMATCH \(line)") }
 
         // Non-vacuity: a corpus that exists but yields no node must not pass quietly. The run
@@ -127,7 +147,7 @@ struct DisplayTimingReaderProbeSweepTests {
         #expect(nodesWithTables > 0, "no external node with tables: checked at least one")
         #expect(mismatches.isEmpty, "\(mismatches.count) driven timings the EDID does not declare:\n\(mismatches.joined(separator: "\n"))")
         #expect(attachedPorts == claimedNodes, "a port attached a timing no node explains: \(attachedPorts) ports for \(claimedNodes) nodes")
-        #expect(comparedExact + alternateRate.count + mismatches.count == attachedPorts, "every attached port is compared")
+        #expect(comparedExact + alternateRate.count + nominalRate.count + mismatches.count == attachedPorts, "every attached port is compared")
         #expect(claimedNodes + unpaired.count == nodesWithTiming, "every captured node is attached or named unpaired")
         #expect(nodesWithTiming + notCaptured.count == nodesWithTables, "every node is accounted for")
     }
