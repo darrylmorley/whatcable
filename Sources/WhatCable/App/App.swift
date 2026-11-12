@@ -1035,6 +1035,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         w.styleMask = [.titled, .closable, .miniaturizable, .resizable]
         w.setContentSize(NSSize(width: 760, height: 540))
         w.center()
+        // Bring back the position and size from last time (issue #522), unless
+        // it was on a display that is no longer connected; then the centred
+        // default above stands.
+        WindowFrameMemory.apply(to: w, autosaveName: Self.mainWindowAutosaveName)
         w.delegate = self
         w.isReleasedWhenClosed = false
         window = w
@@ -1044,7 +1048,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         WatcherHub.shared.setUIVisible(true)
     }
 
+    /// Autosave name for the window-mode main window's frame.
+    static let mainWindowAutosaveName = "uk.whatcable.mainWindow"
+
     private func tearDownWindowMode() {
+        // Free the autosave name so a later return to window mode in this
+        // launch can claim it (one window per name).
+        if let window { WindowFrameMemory.release(window) }
         window?.delegate = nil
         window?.close()
         window = nil

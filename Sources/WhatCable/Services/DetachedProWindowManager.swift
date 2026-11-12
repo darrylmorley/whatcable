@@ -34,6 +34,10 @@ final class DetachedProWindowManager: NSObject, NSWindowDelegate {
         window.isReleasedWhenClosed = false
         window.delegate = self
         window.center()
+        // Remember position and size per screen kind (issue #522). Cable
+        // Diagnostics shares one name across ports: while one is open a second
+        // can't claim it and opens at the centred default.
+        WindowFrameMemory.apply(to: window, autosaveName: Self.autosaveName(for: route))
         windows[key] = window
         // Tell the hub this surface is on screen so its shared watchers poll at
         // the active 1 Hz cadence (not the 30 s idle one) for as long as this
@@ -95,6 +99,7 @@ final class DetachedProWindowManager: NSObject, NSWindowDelegate {
         Task { @MainActor in
             guard let w = notification.object as? NSWindow,
                   let id = w.identifier?.rawValue else { return }
+            WindowFrameMemory.release(w)
             windows[id] = nil
             // Drop this surface's visibility token. The hub goes idle only once
             // every surface (popover/window and all detached windows) is gone.
@@ -123,6 +128,11 @@ final class DetachedProWindowManager: NSObject, NSWindowDelegate {
             k += ".\(portKey)"
         }
         return k
+    }
+
+    /// One autosave name per screen kind, not per port.
+    static func autosaveName(for route: ProScreenRoute) -> String {
+        "uk.whatcable.detached.\(route.id).frame"
     }
 
     private static func title(for route: ProScreenRoute) -> String {
