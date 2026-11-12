@@ -76,22 +76,27 @@ extraHead: |
 <h3>Downloaded the .zip from GitHub?</h3>
 <p>The CLI is bundled inside the app, at:</p>
 <pre><code>/Applications/WhatCable.app/Contents/Helpers/whatcable</code></pre>
-<p>You can run it from there directly, alias it, or symlink it. Pick whichever fits how you use Terminal.</p>
+<p>You can run it from there directly, alias it, or add it to your PATH. Pick whichever fits how you use Terminal.</p>
 
-<h4 class="cli-subhead">Option 1: run the full path (no setup)</h4>
+<h4 class="cli-subhead">Option 1: add it to your PATH with <code>/etc/paths.d</code> (recommended)</h4>
+<p>macOS builds every user's PATH from the files in <code>/etc/paths.d</code>. Add a file there holding the folder the CLI lives in:</p>
+<pre><code><span class="prompt">$</span> echo '/Applications/WhatCable.app/Contents/Helpers' | sudo tee /etc/paths.d/uk.whatcable &gt; /dev/null</code></pre>
+<p>The file holds just that one path, written as is: don't escape spaces or add a trailing slash. If you keep WhatCable somewhere other than <code>/Applications</code>, use that folder instead. The change takes effect in new terminal windows, not the one you're in. To check it worked, open a new window and run:</p>
+<pre><code><span class="prompt">$</span> which whatcable
+/Applications/WhatCable.app/Contents/Helpers/whatcable</code></pre>
+<p>Writing to <code>/etc/paths.d</code> needs <code>sudo</code>, so you run this yourself. WhatCable never asks for admin rights, so it won't do it for you.</p>
+
+<h4 class="cli-subhead">Option 2: run the full path (no setup)</h4>
 <p>Fine for one-off invocations:</p>
 <pre><code><span class="prompt">$</span> /Applications/WhatCable.app/Contents/Helpers/whatcable</code></pre>
 
-<h4 class="cli-subhead">Option 2: shell alias (no <code>sudo</code> needed)</h4>
+<h4 class="cli-subhead">Option 3: shell alias (no <code>sudo</code> needed)</h4>
 <p>Add this line to <code>~/.zshrc</code> (or <code>~/.bashrc</code>), then open a new terminal:</p>
 <pre><code>alias whatcable='/Applications/WhatCable.app/Contents/Helpers/whatcable'</code></pre>
 
-<h4 class="cli-subhead">Option 3: symlink into your PATH</h4>
-<p>Pick the directory that's already on your PATH. On Apple Silicon Macs that's usually <code>/opt/homebrew/bin</code>; on Intel Macs or with custom setups it's often <code>/usr/local/bin</code>. Both need <code>sudo</code>:</p>
-<pre><code><span class="comment"># Apple Silicon (Homebrew default)</span>
-<span class="prompt">$</span> sudo ln -s /Applications/WhatCable.app/Contents/Helpers/whatcable /opt/homebrew/bin/whatcable
-
-<span class="comment"># Intel / other</span>
+<h4 class="cli-subhead">Option 4: symlink into your PATH</h4>
+<p>Unlike the <code>paths.d</code> method, a symlink works straight away in the terminal you're in. <code>/usr/local/bin</code> is on the default macOS PATH; if it doesn't exist yet on your Mac, create it first. Both steps need <code>sudo</code>:</p>
+<pre><code><span class="prompt">$</span> sudo mkdir -p /usr/local/bin
 <span class="prompt">$</span> sudo ln -s /Applications/WhatCable.app/Contents/Helpers/whatcable /usr/local/bin/whatcable</code></pre>
 <p>If you'd rather not use <code>sudo</code>, create <code>~/bin</code>, add it to your PATH in <code>~/.zshrc</code>, and symlink there instead:</p>
 <pre><code><span class="prompt">$</span> mkdir -p ~/bin
