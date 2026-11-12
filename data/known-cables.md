@@ -112,7 +112,7 @@ hand-maintained markdown table; format may change once the consumer exists.
 | LG 27MD5KL bundled Thunderbolt 3 cable (Sumitomo silicon) | `0x20C2` | `0x0004` | `0x21085858` | Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab | none | USB 2.0 (480 Mbps) | 5 A / 20 V (100 W) | active | [#331](https://github.com/darrylmorley/whatcable/issues/331) |
 | LOGIIX Piston Connect USB-C cable (240W / 40 Gbps) | `0x315C` | `0x0000` | `0x000A2E43` | Chengdu Convenientpower Semiconductor Co., LTD | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#328](https://github.com/darrylmorley/whatcable/issues/328) |
 | UGREEN 140 W charger bundled cable (VID/PID zeroed) | `0x0000` | `0x0000` | `0x000A4640` | (zeroed) | none | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#327](https://github.com/darrylmorley/whatcable/issues/327) |
-| Apple Thunderbolt 4 Pro Cable (1.8 m) | `0x05AC` | `0x7208` | `0x12082042` | Apple | `0x2600` | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#342](https://github.com/darrylmorley/whatcable/issues/342) |
+| Apple Thunderbolt 4 Pro Cable (1 m) | `0x05AC` | `0x7208` | `0x12082042` | Apple | `0x2600` | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#342](https://github.com/darrylmorley/whatcable/issues/342), [#653](https://github.com/darrylmorley/whatcable/issues/653) |
 | WD My Passport SSD bundled cable (Joinsoon) | `0x060F` | `0x0000` | `0x00082022` | Joinsoon Electronics Mfg. Co., Ltd. | none | USB 3.2 Gen 2 (10 Gbps) | 3 A / 20 V (60 W) | passive | [#345](https://github.com/darrylmorley/whatcable/issues/345) |
 | Cable Matters Thunderbolt 5 80 Gbps / 240 W cable (VID/PID zeroed) | `0x0000` | `0x0000` | `0x000A2644` | (zeroed) | none | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#343](https://github.com/darrylmorley/whatcable/issues/343) |
 | RØDE Wireless Pro SuperSpeed cable (bundled with mic kit) | `0x19F7` | `0x8001` | `0x00082021` | RØDE | `0x3290` | USB 3.2 Gen 1 (5 Gbps) | 3 A / 20 V (60 W) | passive | [#361](https://github.com/darrylmorley/whatcable/issues/361) |
@@ -124,7 +124,7 @@ hand-maintained markdown table; format may change once the consumer exists.
 | No-brand USB4 40 Gbps L-shaped cable, Taobao/AliExpress | `0x0138` | `0x0000` | `0x000A4843` | Unregistered | `0x40D` | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 20 V (100 W) | passive | [#395](https://github.com/darrylmorley/whatcable/issues/395) |
 | Elecom Thunderbolt 5 / USB4 80 Gbps cable, Osaka pop-up shop | `0x0214` | `0x4011` | `0x110A2644` | Unregistered | `0x303E` | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#396](https://github.com/darrylmorley/whatcable/issues/396) |
 | Apple USB-C Charging Cable (bundled with the 61 W A1718 adapter onwards, incl. M1 MacBook Air) | `0x05AC` | `0x1781` | `0xA1084050` | Apple | `0xA26` | USB 2.0 (480 Mbps) | 5 A / 20 V (100 W) | passive | [#397](https://github.com/darrylmorley/whatcable/issues/397), [#488](https://github.com/darrylmorley/whatcable/issues/488) |
-| OWC Thunderbolt 4 cable, 28 in, Amazon | `0x2B1D` | `0x152A` | `0x110A2643` | Lintes Technology Co., Ltd. | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#388](https://github.com/darrylmorley/whatcable/issues/388) |
+| OWC Thunderbolt 4 cable, 28 in, Amazon | `0x2B1D` | `0x152A` | `0x110A2643` | Lintes Technology Co., Ltd. | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#388](https://github.com/darrylmorley/whatcable/issues/388), [#658](https://github.com/darrylmorley/whatcable/issues/658) |
 | Apple Thunderbolt 4 Pro cable 1.8 m, reporter-identified (second PID alongside `0x7205`) | `0x05AC` | `0x7209` | `0x4368F8DB` | Apple | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 20 V (100 W) | active | [#534](https://github.com/darrylmorley/whatcable/issues/534), test-kit corpus (11 machines) |
 | CalDigit TS4 dock bundled cable (Sumitomo silicon) | `0x20C2` | `0x080F` | `0x45082043` | Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 20 V (100 W) | passive | [#410](https://github.com/darrylmorley/whatcable/issues/410) |
 | Sumitomo OEM Thunderbolt 4 cable, dock bundled (40 Gbps variant of PID 0x0714) | `0x20C2` | `0x0714` | `0x460A2643` | Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | Test-kit corpus, no GitHub issue filed |
@@ -152,7 +152,7 @@ hand-maintained markdown table; format may change once the consumer exists.
 | Anker 2-in-1 USB-C cable 1.8 m, Amazon | `0x291A` | `0x8895` | `0x000A2640` | Anker Innovations Limited | none | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#485](https://github.com/darrylmorley/whatcable/issues/485) |
 | Anker A80E6 240 W Bio-Braided USB-C cable 6 ft, Amazon | `0x291A` | `0xA8F6` | `0x000A4640` | Anker Innovations Limited | `0x38A7` | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#519](https://github.com/darrylmorley/whatcable/issues/519) |
 | Cuktech Rainbow 240 W USB-C cable 1.5 m, Amazon (Zimi silicon) | `0x2B01` | `0x4091` | `0x000A0640` | Zimi Corporation | none | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#521](https://github.com/darrylmorley/whatcable/issues/521) |
-| DJI Power 7 A USB-C digital-display charging cable 1 m | `0x2CA3` | `0xC701` | `0x000A2640` | DJI Technology Co., Ltd. | none | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#499](https://github.com/darrylmorley/whatcable/issues/499) |
+| DJI Power 7 A USB-C digital-display charging cable 1 m | `0x2CA3` | `0xC701` | `0x000A2640` | DJI Technology Co., Ltd. | none | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#499](https://github.com/darrylmorley/whatcable/issues/499), [#662](https://github.com/darrylmorley/whatcable/issues/662) |
 | j5create JUCX27L12 USB4 40 Gbps coaxial cable, Best Buy | `0x2DE5` | `0x2409` | `0x12084043` | KaiJet Technology International Limited, Inc. dba j5create | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 20 V (100 W) | passive | [#509](https://github.com/darrylmorley/whatcable/issues/509) |
 | DELTACO USBC-1362 braided 10 Gbps cable 1 m | `0x2EC8` | `0x0000` | `0x00082022` | Ningbo Prime Electronic Co., Ltd. | none | USB 3.2 Gen 2 (10 Gbps) | 3 A / 20 V (60 W) | passive | [#487](https://github.com/darrylmorley/whatcable/issues/487) |
 | SmallRig USB4 40 Gbps 240 W cable, Amazon (Chengdu Convenientpower silicon) | `0x315C` | `0x0001` | `0x450A4643` | Chengdu Convenientpower Semiconductor Co., LTD | `0x1094` | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#486](https://github.com/darrylmorley/whatcable/issues/486) |
@@ -176,6 +176,17 @@ hand-maintained markdown table; format may change once the consumer exists.
 | HP USB 3.1 Gen 1 5 A cable (P/N 914119-005, Luxshare), bundled with Dell USB-C displays | `0x03F0` | `0x1247` | `0x00082051` | HP Inc. | `0x12` | USB 3.2 Gen 1 (5 Gbps) | 5 A / 20 V (100 W) | passive | [#625](https://github.com/darrylmorley/whatcable/issues/625) |
 | LTT TrueSpec USB-C cable 1 m, 240 W / 40 Gbps (VID/PID zeroed) | `0x0000` | `0x0000` | `0x110A2E43` | (zeroed) | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#631](https://github.com/darrylmorley/whatcable/issues/631) |
 | Hotutuki PD 240 W 80 Gbps cable, Amazon (eEver silicon) | `0x1E4E` | `0x0903` | `0x110A2E44` | eEver Technology, Inc. | `0x2EA` | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#541](https://github.com/darrylmorley/whatcable/issues/541) |
+| Cable Matters Thunderbolt 5 cable (Joinsoon silicon) | `0x060F` | `0x272B` | `0x110A4644` | Joinsoon Electronics Mfg. Co., Ltd. | `0x2120` | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#576](https://github.com/darrylmorley/whatcable/issues/576) |
+| HP USB4 40 Gbps cable, spare part L66241-001 (Luxshare OEM) | `0x03F0` | `0x1347` | `0x000A4643` | HP Inc. | `0x556` | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#639](https://github.com/darrylmorley/whatcable/issues/639) |
+| Apple Thunderbolt 3 Pro Cable 2 m (active), Apple Store | `0x05AC` | `0x7204` | `0x434858DA` | Apple | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | active | [#654](https://github.com/darrylmorley/whatcable/issues/654) |
+| Apple USB-C Charge Cable, bundled with the 61 W adapter (M1 MacBook Air) | `0x05AC` | `0x7202` | `0xB1084050` | Apple | `0xA2B` | USB 2.0 (480 Mbps) | 5 A / 20 V (100 W) | passive | [#656](https://github.com/darrylmorley/whatcable/issues/656) |
+| Dell U3225QE monitor bundled Thunderbolt 4 cable, about 1 m (Sumitomo silicon) | `0x20C2` | `0x0A14` | `0x460A2643` | Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#657](https://github.com/darrylmorley/whatcable/issues/657) |
+| Anker Prime Thunderbolt 5 cable 1.7 ft, Amazon | `0x291A` | `0x8401` | `0x110A2644` | Anker Innovations Limited | `0x944` | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#651](https://github.com/darrylmorley/whatcable/issues/651) |
+| Anker 240 W USB-C charging cable (A88E2012), Amazon | `0x291A` | `0x88E2` | `0x000A4640` | Anker Innovations Limited | `0x3894` | USB 2.0 (480 Mbps) | 5 A / 50 V (240 W) | passive | [#663](https://github.com/darrylmorley/whatcable/issues/663) |
+| Spigen EB24012CC USB-C cable 1.2 m, Amazon (Convenientpower silicon, same as FDBRO #420) | `0x3105` | `0x0002` | `0x110A4643` | Spigen Korea Co., Ltd. | `0x1094` | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#661](https://github.com/darrylmorley/whatcable/issues/661) |
+| Unbranded USB4 40 Gbps cable about 1 m, bundled with an enclosure (no USB-IF cert) | `0x315C` | `0x0000` | `0x450A4643` | Chengdu Convenientpower Semiconductor Co., LTD | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#640](https://github.com/darrylmorley/whatcable/issues/640) |
+| Fitee USB4 80 Gbps cable 5 ft, Amazon (Silkland silicon) | `0x3678` | `0x0000` | `0x000A4644` | (Silkland) Shenzhen Guanhai Technology Co., Ltd. | `0x281E` | USB4 Gen 4 (80 Gbps, Thunderbolt 5 class) | 5 A / 50 V (240 W) | passive | [#649](https://github.com/darrylmorley/whatcable/issues/649) |
+| Cabletime right-angle USB-C cable 1 m, sold as 20 Gbps / 100 W (unregistered VID) | `0x7880` | `0x8010` | `0x320A4042` | Unregistered | `0x1518` | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#636](https://github.com/darrylmorley/whatcable/issues/636) |
 
 Sorted by VID. The zeroed-fingerprint entry is parked at the bottom because it
 is identity-less.
@@ -233,7 +244,9 @@ Patterns the planned Cable Trust Signals heuristics should pick up:
    apart. The db now returns every curated row for a matching fingerprint
    rather than picking one; `PortSummary` still shows the first brand
    (multi-brand wording is a follow-up), but the data no longer silently
-   drops the second brand's identity.
+   drops the second brand's identity. #661 is a near case: Spigen's own
+   VID with the same PID, Cable VDO and cert ID (`0x1094`) as FDBRO #420,
+   so here the VID still tells the two brands apart.
 7. **Port controller contradicts the e-marker's own self-report.** #111
    (CalDigit 2 m TB4) declares itself a passive cable in its ID Header,
    while the port controller reports `ActiveCable = true` for that same
@@ -243,6 +256,15 @@ Patterns the planned Cable Trust Signals heuristics should pick up:
    does not come from the e-marker. `CableClassification` resolves the
    two readings the same way, promoting a passive self-report when the
    controller disagrees and never demoting an active one.
+8. **Cert ID belongs to the e-marker chip, not the cable.** #636
+   (Cabletime) carries cert ID `0x1518`, which USB-IF lists for
+   Hynetek's HUSB332, a USB-PD chip, not a cable. A valid cert ID on a
+   cable is not proof the cable itself was certified.
+9. **Cert listing predates the cable's claimed generation.** #639 (HP,
+   USB4 40 Gbps) carries cert ID `0x556`, listed for an HP model dated
+   2016, before USB4 (plus two undated Chant Sincere models). #651 (Anker Prime TB5) carries `0x944`, an ACON
+   model dated 2022, before Thunderbolt 5. The cert may cover an earlier
+   product from the same maker, so the date is a signal, not a verdict.
 
 ## Adding new entries
 
