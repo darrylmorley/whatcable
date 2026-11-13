@@ -16,5 +16,33 @@
 			<string>ハブ%lld個経由</string>
 		</dict>
 	</dict>
+	<key>%lld USB devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>other</key>
+			<string>%lld台のUSBデバイス</string>
+		</dict>
+	</dict>
+	<key>Show %lld hubs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>other</key>
+			<string>ハブ%lld個を表示</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

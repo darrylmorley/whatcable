@@ -18,5 +18,37 @@
 			<string>透過 %lld 個 Hub</string>
 		</dict>
 	</dict>
+	<key>%lld USB devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld 個 USB 裝置</string>
+			<key>other</key>
+			<string>%lld 個 USB 裝置</string>
+		</dict>
+	</dict>
+	<key>Show %lld hubs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>顯示 %lld 個 Hub</string>
+			<key>other</key>
+			<string>顯示 %lld 個 Hub</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

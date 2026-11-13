@@ -18,5 +18,37 @@
 			<string>经由 %lld 个集线器</string>
 		</dict>
 	</dict>
+	<key>%lld USB devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld 个 USB 设备</string>
+			<key>other</key>
+			<string>%lld 个 USB 设备</string>
+		</dict>
+	</dict>
+	<key>Show %lld hubs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>显示 %lld 个集线器</string>
+			<key>other</key>
+			<string>显示 %lld 个集线器</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

@@ -1,5 +1,6 @@
 import SwiftUI
 import WhatCableAppKit
+import WhatCableCore
 
 struct TestKitSettingsSection: View {
     @EnvironmentObject private var refreshSignal: RefreshSignal
@@ -12,7 +13,7 @@ struct TestKitSettingsSection: View {
         // section in SettingsView so it matches the other settings groups.
         HStack(spacing: 8) {
             Button(action: { showingConsent = true }) {
-                Label(String(localized: "Contribute Diagnostic Data", bundle: _appLocalizedBundle), systemImage: "waveform.path.ecg")
+                Label(String(localized: "Contribute Diagnostic Data", bundle: _coreLocalizedBundle), systemImage: "waveform.path.ecg")
             }
             .disabled(runner.isRunning)
             .buttonStyle(.bordered)
@@ -48,7 +49,7 @@ struct TestKitSettingsSection: View {
         switch runner.state {
         case .idle:
             if let lastVersion = settings.testKitLastRunVersion {
-                Text(String(localized: "Last run: v\(lastVersion)", bundle: _appLocalizedBundle))
+                Text(String(localized: "Last run: v\(lastVersion)", bundle: _coreLocalizedBundle))
                     .scaledFont(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -78,7 +79,7 @@ struct TestKitSettingsSection: View {
                 Text(label)
                     .scaledFont(.caption)
                     .foregroundStyle(.orange)
-                    .help(String(localized: "No output: \(noOutputProbes.joined(separator: ", "))", bundle: _appLocalizedBundle))
+                    .help(String(localized: "No output: \(noOutputProbes.joined(separator: ", "))", bundle: _coreLocalizedBundle))
             }
         case .error(let message):
             Text(message)
@@ -106,13 +107,13 @@ struct TestKitSettingsSection: View {
     /// one already did.
     private static func testKitDoneLabel(passed: Int, failed: Int, noOutput: Int) -> String {
         if failed > 0 && noOutput > 0 {
-            return String(localized: "\(passed) submitted, \(failed) failed, \(noOutput) no output", bundle: _appLocalizedBundle)
+            return String(localized: "\(passed) submitted, \(failed) failed, \(noOutput) no output", bundle: _coreLocalizedBundle)
         } else if failed > 0 {
-            return String(localized: "\(passed) submitted, \(failed) failed", bundle: _appLocalizedBundle)
+            return String(localized: "\(passed) submitted, \(failed) failed", bundle: _coreLocalizedBundle)
         } else if noOutput > 0 {
-            return String(localized: "\(passed) submitted, \(noOutput) no output", bundle: _appLocalizedBundle)
+            return String(localized: "\(passed) submitted, \(noOutput) no output", bundle: _coreLocalizedBundle)
         } else {
-            return String(localized: "\(passed) probes submitted", bundle: _appLocalizedBundle)
+            return String(localized: "\(passed) probes submitted", bundle: _coreLocalizedBundle)
         }
     }
 }
@@ -124,32 +125,32 @@ struct TestKitConsentView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label(String(localized: "Contribute Diagnostic Data", bundle: _appLocalizedBundle), systemImage: "waveform.path.ecg")
+            Label(String(localized: "Contribute Diagnostic Data", bundle: _coreLocalizedBundle), systemImage: "waveform.path.ecg")
                 .scaledFont(.headline, weight: .bold)
 
             VStack(alignment: .leading, spacing: 12) {
                 infoRow(
                     icon: "cpu",
-                    title: String(localized: "What happens", bundle: _appLocalizedBundle),
-                    detail: String(localized: "WhatCable runs \(TestKitRunner.probeNames.count) IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection.", bundle: _appLocalizedBundle)
+                    title: String(localized: "What happens", bundle: _coreLocalizedBundle),
+                    detail: String(localized: "WhatCable runs \(TestKitRunner.probeNames.count) IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection.", bundle: _coreLocalizedBundle)
                 )
 
                 infoRow(
                     icon: "cable.connector",
-                    title: String(localized: "Before you start", bundle: _appLocalizedBundle),
-                    detail: String(localized: "Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results.", bundle: _appLocalizedBundle)
+                    title: String(localized: "Before you start", bundle: _coreLocalizedBundle),
+                    detail: String(localized: "Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results.", bundle: _coreLocalizedBundle)
                 )
 
                 infoRow(
                     icon: "list.clipboard",
-                    title: String(localized: "What is collected", bundle: _appLocalizedBundle),
-                    detail: String(localized: "Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac.", bundle: _appLocalizedBundle)
+                    title: String(localized: "What is collected", bundle: _coreLocalizedBundle),
+                    detail: String(localized: "Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac.", bundle: _coreLocalizedBundle)
                 )
 
                 infoRow(
                     icon: "lock.shield",
-                    title: String(localized: "Privacy", bundle: _appLocalizedBundle),
-                    detail: String(localized: "Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored.", bundle: _appLocalizedBundle)
+                    title: String(localized: "Privacy", bundle: _coreLocalizedBundle),
+                    detail: String(localized: "Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored.", bundle: _coreLocalizedBundle)
                 )
             }
 
@@ -157,9 +158,9 @@ struct TestKitConsentView: View {
 
             HStack {
                 Spacer()
-                Button(String(localized: "Cancel", bundle: _appLocalizedBundle), action: onCancel)
+                Button(String(localized: "Cancel", bundle: _coreLocalizedBundle), action: onCancel)
                     .keyboardShortcut(.cancelAction)
-                Button(String(localized: "Proceed", bundle: _appLocalizedBundle), action: onProceed)
+                Button(String(localized: "Proceed", bundle: _coreLocalizedBundle), action: onProceed)
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
             }

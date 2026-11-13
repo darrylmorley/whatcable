@@ -46,12 +46,12 @@ struct WhatCableApp: App {
         Settings { EmptyView() }
             .commands {
                 CommandGroup(replacing: .appInfo) {
-                    Button(String(localized: "About \(AppInfo.name)", bundle: _appLocalizedBundle)) {
+                    Button(String(localized: "About \(AppInfo.name)", bundle: _coreLocalizedBundle)) {
                         delegate.showAboutPanel()
                     }
                 }
                 CommandGroup(after: .appInfo) {
-                    Button(String(localized: "Check for Updates…", bundle: _appLocalizedBundle)) {
+                    Button(String(localized: "Check for Updates…", bundle: _coreLocalizedBundle)) {
                         UpdateChecker.shared.check(silent: false)
                     }
                 }
@@ -62,18 +62,18 @@ struct WhatCableApp: App {
                     }
                 }
                 CommandGroup(after: .toolbar) {
-                    Button(String(localized: "Refresh", bundle: _appLocalizedBundle)) {
+                    Button(String(localized: "Refresh", bundle: _coreLocalizedBundle)) {
                         delegate.menuRefresh()
                     }
                     .keyboardShortcut("r", modifiers: .command)
                 }
                 CommandGroup(replacing: .help) {
-                    Button(String(localized: "WhatCable on GitHub", bundle: _appLocalizedBundle)) {
+                    Button(String(localized: "WhatCable on GitHub", bundle: _coreLocalizedBundle)) {
                         NSWorkspace.shared.open(AppInfo.helpURL)
                     }
                 }
                 CommandGroup(replacing: .appSettings) {
-                    Button(String(localized: "Settings…", bundle: _appLocalizedBundle)) {
+                    Button(String(localized: "Settings…", bundle: _coreLocalizedBundle)) {
                         delegate.showSettingsPanel(nil)
                     }
                     .keyboardShortcut(",", modifiers: .command)
@@ -1128,18 +1128,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private func showMenu(from button: NSStatusBarButton) {
         guard let statusItem else { return }
         let menu = NSMenu()
-        menu.addItem(.init(title: String(localized: "Refresh", bundle: _appLocalizedBundle), action: #selector(menuRefresh), keyEquivalent: "r"))
-        let pinItem = NSMenuItem(title: String(localized: "Keep window open", bundle: _appLocalizedBundle), action: #selector(menuTogglePin), keyEquivalent: "p")
+        menu.addItem(.init(title: String(localized: "Refresh", bundle: _coreLocalizedBundle), action: #selector(menuRefresh), keyEquivalent: "r"))
+        let pinItem = NSMenuItem(title: String(localized: "Keep window open", bundle: _coreLocalizedBundle), action: #selector(menuTogglePin), keyEquivalent: "p")
         pinItem.state = Self.refreshSignal.keepOpen ? .on : .off
         menu.addItem(pinItem)
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "Settings…", bundle: _appLocalizedBundle), action: #selector(menuSettings), keyEquivalent: ","))
+        menu.addItem(.init(title: String(localized: "Settings…", bundle: _coreLocalizedBundle), action: #selector(menuSettings), keyEquivalent: ","))
         for builder in PluginRegistry.shared.nsMenuItemBuilders[.statusItemMenu] ?? [] {
             menu.addItem(builder())
         }
-        menu.addItem(.init(title: String(localized: "Check for Updates…", bundle: _appLocalizedBundle), action: #selector(menuCheckUpdates), keyEquivalent: ""))
+        menu.addItem(.init(title: String(localized: "Check for Updates…", bundle: _coreLocalizedBundle), action: #selector(menuCheckUpdates), keyEquivalent: ""))
         let testKitItem = NSMenuItem(
-            title: String(localized: "Contribute Diagnostic Data…", bundle: _appLocalizedBundle),
+            title: String(localized: "Contribute Diagnostic Data…", bundle: _coreLocalizedBundle),
             action: #selector(menuRunTestKit),
             keyEquivalent: ""
         )
@@ -1148,10 +1148,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         }
         menu.addItem(testKitItem)
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "About \(AppInfo.name)", bundle: _appLocalizedBundle), action: #selector(showAboutPanel), keyEquivalent: ""))
-        menu.addItem(.init(title: String(localized: "WhatCable on GitHub", bundle: _appLocalizedBundle), action: #selector(menuHelp), keyEquivalent: ""))
+        menu.addItem(.init(title: String(localized: "About \(AppInfo.name)", bundle: _coreLocalizedBundle), action: #selector(showAboutPanel), keyEquivalent: ""))
+        menu.addItem(.init(title: String(localized: "WhatCable on GitHub", bundle: _coreLocalizedBundle), action: #selector(menuHelp), keyEquivalent: ""))
         menu.addItem(.separator())
-        menu.addItem(.init(title: String(localized: "Quit \(AppInfo.name)", bundle: _appLocalizedBundle), action: #selector(menuQuit), keyEquivalent: "q"))
+        menu.addItem(.init(title: String(localized: "Quit \(AppInfo.name)", bundle: _coreLocalizedBundle), action: #selector(menuQuit), keyEquivalent: "q"))
         for item in menu.items where item.action != nil && item.target == nil { item.target = self }
 
         statusItem.menu = menu

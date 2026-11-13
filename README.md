@@ -298,15 +298,15 @@ Issues and PRs welcome. The code is small and tries to stay readable.
 
 Read [TRANSLATIONS.md](TRANSLATIONS.md) first: it covers the terminology policy (technical labels stay in English) and which languages have an active maintainer who reviews changes.
 
-WhatCable uses `.lproj/.strings` files for localisation. Each module (`WhatCable` and `WhatCableCore`) has its own set under `Sources/<module>/Resources/<lang>.lproj/Localizable.strings`.
+WhatCable uses `.lproj/.strings` files for localisation. There is one set, shared by the app, the CLI, the widget and notifications, under `Sources/WhatCableCore/Resources/<lang>.lproj/` (`Localizable.strings`, plus `Localizable.stringsdict` for plural forms).
 
 To add a new language:
 
-1. Copy `en.lproj/Localizable.strings` from both modules into a new `<lang>.lproj/` directory
+1. Copy `en.lproj/Localizable.strings` into a new `<lang>.lproj/` directory next to it
 2. Translate the values (leave the keys as-is)
 3. Make sure format specifiers (`%@`, `%lld`, `%1$@`, etc.) match the English originals exactly
 4. Run `plutil -lint` on your files to check for syntax errors
-5. If the language has its own plural rules, copy `en.lproj/Localizable.stringsdict` in the `WhatCable` module and translate the `one`/`few`/`many`/`other` forms
+5. Copy `en.lproj/Localizable.stringsdict` too and translate the plural forms (`one`/`few`/`many`/`other`, whichever your language uses)
 6. Add the language code to `CFBundleLocalizations` in [`scripts/smoke-test.sh`](scripts/smoke-test.sh)
 
 The Settings language picker builds itself from the bundled `.lproj` resources, so a new language appears there automatically once the files are in place.

@@ -59,7 +59,7 @@ final class WelcomeWindowSizingTests: XCTestCase {
     /// Strict is safe here. Measured across all 19 shipped locales x all 7
     /// slider steps, all 19 give 7 distinct, strictly increasing heights. Note
     /// that the test itself only ever runs the process-default locale (en) and
-    /// never calls `setAppLocale`, so that 19-locale agreement is a safety
+    /// never calls `setCoreLocale`, so that 19-locale agreement is a safety
     /// margin rather than something this test exercises.
     ///
     /// What strictness is actually exposed to is the `minHeight: 480` floor in

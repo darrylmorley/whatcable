@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import WhatCableAppKit
+import WhatCableCore
 import WhatCableDarwinBackend
 
 /// Hosts a Pro screen in its own standalone window when the user taps
@@ -138,17 +139,17 @@ final class DetachedProWindowManager: NSObject, NSWindowDelegate {
     private static func title(for route: ProScreenRoute) -> String {
         switch route.id {
         case "pro.power-monitor":
-            return String(localized: "Power Monitor", bundle: _appLocalizedBundle)
+            return String(localized: "Power Monitor", bundle: _coreLocalizedBundle)
         case "pro.negotiation":
-            return String(localized: "Negotiation Diagnostics", bundle: _appLocalizedBundle)
+            return String(localized: "Negotiation Diagnostics", bundle: _coreLocalizedBundle)
         case "pro.cable-diagnostics":
             let num = route.portCard?.portNumber ?? 0
             if let type = route.portCard?.portTypeDescription {
-                return String(localized: "\(type) Port \(num) Diagnostics", bundle: _appLocalizedBundle)
+                return String(localized: "\(type) Port \(num) Diagnostics", bundle: _coreLocalizedBundle)
             }
-            return String(localized: "Cable Diagnostics", bundle: _appLocalizedBundle)
+            return String(localized: "Cable Diagnostics", bundle: _coreLocalizedBundle)
         case "pro.overview":
-            return String(localized: "WhatCable Pro", bundle: _appLocalizedBundle)
+            return String(localized: "WhatCable Pro", bundle: _coreLocalizedBundle)
         default:
             return "WhatCable"
         }

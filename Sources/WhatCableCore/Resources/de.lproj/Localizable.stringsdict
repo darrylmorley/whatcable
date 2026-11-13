@@ -18,5 +18,37 @@
 			<string>über %lld Hubs</string>
 		</dict>
 	</dict>
+	<key>%lld USB devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld USB-Gerät</string>
+			<key>other</key>
+			<string>%lld USB-Geräte</string>
+		</dict>
+	</dict>
+	<key>Show %lld hubs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld Hub anzeigen</string>
+			<key>other</key>
+			<string>%lld Hubs anzeigen</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

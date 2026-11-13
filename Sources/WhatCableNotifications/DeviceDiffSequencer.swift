@@ -2836,7 +2836,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         USBDeviceChangeGrouper.Snapshot(
             id: device.id,
             locationID: device.locationID,
-            name: device.productName ?? String(localized: "USB device", bundle: _notificationsLocalizedBundle)
+            name: device.productName ?? String(localized: "USB device", bundle: _coreLocalizedBundle)
         )
     }
 
@@ -3026,7 +3026,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         // give you" wording `chargerLabels` uses, rather than a made-up claim.
         var addedLabelsByPortKey = currentLabels
         for portKey in addedPortKeys where addedLabelsByPortKey[portKey] == nil {
-            addedLabelsByPortKey[portKey] = String(localized: "Wattage not reported", bundle: _notificationsLocalizedBundle)
+            addedLabelsByPortKey[portKey] = String(localized: "Wattage not reported", bundle: _coreLocalizedBundle)
         }
         // A plain lookup: both sides are keyed by `portKey` now, and the feed
         // publishes every name under a port's `portKey` as well as its join
@@ -3163,7 +3163,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         // fallback needs this port's own state, not only the machine-wide
         // count, or a disconnected port inherits the adapter reading (#542).
         let activePortKeys = Set(ports.compactMap { $0.connectionActive == true ? $0.portKey : nil })
-        let unreported = String(localized: "Wattage not reported", bundle: _notificationsLocalizedBundle)
+        let unreported = String(localized: "Wattage not reported", bundle: _coreLocalizedBundle)
         // Grouped by `portKey` (type/number), NOT `canonicalJoinKey`. Sibling
         // source nodes on one physical port ("USB-PD" + "Brick ID", the shape
         // 95% of corpus charging ports have) each walk the registry for their
@@ -3182,7 +3182,7 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
         return Dictionary(grouping: sources, by: \.portKey).mapValues { portSources -> String in
             let preferred = PowerSource.preferredChargingSource(in: portSources) ?? portSources.first
             if let winning = preferred?.winning {
-                return String(localized: "\(winning.wattsLabel) negotiated", bundle: _notificationsLocalizedBundle)
+                return String(localized: "\(winning.wattsLabel) negotiated", bundle: _coreLocalizedBundle)
             }
             // Every source in a group shares the group's `portKey`, so the
             // first one names the port these sources belong to.
@@ -3203,11 +3203,11 @@ public final class DeviceDiffSequencer<ClockType: Clock> where ClockType.Duratio
             case .systemAdapterFallback(let watts):
                 // macOS's own reading of the adapter, so it is a measurement:
                 // same wording `PortSummary` uses for this case.
-                return String(localized: "System reports charger at \(watts)W", bundle: _notificationsLocalizedBundle)
+                return String(localized: "System reports charger at \(watts)W", bundle: _coreLocalizedBundle)
             case .portNegotiated(let watts):
                 // The source's own advertised maximum, not a settled contract,
                 // so this must never read as negotiated.
-                return String(localized: "Charger advertises up to \(watts)W", bundle: _notificationsLocalizedBundle)
+                return String(localized: "Charger advertises up to \(watts)W", bundle: _coreLocalizedBundle)
             case .unknown:
                 return unreported
             }

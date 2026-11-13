@@ -21,8 +21,15 @@ English.
 
 ## Where the strings live
 
-- `Sources/WhatCableCore/Resources/<lang>.lproj/Localizable.strings` (CLI + shared)
-- `Sources/WhatCable/Resources/<lang>.lproj/Localizable.strings` (app UI)
+Every string in the app, the CLI, the widget and notifications lives in one
+place per language:
+
+- `Sources/WhatCableCore/Resources/<lang>.lproj/Localizable.strings`
+- `Sources/WhatCableCore/Resources/<lang>.lproj/Localizable.stringsdict`
+  (plural forms, for strings that change with a count)
+
+Edit those two files and nothing else. Each English text appears once, so
+one translation covers it everywhere it is shown.
 
 Keys must match `en.lproj` exactly, including format specifiers (`%@`,
 `%lld`). Positional forms (`%1$@`) are fine where your grammar needs

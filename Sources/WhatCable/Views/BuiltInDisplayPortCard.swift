@@ -56,12 +56,12 @@ struct BuiltInDisplayPortCard: View {
         // the count branch covers a hypothetical MST split through one
         // HDMI socket.
         if port.displays.count == 1 {
-            return String(localized: "Display connected", bundle: _appLocalizedBundle)
+            return String(localized: "Display connected", bundle: _coreLocalizedBundle)
         }
-        return String(localized: "\(port.displays.count) displays connected", bundle: _appLocalizedBundle)
+        return String(localized: "\(port.displays.count) displays connected", bundle: _coreLocalizedBundle)
     }
 
     private var subtitle: String {
-        String(localized: "Built-in \(port.portType) port \(port.portNumber)", bundle: _appLocalizedBundle)
+        String(localized: "Built-in \(port.portType) port \(port.portNumber)", bundle: _coreLocalizedBundle)
     }
 }

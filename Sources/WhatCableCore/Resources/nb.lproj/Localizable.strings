@@ -664,3 +664,183 @@
 "USB accessory (audio or adapter)" = "USB-tilbehør (lyd eller adapter)";
 "This accessory has its own USB-C plug. It is not a cable and does not charge." = "Dette tilbehøret har sin egen USB-C-plugg. Det er ikke en kabel, og det lader ikke.";
 "This plug is part of the accessory, not a cable, so there is no cable rating." = "Denne pluggen er en del av tilbehøret, ikke en kabel, så det finnes ingen kabelspesifikasjon.";
+
+/* ===== Menu bar app (Settings, port cards, windows, updates). ===== */
+"%@ profiles" = "%@ profiler";
+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld USB-C-porter og 1 MagSafe-port oppdaget, men ingenting er koblet til. Slå av \"Skjul tomme porter\" i Innstillinger for å se dem.";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld USB-C-porter oppdaget, men ingenting er koblet til. Slå av \"Skjul tomme porter\" i Innstillinger for å se dem.";
+"About %@" = "Om %@";
+"Active" = "Aktiv";
+"Active cable electronics" = "Aktiv kabelelektronikk";
+"All raw IOKit properties (%lld)" = "Alle IOKit-egenskaper (rådata) (%lld)";
+"Behavior" = "Oppførsel";
+"Built by %@." = "Utviklet av %@.";
+"Cable trust signals" = "Tillitssignaler for kabel";
+"Check for Updates…" = "Se etter oppdateringer…";
+"Connected devices" = "Tilkoblede enheter";
+"Connection" = "Tilkobling";
+"Appearance" = "Utseende";
+"Desktop Mac: charger identity (FedDetails) is not available." = "Stasjonær Mac: laderidentitet (FedDetails) er ikke tilgjengelig.";
+"Done" = "Ferdig";
+"Downloading…" = "Laster ned…";
+"Newer version found, installing it…" = "Nyere versjon funnet, installerer…";
+"Checking for the latest version…" = "Ser etter nyeste versjon…";
+"File a GitHub issue with this cable's e-marker fingerprint" = "Opprett et GitHub-issue med denne kabelens e-marker-fingeravtrykk";
+"Font size" = "Skriftstørrelse";
+"Opacity" = "Tetthet";
+"Solid window background" = "Heldekkende vindusbakgrunn";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Hjelper utvikleren med å reprodusere lader-/kabeloppførsel knyttet til spesifikk maskinvare.";
+"Hide empty ports" = "Skjul tomme porter";
+"Host (%@)" = "Vert (%@)";
+"Include Mac model and macOS version" = "Inkluder Mac-modell og macOS-versjon";
+"Install failed: %@" = "Installasjon mislyktes: %@";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "Denne kontoen kan ikke oppdatere apper på dette stedet. Last ned den nye versjonen fra whatcable.uk, eller oppdater med Homebrew.";
+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "WhatCable kan ikke oppdatere seg selv fra den nåværende mappen. Flytt WhatCable til Programmer-mappen, start den på nytt og prøv igjen, eller last ned den nyeste versjonen fra whatcable.uk.";
+"Install update" = "Installer oppdatering";
+"Installing, WhatCable will relaunch" = "Installerer, WhatCable vil starte på nytt";
+"Keep window open" = "Hold vinduet åpent";
+"Language" = "Språk";
+"Launch at login" = "Start ved innlogging";
+"Lives in the menu bar with no Dock icon." = "Ligger i menylinjen uten Dock-ikon.";
+"Menu bar icon" = "Menylinjeikon";
+"Show charging watts in the menu bar" = "Vis ladewatt i menylinjen";
+/* Menu bar icon choices */
+"Cable, horizontal" = "Kabel, horisontal";
+"Bolt" = "Lyn";
+"Power plug" = "Støpsel";
+"Power cord" = "Strømkabel";
+"No USB-C ports detected" = "Ingen USB-C-porter oppdaget";
+"Notifications" = "Varsler";
+"Notify on cable changes" = "Varsle ved kabelendringer";
+"Notify on app updates" = "Varsle ved appoppdateringer";
+"Open in GitHub" = "Åpne i GitHub";
+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "Åpner et forhåndsutfylt GitHub-issue i nettleseren din. Ingenting sendes før du sender det inn der.";
+"Plug events" = "Tilkoblingshendelser";
+"Preview of what will be included:" = "Forhåndsvisning av hva som inkluderes:";
+"Provisioned" = "Klargjort";
+"Quit" = "Avslutt";
+"Quit %@" = "Avslutt %@";
+"Report this cable" = "Rapporter denne kabelen";
+"Runs as a regular Dock app with a window." = "Kjører som en vanlig Dock-app med vindu.";
+"System Default" = "Systemstandard";
+"Settings" = "Innstillinger";
+"Settings…" = "Innstillinger…";
+"Show in menu bar" = "Vis i menylinjen";
+"Show technical details" = "Vis tekniske detaljer";
+"SuperSpeed" = "SuperSpeed";
+"Supported" = "Støttet";
+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "Denne Macen ser ikke ut til å eksponere sine portkontrollertjenester. Trykk Oppdater, eller sjekk Systeminformasjon > USB.";
+"Thunderbolt fabric" = "Thunderbolt-fabric";
+"Transports" = "Transporter";
+"Verifying signature…" = "Verifiserer signatur…";
+"View release" = "Vis utgivelse";
+"What gets shared?" = "Hva deles?";
+"WhatCable %@ is available" = "WhatCable %@ er tilgjengelig";
+"WhatCable on GitHub" = "WhatCable på GitHub";
+"You're on %@" = "Du bruker %@";
+"%lld USB devices" = "%lld USB-enheter";
+"active" = "aktiv";
+"no active link" = "ingen aktiv forbindelse";
+
+/* Test Kit / Contribute Diagnostic Data consent + notifications (previously missing keys) */
+"COMMUNITY" = "FELLESSKAP";
+"Contribute Diagnostic Data" = "Bidra med diagnostikkdata";
+"Contribute Diagnostic Data…" = "Bidra med diagnostikkdata…";
+"Before you start" = "Før du starter";
+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "Koble til kablene og enhetene du vil ha med, og la alt stå tilkoblet til kjøringen er ferdig. Hvis du kobler til eller fra underveis, kan det bli hull i resultatene.";
+"Privacy" = "Personvern";
+"Pro" = "Pro";
+"Proceed" = "Fortsett";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac." = "Rå IOKit-registeregenskaper, en liste over driverklassene som finnes på Macen din, samt macOS-versjonen din, brikketypen og modellidentifikatoren til Macen din (for eksempel Mac14,3). Dette er data som macOS allerede eksponerer på Macen din.";
+"What happens" = "Hva som skjer";
+"What is collected" = "Hva som samles inn";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable kjører %lld IOKit-prober som leser maskinvaredata Macen din allerede publiserer. Resultatene sendes til en sikker server for å bidra til bedre gjenkjenning av kabler og porter.";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "Maskinens hardware-UUID hashes med SHA-256 før sending. Ingen navn, kontoer, Macens serienummer eller personopplysninger samles inn eller lagres.";
+
+/* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
+"Back" = "Tilbake";
+"Unpin (popover closes when you click away)" = "Løsne (vinduet lukkes når du klikker et annet sted)";
+"Open in a separate window" = "Åpne i et eget vindu";
+"%@ Port %lld Diagnostics" = "%@ port %lld-diagnostikk";
+
+/* Onboarding / welcome screen (first launch). */
+"Welcome to WhatCable" = "Velkommen til WhatCable";
+"See what your USB-C cables, chargers, and devices can actually do." = "Se hva USB-C-kablene, laderne og enhetene dine faktisk kan gjøre.";
+"How would you like to use WhatCable?" = "Hvordan vil du bruke WhatCable?";
+"Menu bar" = "Menylinje";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "Plasseres i menylinjen øverst på skjermen. Klikk på kabelikonet når som helst for å sjekke en tilkobling.";
+"Recommended" = "Anbefalt";
+"Dock app" = "Dock-app";
+"Opens as a regular window with a Dock icon, like most apps." = "Åpnes som et vanlig vindu med et Dock-ikon, som de fleste apper.";
+"Get Started" = "Kom i gang";
+"You can change this any time in Settings." = "Du kan endre dette når som helst i Innstillinger.";
+
+/* Softened blank e-marker note */
+"Cable note" = "Kabelmerknad";
+"Cable details" = "Kabeldetaljer";
+
+/* Active Cable VDO 2 section (ActiveCableVDO2Section) */
+"Active cable (VDO 2)" = "Aktivt kabel (VDO 2)";
+"Physical connection" = "Fysisk tilkobling";
+"Active element" = "Aktivt element";
+"Optically isolated" = "Optisk isolert";
+"USB lanes" = "USB-baner";
+"Two" = "To";
+"One" = "En";
+"USB Gen" = "USB-generasjon";
+"Gen 2 or higher" = "Gen 2 eller høyere";
+"Gen 1" = "Gen 1";
+"USB4 supported" = "USB4 støttes";
+"USB 3.2 supported" = "USB 3.2 støttes";
+"USB 2.0 supported" = "USB 2.0 støttes";
+"USB 2.0 hub hops" = "USB 2.0 hub-hopp";
+"USB4 asymmetric" = "USB4 asymmetrisk";
+"U3 to U0 transition" = "U3 til U0 overgang";
+"Through U3S" = "Via U3S";
+"Direct" = "Direkte";
+"Idle power (U3/CLd)" = "Hvilstrøm (U3/CLd)";
+"Max operating temp" = "Maks driftstemperatur";
+"Shutdown temp" = "Avslutningstemperat.";
+
+"Watts display" = "Watt-visning";
+"Number" = "Tall";
+"Bar" = "Stolpe";
+
+/* USB probing compatibility toggle (issue #429). */
+"Skip deep USB probing" = "Hopp over dyp USB-sondering";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "Hindrer WhatCable i å lese kapasitetsinformasjon fra USB-enheter. Slå på hvis en KVM-svitsj eller hub oppfører seg feil (relé som klikker, eller tastatur og mus som faller ut) mens WhatCable kjører.";
+
+/* Intel Macs are unsupported; notice shown on every launch. */
+"WhatCable can't read cables on this Mac" = "WhatCable kan ikke lese kabler på denne Macen";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Denne Macen har en Intel-prosessor. WhatCable henter kabel- og portdata fra portkontrolleren i Apple Silicon, og Intel-Macer eksponerer den ikke, så appen vil ikke vise noe nyttig.\n\nDen blir stående åpen hvis du vil se deg om, men det er ingenting bak den.";
+"Learn more" = "Finn ut mer";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "Produsent";
+"Serial" = "Serienummer";
+"USB" = "USB";
+"Hide hubs" = "Skjul huber";
+
+/* Beta update channel (opt-in pre-release updates). */
+"Updates" = "Oppdateringer";
+"Include beta versions" = "Inkluder betaversjoner";
+"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "Forhåndsversjoner som kommer noen dager før en stabil utgivelse. Forvent noen ujevnheter.";
+"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "Å slå dette av stopper framtidige betaer. Det tar deg ikke tilbake fra en beta du allerede kjører. Den neste stabile utgivelsen gjør det.";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "WhatCable ble installert med Homebrew. En brew upgrade kan erstatte en beta med den gjeldende stabile utgivelsen.";
+
+/* Brick ID analog charger identity note (issue #592) */
+"Analog charger identifier, no PD profiles" = "Analog laderidentifikator, ingen PD-profiler";
+
+/* ===== Notifications (connect and disconnect alerts). ===== */
+"%@ negotiated" = "%@ forhandlet";
+"Charger connected" = "Lader tilkoblet";
+"Charger disconnected" = "Lader frakoblet";
+"Connected: %@" = "Tilkoblet: %@";
+"Disconnected: %@" = "Frakoblet: %@";
+"Reconnected: %@" = "Tilkoblet på nytt: %@";
+"USB devices connected" = "USB-enheter tilkoblet";
+"USB devices disconnected" = "USB-enheter frakoblet";
+"Thunderbolt devices connected" = "Thunderbolt-enheter tilkoblet";
+"Thunderbolt devices disconnected" = "Thunderbolt-enheter frakoblet";
+"Wattage not reported" = "Effekt ikke rapportert";
+"%@ (%@)" = "%1$@ (%2$@)";

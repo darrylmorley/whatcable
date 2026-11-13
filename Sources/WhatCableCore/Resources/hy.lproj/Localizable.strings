@@ -664,3 +664,183 @@
 "USB accessory (audio or adapter)" = "USB պարագա (աուդիո կամ ադապտեր)";
 "This accessory has its own USB-C plug. It is not a cable and does not charge." = "Այս պարագան ունի իր սեփական USB-C խրոցակը։ Այն մալուխ չէ և չի լիցքավորում։";
 "This plug is part of the accessory, not a cable, so there is no cable rating." = "Այս խրոցակը պարագայի մասն է, ոչ թե մալուխ, ուստի մալուխի բնութագիր չկա։";
+
+/* ===== Menu bar app (Settings, port cards, windows, updates). ===== */
+"%@ profiles" = "%@ ռեժիմ";
+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "Հայտնաբերվել է %lld USB-C պորտ և 1 MagSafe պորտ, սակայն այս պահին ոչինչ միացված չէ։ Դրանք տեսնելու համար «Կարգավորումներում» անջատեք «Թաքցնել դատարկ պորտերը» ֆունկցիան:";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "Հայտնաբերվել է %lld USB-C պորտ, սակայն այս պահին ոչինչ միացված չէ։ Դրանք տեսնելու համար «Կարգավորումներում» անջատեք «Թաքցնել դատարկ պորտերը» ֆունկցիան:";
+"About %@" = "%@-ի մասին";
+"Active" = "Ակտիվ";
+"Active cable electronics" = "Կաբելի ակտիվ էլեկտրոնիկա";
+"All raw IOKit properties (%lld)" = "IOKit-ի բոլոր անմշակ տվյալները (%lld)";
+"Behavior" = "Վարքագիծ";
+"Built by %@." = "Ստեղծվել է %@-ի կողմից:";
+"Cable trust signals" = "Կաբելի վստահելիության ազդանշաններ";
+"Check for Updates…" = "Ստուգել թարմացումները…";
+"Connected devices" = "Միացված սարքեր";
+"Connection" = "Կապ";
+"Desktop Mac: charger identity (FedDetails) is not available." = "Աշխատասեղանային Mac. լիցքավորիչի ինքնությունը (FedDetails) հասանելի չէ:";
+"Appearance" = "Արտաքին տեսք";
+"Done" = "Կատարված է";
+"Downloading…" = "Ներբեռնվում է";
+"Newer version found, installing it…" = "Հայտնաբերվեց նոր տարբերակ, տեղադրվում է…";
+"Checking for the latest version…" = "Ստուգվում է վերջին տարբերակը…";
+"File a GitHub issue with this cable's e-marker fingerprint" = "Ստեղծել GitHub issue այս կաբելի e-marker մատնահետքով";
+"Font size" = "Տառատեսակի չափը";
+"Opacity" = "Անթափանցելիություն";
+"Solid window background" = "Պատուհանի անթափանց ֆոն";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Օգնում է մշակողին վերարտադրել լիցքավորիչի/կաբելի վարքագիծը՝ կապված կոնկրետ սարքակազմի հետ:";
+"Hide empty ports" = "Թաքցնել դատարկ պորտերը";
+"Host (%@)" = "Հոսթ (%@)";
+"Include Mac model and macOS version" = "Ներառել Mac-ի մոդելը և macOS-ի տարբերակը";
+"Install failed: %@" = "Տեղադրումը ձախողվեց՝ %@";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "Այս հաշիվը չի կարող թարմացնել հավելվածներն այս տեղում։ Ներբեռնեք նոր տարբերակը whatcable.uk-ից կամ թարմացրեք Homebrew-ով։";
+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "WhatCable-ը չի կարող ինքն իրեն թարմացնել իր ընթացիկ պանակից։ Տեղափոխեք WhatCable-ը ձեր Applications պանակը, վերագործարկեք այն և կրկին փորձեք, կամ ներբեռնեք վերջին տարբերակը whatcable.uk-ից։";
+"Install update" = "Տեղադրել թարմացումը";
+"Installing, WhatCable will relaunch" = "Տեղադրվում է. WhatCable-ը կվերագործարկվի";
+"Keep window open" = "Պատուհանը բաց թողնել";
+"Language" = "Լեզու";
+"Launch at login" = "Գործարկել համակարգ մուտք գործելիս";
+"Lives in the menu bar with no Dock icon." = "Գտնվում է մենյուի տողում՝ առանց Dock-ի պատկերակի:";
+"Menu bar icon" = "Մենյուի գոտու պատկերակ";
+"Show charging watts in the menu bar" = "Ցուցադրել լիցքավորման վատտը մենյուի տողում";
+/* Menu bar icon choices */
+"Cable, horizontal" = "Մալուխ, հորիզոնական";
+"Bolt" = "Կայծակ";
+"Power plug" = "Խրոց";
+"Power cord" = "Սնման լար";
+"No USB-C ports detected" = "USB-C պորտեր չեն հայտնաբերվել";
+"Notifications" = "Ծանուցումներ";
+"Notify on cable changes" = "Ծանուցել կաբելի փոփոխությունների մասին";
+"Notify on app updates" = "Ծանուցել հավելվածի թարմացումների մասին";
+"Open in GitHub" = "Բացել GitHub-ում";
+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "Ձեր բրաուզերում կբացվի նախապես լրացված GitHub issue: Ոչինչ չի ուղարկվի, մինչև դուք չհաստատեք այնտեղ:";
+"Plug events" = "Միացման իրադարձություններ";
+"Preview of what will be included:" = "Ներառվող տվյալների նախադիտում.";
+"Provisioned" = "Կարգավորված";
+"Quit" = "Ելք";
+"Quit %@" = "Փակել %@-ը";
+"Report this cable" = "Զեկուցել այս կաբելի մասին";
+"Runs as a regular Dock app with a window." = "Աշխատում է որպես սովորական հավելված՝ Dock-ում և պատուհանով:";
+"System Default" = "Համակարգի կանխադրված";
+"Settings" = "Կարգավորումներ";
+"Settings…" = "Կարգավորումներ…";
+"Show in menu bar" = "Ցուցադրել մենյուի տողում";
+"Show technical details" = "Ցուցադրել տեխնիկական մանրամասները";
+"SuperSpeed" = "SuperSpeed";
+"Supported" = "Աջակցվում է";
+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "Այս Mac-ը կարծես թե չի տրամադրում պորտերի վերահսկման ծառայությունները: Սեղմեք թարմացնել կամ ստուգեք System Information > USB բաժինը:";
+"Thunderbolt fabric" = "Thunderbolt կառուցվածք";
+"Transports" = "Տվյալների փոխանցում";
+"Verifying signature…" = "Ստուգվում է թվային ստորագրությունը…";
+"View release" = "Տեսնել թողարկումը";
+"What gets shared?" = "Ի՞նչ տվյալներ են ուղարկվելու:";
+"WhatCable %@ is available" = "WhatCable %@-ը հասանելի է";
+"WhatCable on GitHub" = "Բացել GitHub-ում";
+"You're on %@" = "Դուք օգտագործում եք %@ տարբերակը";
+"%lld USB devices" = "%lld USB սարք";
+"active" = "ակտիվ";
+"no active link" = "ակտիվ կապ չկա";
+
+/* Test Kit / Contribute Diagnostic Data consent + notifications (previously missing keys) */
+"COMMUNITY" = "ՀԱՄԱՅՆՔ";
+"Contribute Diagnostic Data" = "Տրամադրել ախտորոշիչ տվյալներ";
+"Contribute Diagnostic Data…" = "Տրամադրել ախտորոշիչ տվյալներ…";
+"Before you start" = "Սկսելուց առաջ";
+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "Միացրեք այն մալուխներն ու սարքերը, որոնք ցանկանում եք ներառել, ապա թողեք ամեն ինչ միացված, մինչև ավարտվի։ Աշխատանքի ընթացքում միացնելը կամ անջատելը կարող է բացեր թողնել արդյունքներում։";
+"Privacy" = "Գաղտնիություն";
+"Pro" = "Pro";
+"Proceed" = "Շարունակել";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac." = "Հում IOKit ռեեստրի հատկություններ, ձեր Mac-ում առկա դրայվերների դասերի ցանկ, ինչպես նաև macOS-ի տարբերակը, չիպի տեսակը և ձեր Mac-ի մոդելի նույնացուցիչը (օրինակ՝ Mac14,3): Սրանք տվյալներ են, որոնք macOS-ն արդեն հասանելի է դարձնում ձեր Mac-ում:";
+"What happens" = "Ինչ է տեղի ունենում";
+"What is collected" = "Ինչ է հավաքվում";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable-ը գործարկում է %lld IOKit զոնդ, որոնք կարդում են սարքային տվյալներ, որոնք ձեր Mac-ն արդեն հրապարակում է: Արդյունքներն ուղարկվում են ապահով սերվեր՝ մալուխների և պորտերի հայտնաբերումը բարելավելու համար:";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "Ձեր մեքենայի սարքակազմի UUID-ն հեշավորվում է SHA-256-ով նախքան ուղարկելը: Ոչ մի անուն, հաշիվ, ձեր Mac-ի սերիական համար կամ անձնական տվյալ չի հավաքվում կամ պահվում:";
+
+/* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
+"Back" = "Հետ";
+"Unpin (popover closes when you click away)" = "Ապամագնիսել (ելնող պատուհանը փակվում է, երբ կտտացնում եք դրսում)";
+"Open in a separate window" = "Բացել առանձին պատուհանում";
+"%@ Port %lld Diagnostics" = "%@ Պորտ %lld ախտորոշում";
+
+/* Onboarding / welcome screen (first launch). English placeholders; Armenian to be refined by the community. */
+"Welcome to WhatCable" = "Բարի գալուստ WhatCable";
+"See what your USB-C cables, chargers, and devices can actually do." = "Տեսեք, թե ձեր USB-C մալուխները, լիցքավորիչները և սարքերն իրականում ինչ կարող են անել:";
+"How would you like to use WhatCable?" = "Ինչպե՞ս եք ցանկանում օգտագործել WhatCable-ը:";
+"Menu bar" = "Ընտրացանկի տող";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "Տեղակայված է էկրանի վերևի ընտրացանկի տողում: Ցանկացած պահի կտտացրեք մալուխի պատկերակին կապը ստուգելու համար:";
+"Recommended" = "Առաջարկվում է";
+"Dock app" = "Dock հավելված";
+"Opens as a regular window with a Dock icon, like most apps." = "Բացվում է որպես սովորական պատուհան՝ Dock-ում պատկերակով, ինչպես մյուս հավելվածները:";
+"Get Started" = "Սկսել";
+"You can change this any time in Settings." = "Կարող եք փոխել սա ցանկացած պահի Կարգավորումներում:";
+
+/* Softened blank e-marker note */
+"Cable note" = "Մալուխի նշում";
+"Cable details" = "Մալուխի մանրամասներ";
+
+/* Active Cable VDO 2 section (ActiveCableVDO2Section) */
+"Active cable (VDO 2)" = "Ակտիվ մալուխ (VDO 2)";
+"Physical connection" = "Ֆիզիկական կապ";
+"Active element" = "Ակտիվ տարր";
+"Optically isolated" = "Օպտիկական մեկուսացված";
+"USB lanes" = "USB ալիքներ";
+"Two" = "Երկու";
+"One" = "Մեկ";
+"USB Gen" = "USB սերնդ";
+"Gen 2 or higher" = "Սերնդ 2 կամ ավելի";
+"Gen 1" = "Սերնդ 1";
+"USB4 supported" = "USB4 աջակցվում է";
+"USB 3.2 supported" = "USB 3.2 աջակցվում է";
+"USB 2.0 supported" = "USB 2.0 աջակցվում է";
+"USB 2.0 hub hops" = "USB 2.0 հանգույցի ցատկումներ";
+"USB4 asymmetric" = "USB4 ասիմետրիկ";
+"U3 to U0 transition" = "U3-ից U0 անցում";
+"Through U3S" = "U3S-ի միջով";
+"Direct" = "Ուղիղ";
+"Idle power (U3/CLd)" = "Հանգստի հոսանք (U3/CLd)";
+"Max operating temp" = "Առավելագույն աշխ. ջերմ.";
+"Shutdown temp" = "Անջատման ջերմ.";
+
+"Watts display" = "Վատերի ցուցադրում";
+"Number" = "Թիվ";
+"Bar" = "Սյունակ";
+
+/* USB probing compatibility toggle (issue #429). */
+"Skip deep USB probing" = "Բաց թողնել USB-ի խորը հետազոտումը";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "Կանխում է WhatCable-ի կողմից USB սարքերի հնարավորությունների մասին տեղեկությունների ընթերցումը։ Միացրեք, եթե KVM անջատիչը կամ բաշխիչը սխալ է աշխատում (ռելեի կտկտոց կամ ստեղնաշարի և մկնիկի անջատում) WhatCable-ի աշխատանքի ընթացքում։";
+
+/* Intel Macs are unsupported; notice shown on every launch. */
+"WhatCable can't read cables on this Mac" = "WhatCable-ը չի կարող մալուխներ կարդալ այս Mac-ի վրա";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Այս Mac-ն ունի Intel պրոցեսոր։ WhatCable-ը մալուխների և պորտերի տվյալները ստանում է Apple Silicon-ի պորտի կարգավորիչից, իսկ Intel Mac-երն այն չեն տրամադրում, ուստի հավելվածը ոչ մի օգտակար բան ցույց չի տա։\n\nԱյն կմնա բաց, եթե ուզում եք նայել, բայց դրա հետևում ոչինչ չկա։";
+"Learn more" = "Իմանալ ավելին";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "Արտադրող";
+"Serial" = "Սերիական համար";
+"USB" = "USB";
+"Hide hubs" = "Թաքցնել հանգույցները";
+
+/* Beta update channel (opt-in pre-release updates). */
+"Updates" = "Թարմացումներ";
+"Include beta versions" = "Ներառել բետա տարբերակները";
+"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "Նախնական տարբերակներ, որոնք թողարկվում են կայուն տարբերակից մի քանի օր առաջ։ Սպասեք թերությունների։";
+"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "Սա անջատելը դադարեցնում է հետագա բետաները։ Այն ձեզ հետ չի բերում արդեն աշխատող բետայից։ Դա կանի հաջորդ կայուն թողարկումը։";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "WhatCable-ը տեղադրվել է Homebrew-ով։ brew upgrade-ը կարող է բետան փոխարինել ընթացիկ կայուն տարբերակով։";
+
+/* Brick ID analog charger identity note (issue #592) */
+"Analog charger identifier, no PD profiles" = "Անալոգային լիցքավորիչի նույնացուցիչ, PD պրոֆիլներ չկան";
+
+/* ===== Notifications (connect and disconnect alerts). ===== */
+"%@ negotiated" = "համաձայնեցված է %@";
+"Charger connected" = "Լիցքավորիչը միացված է";
+"Charger disconnected" = "Լիցքավորիչը անջատված է";
+"Connected: %@" = "Միացված է՝ %@";
+"Disconnected: %@" = "Անջատված է՝ %@";
+"Reconnected: %@" = "Վերամիացված է՝ %@";
+"USB devices connected" = "USB սարքերը միացվեցին";
+"USB devices disconnected" = "USB սարքերն անջատվեցին";
+"Thunderbolt devices connected" = "Thunderbolt սարքերը միացվեցին";
+"Thunderbolt devices disconnected" = "Thunderbolt սարքերն անջատվեցին";
+"Wattage not reported" = "Հզորությունը չի հաղորդվում";
+"%@ (%@)" = "%1$@ (%2$@)";

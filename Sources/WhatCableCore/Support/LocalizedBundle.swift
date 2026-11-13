@@ -1,8 +1,10 @@
 import Foundation
 
-// The bundle used for all localized strings in WhatCableCore.
-// Defaults to the module bundle (system language). Call setCoreLocale(_:)
-// to switch to a specific lproj bundle for live language switching.
+// The one translation catalogue for WhatCable: every localised string in the
+// app, the CLI, the widget, notifications and the Pro plugins resolves through
+// `_coreLocalizedBundle`. Defaults to the module bundle (system language).
+// Call setCoreLocale(_:) to switch to a specific lproj bundle for live
+// language switching.
 //
 // Access goes through an NSLock so the live language switch (written on the
 // main actor from AppSettings) can't race a concurrent read from a background
@@ -18,6 +20,11 @@ public var _coreLocalizedBundle: Bundle {
     defer { _coreBundleLock.unlock() }
     return _coreBundleStorage
 }
+
+/// The resource bundle that holds the catalogue's `.lproj` directories,
+/// regardless of the language currently selected. The Settings language
+/// picker lists its `localizations`.
+public var coreLocalizationBundle: Bundle { .module }
 
 public func setCoreLocale(_ identifier: String) {
     let resolved: Bundle

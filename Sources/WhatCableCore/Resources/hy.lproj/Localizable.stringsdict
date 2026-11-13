@@ -18,5 +18,37 @@
 			<string>%lld հանգույցի միջոցով</string>
 		</dict>
 	</dict>
+	<key>%lld USB devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld USB սարք</string>
+			<key>other</key>
+			<string>%lld USB սարք</string>
+		</dict>
+	</dict>
+	<key>Show %lld hubs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Ցուցադրել %lld հանգույց</string>
+			<key>other</key>
+			<string>Ցուցադրել %lld հանգույց</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

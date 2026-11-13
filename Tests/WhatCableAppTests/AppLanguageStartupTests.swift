@@ -38,11 +38,39 @@ final class AppLanguageStartupTests: XCTestCase {
         }
     }
 
-    func testApplyLocaleSwitchesAppAndCoreStrings() {
+    /// One catalogue now serves the app, notifications and Core, so switching
+    /// it must change strings that used to live in each of the three files:
+    /// "Refresh" (app and Core), "Behavior" (app only), "Charger connected"
+    /// (notifications only) and "Power Monitor" (Core).
+    func testApplyLocaleSwitchesTheOneCatalogue() {
         defer { AppSettings.applyLocale("") }
         AppSettings.applyLocale("de")
-        XCTAssertEqual(String(localized: "Refresh", bundle: _appLocalizedBundle), "Aktualisieren")
+        XCTAssertEqual(String(localized: "Refresh", bundle: _coreLocalizedBundle), "Aktualisieren")
+        XCTAssertEqual(String(localized: "Behavior", bundle: _coreLocalizedBundle), "Verhalten")
+        XCTAssertEqual(String(localized: "Charger connected", bundle: _coreLocalizedBundle), "Ladegerät verbunden")
         XCTAssertEqual(String(localized: "Power Monitor", bundle: _coreLocalizedBundle), "Strommonitor")
+        // The free build's Settings link, which used to resolve through the
+        // app's catalogue where it had no entry, so it always showed English.
+        XCTAssertEqual(String(localized: "Upgrade to WhatCable Pro", bundle: _coreLocalizedBundle),
+                       "Auf WhatCable Pro upgraden")
+    }
+
+    /// The Settings language picker lists every language the catalogue ships,
+    /// read from Core's bundle (the app target has no resources of its own).
+    /// Compared with the `.lproj` directories in the source tree, so adding a
+    /// language needs no edit here.
+    func testPickerListsEveryShippedLanguage() throws {
+        let resources = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()   // WhatCableAppTests
+            .deletingLastPathComponent()   // Tests
+            .deletingLastPathComponent()   // repo root
+            .appendingPathComponent("Sources/WhatCableCore/Resources")
+        let onDisk = try FileManager.default.contentsOfDirectory(atPath: resources.path)
+            .filter { $0.hasSuffix(".lproj") }
+            .map { String($0.dropLast(".lproj".count)) }
+            .sorted()
+        XCTAssertGreaterThan(onDisk.count, 1, "No translations found under \(resources.path)")
+        XCTAssertEqual(AppLanguages.available.map(\.id), onDisk)
     }
 
     func testAppleLanguagesDecision() {

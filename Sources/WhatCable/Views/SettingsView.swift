@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import WhatCableAppKit
+import WhatCableCore
 
 /// Settings panel shown in place of the main popover content. Pushes a
 /// "Done" header and groups toggles by purpose. All preferences live on
@@ -33,9 +34,9 @@ struct SettingsView: View {
         HStack {
             Image(systemName: "gearshape")
                 .scaledFont(.title2)
-            Text(String(localized: "Settings", bundle: _appLocalizedBundle)).scaledFont(.headline, weight: .bold)
+            Text(String(localized: "Settings", bundle: _coreLocalizedBundle)).scaledFont(.headline, weight: .bold)
             Spacer()
-            Button(String(localized: "Done", bundle: _appLocalizedBundle), action: dismiss)
+            Button(String(localized: "Done", bundle: _coreLocalizedBundle), action: dismiss)
                 .keyboardShortcut(.defaultAction)
         }
         .padding(12)
@@ -48,32 +49,32 @@ struct SettingsForm: View {
     var body: some View {
         Form {
             Section {
-                Toggle(String(localized: "Launch at login", bundle: _appLocalizedBundle), isOn: $settings.launchAtLogin)
-                Toggle(String(localized: "Show in menu bar", bundle: _appLocalizedBundle), isOn: $settings.useMenuBarMode)
+                Toggle(String(localized: "Launch at login", bundle: _coreLocalizedBundle), isOn: $settings.launchAtLogin)
+                Toggle(String(localized: "Show in menu bar", bundle: _coreLocalizedBundle), isOn: $settings.useMenuBarMode)
             } header: {
                 sectionHeader("Behavior")
             } footer: {
                 Text(settings.useMenuBarMode
-                     ? String(localized: "Lives in the menu bar with no Dock icon.", bundle: _appLocalizedBundle)
-                     : String(localized: "Runs as a regular Dock app with a window.", bundle: _appLocalizedBundle))
+                     ? String(localized: "Lives in the menu bar with no Dock icon.", bundle: _coreLocalizedBundle)
+                     : String(localized: "Runs as a regular Dock app with a window.", bundle: _coreLocalizedBundle))
                     .scaledFont(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
-                Toggle(String(localized: "Show technical details", bundle: _appLocalizedBundle), isOn: $settings.showTechnicalDetails)
-                Toggle(String(localized: "Hide empty ports", bundle: _appLocalizedBundle), isOn: $settings.hideEmptyPorts)
+                Toggle(String(localized: "Show technical details", bundle: _coreLocalizedBundle), isOn: $settings.showTechnicalDetails)
+                Toggle(String(localized: "Hide empty ports", bundle: _coreLocalizedBundle), isOn: $settings.hideEmptyPorts)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Toggle(String(localized: "Skip deep USB probing", bundle: _appLocalizedBundle), isOn: $settings.skipDeepUSBProbing)
-                    Text(String(localized: "Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs.", bundle: _appLocalizedBundle))
+                    Toggle(String(localized: "Skip deep USB probing", bundle: _coreLocalizedBundle), isOn: $settings.skipDeepUSBProbing)
+                    Text(String(localized: "Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs.", bundle: _coreLocalizedBundle))
                         .scaledFont(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text(String(localized: "Font size", bundle: _appLocalizedBundle))
+                        Text(String(localized: "Font size", bundle: _coreLocalizedBundle))
                             .scaledFont(.body)
                         Spacer()
                         Text(verbatim: "\(Int((settings.fontSize * 100).rounded()))%")
@@ -93,7 +94,7 @@ struct SettingsForm: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text(String(localized: "Opacity", bundle: _appLocalizedBundle))
+                        Text(String(localized: "Opacity", bundle: _coreLocalizedBundle))
                             .scaledFont(.body)
                         Spacer()
                         Text(verbatim: "\(Int((settings.uiOpacity * 100).rounded()))%")
@@ -112,35 +113,35 @@ struct SettingsForm: View {
                 }
 
                 if settings.useMenuBarMode {
-                    Toggle(String(localized: "Solid window background", bundle: _appLocalizedBundle), isOn: $settings.solidMenuBarBackground)
+                    Toggle(String(localized: "Solid window background", bundle: _coreLocalizedBundle), isOn: $settings.solidMenuBarBackground)
                 }
 
                 LabeledContent {
                     MenuBarIconPicker(selection: $settings.menuBarIcon)
                 } label: {
-                    Text(String(localized: "Menu bar icon", bundle: _appLocalizedBundle))
+                    Text(String(localized: "Menu bar icon", bundle: _coreLocalizedBundle))
                 }
 
-                Toggle(String(localized: "Show charging watts in the menu bar", bundle: _appLocalizedBundle), isOn: $settings.showChargingWatts)
+                Toggle(String(localized: "Show charging watts in the menu bar", bundle: _coreLocalizedBundle), isOn: $settings.showChargingWatts)
 
                 if settings.showChargingWatts {
                     Picker(selection: $settings.menuBarWattsStyle) {
-                        Text(String(localized: "Number", bundle: _appLocalizedBundle)).tag(MenuBarWattsStyle.number)
-                        Text(String(localized: "Bar", bundle: _appLocalizedBundle)).tag(MenuBarWattsStyle.bar)
+                        Text(String(localized: "Number", bundle: _coreLocalizedBundle)).tag(MenuBarWattsStyle.number)
+                        Text(String(localized: "Bar", bundle: _coreLocalizedBundle)).tag(MenuBarWattsStyle.bar)
                     } label: {
-                        Text(String(localized: "Watts display", bundle: _appLocalizedBundle))
+                        Text(String(localized: "Watts display", bundle: _coreLocalizedBundle))
                     }
                     .pickerStyle(.segmented)
                 }
 
                 Picker(selection: $settings.preferredLanguage) {
-                    Text(String(localized: "System Default", bundle: _appLocalizedBundle)).tag("")
+                    Text(String(localized: "System Default", bundle: _coreLocalizedBundle)).tag("")
                     Divider()
                     ForEach(AppLanguages.available) { language in
                         Text(verbatim: language.name).tag(language.id)
                     }
                 } label: {
-                    Text(String(localized: "Language", bundle: _appLocalizedBundle))
+                    Text(String(localized: "Language", bundle: _coreLocalizedBundle))
                 }
                 .pickerStyle(.menu)
             } header: {
@@ -148,23 +149,23 @@ struct SettingsForm: View {
             }
 
             Section {
-                Toggle(String(localized: "Notify on cable changes", bundle: _appLocalizedBundle), isOn: $settings.notifyOnChanges)
-                Toggle(String(localized: "Notify on app updates", bundle: _appLocalizedBundle), isOn: $settings.notifyOnUpdates)
+                Toggle(String(localized: "Notify on cable changes", bundle: _coreLocalizedBundle), isOn: $settings.notifyOnChanges)
+                Toggle(String(localized: "Notify on app updates", bundle: _coreLocalizedBundle), isOn: $settings.notifyOnUpdates)
             } header: {
                 sectionHeader("Notifications")
             }
 
             Section {
                 VStack(alignment: .leading, spacing: 4) {
-                    Toggle(String(localized: "Include beta versions", bundle: _appLocalizedBundle), isOn: $settings.receiveBetaUpdates)
-                    Text(String(localized: "Pre-release builds, shipped a few days before a stable release. Expect rough edges.", bundle: _appLocalizedBundle))
+                    Toggle(String(localized: "Include beta versions", bundle: _coreLocalizedBundle), isOn: $settings.receiveBetaUpdates)
+                    Text(String(localized: "Pre-release builds, shipped a few days before a stable release. Expect rough edges.", bundle: _coreLocalizedBundle))
                         .scaledFont(.caption)
                         .foregroundStyle(.secondary)
-                    Text(String(localized: "Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will.", bundle: _appLocalizedBundle))
+                    Text(String(localized: "Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will.", bundle: _coreLocalizedBundle))
                         .scaledFont(.caption)
                         .foregroundStyle(.secondary)
                     if UpdateChecker.isHomebrewInstall {
-                        Text(String(localized: "You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release.", bundle: _appLocalizedBundle))
+                        Text(String(localized: "You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release.", bundle: _coreLocalizedBundle))
                             .scaledFont(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -182,7 +183,7 @@ struct SettingsForm: View {
             Section {
                 let builders = PluginRegistry.shared.settingsProSectionBuilders
                 if builders.isEmpty {
-                    Link(String(localized: "Upgrade to WhatCable Pro", bundle: _appLocalizedBundle),
+                    Link(String(localized: "Upgrade to WhatCable Pro", bundle: _coreLocalizedBundle),
                          destination: URL(string: "https://www.whatcable.uk/pro")!)
                 } else {
                     ForEach(builders.indices, id: \.self) { i in
@@ -199,10 +200,10 @@ struct SettingsForm: View {
     }
 
     /// A section header in the small uppercase grey style, scaled with the
-    /// font-size preference. `title` is an English key looked up in the app
-    /// bundle, then uppercased (a no-op for non-Latin scripts).
+    /// font-size preference. `title` is an English key looked up in Core's
+    /// catalogue, then uppercased (a no-op for non-Latin scripts).
     private func sectionHeader(_ title: String) -> some View {
-        Text(String(localized: String.LocalizationValue(title), bundle: _appLocalizedBundle).uppercased())
+        Text(String(localized: String.LocalizationValue(title), bundle: _coreLocalizedBundle).uppercased())
             .scaledFont(.caption, weight: .semibold)
             .foregroundStyle(.secondary)
     }
@@ -226,15 +227,15 @@ struct MenuBarIconPicker: View {
     private func label(for symbolName: String) -> String {
         switch symbolName {
         case "cable.connector":
-            return String(localized: "Cable", bundle: _appLocalizedBundle)
+            return String(localized: "Cable", bundle: _coreLocalizedBundle)
         case "cable.connector.horizontal":
-            return String(localized: "Cable, horizontal", bundle: _appLocalizedBundle)
+            return String(localized: "Cable, horizontal", bundle: _coreLocalizedBundle)
         case "bolt.fill":
-            return String(localized: "Bolt", bundle: _appLocalizedBundle)
+            return String(localized: "Bolt", bundle: _coreLocalizedBundle)
         case "powerplug.fill":
-            return String(localized: "Power plug", bundle: _appLocalizedBundle)
+            return String(localized: "Power plug", bundle: _coreLocalizedBundle)
         case "powercord.fill":
-            return String(localized: "Power cord", bundle: _appLocalizedBundle)
+            return String(localized: "Power cord", bundle: _coreLocalizedBundle)
         default:
             return symbolName
         }

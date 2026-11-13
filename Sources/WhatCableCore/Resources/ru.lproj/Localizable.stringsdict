@@ -22,5 +22,45 @@
 			<string>через %lld хаба</string>
 		</dict>
 	</dict>
+	<key>%lld USB devices</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld USB-устройства</string>
+			<key>many</key>
+			<string>%lld USB-устройств</string>
+			<key>one</key>
+			<string>%lld USB-устройство</string>
+			<key>other</key>
+			<string>%lld USB-устройства</string>
+		</dict>
+	</dict>
+	<key>Show %lld hubs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>Показать %lld хаба</string>
+			<key>many</key>
+			<string>Показать %lld хабов</string>
+			<key>one</key>
+			<string>Показать %lld хаб</string>
+			<key>other</key>
+			<string>Показать %lld хаба</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

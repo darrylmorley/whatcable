@@ -183,12 +183,11 @@ final class AppSettings: ObservableObject {
         defaults.string(forKey: Keys.preferredLanguage) ?? ""
     }
 
-    /// Points every string bundle (Core, app, notifications) at `identifier`,
-    /// or back at the system language for an empty string.
+    /// Points the string catalogue (Core's bundle, which the app,
+    /// notifications and plugins all read) at `identifier`, or back at the
+    /// system language for an empty string.
     nonisolated static func applyLocale(_ identifier: String) {
         setCoreLocale(identifier)
-        setAppLocale(identifier)
-        setNotificationsLocale(identifier)
     }
 
     /// What to do with the app's own `AppleLanguages` entry. That entry is

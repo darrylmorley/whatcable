@@ -663,3 +663,183 @@
 "USB accessory (audio or adapter)" = "USB 액세서리(오디오 또는 어댑터)";
 "This accessory has its own USB-C plug. It is not a cable and does not charge." = "이 액세서리에는 자체 USB-C 플러그가 있습니다. 케이블이 아니며 충전하지 않습니다.";
 "This plug is part of the accessory, not a cable, so there is no cable rating." = "이 플러그는 케이블이 아니라 액세서리의 일부이므로 케이블 정격이 없습니다.";
+
+/* ===== Menu bar app (Settings, port cards, windows, updates). ===== */
+"%@ profiles" = "%@ 프로파일";
+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "USB-C 포트 %lld개와 MagSafe 포트 1개가 감지되었지만 현재 아무것도 연결되어 있지 않아요. 설정에서 \"빈 포트 숨기기\"를 끄면 볼 수 있어요.";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "USB-C 포트 %lld개가 감지되었지만 현재 아무것도 연결되어 있지 않아요. 설정에서 \"빈 포트 숨기기\"를 끄면 볼 수 있어요.";
+"About %@" = "%@에 관하여";
+"Active" = "활성화됨";
+"Active cable electronics" = "케이블 내장 액티브 회로";
+"All raw IOKit properties (%lld)" = "전체 원시 IOKit 속성 (%lld)";
+"Behavior" = "동작";
+"Built by %@." = "%@(이)가 만듦";
+"Cable trust signals" = "케이블 신뢰 지표";
+"Check for Updates…" = "업데이트 확인…";
+"Connected devices" = "연결된 기기";
+"Connection" = "연결";
+"Appearance" = "모양";
+"Desktop Mac: charger identity (FedDetails) is not available." = "데스크탑 Mac: 충전기 정보(FedDetails)를 사용할 수 없어요.";
+"Done" = "완료";
+"Downloading…" = "다운로드 중…";
+"Newer version found, installing it…" = "최신 버전을 찾았습니다. 설치 중…";
+"Checking for the latest version…" = "최신 버전 확인 중…";
+"File a GitHub issue with this cable's e-marker fingerprint" = "이 케이블의 E-marker 핑거프린트로 GitHub 이슈 등록";
+"Font size" = "글자 크기";
+"Opacity" = "불투명도";
+"Solid window background" = "불투명한 창 배경";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "개발자가 특정 하드웨어에서 생기는 충전기/케이블 문제를 재현하는 데 도움이 됩니다.";
+"Hide empty ports" = "빈 포트 숨기기";
+"Host (%@)" = "호스트 (%@)";
+"Include Mac model and macOS version" = "Mac 모델과 macOS 버전 포함";
+"Install failed: %@" = "설치 실패: %@";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "이 계정은 이 위치의 앱을 업데이트할 수 없습니다. whatcable.uk에서 새 버전을 다운로드하거나 Homebrew로 업데이트하세요.";
+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "WhatCable이 현재 폴더에서 자체 업데이트를 할 수 없습니다. WhatCable을 응용 프로그램 폴더로 옮긴 후 다시 실행하여 시도하거나, whatcable.uk에서 최신 버전을 내려받으세요.";
+"Install update" = "업데이트 설치";
+"Installing, WhatCable will relaunch" = "설치 중입니다. WhatCable이 다시 시작됩니다";
+"Keep window open" = "창 계속 열어 두기";
+"Language" = "언어";
+"Launch at login" = "로그인 시 실행";
+"Lives in the menu bar with no Dock icon." = "Dock 아이콘 없이 메뉴 막대에 계속 표시됩니다.";
+"Menu bar icon" = "메뉴 막대 아이콘";
+"Show charging watts in the menu bar" = "메뉴 막대에 충전 와트 표시";
+/* Menu bar icon choices */
+"Cable, horizontal" = "케이블, 가로";
+"Bolt" = "번개";
+"Power plug" = "전원 플러그";
+"Power cord" = "전원 코드";
+"No USB-C ports detected" = "감지된 USB-C 포트 없음";
+"Notifications" = "알림";
+"Notify on cable changes" = "케이블 변경 시 알림";
+"Notify on app updates" = "앱 업데이트 시 알림";
+"Open in GitHub" = "GitHub에서 열기";
+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "미리 작성된 GitHub 이슈를 브라우저에서 열어요. GitHub에서 제출하기 전까지는 아무것도 전송되지 않아요.";
+"Plug events" = "연결/분리 이벤트";
+"Preview of what will be included:" = "포함될 내용 미리보기:";
+"Provisioned" = "구성됨";
+"Quit" = "종료";
+"Quit %@" = "%@ 종료";
+"Report this cable" = "이 케이블 보고";
+"Runs as a regular Dock app with a window." = "창이 있는 일반 Dock 앱으로 실행됩니다.";
+"System Default" = "시스템 기본값";
+"Settings" = "설정";
+"Settings…" = "설정…";
+"Show in menu bar" = "메뉴 막대에 표시";
+"Show technical details" = "기술 세부정보 표시";
+"SuperSpeed" = "SuperSpeed";
+"Supported" = "지원됨";
+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "이 Mac은 포트 컨트롤러 서비스를 노출하지 않는 것 같아요. 새로 고침을 누르거나 시스템 정보 > USB를 확인해 보세요.";
+"Thunderbolt fabric" = "Thunderbolt 패브릭";
+"Transports" = "전송 방식";
+"Verifying signature…" = "서명 확인 중…";
+"View release" = "릴리스 보기";
+"What gets shared?" = "무엇이 공유되나요?";
+"WhatCable %@ is available" = "WhatCable %@ 업데이트가 있어요";
+"WhatCable on GitHub" = "GitHub에서 WhatCable 보기";
+"You're on %@" = "현재 버전: %@";
+"%lld USB devices" = "USB 기기 %lld개";
+"active" = "활성";
+"no active link" = "활성화된 링크 없음";
+
+/* Test Kit / Contribute Diagnostic Data consent + notifications (previously missing keys) */
+"COMMUNITY" = "커뮤니티";
+"Contribute Diagnostic Data" = "진단 데이터 제공";
+"Contribute Diagnostic Data…" = "진단 데이터 제공…";
+"Before you start" = "시작하기 전에";
+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "포함하고 싶은 케이블과 기기를 연결하고, 끝날 때까지 모두 연결해 두세요. 실행 중에 연결하거나 분리하면 결과에 빈틈이 생길 수 있어요.";
+"Privacy" = "개인정보 보호";
+"Pro" = "Pro";
+"Proceed" = "계속";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac." = "IOKit 레지스트리 원시 속성, Mac에 존재하는 드라이버 클래스 목록, macOS 버전, 칩 종류, Mac 모델 식별자(예: Mac14,3)입니다. 이는 macOS가 이미 Mac에서 공개하는 데이터예요.";
+"What happens" = "어떤 일이 일어나나요";
+"What is collected" = "수집되는 정보";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable은 Mac이 이미 공개하는 하드웨어 데이터를 읽는 IOKit 프로브 %lld개를 실행합니다. 그 결과는 케이블과 포트 감지 기능을 개선하기 위해 보안 서버로 전송됩니다.";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "기기의 하드웨어 UUID는 전송 전에 SHA-256으로 해시 처리됩니다. 이름, 계정, Mac의 일련번호 등 개인 데이터는 수집하거나 저장하지 않아요.";
+
+/* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
+"Back" = "뒤로";
+"Unpin (popover closes when you click away)" = "고정 해제 (다른 곳을 클릭하면 팝오버가 닫힘)";
+"Open in a separate window" = "별도 창으로 열기";
+"%@ Port %lld Diagnostics" = "%@ 포트 %lld 진단";
+
+/* Onboarding / welcome screen (first launch). */
+"Welcome to WhatCable" = "WhatCable에 오신 것을 환영해요";
+"See what your USB-C cables, chargers, and devices can actually do." = "USB-C 케이블, 충전기, 기기가 실제로 어떤 성능을 내는지 확인하세요.";
+"How would you like to use WhatCable?" = "WhatCable을 어떻게 사용하시겠어요?";
+"Menu bar" = "메뉴 막대";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "화면 상단 메뉴 막대에 자리합니다. 케이블 아이콘을 클릭하면 언제든 연결을 확인할 수 있어요.";
+"Recommended" = "추천";
+"Dock app" = "Dock 앱";
+"Opens as a regular window with a Dock icon, like most apps." = "대부분의 앱처럼 Dock 아이콘이 있는 일반 창으로 열립니다.";
+"Get Started" = "시작하기";
+"You can change this any time in Settings." = "이 설정은 언제든 설정에서 바꿀 수 있어요.";
+
+/* Softened blank e-marker note */
+"Cable note" = "케이블 참고";
+"Cable details" = "케이블 세부 정보";
+
+/* Active Cable VDO 2 section (ActiveCableVDO2Section) */
+"Active cable (VDO 2)" = "액티브 케이블 (VDO 2)";
+"Physical connection" = "물리적 연결";
+"Active element" = "액티브 소자";
+"Optically isolated" = "광학적 절연";
+"USB lanes" = "USB 레인";
+"Two" = "두 개";
+"One" = "한 개";
+"USB Gen" = "USB 세대";
+"Gen 2 or higher" = "Gen 2 이상";
+"Gen 1" = "Gen 1";
+"USB4 supported" = "USB4 지원";
+"USB 3.2 supported" = "USB 3.2 지원";
+"USB 2.0 supported" = "USB 2.0 지원";
+"USB 2.0 hub hops" = "USB 2.0 허브 홉";
+"USB4 asymmetric" = "USB4 비대칭";
+"U3 to U0 transition" = "U3에서 U0 전환";
+"Through U3S" = "U3S 경유";
+"Direct" = "직접";
+"Idle power (U3/CLd)" = "유휴 전력 (U3/CLd)";
+"Max operating temp" = "최대 동작 온도";
+"Shutdown temp" = "종료 온도";
+
+"Watts display" = "와트 표시";
+"Number" = "숫자";
+"Bar" = "막대";
+
+/* USB probing compatibility toggle (issue #429). */
+"Skip deep USB probing" = "심층 USB 프로빙 건너뛰기";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "WhatCable이 USB 장치에서 기능 정보를 읽는 것을 중지합니다. WhatCable 실행 중에 KVM 스위치나 허브가 오작동하는 경우(릴레이 딸깍거림 또는 키보드와 마우스 끊김) 켜세요.";
+
+/* Intel Macs are unsupported; notice shown on every launch. */
+"WhatCable can't read cables on this Mac" = "이 Mac에서는 케이블을 읽을 수 없습니다";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "이 Mac은 Intel 프로세서를 사용합니다. WhatCable은 케이블과 포트 데이터를 Apple Silicon의 포트 컨트롤러에서 가져오는데, Intel Mac은 이를 제공하지 않으므로 앱에 유용한 정보가 표시되지 않습니다.\n\n둘러보고 싶다면 열어 둘 수 있지만, 그 뒤에는 아무것도 없습니다.";
+"Learn more" = "자세히 알아보기";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "제조사";
+"Serial" = "일련번호";
+"USB" = "USB";
+"Hide hubs" = "허브 숨기기";
+
+/* Beta update channel (opt-in pre-release updates). */
+"Updates" = "업데이트";
+"Include beta versions" = "베타 버전 포함";
+"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "안정 버전 출시 며칠 전에 배포되는 사전 릴리스 빌드입니다. 다듬어지지 않은 부분이 있을 수 있습니다.";
+"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "이 옵션을 끄면 이후 베타는 받지 않습니다. 이미 사용 중인 베타에서 되돌아가지는 않으며, 다음 안정 버전이 그 역할을 합니다.";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "WhatCable을 Homebrew로 설치했습니다. brew upgrade를 실행하면 베타가 현재 안정 버전으로 교체될 수 있습니다.";
+
+/* Brick ID analog charger identity note (issue #592) */
+"Analog charger identifier, no PD profiles" = "아날로그 충전기 식별자, PD 프로필 없음";
+
+/* ===== Notifications (connect and disconnect alerts). ===== */
+"%@ negotiated" = "협상됨: %@";
+"Charger connected" = "충전기 연결됨";
+"Charger disconnected" = "충전기 분리됨";
+"Connected: %@" = "연결됨: %@";
+"Disconnected: %@" = "연결 해제됨: %@";
+"Reconnected: %@" = "재연결됨: %@";
+"USB devices connected" = "USB 기기 연결됨";
+"USB devices disconnected" = "USB 기기 분리됨";
+"Thunderbolt devices connected" = "Thunderbolt 기기 연결됨";
+"Thunderbolt devices disconnected" = "Thunderbolt 기기 분리됨";
+"Wattage not reported" = "전력이 보고되지 않음";
+"%@ (%@)" = "%1$@ (%2$@)";

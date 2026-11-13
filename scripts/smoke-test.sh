@@ -146,30 +146,6 @@ if [[ -d "${SPM_RESOURCES_SRC}" ]]; then
     cp -R "${SPM_RESOURCES_SRC}/." "${bundle_path}/"
 fi
 
-# The WhatCable app target also has its own string catalog for UI strings.
-APP_BUNDLE_NAME="WhatCable_WhatCable.bundle"
-APP_RESOURCES_SRC="Sources/WhatCable/Resources"
-if [[ -d "${APP_RESOURCES_SRC}" ]]; then
-    bundle_path="${RESOURCES_DIR}/${APP_BUNDLE_NAME}"
-    rm -rf "${bundle_path}"
-    mkdir -p "${bundle_path}"
-    cp -R "${APP_RESOURCES_SRC}/." "${bundle_path}/"
-fi
-
-# WhatCableNotifications (the notification decision module, PR #564) has its
-# own localised strings, separate from the app's. WhatCableCLI does not
-# depend on this target (verified against Package.swift), so unlike
-# WhatCable_WhatCableCore.bundle above, this one is app-only: no CLI staging
-# needed.
-NOTIFICATIONS_BUNDLE_NAME="WhatCable_WhatCableNotifications.bundle"
-NOTIFICATIONS_RESOURCES_SRC="Sources/WhatCableNotifications/Resources"
-if [[ -d "${NOTIFICATIONS_RESOURCES_SRC}" ]]; then
-    bundle_path="${RESOURCES_DIR}/${NOTIFICATIONS_BUNDLE_NAME}"
-    rm -rf "${bundle_path}"
-    mkdir -p "${bundle_path}"
-    cp -R "${NOTIFICATIONS_RESOURCES_SRC}/." "${bundle_path}/"
-fi
-
 # TUIkit declares SPM resources, so the build produces TUIkit_TUIkit.bundle
 # alongside the binaries in the products dir. Bundle.module's lookup chain
 # needs it at runtime when the --dashboard command initialises the TUI.
@@ -202,10 +178,13 @@ cp -R "${TUIKIT_BUNDLE_SRC}" "${RESOURCES_DIR}/${TUIKIT_BUNDLE_NAME}"
 # en. So the check also requires at least one `*.lproj/Localizable.strings`
 # file inside, the shape every one of these targets' Resources/ carries
 # today.
+#
+# Today only WhatCableCore declares resources: it holds the one translation
+# catalogue that the app, notifications, plugins, CLI and widget all read
+# through _coreLocalizedBundle. The localisation gate in CI fails on any
+# `.lproj` outside Core, so a second catalogue can't quietly reappear.
 RESOURCE_BEARING_APP_TARGETS=(
     "WhatCableCore"
-    "WhatCable"
-    "WhatCableNotifications"
 )
 for target in "${RESOURCE_BEARING_APP_TARGETS[@]}"; do
     expected_bundle="${RESOURCES_DIR}/WhatCable_${target}.bundle"
@@ -225,9 +204,9 @@ for target in "${RESOURCE_BEARING_APP_TARGETS[@]}"; do
 done
 
 # macOS needs .lproj directories at the app bundle root to recognize
-# supported languages. The actual strings live in the SPM sub-bundles,
+# supported languages. The actual strings live in Core's SPM bundle,
 # but without these markers the system won't select the right locale.
-for lproj in "${APP_RESOURCES_SRC}"/*.lproj; do
+for lproj in "${SPM_RESOURCES_SRC}"/*.lproj; do
     [[ -d "${lproj}" ]] || continue
     mkdir -p "${RESOURCES_DIR}/$(basename "${lproj}")"
 done

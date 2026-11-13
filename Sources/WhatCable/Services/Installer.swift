@@ -2,6 +2,7 @@
 import Foundation
 import AppKit
 import os.log
+import WhatCableCore
 
 /// Downloads a new release zip from GitHub, validates its code signature
 /// matches the currently running app, and swaps the bundles via a small
@@ -59,7 +60,7 @@ final class Installer: ObservableObject {
         // unwritable location up front and tell the user how to update instead.
         let installDir = Bundle.main.bundleURL.deletingLastPathComponent()
         if !FileManager.default.isWritableFile(atPath: installDir.path) {
-            state = .blocked(String(localized: "This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew.", bundle: _appLocalizedBundle))
+            state = .blocked(String(localized: "This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew.", bundle: _coreLocalizedBundle))
             return
         }
 
@@ -72,7 +73,7 @@ final class Installer: ObservableObject {
         // front and point the user at the manual path instead. (Support: a user
         // running WhatCable straight from ~/Downloads.)
         if !FileManager.default.fileExists(atPath: Bundle.main.bundleURL.path) {
-            state = .blocked(String(localized: "WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk.", bundle: _appLocalizedBundle))
+            state = .blocked(String(localized: "WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk.", bundle: _coreLocalizedBundle))
             return
         }
 

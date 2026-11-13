@@ -664,3 +664,183 @@
 "USB accessory (audio or adapter)" = "Accesorio USB (audio o adaptador)";
 "This accessory has its own USB-C plug. It is not a cable and does not charge." = "Este accesorio tiene su propio conector USB-C. No es un cable y no carga.";
 "This plug is part of the accessory, not a cable, so there is no cable rating." = "Este conector forma parte del accesorio, no de un cable, así que no hay datos de cable.";
+
+/* ===== Menu bar app (Settings, port cards, windows, updates). ===== */
+"%@ profiles" = "%@ perfiles";
+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld puertos USB-C y 1 puerto MagSafe detectados, pero no hay nada conectado. Desactiva \"Ocultar puertos vacíos\" en Ajustes para verlos.";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld puertos USB-C detectados, pero no hay nada conectado. Desactiva \"Ocultar puertos vacíos\" en Ajustes para verlos.";
+"About %@" = "Acerca de %@";
+"Active" = "Activo";
+"Active cable electronics" = "Electrónica activa del cable";
+"All raw IOKit properties (%lld)" = "Todas las propiedades IOKit en bruto (%lld)";
+"Behavior" = "Comportamiento";
+"Built by %@." = "Creado por %@.";
+"Cable trust signals" = "Señales de confianza del cable";
+"Check for Updates…" = "Buscar actualizaciones…";
+"Connected devices" = "Dispositivos conectados";
+"Connection" = "Conexión";
+"Appearance" = "Apariencia";
+"Desktop Mac: charger identity (FedDetails) is not available." = "Mac de escritorio: identidad del cargador (FedDetails) no disponible.";
+"Done" = "Listo";
+"Downloading…" = "Descargando…";
+"Newer version found, installing it…" = "Versión más reciente encontrada, instalando…";
+"Checking for the latest version…" = "Buscando la última versión…";
+"File a GitHub issue with this cable's e-marker fingerprint" = "Abrir un issue en GitHub con la huella e-marker de este cable";
+"Font size" = "Tamaño de fuente";
+"Opacity" = "Opacidad";
+"Solid window background" = "Fondo de ventana sólido";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Ayuda al desarrollador a reproducir el comportamiento del cargador/cable vinculado a un hardware específico.";
+"Hide empty ports" = "Ocultar puertos vacíos";
+"Host (%@)" = "Host (%@)";
+"Include Mac model and macOS version" = "Incluir modelo de Mac y versión de macOS";
+"Install failed: %@" = "Error de instalación: %@";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "Esta cuenta no puede actualizar apps en esta ubicación. Descarga la nueva versión desde whatcable.uk o actualiza con Homebrew.";
+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "WhatCable no puede actualizarse desde su carpeta actual. Mueve WhatCable a tu carpeta Aplicaciones, vuelve a abrirlo e inténtalo de nuevo, o descarga la última versión desde whatcable.uk.";
+"Install update" = "Instalar actualización";
+"Installing, WhatCable will relaunch" = "Instalando, WhatCable se reiniciará";
+"Keep window open" = "Mantener ventana abierta";
+"Language" = "Idioma";
+"Launch at login" = "Abrir al iniciar sesión";
+"Lives in the menu bar with no Dock icon." = "Reside en la barra de menús sin icono en el Dock.";
+"Menu bar icon" = "Icono de la barra de menús";
+"Show charging watts in the menu bar" = "Mostrar vatios de carga en la barra de menús";
+/* Menu bar icon choices */
+"Cable, horizontal" = "Cable, horizontal";
+"Bolt" = "Rayo";
+"Power plug" = "Enchufe";
+"Power cord" = "Cable de alimentación";
+"No USB-C ports detected" = "No se detectaron puertos USB-C";
+"Notifications" = "Notificaciones";
+"Notify on cable changes" = "Notificar cambios de cable";
+"Notify on app updates" = "Notificar actualizaciones de la app";
+"Open in GitHub" = "Abrir en GitHub";
+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "Abre un issue pre-rellenado en GitHub en tu navegador. No se envía nada hasta que lo envíes tú.";
+"Plug events" = "Eventos de conexión";
+"Preview of what will be included:" = "Vista previa de lo que se incluirá:";
+"Provisioned" = "Aprovisionado";
+"Quit" = "Salir";
+"Quit %@" = "Salir de %@";
+"Report this cable" = "Reportar este cable";
+"Runs as a regular Dock app with a window." = "Funciona como una app normal del Dock con ventana.";
+"System Default" = "Por defecto del sistema";
+"Settings" = "Ajustes";
+"Settings…" = "Ajustes…";
+"Show in menu bar" = "Mostrar en la barra de menús";
+"Show technical details" = "Mostrar detalles técnicos";
+"SuperSpeed" = "SuperSpeed";
+"Supported" = "Compatible";
+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "Este Mac no parece exponer sus servicios de controlador de puertos. Pulsa Actualizar, o revisa Información del Sistema > USB.";
+"Thunderbolt fabric" = "Fabric Thunderbolt";
+"Transports" = "Transportes";
+"Verifying signature…" = "Verificando firma…";
+"View release" = "Ver versión";
+"What gets shared?" = "¿Qué se comparte?";
+"WhatCable %@ is available" = "WhatCable %@ está disponible";
+"WhatCable on GitHub" = "WhatCable en GitHub";
+"You're on %@" = "Estás en %@";
+"%lld USB devices" = "%lld dispositivos USB";
+"active" = "activo";
+"no active link" = "sin enlace activo";
+
+/* Test Kit / Contribute Diagnostic Data consent + notifications (previously missing keys) */
+"COMMUNITY" = "COMUNIDAD";
+"Contribute Diagnostic Data" = "Contribuir con datos de diagnóstico";
+"Contribute Diagnostic Data…" = "Contribuir con datos de diagnóstico…";
+"Before you start" = "Antes de empezar";
+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "Conecta los cables y dispositivos que quieras incluir y déjalos conectados hasta que termine. Conectar o desconectar algo durante la ejecución puede dejar huecos en los resultados.";
+"Privacy" = "Privacidad";
+"Pro" = "Pro";
+"Proceed" = "Continuar";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac." = "Propiedades sin procesar del registro IOKit, una lista de las clases de controladores presentes en tu Mac, además de tu versión de macOS, el tipo de chip y el identificador de modelo de tu Mac (por ejemplo, Mac14,3). Son datos que macOS ya expone en tu Mac.";
+"What happens" = "Qué sucede";
+"What is collected" = "Qué se recopila";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable ejecuta %lld sondeos IOKit que leen datos de hardware que tu Mac ya publica. Los resultados se envían a un servidor seguro para ayudar a mejorar la detección de cables y puertos.";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "El UUID de hardware de tu equipo se somete a hash con SHA-256 antes de enviarse. No se recopilan ni almacenan nombres, cuentas, el número de serie de tu Mac ni datos personales.";
+
+/* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
+"Back" = "Volver";
+"Unpin (popover closes when you click away)" = "Desanclar (la ventana se cierra al hacer clic fuera)";
+"Open in a separate window" = "Abrir en una ventana separada";
+"%@ Port %lld Diagnostics" = "Diagnósticos %@ puerto %lld";
+
+/* Onboarding / welcome screen (first launch). */
+"Welcome to WhatCable" = "Bienvenido a WhatCable";
+"See what your USB-C cables, chargers, and devices can actually do." = "Descubre qué pueden hacer realmente tus cables USB-C, cargadores y dispositivos.";
+"How would you like to use WhatCable?" = "¿Cómo quieres usar WhatCable?";
+"Menu bar" = "Barra de menús";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "Se ubica en la barra de menús en la parte superior de tu pantalla. Haz clic en el icono del cable en cualquier momento para verificar una conexión.";
+"Recommended" = "Recomendado";
+"Dock app" = "App en el Dock";
+"Opens as a regular window with a Dock icon, like most apps." = "Se abre como una ventana normal con un icono en el Dock, como la mayoría de las apps.";
+"Get Started" = "Comenzar";
+"You can change this any time in Settings." = "Puedes cambiar esto en cualquier momento en Ajustes.";
+
+/* Softened blank e-marker note */
+"Cable note" = "Nota del cable";
+"Cable details" = "Detalles del cable";
+
+/* Active Cable VDO 2 section (ActiveCableVDO2Section) */
+"Active cable (VDO 2)" = "Cable activo (VDO 2)";
+"Physical connection" = "Conexión física";
+"Active element" = "Elemento activo";
+"Optically isolated" = "Aislado ópticamente";
+"USB lanes" = "Canales USB";
+"Two" = "Dos";
+"One" = "Uno";
+"USB Gen" = "Gen USB";
+"Gen 2 or higher" = "Gen 2 o superior";
+"Gen 1" = "Gen 1";
+"USB4 supported" = "USB4 compatible";
+"USB 3.2 supported" = "USB 3.2 compatible";
+"USB 2.0 supported" = "USB 2.0 compatible";
+"USB 2.0 hub hops" = "Saltos de hub USB 2.0";
+"USB4 asymmetric" = "USB4 asimétrico";
+"U3 to U0 transition" = "Transición de U3 a U0";
+"Through U3S" = "A través de U3S";
+"Direct" = "Directo";
+"Idle power (U3/CLd)" = "Consumo en reposo (U3/CLd)";
+"Max operating temp" = "Temp. máxima de operación";
+"Shutdown temp" = "Temp. de apagado";
+
+"Watts display" = "Visualización de vatios";
+"Number" = "Número";
+"Bar" = "Barra";
+
+/* USB probing compatibility toggle (issue #429). */
+"Skip deep USB probing" = "Omitir sondeo USB profundo";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "Impide que WhatCable lea la información de capacidades de los dispositivos USB. Actívalo si un conmutador KVM o un concentrador se comporta mal (relé que hace clic, o teclado y ratón que se desconectan) cuando WhatCable se ejecuta.";
+
+/* Intel Macs are unsupported; notice shown on every launch. */
+"WhatCable can't read cables on this Mac" = "WhatCable no puede leer cables en este Mac";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Este Mac tiene un procesador Intel. WhatCable obtiene los datos de cables y puertos del controlador de puertos de Apple Silicon, y los Mac con Intel no lo exponen, así que la app no mostrará nada útil.\n\nSeguirá abierta por si quieres echar un vistazo, pero no hay nada detrás.";
+"Learn more" = "Más información";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "Fabricante";
+"Serial" = "Número de serie";
+"USB" = "USB";
+"Hide hubs" = "Ocultar hubs";
+
+/* Beta update channel (opt-in pre-release updates). */
+"Updates" = "Actualizaciones";
+"Include beta versions" = "Incluir versiones beta";
+"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "Versiones preliminares, publicadas unos días antes de una versión estable. Espera algún defecto.";
+"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "Desactivar esto detiene las betas futuras. No te devuelve desde una beta que ya estés usando. Lo hará la siguiente versión estable.";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "Instalaste WhatCable con Homebrew. Ejecutar brew upgrade puede sustituir una beta por la versión estable actual.";
+
+/* Brick ID analog charger identity note (issue #592) */
+"Analog charger identifier, no PD profiles" = "Identificador de cargador analógico, sin perfiles PD";
+
+/* ===== Notifications (connect and disconnect alerts). ===== */
+"%@ negotiated" = "%@ negociado";
+"Charger connected" = "Cargador conectado";
+"Charger disconnected" = "Cargador desconectado";
+"Connected: %@" = "Conectado: %@";
+"Disconnected: %@" = "Desconectado: %@";
+"Reconnected: %@" = "Reconectado: %@";
+"USB devices connected" = "Dispositivos USB conectados";
+"USB devices disconnected" = "Dispositivos USB desconectados";
+"Thunderbolt devices connected" = "Dispositivos Thunderbolt conectados";
+"Thunderbolt devices disconnected" = "Dispositivos Thunderbolt desconectados";
+"Wattage not reported" = "Potencia no reportada";
+"%@ (%@)" = "%1$@ (%2$@)";

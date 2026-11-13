@@ -42,14 +42,14 @@ struct CableReportSheet: View {
                     .scaledFont(.title2)
                     .foregroundStyle(.tint)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(String(localized: "Report this cable", bundle: _appLocalizedBundle)).scaledFont(.title3, weight: .bold)
-                    Text(String(localized: "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there.", bundle: _appLocalizedBundle))
+                    Text(String(localized: "Report this cable", bundle: _coreLocalizedBundle)).scaledFont(.title3, weight: .bold)
+                    Text(String(localized: "Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there.", bundle: _coreLocalizedBundle))
                         .scaledFont(.callout)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Text(String(localized: "Preview of what will be included:", bundle: _appLocalizedBundle))
+            Text(String(localized: "Preview of what will be included:", bundle: _coreLocalizedBundle))
                 .scaledFont(.caption).foregroundStyle(.secondary)
 
             if let payload {
@@ -66,8 +66,8 @@ struct CableReportSheet: View {
 
             Toggle(isOn: $includeSystemInfo) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(String(localized: "Include Mac model and macOS version", bundle: _appLocalizedBundle))
-                    Text(String(localized: "Helps the maintainer reproduce charger / cable behavior tied to specific hardware.", bundle: _appLocalizedBundle))
+                    Text(String(localized: "Include Mac model and macOS version", bundle: _coreLocalizedBundle))
+                    Text(String(localized: "Helps the maintainer reproduce charger / cable behavior tied to specific hardware.", bundle: _coreLocalizedBundle))
                         .scaledFont(.caption).foregroundStyle(.secondary)
                 }
             }
@@ -76,12 +76,12 @@ struct CableReportSheet: View {
             Divider()
 
             HStack {
-                Link(String(localized: "What gets shared?", bundle: _appLocalizedBundle), destination: URL(string: "https://github.com/darrylmorley/whatcable#privacy")!)
+                Link(String(localized: "What gets shared?", bundle: _coreLocalizedBundle), destination: URL(string: "https://github.com/darrylmorley/whatcable#privacy")!)
                     .scaledFont(.caption)
                 Spacer()
-                Button(String(localized: "Cancel", bundle: _appLocalizedBundle), action: dismiss)
+                Button(String(localized: "Cancel", bundle: _coreLocalizedBundle), action: dismiss)
                     .keyboardShortcut(.cancelAction)
-                Button(String(localized: "Open in GitHub", bundle: _appLocalizedBundle)) {
+                Button(String(localized: "Open in GitHub", bundle: _coreLocalizedBundle)) {
                     if let url = payload?.githubURL {
                         NSWorkspace.shared.open(url)
                     }

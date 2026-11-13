@@ -664,3 +664,183 @@
 "USB accessory (audio or adapter)" = "USB 配件（音频或转接器）";
 "This accessory has its own USB-C plug. It is not a cable and does not charge." = "此配件自带 USB-C 插头。它不是线缆，也不充电。";
 "This plug is part of the accessory, not a cable, so there is no cable rating." = "此插头是配件的一部分，不是线缆，因此没有线缆规格。";
+
+/* ===== Menu bar app (Settings, port cards, windows, updates). ===== */
+"%@ profiles" = "%@ 供电档位";
+"%lld USB devices" = "%lld 个 USB 设备";
+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "检测到 %lld 个 USB-C 端口和 1 个 MagSafe 端口，但当前没有接入设备。可在\"设置\"中关闭\"隐藏空端口\"查看它们。";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "检测到 %lld 个 USB-C 端口，但当前没有接入设备。可在\"设置\"中关闭\"隐藏空端口\"查看它们。";
+"About %@" = "关于 %@";
+"Active" = "活跃";
+"Active cable electronics" = "有源线缆电子组件";
+"All raw IOKit properties (%lld)" = "全部原始 IOKit 属性（%lld）";
+"Behavior" = "行为";
+"Built by %@." = "由 %@ 构建。";
+"Cable trust signals" = "线缆可信度信号";
+"Check for Updates…" = "检查更新…";
+"Connected devices" = "已连接设备";
+"Connection" = "连接";
+"Appearance" = "外观";
+"Desktop Mac: charger identity (FedDetails) is not available." = "台式 Mac: 充电器身份信息 (FedDetails) 不可用。";
+"Done" = "完成";
+"Downloading…" = "正在下载…";
+"Newer version found, installing it…" = "找到新版本，正在安装…";
+"Checking for the latest version…" = "正在检查最新版本…";
+"File a GitHub issue with this cable's e-marker fingerprint" = "使用这条线缆的 e-marker 指纹提交 GitHub issue";
+"Font size" = "字体大小";
+"Opacity" = "不透明度";
+"Solid window background" = "不透明窗口背景";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "帮助维护者复现与特定硬件相关的充电器/线缆行为。";
+"Hide empty ports" = "隐藏空端口";
+"Host (%@)" = "主机（%@）";
+"Include Mac model and macOS version" = "包含 Mac 机型和 macOS 版本";
+"Install failed: %@" = "安装失败：%@";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "此账户无法更新此位置的应用。请从 whatcable.uk 下载新版本，或使用 Homebrew 更新。";
+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "WhatCable 无法从当前文件夹自我更新。请将 WhatCable 移动到“应用程序”文件夹，重新启动后再试一次，或从 whatcable.uk 下载最新版本。";
+"Install update" = "安装更新";
+"Installing, WhatCable will relaunch" = "正在安装，WhatCable 将重新启动";
+"Keep window open" = "保持窗口打开";
+"Language" = "语言";
+"Launch at login" = "登录时启动";
+"Lives in the menu bar with no Dock icon." = "驻留在菜单栏，不显示 Dock 图标。";
+"Menu bar icon" = "菜单栏图标";
+"Show charging watts in the menu bar" = "在菜单栏显示充电功率";
+/* Menu bar icon choices */
+"Cable, horizontal" = "线缆（横向）";
+"Bolt" = "闪电";
+"Power plug" = "电源插头";
+"Power cord" = "电源线";
+"No USB-C ports detected" = "未检测到 USB-C 端口";
+"Notifications" = "通知";
+"Notify on cable changes" = "线缆变化时通知";
+"Notify on app updates" = "应用更新时通知";
+"Open in GitHub" = "在 GitHub 中打开";
+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "会在浏览器中打开预填好的 GitHub issue。只有你在那里提交后才会发送内容。";
+"Plug events" = "插拔事件";
+"Preview of what will be included:" = "将包含内容的预览：";
+"Provisioned" = "已配置";
+"Quit" = "退出";
+"Quit %@" = "退出 %@";
+"Report this cable" = "报告这条线缆";
+"Runs as a regular Dock app with a window." = "作为普通 Dock 应用运行并显示窗口。";
+"System Default" = "系统默认";
+"Settings" = "设置";
+"Settings…" = "设置…";
+"Show in menu bar" = "显示在菜单栏";
+"Show technical details" = "显示技术详情";
+"SuperSpeed" = "SuperSpeed";
+"Supported" = "支持";
+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "这台 Mac 似乎没有暴露端口控制器服务。请点按刷新，或检查「系统信息」>「USB」。";
+"Thunderbolt fabric" = "Thunderbolt 拓扑";
+"Transports" = "传输";
+"Verifying signature…" = "正在验证签名…";
+"View release" = "查看发布页";
+"What gets shared?" = "会分享哪些内容？";
+"WhatCable %@ is available" = "WhatCable %@ 可用";
+"WhatCable on GitHub" = "GitHub 上的 WhatCable";
+"You're on %@" = "当前版本 %@";
+"active" = "当前";
+"no active link" = "无活跃链路";
+
+/* Test Kit / Contribute Diagnostic Data consent + notifications (previously missing keys) */
+"COMMUNITY" = "社区";
+"Contribute Diagnostic Data" = "贡献诊断数据";
+"Contribute Diagnostic Data…" = "贡献诊断数据…";
+"Before you start" = "开始之前";
+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "请插好你想纳入的线缆和设备，并在运行结束前保持全部连接。运行期间插拔可能会让结果出现缺漏。";
+"Privacy" = "隐私";
+"Pro" = "Pro";
+"Proceed" = "继续";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac." = "原始 IOKit 注册表属性、你的 Mac 上存在的驱动程序类列表，以及你的 macOS 版本、芯片类型和 Mac 型号标识符（例如 Mac14,3）。这些是 macOS 已经在你的 Mac 上公开的数据。";
+"What happens" = "会发生什么";
+"What is collected" = "收集哪些内容";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable 会运行 %lld 个 IOKit 探测，读取你的 Mac 已经公开的硬件数据。结果会发送到安全服务器，以帮助改进线缆和端口检测。";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "你设备的硬件 UUID 在发送前会用 SHA-256 哈希处理。不会收集或存储任何姓名、账户、你的 Mac 序列号或个人数据。";
+
+/* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
+"Back" = "返回";
+"Unpin (popover closes when you click away)" = "取消固定（点击外部区域时关闭弹出窗口）";
+"Open in a separate window" = "在独立窗口中打开";
+"%@ Port %lld Diagnostics" = "%1$@ 端口 %2$lld 诊断";
+
+/* Onboarding / welcome screen (first launch). */
+"Welcome to WhatCable" = "欢迎使用 WhatCable";
+"See what your USB-C cables, chargers, and devices can actually do." = "查看你的 USB-C 线缆、充电器和设备的实际能力。";
+"How would you like to use WhatCable?" = "你想如何使用 WhatCable？";
+"Menu bar" = "菜单栏";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "位于屏幕顶部的菜单栏中。随时点击线缆图标即可检查连接。";
+"Recommended" = "推荐";
+"Dock app" = "程序坞应用";
+"Opens as a regular window with a Dock icon, like most apps." = "像大多数应用一样，以常规窗口打开并显示程序坞图标。";
+"Get Started" = "开始使用";
+"You can change this any time in Settings." = "你可以随时在设置中更改。";
+
+/* Softened blank e-marker note */
+"Cable note" = "线缆备注";
+"Cable details" = "线缆详情";
+
+/* Active Cable VDO 2 section (ActiveCableVDO2Section) */
+"Active cable (VDO 2)" = "有源线缆 (VDO 2)";
+"Physical connection" = "物理连接";
+"Active element" = "有源元件";
+"Optically isolated" = "光学隔离";
+"USB lanes" = "USB 通道";
+"Two" = "两条";
+"One" = "一条";
+"USB Gen" = "USB 代";
+"Gen 2 or higher" = "第 2 代或更高";
+"Gen 1" = "第 1 代";
+"USB4 supported" = "支持 USB4";
+"USB 3.2 supported" = "支持 USB 3.2";
+"USB 2.0 supported" = "支持 USB 2.0";
+"USB 2.0 hub hops" = "USB 2.0 集线器跳数";
+"USB4 asymmetric" = "USB4 非对称";
+"U3 to U0 transition" = "U3 到 U0 切换";
+"Through U3S" = "经由 U3S";
+"Direct" = "直接";
+"Idle power (U3/CLd)" = "空闲功耗 (U3/CLd)";
+"Max operating temp" = "最高工作温度";
+"Shutdown temp" = "关断温度";
+
+"Watts display" = "瓦特显示";
+"Number" = "数字";
+"Bar" = "条形";
+
+/* USB probing compatibility toggle (issue #429). */
+"Skip deep USB probing" = "跳过深度 USB 探测";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "阻止 WhatCable 读取 USB 设备的功能信息。如果 WhatCable 运行时 KVM 切换器或集线器出现异常（继电器咔哒响，或键盘和鼠标掉线），请开启此项。";
+
+/* Intel Macs are unsupported; notice shown on every launch. */
+"WhatCable can't read cables on this Mac" = "WhatCable 无法在这台 Mac 上读取线缆";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "这台 Mac 使用 Intel 处理器。WhatCable 的线缆和端口数据来自 Apple Silicon 的端口控制器，而 Intel Mac 不提供这些数据，因此 App 不会显示任何有用的内容。\n\n如果你想看看，它会保持打开，但背后没有任何数据。";
+"Learn more" = "了解更多";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "厂商";
+"Serial" = "序列号";
+"USB" = "USB";
+"Hide hubs" = "隐藏集线器";
+
+/* Beta update channel (opt-in pre-release updates). */
+"Updates" = "更新";
+"Include beta versions" = "包含 Beta 版本";
+"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "预发布版本，通常在稳定版发布前几天推出。可能存在瑕疵。";
+"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "关闭后将不再收到后续 Beta 版本。它不会让你退回到已经在运行的 Beta 版本，下一个稳定版发布时才会。";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "你通过 Homebrew 安装了 WhatCable。运行 brew upgrade 可能会用当前稳定版替换 Beta 版本。";
+
+/* Brick ID analog charger identity note (issue #592) */
+"Analog charger identifier, no PD profiles" = "模拟充电器识别符，无 PD 配置文件";
+
+/* ===== Notifications (connect and disconnect alerts). ===== */
+"%@ negotiated" = "已协商 %@";
+"Charger connected" = "充电器已连接";
+"Charger disconnected" = "充电器已断开";
+"Connected: %@" = "已连接：%@";
+"Disconnected: %@" = "已断开：%@";
+"Reconnected: %@" = "已重新连接：%@";
+"USB devices connected" = "USB 设备已连接";
+"USB devices disconnected" = "USB 设备已断开";
+"Thunderbolt devices connected" = "Thunderbolt 设备已连接";
+"Thunderbolt devices disconnected" = "Thunderbolt 设备已断开";
+"Wattage not reported" = "未报告功率";
+"%@ (%@)" = "%1$@（%2$@）";

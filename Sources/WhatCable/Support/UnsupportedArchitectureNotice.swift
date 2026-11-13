@@ -37,15 +37,15 @@ enum UnsupportedArchitectureNotice {
         let alert = NSAlert()
         alert.messageText = String(
             localized: "WhatCable can't read cables on this Mac",
-            bundle: _appLocalizedBundle
+            bundle: _coreLocalizedBundle
         )
         alert.informativeText = String(
             localized: "This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it.",
-            bundle: _appLocalizedBundle
+            bundle: _coreLocalizedBundle
         )
         alert.window.level = .floating
-        alert.addButton(withTitle: String(localized: "OK", bundle: _appLocalizedBundle))
-        alert.addButton(withTitle: String(localized: "Learn more", bundle: _appLocalizedBundle))
+        alert.addButton(withTitle: String(localized: "OK", bundle: _coreLocalizedBundle))
+        alert.addButton(withTitle: String(localized: "Learn more", bundle: _coreLocalizedBundle))
         let response = alert.runModal()
 
         NSApp.setActivationPolicy(originalPolicy)

@@ -547,7 +547,7 @@ public enum NotificationDecision {
         cableLabel: String? = nil,
         singleDeviceBody: (UInt64) -> String?
     ) -> NotificationContent {
-        let title = String(localized: "Reconnected: \(added.rootName)", bundle: _notificationsLocalizedBundle)
+        let title = String(localized: "Reconnected: \(added.rootName)", bundle: _coreLocalizedBundle)
         let body = added.memberNames.isEmpty
             ? (singleDeviceBody(added.rootID) ?? "")
             : added.memberNames.joined(separator: "\n")
@@ -579,7 +579,7 @@ public enum NotificationDecision {
         singleDeviceBody: (UInt64) -> String?
     ) -> [NotificationContent] {
         if groups.count == 1, let group = groups.first {
-            let title = String(localized: "Connected: \(group.rootName)", bundle: _notificationsLocalizedBundle)
+            let title = String(localized: "Connected: \(group.rootName)", bundle: _coreLocalizedBundle)
             let body = group.memberNames.isEmpty
                 ? (singleDeviceBody(group.rootID) ?? "")
                 : group.memberNames.joined(separator: "\n")
@@ -587,8 +587,8 @@ public enum NotificationDecision {
         } else if groups.count > 1 {
             let allNames = groups.flatMap { [$0.rootName] + $0.memberNames }
             let baseTitle = thunderboltInvolved
-                ? String(localized: "Thunderbolt devices connected", bundle: _notificationsLocalizedBundle)
-                : String(localized: "USB devices connected", bundle: _notificationsLocalizedBundle)
+                ? String(localized: "Thunderbolt devices connected", bundle: _coreLocalizedBundle)
+                : String(localized: "USB devices connected", bundle: _coreLocalizedBundle)
             return [NotificationContent(title: baseTitle, subtitle: cableLabelSubtitle(cableLabel), body: allNames.joined(separator: "\n"))]
         }
         return []
@@ -610,13 +610,13 @@ public enum NotificationDecision {
         cableLabel: String? = nil
     ) -> [NotificationContent] {
         if groups.count == 1, let group = groups.first {
-            let title = String(localized: "Disconnected: \(group.rootName)", bundle: _notificationsLocalizedBundle)
+            let title = String(localized: "Disconnected: \(group.rootName)", bundle: _coreLocalizedBundle)
             return [NotificationContent(title: title, subtitle: cableLabelSubtitle(cableLabel), body: group.memberNames.joined(separator: "\n"))]
         } else if groups.count > 1 {
             let allNames = groups.flatMap { [$0.rootName] + $0.memberNames }
             let baseTitle = thunderboltInvolved
-                ? String(localized: "Thunderbolt devices disconnected", bundle: _notificationsLocalizedBundle)
-                : String(localized: "USB devices disconnected", bundle: _notificationsLocalizedBundle)
+                ? String(localized: "Thunderbolt devices disconnected", bundle: _coreLocalizedBundle)
+                : String(localized: "USB devices disconnected", bundle: _coreLocalizedBundle)
             return [NotificationContent(title: baseTitle, subtitle: cableLabelSubtitle(cableLabel), body: allNames.joined(separator: "\n"))]
         }
         return []
@@ -676,13 +676,13 @@ public enum NotificationDecision {
         var contents: [NotificationContent] = []
         if !removed.isEmpty {
             contents.append(chargerContent(
-                title: String(localized: "Charger disconnected", bundle: _notificationsLocalizedBundle),
+                title: String(localized: "Charger disconnected", bundle: _coreLocalizedBundle),
                 lines: removed
             ))
         }
         if !added.isEmpty {
             contents.append(chargerContent(
-                title: String(localized: "Charger connected", bundle: _notificationsLocalizedBundle),
+                title: String(localized: "Charger connected", bundle: _coreLocalizedBundle),
                 lines: added
             ))
         }
@@ -706,7 +706,7 @@ public enum NotificationDecision {
         // this same batch has a name.
         let bodyLines = lines.map { line -> String in
             guard let name = line.cableName else { return line.wattage }
-            return String(localized: "\(line.wattage) (\(name))", bundle: _notificationsLocalizedBundle)
+            return String(localized: "\(line.wattage) (\(name))", bundle: _coreLocalizedBundle)
         }
         return NotificationContent(
             title: title,

@@ -468,8 +468,8 @@ final class WidgetDataWriter {
             // Grouping filters inactive DP nodes, so each entity here always
             // carries at least one attached display.
             let firstDiag = hdmiPort.displays.compactMap { DisplayDiagnostic(dp: $0, cable: nil) }.first
-            let headline = String(localized: "Display connected", bundle: _appLocalizedBundle)
-            let subtitle = String(localized: "Built-in \(hdmiPort.portType) port \(hdmiPort.portNumber)", bundle: _appLocalizedBundle)
+            let headline = String(localized: "Display connected", bundle: _coreLocalizedBundle)
+            let subtitle = String(localized: "Built-in \(hdmiPort.portType) port \(hdmiPort.portNumber)", bundle: _coreLocalizedBundle)
             // Real port ids are kernel-assigned IOKit entry ids, always small.
             // Use the top end of the UInt64 range so synthesized HDMI entries
             // never collide with them, even across many ports.

@@ -663,3 +663,183 @@
 "USB accessory (audio or adapter)" = "USB piederums (audio vai adapteris)";
 "This accessory has its own USB-C plug. It is not a cable and does not charge." = "Šim piederumam ir paša USB-C spraudnis. Tas nav kabelis un neuzlādē.";
 "This plug is part of the accessory, not a cable, so there is no cable rating." = "Šis spraudnis ir piederuma daļa, nevis kabelis, tāpēc kabeļa parametru nav.";
+
+/* ===== Menu bar app (Settings, port cards, windows, updates). ===== */
+"%@ profiles" = "%@ profili";
+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld USB-C porti un 1 MagSafe ports konstatēti, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.";
+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld USB-C porti konstatēti, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.";
+"About %@" = "Par %@";
+"Active" = "Aktīvs";
+"Active cable electronics" = "Aktīva kabeļa elektronika";
+"All raw IOKit properties (%lld)" = "Visas neapstrādātās IOKit īpašības (%lld)";
+"Behavior" = "Uzvedība";
+"Built by %@." = "Izstrādāja %@.";
+"Cable trust signals" = "Kabeļa uzticamības signāli";
+"Check for Updates…" = "Pārbaudīt atjauninājumus…";
+"Connected devices" = "Pievienotās ierīces";
+"Connection" = "Savienojums";
+"Appearance" = "Izskats";
+"Desktop Mac: charger identity (FedDetails) is not available." = "Stacionārais Mac: lādētāja identitāte (FedDetails) nav pieejama.";
+"Done" = "Gatavs";
+"Downloading…" = "Notiek lejupielāde…";
+"Newer version found, installing it…" = "Atrasta jaunāka versija, notiek instalēšana…";
+"Checking for the latest version…" = "Pārbauda, vai pieejama jaunākā versija…";
+"File a GitHub issue with this cable's e-marker fingerprint" = "Iesniegt GitHub ziņojumu ar šī kabeļa e-marker pirksta nospiedumu";
+"Font size" = "Fonta izmērs";
+"Opacity" = "Necaurredzamība";
+"Solid window background" = "Necaurredzams loga fons";
+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "Palīdz uzturētājam reproducēt lādētāja / kabeļa darbību, kas saistīta ar konkrētu aparatūru.";
+"Hide empty ports" = "Slēpt tukšos portus";
+"Host (%@)" = "Resursdators (%@)";
+"Include Mac model and macOS version" = "Iekļaut Mac modeli un macOS versiju";
+"Install failed: %@" = "Instalācija neizdevās: %@";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "Šis konts nevar atjaunināt lietotnes šajā vietā. Lejupielādējiet jauno versiju no whatcable.uk vai atjauniniet ar Homebrew.";
+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "WhatCable nevar atjaunināties no tā pašreizējās mapes. Pārvietojiet WhatCable uz mapi Programmas, palaidiet to no jauna un mēģiniet vēlreiz, vai lejupielādējiet jaunāko versiju no whatcable.uk.";
+"Install update" = "Instalēt atjauninājumu";
+"Installing, WhatCable will relaunch" = "Notiek instalēšana, WhatCable tiks palaists no jauna";
+"Keep window open" = "Turēt logu atvērtu";
+"Language" = "Valoda";
+"Launch at login" = "Palaist, piesakoties";
+"Lives in the menu bar with no Dock icon." = "Atrodas izvēļņu joslā bez Dock ikonas.";
+"Menu bar icon" = "Izvēļņu joslas ikona";
+"Show charging watts in the menu bar" = "Rādīt uzlādes vatus izvēļņu joslā";
+/* Menu bar icon choices */
+"Cable, horizontal" = "Horizontāls kabelis";
+"Bolt" = "Zibens";
+"Power plug" = "Kontaktdakša";
+"Power cord" = "Barošanas vads";
+"No USB-C ports detected" = "Nav konstatēti USB-C porti";
+"Notifications" = "Paziņojumi";
+"Notify on cable changes" = "Ziņot par kabeļa izmaiņām";
+"Notify on app updates" = "Ziņot par lietotnes atjauninājumiem";
+"Open in GitHub" = "Atvērt GitHub";
+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "Atver iepriekš aizpildītu GitHub ziņojumu jūsu pārlūkā. Nekas netiek nosūtīts, kamēr jūs to neiesniedzat.";
+"Plug events" = "Pievienošanas notikumi";
+"Preview of what will be included:" = "Priekšskatījums tam, kas tiks iekļauts:";
+"Provisioned" = "Nodrošināts";
+"Quit" = "Iziet";
+"Quit %@" = "Iziet %@";
+"Report this cable" = "Ziņot par šo kabeli";
+"Runs as a regular Dock app with a window." = "Darbojas kā parasta Dock lietotne ar logu.";
+"System Default" = "Sistēmas noklusējums";
+"Settings" = "Iestatījumi";
+"Settings…" = "Iestatījumi…";
+"Show in menu bar" = "Rādīt izvēļņu joslā";
+"Show technical details" = "Rādīt tehniskās detaļas";
+"SuperSpeed" = "SuperSpeed";
+"Supported" = "Atbalstīts";
+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "Šis Mac, šķiet, neatklāj savus porta kontroliera pakalpojumus. Nospiediet atsvaidzināt vai pārbaudiet Sistēmas informācija > USB.";
+"Thunderbolt fabric" = "Thunderbolt tīkls";
+"Transports" = "Transporti";
+"Verifying signature…" = "Pārbauda parakstu…";
+"View release" = "Skatīt laidienu";
+"What gets shared?" = "Kas tiek kopīgots?";
+"WhatCable %@ is available" = "WhatCable %@ ir pieejams";
+"WhatCable on GitHub" = "WhatCable vietnē GitHub";
+"You're on %@" = "Jūs izmantojat %@";
+"%lld USB devices" = "%lld USB ierīces";
+"active" = "aktīvs";
+"no active link" = "nav aktīva savienojuma";
+
+/* Test Kit / Contribute Diagnostic Data consent + notifications (previously missing keys) */
+"COMMUNITY" = "KOPIENA";
+"Contribute Diagnostic Data" = "Sniegt diagnostikas datus";
+"Contribute Diagnostic Data…" = "Sniegt diagnostikas datus…";
+"Before you start" = "Pirms sākat";
+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "Pievienojiet kabeļus un ierīces, kuras vēlaties iekļaut, un atstājiet visu pievienotu, līdz darbība beidzas. Pievienošana vai atvienošana darbības laikā var atstāt robus rezultātos.";
+"Privacy" = "Privātums";
+"Pro" = "Pro";
+"Proceed" = "Turpināt";
+"Raw IOKit registry properties, a list of the driver classes present on your Mac, plus your macOS version, chip type and Mac model identifier (for example, Mac14,3). This is data macOS already exposes on your Mac." = "Neapstrādātas IOKit reģistra īpašības, jūsu Mac pieejamo draiveru klašu saraksts, kā arī jūsu macOS versija, mikroshēmas veids un jūsu Mac modeļa identifikators (piemēram, Mac14,3). Šie ir dati, ko macOS jau padara pieejamus jūsu Mac.";
+"What happens" = "Kas notiek";
+"What is collected" = "Kas tiek ievākts";
+"WhatCable runs %lld IOKit probes that read hardware data your Mac already publishes. The results are sent to a secure server to help improve cable and port detection." = "WhatCable veic %lld IOKit pārbaudes, kas nolasa aparatūras datus, ko jūsu Mac jau publisko. Rezultāti tiek nosūtīti uz drošu serveri, lai palīdzētu uzlabot kabeļu un portu noteikšanu.";
+"Your machine's hardware UUID is hashed with SHA-256 before sending. No names, accounts, your Mac's serial number, or personal data are collected or stored." = "Jūsu iekārtas aparatūras UUID tiek jaukts ar SHA-256 pirms nosūtīšanas. Netiek ievākti vai glabāti vārdi, konti, jūsu Mac sērijas numurs vai personas dati.";
+
+/* Negotiation diagnostics + Pro UX (PR #55) */
+"Back" = "Atpakaļ";
+"Unpin (popover closes when you click away)" = "Atspraust (uznirstošais logs aizveras, kad noklikšķināt ārpus tā)";
+"Open in a separate window" = "Atvērt atsevišķā logā";
+"%@ Port %lld Diagnostics" = "%@ porta %lld diagnostika";
+
+/* Onboarding / welcome screen (first launch). */
+"Welcome to WhatCable" = "Laipni lūdzam lietotnē WhatCable!";
+"See what your USB-C cables, chargers, and devices can actually do." = "Uzziniet, ko jūsu USB-C kabeļi, lādētāji un ierīces patiesībā spēj.";
+"How would you like to use WhatCable?" = "Kā vēlaties izmantot WhatCable?";
+"Menu bar" = "Izvēļņu josla";
+"Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection." = "Atrodas izvēļņu joslā ekrāna augšdaļā. Noklikšķiniet uz kabeļa ikonas jebkurā laikā, lai pārbaudītu savienojumu.";
+"Recommended" = "Ieteicams";
+"Dock app" = "Dock lietotne";
+"Opens as a regular window with a Dock icon, like most apps." = "Atveras kā parasts logs ar Dock ikonu, tāpat kā lielākā daļa lietotņu.";
+"Get Started" = "Sākt";
+"You can change this any time in Settings." = "To jebkurā laikā var mainīt iestatījumos.";
+
+/* Softened blank e-marker note */
+"Cable note" = "Piezīme par kabeli";
+"Cable details" = "Kabeļa informācija";
+
+/* Active Cable VDO 2 section (ActiveCableVDO2Section) */
+"Active cable (VDO 2)" = "Aktīvais kabelis (VDO 2)";
+"Physical connection" = "Fiziskais savienojums";
+"Active element" = "Aktīvais elements";
+"Optically isolated" = "Optiski izolēts";
+"USB lanes" = "USB joslas";
+"Two" = "Divi";
+"One" = "Viens";
+"USB Gen" = "USB paaudze";
+"Gen 2 or higher" = "2. paaudze vai jaunāka";
+"Gen 1" = "1. paaudze";
+"USB4 supported" = "USB4 atbalstīts";
+"USB 3.2 supported" = "USB 3.2 atbalstīts";
+"USB 2.0 supported" = "USB 2.0 atbalstīts";
+"USB 2.0 hub hops" = "USB 2.0 centrmezglu posmi";
+"USB4 asymmetric" = "USB4 asimetrisks";
+"U3 to U0 transition" = "U3 uz U0 pāreja";
+"Through U3S" = "Caur U3S";
+"Direct" = "Tiešs";
+"Idle power (U3/CLd)" = "Dīkstāves jauda (U3/CLd)";
+"Max operating temp" = "Maks. darba temp.";
+"Shutdown temp" = "Izslēgšanas temp.";
+
+"Watts display" = "Vatu rādījums";
+"Number" = "Skaitlis";
+"Bar" = "Josla";
+
+/* USB probing compatibility toggle (issue #429). */
+"Skip deep USB probing" = "Izlaist padziļinātu USB izpēti";
+"Stops WhatCable reading capability info from USB devices. Turn on if a KVM switch or hub misbehaves (relay clicking, or keyboard and mouse dropping) when WhatCable runs." = "Neļauj WhatCable nolasīt USB ierīču iespēju informāciju. Ieslēdziet, ja KVM slēdzis vai centrmezgls darbojas nepareizi (releja klikšķēšana vai tastatūras un peles atslēgšanās), kamēr darbojas WhatCable.";
+
+/* Intel Macs are unsupported; notice shown on every launch. */
+"WhatCable can't read cables on this Mac" = "WhatCable šajā Mac nevar nolasīt kabeļus";
+"This Mac has an Intel processor. WhatCable gets its cable and port data from Apple Silicon's port controller, and Intel Macs don't expose it, so the app will show nothing useful.\n\nIt'll stay open if you want to look around, but there's nothing behind it." = "Šim Mac ir Intel procesors. WhatCable iegūst kabeļu un portu datus no Apple Silicon portu kontroliera, un Intel Mac to nepadara pieejamu, tāpēc lietotne nerādīs neko noderīgu.\n\nTā paliks atvērta, ja vēlaties paskatīties, bet aiz tās nekā nav.";
+"Learn more" = "Uzzināt vairāk";
+/* USB device detail rows (downstream device enrichment). Labels for the
+   per-device expander: vendor, serial and USB version. */
+"Vendor" = "Ražotājs";
+"Serial" = "Sērijas numurs";
+"USB" = "USB";
+"Hide hubs" = "Slēpt centrmezglus";
+
+/* Beta update channel (opt-in pre-release updates). */
+"Updates" = "Atjauninājumi";
+"Include beta versions" = "Iekļaut beta versijas";
+"Pre-release builds, shipped a few days before a stable release. Expect rough edges." = "Pirmsizlaides versijas, kas iznāk dažas dienas pirms stabilās versijas. Iespējamas nepilnības.";
+"Turning this off stops future betas. It does not move you back off a beta you are already running. The next stable release will." = "Izslēdzot to, turpmākās beta versijas vairs nesaņemsi. Tas neatgriež no beta versijas, kuru jau lieto. To izdarīs nākamā stabilā versija.";
+"You installed WhatCable with Homebrew. Running brew upgrade may replace a beta with the current stable release." = "WhatCable ir instalēts ar Homebrew. Komanda brew upgrade var aizstāt beta versiju ar pašreizējo stabilo versiju.";
+
+/* Brick ID analog charger identity note (issue #592) */
+"Analog charger identifier, no PD profiles" = "Analogā lādētāja identifikators, nav PD profilu";
+
+/* ===== Notifications (connect and disconnect alerts). ===== */
+"%@ negotiated" = "%@ saskaņots";
+"Charger connected" = "Lādētājs pievienots";
+"Charger disconnected" = "Lādētājs atvienots";
+"Connected: %@" = "Pievienots: %@";
+"Disconnected: %@" = "Atvienots: %@";
+"Reconnected: %@" = "Atkārtoti pievienots: %@";
+"USB devices connected" = "USB ierīces pievienotas";
+"USB devices disconnected" = "USB ierīces atvienotas";
+"Thunderbolt devices connected" = "Thunderbolt ierīces pievienotas";
+"Thunderbolt devices disconnected" = "Thunderbolt ierīces atvienotas";
+"Wattage not reported" = "Jauda netiek ziņota";
+"%@ (%@)" = "%1$@ (%2$@)";

@@ -1,5 +1,6 @@
 import SwiftUI
 import WhatCableAppKit
+import WhatCableCore
 
 struct WelcomeView: View {
     @State private var useMenuBar: Bool
@@ -27,10 +28,10 @@ struct WelcomeView: View {
                 .resizable()
                 .frame(width: 64, height: 64)
 
-            Text(String(localized: "Welcome to WhatCable", bundle: _appLocalizedBundle))
+            Text(String(localized: "Welcome to WhatCable", bundle: _coreLocalizedBundle))
                 .scaledFont(.title, weight: .bold)
 
-            Text(String(localized: "See what your USB-C cables, chargers, and devices can actually do.", bundle: _appLocalizedBundle))
+            Text(String(localized: "See what your USB-C cables, chargers, and devices can actually do.", bundle: _coreLocalizedBundle))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 // Without this the subtitle is squeezed onto one line and
@@ -40,7 +41,7 @@ struct WelcomeView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 16) {
-                Text(String(localized: "How would you like to use WhatCable?", bundle: _appLocalizedBundle))
+                Text(String(localized: "How would you like to use WhatCable?", bundle: _coreLocalizedBundle))
                     .scaledFont(.headline)
                     // Same reason as the subtitle above. Without it this
                     // headline is held to one line and truncated with an
@@ -52,27 +53,27 @@ struct WelcomeView: View {
 
                 modeOption(
                     icon: "menubar.rectangle",
-                    title: String(localized: "Menu bar", bundle: _appLocalizedBundle),
-                    description: String(localized: "Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection.", bundle: _appLocalizedBundle),
-                    badge: String(localized: "Recommended", bundle: _appLocalizedBundle),
+                    title: String(localized: "Menu bar", bundle: _coreLocalizedBundle),
+                    description: String(localized: "Sits in the menu bar at the top of your screen. Click the cable icon any time to check a connection.", bundle: _coreLocalizedBundle),
+                    badge: String(localized: "Recommended", bundle: _coreLocalizedBundle),
                     isSelected: useMenuBar
                 ) { useMenuBar = true; onSelectionChanged?(true) }
 
                 modeOption(
                     icon: "macwindow",
-                    title: String(localized: "Dock app", bundle: _appLocalizedBundle),
-                    description: String(localized: "Opens as a regular window with a Dock icon, like most apps.", bundle: _appLocalizedBundle),
+                    title: String(localized: "Dock app", bundle: _coreLocalizedBundle),
+                    description: String(localized: "Opens as a regular window with a Dock icon, like most apps.", bundle: _coreLocalizedBundle),
                     badge: nil,
                     isSelected: !useMenuBar
                 ) { useMenuBar = false; onSelectionChanged?(false) }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(String(localized: "You can change this any time in Settings.", bundle: _appLocalizedBundle))
+            Text(String(localized: "You can change this any time in Settings.", bundle: _coreLocalizedBundle))
                 .scaledFont(.caption)
                 .foregroundStyle(.secondary)
 
-            Button(String(localized: "Get Started", bundle: _appLocalizedBundle)) {
+            Button(String(localized: "Get Started", bundle: _coreLocalizedBundle)) {
                 onComplete(useMenuBar)
             }
             .buttonStyle(.borderedProminent)
