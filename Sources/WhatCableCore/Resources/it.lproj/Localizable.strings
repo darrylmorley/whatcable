@@ -475,7 +475,7 @@
 "Built-in USB ports" = "Porte USB integrate";
 "Built-in USB-A ports" = "Porte USB-A integrate";
 "Plain USB ports behind the Mac's internal hub, so there's no cable, power, or Thunderbolt data for them." = "Porte USB semplici collegate all'hub interno del Mac, quindi non ci sono dati sul cavo, alimentazione o Thunderbolt.";
-"Move these devices to a Thunderbolt port to see more about them." = "Per visualizzare maggiori informazioni su questi dispositivi spostali su una porta Thunderbolt.";
+"Move these devices to a Thunderbolt port to see more about them." = "Per visualizzare maggiori informazioni su questi dispositivi collegali a una porta Thunderbolt.";
 
 /* Cable history */
 "Add this cable" = "Aggiungi questo cavo";
