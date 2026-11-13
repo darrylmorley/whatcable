@@ -19,14 +19,18 @@
 //                     Pass -> Obsolete, or gained listings).
 //   --test-parser     run the parser self-tests (manual vendors, contact-email
 //                     stripping, known cables, cert-xids.tsv, the seeded
-//                     cert-date fallback and per-XID response validation)
-//                     and exit.
+//                     cert-date fallback, per-XID response validation and
+//                     the cert-date carry-forward) and exit.
 // Env:
 //   ALLOW_EMPTY_CERTS=1   permit a build with zero certifications (otherwise a
 //                         collapsed cert table fails the build; see below).
 //                         Also overrides a failed per-XID certification fetch
 //                         (exit 6): with this set, a failed fetch is a
 //                         warning, not a build failure.
+//   WC_PREVIOUS_CERT_DB   path to a db to carry dropped certification dates
+//                         forward from, instead of the committed
+//                         Sources/WhatCableCore/Resources/whatcable.db (git
+//                         HEAD). For restoring dates an earlier build lost.
 //   WC_FAIL_CERT_FETCH    test hook: comma-separated XIDs, decimal or hex
 //                         with a 0x prefix (e.g. 7238 or 0x1C46). Forces
 //                         fetchPerXIDListings to fail (return nil) for those
@@ -101,6 +105,18 @@ let forcedCertFetchFailures: Set<Int> = {
 
 // MARK: - SQLite helpers
 
+/// Exit after openDB() has deleted the bundled db: by then both dbs may be
+/// missing or partial, so say how to put them back before a re-run.
+func failBuild(_ code: Int32) -> Never {
+    fputs("""
+        Both bundled databases may now be missing or partial. Restore them
+        before re-running:
+          git checkout -- Sources/WhatCableCore/Resources/whatcable.db docs/whatcable.db
+
+        """, stderr)
+    exit(code)
+}
+
 var db: OpaquePointer?
 
 func openDB() {
@@ -110,7 +126,7 @@ func openDB() {
     let rc = sqlite3_open(dbOutput, &db)
     guard rc == SQLITE_OK else {
         fputs("error: sqlite3_open failed: \(String(cString: sqlite3_errmsg(db)))\n", stderr)
-        exit(1)
+        failBuild(1)
     }
     // WAL mode and synchronous=OFF for build-time speed (we're writing
     // once and the file is read-only at runtime).
@@ -125,7 +141,7 @@ func runSQL(_ sql: String) {
         let msg = err.map { String(cString: $0) } ?? "unknown"
         sqlite3_free(err)
         fputs("error: SQL failed: \(msg)\n  statement: \(sql)\n", stderr)
-        exit(2)
+        failBuild(2)
     }
 }
 
@@ -209,14 +225,14 @@ func createSchema() {
 func importUSBIFVendors() -> Int {
     guard let text = try? String(contentsOfFile: vendorTSV, encoding: .utf8) else {
         fputs("error: could not read \(vendorTSV)\n", stderr)
-        exit(3)
+        failBuild(3)
     }
 
     let insertSQL = "INSERT INTO vendors (vid, name, source) VALUES (?, ?, 'usbif')"
     var stmt: OpaquePointer?
     guard sqlite3_prepare_v2(db, insertSQL, -1, &stmt, nil) == SQLITE_OK else {
         fputs("error: prepare failed for vendor insert\n", stderr)
-        exit(4)
+        failBuild(4)
     }
 
     runSQL("BEGIN TRANSACTION")
@@ -1264,6 +1280,7 @@ if CommandLine.arguments.contains("--test-parser") {
     let (certXIDFailures, certXIDReport) = runCertXIDParserSelfTests()
     let (certDateFailures, certDateReport) = runCertDateFallbackSelfTests()
     let (perXIDFailures, perXIDReport) = runPerXIDResponseSelfTests()
+    let (carryFailures, carryReport) = runCertDateCarrySelfTests()
     FileHandle.standardOutput.write(vendorReport.data(using: .utf8) ?? Data())
     FileHandle.standardOutput.write("\ncontact-email stripping:\n".data(using: .utf8) ?? Data())
     FileHandle.standardOutput.write(emailReport.data(using: .utf8) ?? Data())
@@ -1275,8 +1292,11 @@ if CommandLine.arguments.contains("--test-parser") {
     FileHandle.standardOutput.write(certDateReport.data(using: .utf8) ?? Data())
     FileHandle.standardOutput.write("\n".data(using: .utf8) ?? Data())
     FileHandle.standardOutput.write(perXIDReport.data(using: .utf8) ?? Data())
+    FileHandle.standardOutput.write("\n".data(using: .utf8) ?? Data())
+    FileHandle.standardOutput.write(carryReport.data(using: .utf8) ?? Data())
     exit((vendorFailures + emailFailures + cableFailures
-          + certXIDFailures + certDateFailures + perXIDFailures) == 0 ? 0 : 1)
+          + certXIDFailures + certDateFailures + perXIDFailures
+          + carryFailures) == 0 ? 0 : 1)
 }
 
 func importKnownCables() -> Int {
@@ -1348,7 +1368,7 @@ func importKnownCables() -> Int {
             // this. If it fires anyway, something upstream disagrees with
             // that check, which is itself a bug worth failing loudly for.
             fputs("error: sqlite rejected cable VID=\(row.vid) PID=\(row.pid) '\(row.brand)' as a duplicate of the UNIQUE(vid, pid, cable_vdo, brand) index, but findExactDuplicateRow did not catch it. This is a bug in the duplicate check.\n", stderr)
-            exit(12)
+            failBuild(12)
         } else if rc != SQLITE_DONE {
             fputs("warn: failed to insert cable VID=\(row.vid) PID=\(row.pid): \(String(cString: sqlite3_errmsg(db)))\n", stderr)
         } else {
@@ -1371,7 +1391,7 @@ func importKnownCables() -> Int {
             A row was silently dropped somewhere between parsing and insert.
 
             """, stderr)
-        exit(13)
+        failBuild(13)
     }
 
     return count
@@ -1636,6 +1656,200 @@ func runCertDateFallbackSelfTests() -> (failures: Int, output: String) {
             output += "    - expected '\(testCase.expected)', got '\(got)'\n"
         }
     }
+    output += "\n\(failures == 0 ? "all passed" : "\(failures) FAILED")\n"
+    return (failures, output)
+}
+
+/// One certification listing as far as its date is concerned: the cert ID,
+/// company and model that identify it, and the date it carries.
+struct CertListing {
+    let xid: Int
+    let company: String
+    let model: String
+    let certDate: String
+}
+
+/// Result of `carryForwardCertDates`: one resolved date per new listing (same
+/// order), plus which listings took a carried date and which could not
+/// because the previous db had more than one date for them.
+struct CertDateCarryResult {
+    let dates: [String]
+    let carried: [Int]
+    let ambiguous: [Int]
+}
+
+/// Keep certification dates the USB-IF feed has dropped.
+///
+/// The bulk catalogue is the only source of dates, and it drops rows between
+/// builds, so a listing USB-IF still shows can come back dateless. That is
+/// flaky data, not a real change: when the new build has an EMPTY date for a
+/// listing the previous db had dated, the previous date is carried forward.
+///
+/// A listing is the same one only when cert ID, company and model all match
+/// (company and model case-insensitively, like `certDate(forXID:...)`). One
+/// cert ID can carry several companies, so a date never crosses to a
+/// different company or model. A date the new build does have is never
+/// replaced. USB-IF does list some models twice under one cert ID, so a
+/// date is carried only when every previous row for the listing had that
+/// same date and the new build has no more rows for it than the previous
+/// db. Otherwise (two dates, a dated row beside a dateless one, an extra
+/// row) there is no telling which row the date belongs to, so nothing is
+/// carried and the listing is reported as ambiguous.
+///
+/// Pure (no globals, no I/O) so `--test-parser` can exercise it directly.
+func carryForwardCertDates(new: [CertListing], previous: [CertListing]) -> CertDateCarryResult {
+    func key(_ l: CertListing) -> String {
+        let fold: (String) -> String = { $0.folding(options: .caseInsensitive, locale: nil) }
+        return "\(l.xid)\u{0}\(fold(l.company))\u{0}\(fold(l.model))"
+    }
+    var previousRows: [String: Int] = [:]
+    var previousDateless: Set<String> = []
+    var previousDates: [String: Set<String>] = [:]
+    for p in previous {
+        let k = key(p)
+        previousRows[k, default: 0] += 1
+        if p.certDate.isEmpty { previousDateless.insert(k) }
+        else { previousDates[k, default: []].insert(p.certDate) }
+    }
+    var newRows: [String: Int] = [:]
+    for n in new { newRows[key(n), default: 0] += 1 }
+
+    var dates: [String] = []
+    var carried: [Int] = []
+    var ambiguous: [Int] = []
+    for (i, listing) in new.enumerated() {
+        let k = key(listing)
+        guard listing.certDate.isEmpty, let candidates = previousDates[k] else {
+            dates.append(listing.certDate)
+            continue
+        }
+        // Carry only when every previous row for this listing had the same
+        // date and the new build has no more rows for it than before.
+        // Anything else (two dates, a dated row beside a dateless twin, an
+        // extra row that may be a new listing) leaves no way to tell which
+        // row the date belongs to.
+        if candidates.count == 1, let only = candidates.first,
+           !previousDateless.contains(k),
+           newRows[k, default: 0] <= previousRows[k, default: 0] {
+            dates.append(only)
+            carried.append(i)
+        } else {
+            dates.append("")
+            ambiguous.append(i)
+        }
+    }
+    return CertDateCarryResult(dates: dates, carried: carried, ambiguous: ambiguous)
+}
+
+/// Self-tests for `carryForwardCertDates`.
+func runCertDateCarrySelfTests() -> (failures: Int, output: String) {
+    // 0xEE6 is the real case: Astron Connectivity lost its date while
+    // Johnson Component, on the same cert ID, kept its own.
+    let previous: [CertListing] = [
+        CertListing(xid: 0xEE6, company: "Johnson Component & Equipments Co., Ltd.",
+                    model: "USB3CC-6830-1m", certDate: "2016-08-17T00:00:00"),
+        CertListing(xid: 0xEE6, company: "Astron Connectivity",
+                    model: "T1M1M10XX6-R", certDate: "2020-05-06T00:00:00"),
+        CertListing(xid: 0x100, company: "Foo Ltd", model: "A1",
+                    certDate: "2021-01-01T00:00:00"),
+        CertListing(xid: 0x101, company: "Foo Ltd", model: "B1",
+                    certDate: "2021-02-02T00:00:00"),
+        CertListing(xid: 0x102, company: "Bar Ltd", model: "C1",
+                    certDate: "2021-03-03T00:00:00"),
+        // Listed twice with different dates: ambiguous.
+        CertListing(xid: 0x103, company: "Twice Ltd", model: "D1",
+                    certDate: "2016-12-22T00:00:00"),
+        CertListing(xid: 0x103, company: "Twice Ltd", model: "D1",
+                    certDate: "2016-02-09T00:00:00"),
+        // Listed twice with the same date: not ambiguous.
+        CertListing(xid: 0x104, company: "Same Ltd", model: "E1",
+                    certDate: "2022-07-12T00:00:00"),
+        CertListing(xid: 0x104, company: "Same Ltd", model: "E1",
+                    certDate: "2022-07-12T00:00:00"),
+        // Previously dateless: nothing to carry.
+        CertListing(xid: 0x105, company: "Blank Ltd", model: "F1", certDate: ""),
+        // Listed twice, one dated and one dateless: which row the date
+        // belongs to is unknowable, so it is ambiguous. This is what a
+        // twice-listed model looks like one build after the feed dropped
+        // one of its dates.
+        CertListing(xid: 0x107, company: "Half Ltd", model: "H1",
+                    certDate: "2016-12-22T00:00:00"),
+        CertListing(xid: 0x107, company: "Half Ltd", model: "H1", certDate: ""),
+        // Same, where the dateless twin is still dateless and the dated one
+        // still dated: the twin must not borrow its sibling's date.
+        CertListing(xid: 0x108, company: "Twin Ltd", model: "T1",
+                    certDate: "2019-01-01T00:00:00"),
+        CertListing(xid: 0x108, company: "Twin Ltd", model: "T1", certDate: ""),
+        // Listed once before, twice now: the new row could be a new listing.
+        CertListing(xid: 0x109, company: "Grow Ltd", model: "G2",
+                    certDate: "2020-02-02T00:00:00"),
+    ]
+    let new: [CertListing] = [
+        CertListing(xid: 0xEE6, company: "Johnson Component & Equipments Co., Ltd.",
+                    model: "USB3CC-6830-1m", certDate: ""),
+        CertListing(xid: 0xEE6, company: "Astron Connectivity",
+                    model: "T1M1M10XX6-R", certDate: ""),
+        CertListing(xid: 0x100, company: "Foo Ltd", model: "A1",
+                    certDate: "2024-04-04T00:00:00"),
+        CertListing(xid: 0x101, company: "FOO LTD", model: "b1", certDate: ""),
+        CertListing(xid: 0x102, company: "Bar Ltd", model: "C2", certDate: ""),
+        CertListing(xid: 0x102, company: "Other Ltd", model: "C1", certDate: ""),
+        CertListing(xid: 0x103, company: "Twice Ltd", model: "D1", certDate: ""),
+        CertListing(xid: 0x104, company: "Same Ltd", model: "E1", certDate: ""),
+        CertListing(xid: 0x105, company: "Blank Ltd", model: "F1", certDate: ""),
+        CertListing(xid: 0x106, company: "New Ltd", model: "G1", certDate: ""),
+        CertListing(xid: 0x101, company: "Foo Ltd", model: "A1", certDate: ""),
+        CertListing(xid: 0x107, company: "Half Ltd", model: "H1", certDate: ""),
+        CertListing(xid: 0x108, company: "Twin Ltd", model: "T1",
+                    certDate: "2019-01-01T00:00:00"),
+        CertListing(xid: 0x108, company: "Twin Ltd", model: "T1", certDate: ""),
+        CertListing(xid: 0x109, company: "Grow Ltd", model: "G2", certDate: ""),
+        CertListing(xid: 0x109, company: "Grow Ltd", model: "G2", certDate: ""),
+    ]
+    let cases: [(label: String, index: Int, expected: String)] = [
+        ("each listing on a shared cert ID gets back its own date (Johnson)",
+         0, "2016-08-17T00:00:00"),
+        ("each listing on a shared cert ID gets back its own date (Astron)",
+         1, "2020-05-06T00:00:00"),
+        ("a date the feed does give is never replaced", 2, "2024-04-04T00:00:00"),
+        ("company and model match case-insensitively", 3, "2021-02-02T00:00:00"),
+        ("a different model under the same company gets nothing", 4, ""),
+        ("a different company with the same model gets nothing", 5, ""),
+        ("two different previous dates for one listing: nothing carried", 6, ""),
+        ("the same previous date listed twice is still carried", 7, "2022-07-12T00:00:00"),
+        ("a listing that was dateless before stays dateless", 8, ""),
+        ("a listing the previous db did not have gets nothing", 9, ""),
+        ("a date never crosses to a different cert ID", 10, ""),
+        ("previously listed twice, one dated and one dateless: nothing carried",
+         11, ""),
+        ("a dated twin keeps its date", 12, "2019-01-01T00:00:00"),
+        ("a dateless twin never borrows its dated sibling's date", 13, ""),
+        ("listed once before, twice now: first row not carried", 14, ""),
+        ("listed once before, twice now: second row not carried", 15, ""),
+    ]
+
+    let result = carryForwardCertDates(new: new, previous: previous)
+    var failures = 0
+    var output = "cert-date carry-forward:\n"
+    func record(_ ok: Bool, _ label: String, _ detail: String) {
+        if ok {
+            output += "  ok: \(label)\n"
+        } else {
+            failures += 1
+            output += "  FAIL: \(label)\n    - \(detail)\n"
+        }
+    }
+    for testCase in cases {
+        let got = testCase.index < result.dates.count ? result.dates[testCase.index] : "<missing>"
+        record(got == testCase.expected, testCase.label,
+               "expected '\(testCase.expected)', got '\(got)'")
+    }
+    record(result.dates.count == new.count, "one resolved date per new listing",
+           "expected \(new.count), got \(result.dates.count)")
+    record(result.carried == [0, 1, 3, 7], "the carried listings are reported",
+           "expected [0, 1, 3, 7], got \(result.carried)")
+    record(result.ambiguous == [6, 11, 13, 14, 15], "the ambiguous listings are reported",
+           "expected [6, 11, 13, 14, 15], got \(result.ambiguous)")
     output += "\n\(failures == 0 ? "all passed" : "\(failures) FAILED")\n"
     return (failures, output)
 }
@@ -2019,12 +2233,144 @@ func importCertifications() -> (xids: Int, listings: Int, failedXIDs: [Int]) {
     return (xidsCovered, listingsInserted, failedXIDs)
 }
 
+/// Certification listings of the previous db, the carry-forward source.
+///
+/// That is the COMMITTED db (`git show HEAD:...`), not the file on disk:
+/// openDB() deletes the file, so after a failed build the on-disk copy can
+/// be empty or partial, and a re-run reading it would silently lose every
+/// date it should carry. WC_PREVIOUS_CERT_DB names another db file instead
+/// (e.g. an older commit's, to restore dates already lost). Without git the
+/// on-disk file is used, with a warning.
+func loadPreviousCertListings() -> [CertListing] {
+    let fm = FileManager.default
+    var path = dbOutput
+    var tempPath: String?
+    if let override = ProcessInfo.processInfo.environment["WC_PREVIOUS_CERT_DB"],
+       !override.isEmpty {
+        path = override
+        print("cert-date carry-forward: previous db from WC_PREVIOUS_CERT_DB=\(override)")
+    } else {
+        let temp = NSTemporaryDirectory() + "whatcable-previous-\(ProcessInfo.processInfo.processIdentifier).db"
+        fm.createFile(atPath: temp, contents: nil)
+        let out = FileHandle(forWritingAtPath: temp)
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+        process.arguments = ["-C", repoRoot, "show",
+                             "HEAD:Sources/WhatCableCore/Resources/whatcable.db"]
+        process.standardOutput = out
+        process.standardError = FileHandle.nullDevice
+        var ok = false
+        if (try? process.run()) != nil {
+            process.waitUntilExit()
+            ok = process.terminationStatus == 0
+        }
+        try? out?.close()
+        let size = (try? fm.attributesOfItem(atPath: temp)[.size] as? Int) ?? 0
+        if ok, size > 0 {
+            path = temp
+            tempPath = temp
+            print("cert-date carry-forward: previous db from git HEAD")
+        } else {
+            try? fm.removeItem(atPath: temp)
+            fputs("warn: cert-date carry-forward: could not read the committed db from git; " +
+                  "using the file on disk, which a failed earlier build may have emptied\n", stderr)
+        }
+    }
+    defer { if let tempPath { try? fm.removeItem(atPath: tempPath) } }
+
+    guard fm.fileExists(atPath: path) else {
+        fputs("warn: cert-date carry-forward: no previous db at \(path), nothing to carry\n", stderr)
+        return []
+    }
+    var prev: OpaquePointer?
+    defer { sqlite3_close(prev) }
+    guard sqlite3_open_v2(path, &prev, SQLITE_OPEN_READONLY, nil) == SQLITE_OK else {
+        fputs("warn: cert-date carry-forward: could not open the previous db, nothing to carry\n", stderr)
+        return []
+    }
+    var stmt: OpaquePointer?
+    guard sqlite3_prepare_v2(prev, "SELECT xid, company, model, cert_date FROM cable_certs",
+                             -1, &stmt, nil) == SQLITE_OK else {
+        fputs("warn: cert-date carry-forward: previous db has no cable_certs table, nothing to carry\n", stderr)
+        return []
+    }
+    defer { sqlite3_finalize(stmt) }
+    func text(_ col: Int32) -> String {
+        sqlite3_column_text(stmt, col).map { String(cString: $0) } ?? ""
+    }
+    var out: [CertListing] = []
+    while sqlite3_step(stmt) == SQLITE_ROW {
+        out.append(CertListing(xid: Int(sqlite3_column_int64(stmt, 0)),
+                               company: text(1), model: text(2), certDate: text(3)))
+    }
+    if out.isEmpty {
+        fputs("warn: cert-date carry-forward: the previous db has 0 certification listings, nothing to carry\n", stderr)
+    }
+    print("cert-date carry-forward: \(out.count) listings in the previous db")
+    return out
+}
+
+/// Fill in the dates the feed dropped, from the previous db, and print one
+/// line per carried date so the carry stays visible in the build output.
+func applyCertDateCarryForward(previous: [CertListing]) {
+    var rowids: [Int64] = []
+    var listings: [CertListing] = []
+    var stmt: OpaquePointer?
+    guard sqlite3_prepare_v2(db, "SELECT rowid, xid, company, model, cert_date FROM cable_certs ORDER BY rowid",
+                             -1, &stmt, nil) == SQLITE_OK else {
+        fputs("error: could not read cable_certs for the cert-date carry-forward\n", stderr)
+        failBuild(2)
+    }
+    func text(_ col: Int32) -> String {
+        sqlite3_column_text(stmt, col).map { String(cString: $0) } ?? ""
+    }
+    while sqlite3_step(stmt) == SQLITE_ROW {
+        rowids.append(sqlite3_column_int64(stmt, 0))
+        listings.append(CertListing(xid: Int(sqlite3_column_int64(stmt, 1)),
+                                    company: text(2), model: text(3), certDate: text(4)))
+    }
+    sqlite3_finalize(stmt)
+
+    let result = carryForwardCertDates(new: listings, previous: previous)
+    func describe(_ l: CertListing) -> String {
+        "\(String(format: "0x%X", l.xid)) \(l.company) / \(l.model)"
+    }
+
+    var update: OpaquePointer?
+    guard sqlite3_prepare_v2(db, "UPDATE cable_certs SET cert_date = ? WHERE rowid = ?",
+                             -1, &update, nil) == SQLITE_OK else {
+        fputs("error: could not prepare the cert-date carry-forward update\n", stderr)
+        failBuild(2)
+    }
+    defer { sqlite3_finalize(update) }
+    let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
+    for i in result.carried {
+        sqlite3_reset(update)
+        sqlite3_bind_text(update, 1, result.dates[i], -1, SQLITE_TRANSIENT)
+        sqlite3_bind_int64(update, 2, rowids[i])
+        guard sqlite3_step(update) == SQLITE_DONE else {
+            fputs("error: cert-date carry-forward update failed for \(describe(listings[i]))\n", stderr)
+            failBuild(2)
+        }
+        print("  carried forward: \(describe(listings[i])) -> \(result.dates[i])")
+    }
+    for i in result.ambiguous {
+        print("  not carried (ambiguous: listed more than once): \(describe(listings[i]))")
+    }
+    print("cert-date carry-forward: \(result.carried.count) date(s) carried, " +
+          "\(result.ambiguous.count) ambiguous")
+}
+
 // MARK: - Main
 
 // Validate the markdown before openDB() touches anything: openDB() deletes
 // the bundled database, so a rejected row must fail the build while every
 // generated artifact is still intact.
 validateKnownCablesMarkdown()
+
+// Read the certification listings of the committed db, so dates USB-IF's
+// feed has dropped can be carried forward (see carryForwardCertDates).
+let previousCertListings = loadPreviousCertListings()
 
 openDB()
 createSchema()
@@ -2043,6 +2389,7 @@ print("Imported \(cableCount) known cables")
 
 let certs = importCertifications()
 print("USB-IF certs: \(certs.listings) listings across \(certs.xids) XIDs")
+applyCertDateCarryForward(previous: previousCertListings)
 
 // Guard against silently shipping a cert-less db. With the per-XID -> bulk
 // fallback and the bulk floor, zero listings can only mean the bulk fetch
