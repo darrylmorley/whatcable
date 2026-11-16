@@ -848,3 +848,54 @@
 "Thunderbolt devices disconnected" = "دستگاه‌های Thunderbolt جدا شدند";
 "Wattage not reported" = "توان گزارش نشده است";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab تعویض  r تازه‌سازی  c گزارش  q خروج  ↑↓ انتخاب  enter باز/بسته کردن";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab تعویض  r تازه‌سازی  q خروج  ↑↓ پیمایش";
+"Tab switch  r refresh  q quit" = "Tab تعویض  r تازه‌سازی  q خروج";
+"Overview" = "نمای کلی";
+"Negotiation" = "مذاکره";
+"WhatCable Dashboard - %@" = "داشبورد WhatCable - %@";
+"Updated: %@" = "به‌روزرسانی: %@";
+"waiting..." = "در انتظار...";
+"No active connections" = "اتصال فعالی وجود ندارد";
+"Live power per port. System totals at the top." = "توان زنده برای هر درگاه. مجموع سیستم در بالا.";
+"System" = "سیستم";
+"Desktop Mac (no battery)" = "Mac رومیزی (بدون باتری)";
+"Adapter: %@" = "آداپتور: %@";
+"No charger" = "بدون شارژر";
+"No active power ports" = "درگاه توان فعالی وجود ندارد";
+"no live draw  contract up to %@" = "مصرف زنده‌ای نیست  قرارداد تا %@";
+"Waiting for telemetry..." = "در انتظار تله‌متری...";
+"Contract: %@" = "قرارداد: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "مقاومت: %@";
+"Health: %@" = "سلامت: %@";
+"no live draw to chart" = "مصرف زنده‌ای برای نمودار نیست";
+"Draw  (%@)" = "مصرف  (%@)";
+"last %llds" = "%lld ثانیهٔ اخیر";
+"last %lldm" = "%lld دقیقهٔ اخیر";
+"last %lldm %llds" = "%1$lld دقیقه و %2$lld ثانیهٔ اخیر";
+"Worth keeping an eye on" = "بهتر است زیر نظر باشد";
+"Signal conflict detected" = "تعارض سیگنال شناسایی شد";
+"Cable e-marker says %@ but controller reads %@." = "e-marker کابل %1$@ را گزارش می‌کند، اما کنترلر %2$@ را می‌خواند.";
+"The controller's reading is used." = "مقدار خوانده‌شده توسط کنترلر استفاده می‌شود.";
+"Ports" = "درگاه‌ها";
+"Data: %@" = "داده: %@";
+"Charging: %@" = "شارژ: %@";
+"Battery: fully charged" = "باتری: کاملاً شارژ شده";
+"Charging path: %@" = "مسیر شارژ: %@";
+"No active power sources" = "منبع توان فعالی وجود ندارد";
+"Port %lld" = "درگاه %lld";
+"measuring (%@)" = "در حال اندازه‌گیری (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm برآورد مسیر (%2$@، بازهٔ %3$@ A، R2 %4$@)";
+"No Thunderbolt controller" = "کنترلر Thunderbolt وجود ندارد";
+"%@, up to %lld Gb/s" = "%1$@، تا %2$lld Gb/s";
+"No data-capable ports" = "درگاه دارای قابلیت داده وجود ندارد";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ به %2$@";
+"Power adapter" = "آداپتور برق";
+"error: %@" = "خطا: %@";

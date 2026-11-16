@@ -406,10 +406,10 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
+"Performing as expected" = "Працює як очікувалося";
 "No problems seen while watching this cable." = "No problems seen while watching this cable.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
+"Not performing as expected" = "Працює не так, як очікувалося";
 "Isn't performing as expected" = "Isn't performing as expected";
 
 /* Power Monitor system power source indicator. */
@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt-пристрої відключено";
 "Wattage not reported" = "Потужність не повідомляється";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab перемкнути  r оновити  c повідомити  q вийти  ↑↓ вибрати  enter розгорнути/згорнути";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab перемкнути  r оновити  q вийти  ↑↓ прокрутка";
+"Tab switch  r refresh  q quit" = "Tab перемкнути  r оновити  q вийти";
+"Overview" = "Огляд";
+"Negotiation" = "Узгодження";
+"WhatCable Dashboard - %@" = "Панель WhatCable - %@";
+"Updated: %@" = "Оновлено: %@";
+"waiting..." = "очікування...";
+"No active connections" = "Немає активних підключень";
+"Live power per port. System totals at the top." = "Живлення кожного порту в реальному часі. Підсумки системи вгорі.";
+"System" = "Система";
+"Desktop Mac (no battery)" = "Настільний Mac (без акумулятора)";
+"Adapter: %@" = "Адаптер: %@";
+"No charger" = "Немає зарядного пристрою";
+"No active power ports" = "Немає активних портів живлення";
+"no live draw  contract up to %@" = "немає поточного споживання  договір до %@";
+"Waiting for telemetry..." = "Очікування телеметрії...";
+"Contract: %@" = "Договір: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "Опір: %@";
+"Health: %@" = "Стан: %@";
+"no live draw to chart" = "немає поточного споживання для графіка";
+"Draw  (%@)" = "Споживання  (%@)";
+"last %llds" = "за %lld с";
+"last %lldm" = "за %lld хв";
+"last %lldm %llds" = "за %1$lld хв %2$lld с";
+"Worth keeping an eye on" = "Варто стежити";
+"Signal conflict detected" = "Виявлено розбіжність сигналів";
+"Cable e-marker says %@ but controller reads %@." = "E-marker кабелю повідомляє %1$@, але контролер зчитує %2$@.";
+"The controller's reading is used." = "Використовується значення контролера.";
+"Ports" = "Порти";
+"Data: %@" = "Дані: %@";
+"Charging: %@" = "Заряджання: %@";
+"Battery: fully charged" = "Акумулятор: повністю заряджений";
+"Charging path: %@" = "Шлях заряджання: %@";
+"No active power sources" = "Немає активних джерел живлення";
+"Port %lld" = "Порт %lld";
+"measuring (%@)" = "вимірювання (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm оцінка шляху (%2$@, діапазон %3$@ A, R2 %4$@)";
+"No Thunderbolt controller" = "Немає контролера Thunderbolt";
+"%@, up to %lld Gb/s" = "%1$@, до %2$lld Gb/s";
+"No data-capable ports" = "Немає портів із передаванням даних";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ до %2$@";
+"Power adapter" = "Адаптер живлення";
+"error: %@" = "помилка: %@";

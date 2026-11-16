@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt 裝置已中斷連接";
 "Wattage not reported" = "未回報功率";
 "%@ (%@)" = "%1$@（%2$@）";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab 切換  r 重新整理  c 回報  q 結束  ↑↓ 選擇  enter 展開/收合";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab 切換  r 重新整理  q 結束  ↑↓ 捲動";
+"Tab switch  r refresh  q quit" = "Tab 切換  r 重新整理  q 結束";
+"Overview" = "概覽";
+"Negotiation" = "協商";
+"WhatCable Dashboard - %@" = "WhatCable 儀表板 - %@";
+"Updated: %@" = "更新於：%@";
+"waiting..." = "等待中...";
+"No active connections" = "沒有作用中的連線";
+"Live power per port. System totals at the top." = "各連接埠的即時功率。系統總計顯示在頂端。";
+"System" = "系統";
+"Desktop Mac (no battery)" = "桌上型 Mac（無電池）";
+"Adapter: %@" = "電源轉接器：%@";
+"No charger" = "無充電器";
+"No active power ports" = "沒有作用中的供電連接埠";
+"no live draw  contract up to %@" = "無即時耗電  協議最高 %@";
+"Waiting for telemetry..." = "正在等待遙測資料...";
+"Contract: %@" = "協議：%@";
+"VConn: %@  %@" = "VConn：%1$@  %2$@";
+"Resistance: %@" = "電阻：%@";
+"Health: %@" = "健康狀況：%@";
+"no live draw to chart" = "無即時耗電可繪製";
+"Draw  (%@)" = "耗電  (%@)";
+"last %llds" = "最近 %lld 秒";
+"last %lldm" = "最近 %lld 分鐘";
+"last %lldm %llds" = "最近 %1$lld 分 %2$lld 秒";
+"Worth keeping an eye on" = "值得留意";
+"Signal conflict detected" = "偵測到訊號衝突";
+"Cable e-marker says %@ but controller reads %@." = "線材 e-marker 顯示 %1$@，但控制器讀取為 %2$@。";
+"The controller's reading is used." = "採用控制器的讀數。";
+"Ports" = "連接埠";
+"Data: %@" = "資料：%@";
+"Charging: %@" = "充電：%@";
+"Battery: fully charged" = "電池：已充滿";
+"Charging path: %@" = "充電路徑：%@";
+"No active power sources" = "沒有作用中的電源";
+"Port %lld" = "連接埠 %lld";
+"measuring (%@)" = "測量中（%@）";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm 路徑估計（%2$@，%3$@ A 跨度，R2 %4$@）";
+"No Thunderbolt controller" = "無 Thunderbolt 控制器";
+"%@, up to %lld Gb/s" = "%1$@，最高 %2$lld Gb/s";
+"No data-capable ports" = "沒有支援資料的連接埠";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ 至 %2$@";
+"Power adapter" = "電源轉接器";
+"error: %@" = "錯誤：%@";

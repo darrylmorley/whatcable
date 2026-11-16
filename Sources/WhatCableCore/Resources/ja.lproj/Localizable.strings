@@ -408,10 +408,10 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
+"Performing as expected" = "期待どおりに動作しています";
 "No problems seen while watching this cable." = "No problems seen while watching this cable.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
+"Not performing as expected" = "期待どおりに動作していません";
 "Isn't performing as expected" = "Isn't performing as expected";
 
 /* Power Monitor system power source indicator. */
@@ -845,3 +845,54 @@
 "Thunderbolt devices disconnected" = "Thunderboltデバイスが切断されました";
 "Wattage not reported" = "電力は報告されません";
 "%@ (%@)" = "%1$@（%2$@）";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab 切替  r 更新  c 報告  q 終了  ↑↓ 選択  enter 展開/折りたたみ";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab 切替  r 更新  q 終了  ↑↓ スクロール";
+"Tab switch  r refresh  q quit" = "Tab 切替  r 更新  q 終了";
+"Overview" = "概要";
+"Negotiation" = "ネゴシエーション";
+"WhatCable Dashboard - %@" = "WhatCable ダッシュボード - %@";
+"Updated: %@" = "更新: %@";
+"waiting..." = "待機中...";
+"No active connections" = "アクティブな接続なし";
+"Live power per port. System totals at the top." = "ポートごとのライブ電力。システム合計は上部に表示。";
+"System" = "システム";
+"Desktop Mac (no battery)" = "デスクトップMac（バッテリーなし）";
+"Adapter: %@" = "アダプタ: %@";
+"No charger" = "充電器なし";
+"No active power ports" = "アクティブな電源ポートなし";
+"no live draw  contract up to %@" = "ライブ消費なし  コントラクト最大 %@";
+"Waiting for telemetry..." = "テレメトリーを待機中...";
+"Contract: %@" = "コントラクト: %@";
+"VConn: %@  %@" = "VConn：%1$@  %2$@";
+"Resistance: %@" = "抵抗: %@";
+"Health: %@" = "ヘルス: %@";
+"no live draw to chart" = "グラフに表示するライブ消費なし";
+"Draw  (%@)" = "消費電力  (%@)";
+"last %llds" = "直近%lld秒";
+"last %lldm" = "直近%lld分";
+"last %lldm %llds" = "直近%1$lld分%2$lld秒";
+"Worth keeping an eye on" = "様子を見る価値あり";
+"Signal conflict detected" = "信号の不一致を検出";
+"Cable e-marker says %@ but controller reads %@." = "ケーブルの e-marker は %1$@ ですが、コントローラーの読み取りは %2$@ です。";
+"The controller's reading is used." = "コントローラーの値を使用します。";
+"Ports" = "ポート";
+"Data: %@" = "データ: %@";
+"Charging: %@" = "充電: %@";
+"Battery: fully charged" = "バッテリー: フル充電";
+"Charging path: %@" = "充電経路: %@";
+"No active power sources" = "アクティブな電源なし";
+"Port %lld" = "ポート %lld";
+"measuring (%@)" = "測定中（%@）";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm 経路推定（%2$@、%3$@ A 幅、R2 %4$@）";
+"No Thunderbolt controller" = "Thunderbolt コントローラーなし";
+"%@, up to %lld Gb/s" = "%1$@、最大 %2$lld Gb/s";
+"No data-capable ports" = "データ対応ポートなし";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%2$@ へ %1$@";
+"Power adapter" = "電源アダプタ";
+"error: %@" = "エラー: %@";

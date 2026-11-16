@@ -406,10 +406,10 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
+"Performing as expected" = "Beklendiği gibi çalışıyor";
 "No problems seen while watching this cable." = "No problems seen while watching this cable.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
+"Not performing as expected" = "Beklendiği gibi çalışmıyor";
 "Isn't performing as expected" = "Isn't performing as expected";
 
 /* Power Monitor system power source indicator. */
@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt aygıtları çıkarıldı";
 "Wattage not reported" = "Güç bildirilmiyor";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab değiştir  r yenile  c bildir  q çık  ↑↓ seç  enter genişlet/daralt";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab değiştir  r yenile  q çık  ↑↓ kaydır";
+"Tab switch  r refresh  q quit" = "Tab değiştir  r yenile  q çık";
+"Overview" = "Genel Bakış";
+"Negotiation" = "Müzakere";
+"WhatCable Dashboard - %@" = "WhatCable Panosu - %@";
+"Updated: %@" = "Güncellendi: %@";
+"waiting..." = "bekleniyor...";
+"No active connections" = "Etkin bağlantı yok";
+"Live power per port. System totals at the top." = "Port başına canlı güç. Sistem toplamları en üstte.";
+"System" = "Sistem";
+"Desktop Mac (no battery)" = "Masaüstü Mac (pil yok)";
+"Adapter: %@" = "Adaptör: %@";
+"No charger" = "Şarj aleti yok";
+"No active power ports" = "Etkin güç portu yok";
+"no live draw  contract up to %@" = "canlı çekim yok  sözleşme en fazla %@";
+"Waiting for telemetry..." = "Telemetri bekleniyor...";
+"Contract: %@" = "Sözleşme: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "Direnç: %@";
+"Health: %@" = "Sağlık: %@";
+"no live draw to chart" = "grafik için canlı çekim yok";
+"Draw  (%@)" = "Çekim  (%@)";
+"last %llds" = "son %llds";
+"last %lldm" = "son %lldm";
+"last %lldm %llds" = "son %1$lldm %2$llds";
+"Worth keeping an eye on" = "Göz kulak olmaya değer";
+"Signal conflict detected" = "Sinyal çakışması algılandı";
+"Cable e-marker says %@ but controller reads %@." = "Kablonun e-marker'ı %1$@ diyor, ancak denetleyici %2$@ okuyor.";
+"The controller's reading is used." = "Denetleyicinin okuması kullanılıyor.";
+"Ports" = "Portlar";
+"Data: %@" = "Veri: %@";
+"Charging: %@" = "Şarj: %@";
+"Battery: fully charged" = "Pil: tamamen dolu";
+"Charging path: %@" = "Şarj yolu: %@";
+"No active power sources" = "Etkin güç kaynağı yok";
+"Port %lld" = "Port %lld";
+"measuring (%@)" = "ölçülüyor (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm yol tahmini (%2$@, %3$@ A aralık, R2 %4$@)";
+"No Thunderbolt controller" = "Thunderbolt denetleyicisi yok";
+"%@, up to %lld Gb/s" = "%1$@, en fazla %2$lld Gb/s";
+"No data-capable ports" = "Veri destekli port yok";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%2$@ ile %1$@";
+"Power adapter" = "Güç adaptörü";
+"error: %@" = "hata: %@";

@@ -406,10 +406,10 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
+"Performing as expected" = "Werkt zoals verwacht";
 "No problems seen while watching this cable." = "No problems seen while watching this cable.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
+"Not performing as expected" = "Werkt niet zoals verwacht";
 "Isn't performing as expected" = "Isn't performing as expected";
 
 /* Power Monitor system power source indicator. */
@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt-apparaten verbroken";
 "Wattage not reported" = "Vermogen niet gerapporteerd";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab wisselen  r vernieuwen  c melden  q stoppen  ↑↓ selecteren  enter uit-/inklappen";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab wisselen  r vernieuwen  q stoppen  ↑↓ scrollen";
+"Tab switch  r refresh  q quit" = "Tab wisselen  r vernieuwen  q stoppen";
+"Overview" = "Overzicht";
+"Negotiation" = "Onderhandeling";
+"WhatCable Dashboard - %@" = "WhatCable-dashboard - %@";
+"Updated: %@" = "Bijgewerkt: %@";
+"waiting..." = "wachten...";
+"No active connections" = "Geen actieve verbindingen";
+"Live power per port. System totals at the top." = "Live vermogen per poort. Systeemtotalen bovenaan.";
+"System" = "Systeem";
+"Desktop Mac (no battery)" = "Desktop Mac (geen batterij)";
+"Adapter: %@" = "Netadapter: %@";
+"No charger" = "Geen oplader";
+"No active power ports" = "Geen actieve voedingspoorten";
+"no live draw  contract up to %@" = "geen live afname  contract tot %@";
+"Waiting for telemetry..." = "Wachten op telemetrie...";
+"Contract: %@" = "Vermogenscontract: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "Weerstand: %@";
+"Health: %@" = "Gezondheid: %@";
+"no live draw to chart" = "geen live afname om te tonen";
+"Draw  (%@)" = "Afname  (%@)";
+"last %llds" = "laatste %llds";
+"last %lldm" = "laatste %lldm";
+"last %lldm %llds" = "laatste %1$lldm %2$llds";
+"Worth keeping an eye on" = "Het in de gaten houden waard";
+"Signal conflict detected" = "Signaalconflict gedetecteerd";
+"Cable e-marker says %@ but controller reads %@." = "De e-marker van de kabel meldt %1$@, maar de controller leest %2$@.";
+"The controller's reading is used." = "De waarde van de controller wordt gebruikt.";
+"Ports" = "Poorten";
+"Data: %@" = "Data: %@";
+"Charging: %@" = "Opladen: %@";
+"Battery: fully charged" = "Batterij: volledig opgeladen";
+"Charging path: %@" = "Laadpad: %@";
+"No active power sources" = "Geen actieve stroombronnen";
+"Port %lld" = "Poort %lld";
+"measuring (%@)" = "meten (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm pad geschat (%2$@, %3$@ A bereik, R2 %4$@)";
+"No Thunderbolt controller" = "Geen Thunderbolt-controller";
+"%@, up to %lld Gb/s" = "%1$@, tot %2$lld Gb/s";
+"No data-capable ports" = "Geen datapoorten";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ naar %2$@";
+"Power adapter" = "Netadapter";
+"error: %@" = "fout: %@";

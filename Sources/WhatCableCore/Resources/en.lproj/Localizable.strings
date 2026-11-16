@@ -848,3 +848,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt devices disconnected";
 "Wattage not reported" = "Wattage not reported";
 "%@ (%@)" = "%@ (%@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab switch  r refresh  q quit  ↑↓ scroll";
+"Tab switch  r refresh  q quit" = "Tab switch  r refresh  q quit";
+"Overview" = "Overview";
+"Negotiation" = "Negotiation";
+"WhatCable Dashboard - %@" = "WhatCable Dashboard - %@";
+"Updated: %@" = "Updated: %@";
+"waiting..." = "waiting...";
+"No active connections" = "No active connections";
+"Live power per port. System totals at the top." = "Live power per port. System totals at the top.";
+"System" = "System";
+"Desktop Mac (no battery)" = "Desktop Mac (no battery)";
+"Adapter: %@" = "Adapter: %@";
+"No charger" = "No charger";
+"No active power ports" = "No active power ports";
+"no live draw  contract up to %@" = "no live draw  contract up to %@";
+"Waiting for telemetry..." = "Waiting for telemetry...";
+"Contract: %@" = "Contract: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "Resistance: %@";
+"Health: %@" = "Health: %@";
+"no live draw to chart" = "no live draw to chart";
+"Draw  (%@)" = "Draw  (%@)";
+"last %llds" = "last %llds";
+"last %lldm" = "last %lldm";
+"last %lldm %llds" = "last %1$lldm %2$llds";
+"Worth keeping an eye on" = "Worth keeping an eye on";
+"Signal conflict detected" = "Signal conflict detected";
+"Cable e-marker says %@ but controller reads %@." = "Cable e-marker says %1$@ but controller reads %2$@.";
+"The controller's reading is used." = "The controller's reading is used.";
+"Ports" = "Ports";
+"Data: %@" = "Data: %@";
+"Charging: %@" = "Charging: %@";
+"Battery: fully charged" = "Battery: fully charged";
+"Charging path: %@" = "Charging path: %@";
+"No active power sources" = "No active power sources";
+"Port %lld" = "Port %lld";
+"measuring (%@)" = "measuring (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm path est. (%2$@, %3$@ A span, R2 %4$@)";
+"No Thunderbolt controller" = "No Thunderbolt controller";
+"%@, up to %lld Gb/s" = "%1$@, up to %2$lld Gb/s";
+"No data-capable ports" = "No data-capable ports";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ to %2$@";
+"Power adapter" = "Power adapter";
+"error: %@" = "error: %@";

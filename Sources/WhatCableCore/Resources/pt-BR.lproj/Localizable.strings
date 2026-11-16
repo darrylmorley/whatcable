@@ -406,10 +406,10 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
+"Performing as expected" = "Funcionando como esperado";
 "No problems seen while watching this cable." = "No problems seen while watching this cable.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
+"Not performing as expected" = "Não está funcionando como esperado";
 "Isn't performing as expected" = "Isn't performing as expected";
 
 /* Power Monitor system power source indicator. */
@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Dispositivos Thunderbolt desconectados";
 "Wattage not reported" = "Potência não informada";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab alternar  r atualizar  c relatar  q sair  ↑↓ selecionar  enter expandir/recolher";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab alternar  r atualizar  q sair  ↑↓ rolar";
+"Tab switch  r refresh  q quit" = "Tab alternar  r atualizar  q sair";
+"Overview" = "Visão geral";
+"Negotiation" = "Negociação";
+"WhatCable Dashboard - %@" = "Painel do WhatCable - %@";
+"Updated: %@" = "Atualizado: %@";
+"waiting..." = "aguardando...";
+"No active connections" = "Nenhuma conexão ativa";
+"Live power per port. System totals at the top." = "Energia ao vivo por porta. Totais do sistema no topo.";
+"System" = "Sistema";
+"Desktop Mac (no battery)" = "Mac de mesa (sem bateria)";
+"Adapter: %@" = "Adaptador: %@";
+"No charger" = "Sem carregador";
+"No active power ports" = "Nenhuma porta de energia ativa";
+"no live draw  contract up to %@" = "sem consumo ao vivo  contrato até %@";
+"Waiting for telemetry..." = "Aguardando telemetria...";
+"Contract: %@" = "Contrato: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "Resistência: %@";
+"Health: %@" = "Saúde: %@";
+"no live draw to chart" = "sem consumo ao vivo para o gráfico";
+"Draw  (%@)" = "Consumo  (%@)";
+"last %llds" = "últimos %llds";
+"last %lldm" = "últimos %lldm";
+"last %lldm %llds" = "últimos %1$lldm %2$llds";
+"Worth keeping an eye on" = "Vale a pena acompanhar";
+"Signal conflict detected" = "Conflito de sinais detectado";
+"Cable e-marker says %@ but controller reads %@." = "O e-marker do cabo indica %1$@, mas o controlador lê %2$@.";
+"The controller's reading is used." = "A leitura do controlador é usada.";
+"Ports" = "Portas";
+"Data: %@" = "Dados: %@";
+"Charging: %@" = "Carregamento: %@";
+"Battery: fully charged" = "Bateria: carga completa";
+"Charging path: %@" = "Caminho de carregamento: %@";
+"No active power sources" = "Nenhuma fonte de energia ativa";
+"Port %lld" = "Porta %lld";
+"measuring (%@)" = "medindo (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm caminho est. (%2$@, faixa de %3$@ A, R2 %4$@)";
+"No Thunderbolt controller" = "Nenhum controlador Thunderbolt";
+"%@, up to %lld Gb/s" = "%1$@, até %2$lld Gb/s";
+"No data-capable ports" = "Nenhuma porta de dados";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ para %2$@";
+"Power adapter" = "Adaptador de energia";
+"error: %@" = "erro: %@";

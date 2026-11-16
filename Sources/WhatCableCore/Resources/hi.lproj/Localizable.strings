@@ -406,10 +406,10 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
+"Performing as expected" = "उम्मीद के मुताबिक काम कर रहा है";
 "No problems seen while watching this cable." = "No problems seen while watching this cable.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
+"Not performing as expected" = "उम्मीद के मुताबिक काम नहीं कर रहा";
 "Isn't performing as expected" = "Isn't performing as expected";
 
 /* Power Monitor system power source indicator. */
@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt डिवाइस डिस्कनेक्ट हुए";
 "Wattage not reported" = "वाट क्षमता रिपोर्ट नहीं की गई";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab बदलें  r रीफ़्रेश  c रिपोर्ट  q बंद करें  ↑↓ चुनें  enter खोलें/बंद करें";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab बदलें  r रीफ़्रेश  q बंद करें  ↑↓ स्क्रॉल";
+"Tab switch  r refresh  q quit" = "Tab बदलें  r रीफ़्रेश  q बंद करें";
+"Overview" = "अवलोकन";
+"Negotiation" = "निगोशिएशन";
+"WhatCable Dashboard - %@" = "WhatCable डैशबोर्ड - %@";
+"Updated: %@" = "अपडेट किया गया: %@";
+"waiting..." = "प्रतीक्षा...";
+"No active connections" = "कोई सक्रिय कनेक्शन नहीं";
+"Live power per port. System totals at the top." = "हर पोर्ट की लाइव पावर। सिस्टम का कुल ऊपर।";
+"System" = "सिस्टम";
+"Desktop Mac (no battery)" = "डेस्कटॉप Mac (बैटरी नहीं)";
+"Adapter: %@" = "एडेप्टर: %@";
+"No charger" = "कोई चार्जर नहीं";
+"No active power ports" = "कोई सक्रिय पावर पोर्ट नहीं";
+"no live draw  contract up to %@" = "कोई लाइव खपत नहीं  कॉन्ट्रैक्ट अधिकतम %@";
+"Waiting for telemetry..." = "टेलीमेट्री की प्रतीक्षा...";
+"Contract: %@" = "कॉन्ट्रैक्ट: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "प्रतिरोध: %@";
+"Health: %@" = "हेल्थ: %@";
+"no live draw to chart" = "चार्ट के लिए कोई लाइव खपत नहीं";
+"Draw  (%@)" = "खपत  (%@)";
+"last %llds" = "पिछले %llds";
+"last %lldm" = "पिछले %lldm";
+"last %lldm %llds" = "पिछले %1$lldm %2$llds";
+"Worth keeping an eye on" = "नज़र रखने लायक";
+"Signal conflict detected" = "सिग्नल में टकराव मिला";
+"Cable e-marker says %@ but controller reads %@." = "केबल का e-marker %1$@ बताता है, लेकिन कंट्रोलर %2$@ पढ़ता है।";
+"The controller's reading is used." = "कंट्रोलर की रीडिंग उपयोग की जाती है।";
+"Ports" = "पोर्ट";
+"Data: %@" = "डेटा: %@";
+"Charging: %@" = "चार्जिंग: %@";
+"Battery: fully charged" = "बैटरी: पूरी चार्ज";
+"Charging path: %@" = "चार्जिंग पाथ: %@";
+"No active power sources" = "कोई सक्रिय पावर स्रोत नहीं";
+"Port %lld" = "पोर्ट %lld";
+"measuring (%@)" = "माप जारी (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm पाथ अनुमान (%2$@, %3$@ A रेंज, R2 %4$@)";
+"No Thunderbolt controller" = "कोई Thunderbolt कंट्रोलर नहीं";
+"%@, up to %lld Gb/s" = "%1$@, अधिकतम %2$lld Gb/s";
+"No data-capable ports" = "डेटा वाले कोई पोर्ट नहीं";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%2$@ तक %1$@";
+"Power adapter" = "पावर एडेप्टर";
+"error: %@" = "त्रुटि: %@";

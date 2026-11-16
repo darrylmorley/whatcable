@@ -50,5 +50,38 @@
 			<string>%lld Hubs anzeigen</string>
 		</dict>
 	</dict>
+	<!-- Pro terminal dashboard, the CLI dashboard flag. -->
+	<key>%lld samples</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld Messwert</string>
+			<key>other</key>
+			<string>%lld Messwerte</string>
+		</dict>
+	</dict>
+	<key>%lld ports idle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld Anschluss inaktiv</string>
+			<key>other</key>
+			<string>%lld Anschlüsse inaktiv</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

@@ -406,10 +406,10 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
+"Performing as expected" = "예상대로 작동하고 있어요";
 "No problems seen while watching this cable." = "No problems seen while watching this cable.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
+"Not performing as expected" = "예상대로 작동하지 않아요";
 "Isn't performing as expected" = "Isn't performing as expected";
 
 /* Power Monitor system power source indicator. */
@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt 기기 분리됨";
 "Wattage not reported" = "전력이 보고되지 않음";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab 전환  r 새로고침  c 보고  q 종료  ↑↓ 선택  enter 펼치기/접기";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab 전환  r 새로고침  q 종료  ↑↓ 스크롤";
+"Tab switch  r refresh  q quit" = "Tab 전환  r 새로고침  q 종료";
+"Overview" = "개요";
+"Negotiation" = "협상";
+"WhatCable Dashboard - %@" = "WhatCable 대시보드 - %@";
+"Updated: %@" = "업데이트: %@";
+"waiting..." = "대기 중...";
+"No active connections" = "활성 연결 없음";
+"Live power per port. System totals at the top." = "포트별 실시간 전력. 시스템 합계는 맨 위에 있어요.";
+"System" = "시스템";
+"Desktop Mac (no battery)" = "데스크탑 Mac (배터리 없음)";
+"Adapter: %@" = "어댑터: %@";
+"No charger" = "충전기 없음";
+"No active power ports" = "활성 전원 포트 없음";
+"no live draw  contract up to %@" = "실시간 소비 없음  계약 최대 %@";
+"Waiting for telemetry..." = "측정 데이터를 기다리는 중...";
+"Contract: %@" = "계약: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "저항: %@";
+"Health: %@" = "상태: %@";
+"no live draw to chart" = "차트에 표시할 실시간 소비 없음";
+"Draw  (%@)" = "소비 전력  (%@)";
+"last %llds" = "최근 %lld초";
+"last %lldm" = "최근 %lld분";
+"last %lldm %llds" = "최근 %1$lld분 %2$lld초";
+"Worth keeping an eye on" = "지켜볼 필요가 있어요";
+"Signal conflict detected" = "신호 충돌 감지됨";
+"Cable e-marker says %@ but controller reads %@." = "케이블의 E-marker는 %1$@(이)라고 하지만 컨트롤러는 %2$@(으)로 읽어요.";
+"The controller's reading is used." = "컨트롤러의 값을 사용해요.";
+"Ports" = "포트";
+"Data: %@" = "데이터: %@";
+"Charging: %@" = "충전: %@";
+"Battery: fully charged" = "배터리: 완전히 충전됨";
+"Charging path: %@" = "충전 경로: %@";
+"No active power sources" = "활성 전원 없음";
+"Port %lld" = "포트 %lld";
+"measuring (%@)" = "측정 중 (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm 경로 추정 (%2$@, %3$@ A 범위, R2 %4$@)";
+"No Thunderbolt controller" = "Thunderbolt 컨트롤러 없음";
+"%@, up to %lld Gb/s" = "%1$@, 최대 %2$lld Gb/s";
+"No data-capable ports" = "데이터 지원 포트 없음";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%2$@(으)로 %1$@";
+"Power adapter" = "전원 어댑터";
+"error: %@" = "오류: %@";

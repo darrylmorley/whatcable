@@ -110,5 +110,42 @@
 			<string>%lld USB-C portu konstatēti, bet nekas nav pievienots. Izslēdziet „Slēpt tukšos portus“ iestatījumos, lai tos redzētu.</string>
 		</dict>
 	</dict>
+	<!-- Pro terminal dashboard, the CLI dashboard flag. -->
+	<key>%lld samples</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>zero</key>
+			<string>%lld paraugu</string>
+			<key>one</key>
+			<string>%lld paraugs</string>
+			<key>other</key>
+			<string>%lld paraugi</string>
+		</dict>
+	</dict>
+	<key>%lld ports idle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>zero</key>
+			<string>%lld portu dīkstāvē</string>
+			<key>one</key>
+			<string>%lld ports dīkstāvē</string>
+			<key>other</key>
+			<string>%lld porti dīkstāvē</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt ierīces atvienotas";
 "Wattage not reported" = "Jauda netiek ziņota";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab pārslēgt  r atsvaidzināt  c ziņot  q iziet  ↑↓ atlasīt  enter izvērst/sakļaut";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab pārslēgt  r atsvaidzināt  q iziet  ↑↓ ritināt";
+"Tab switch  r refresh  q quit" = "Tab pārslēgt  r atsvaidzināt  q iziet";
+"Overview" = "Pārskats";
+"Negotiation" = "Saskaņošana";
+"WhatCable Dashboard - %@" = "WhatCable informācijas panelis - %@";
+"Updated: %@" = "Atjaunināts: %@";
+"waiting..." = "gaida...";
+"No active connections" = "Nav aktīvu savienojumu";
+"Live power per port. System totals at the top." = "Tiešraides jauda katram portam. Sistēmas kopsummas augšā.";
+"System" = "Sistēma";
+"Desktop Mac (no battery)" = "Stacionārais Mac (bez akumulatora)";
+"Adapter: %@" = "Adapteris: %@";
+"No charger" = "Nav lādētāja";
+"No active power ports" = "Nav aktīvu jaudas portu";
+"no live draw  contract up to %@" = "nav tiešraides patēriņa  līgums līdz %@";
+"Waiting for telemetry..." = "Gaida telemetriju...";
+"Contract: %@" = "Līgums: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "Pretestība: %@";
+"Health: %@" = "Veselība: %@";
+"no live draw to chart" = "nav tiešraides patēriņa diagrammai";
+"Draw  (%@)" = "Patēriņš  (%@)";
+"last %llds" = "pēdējās %llds";
+"last %lldm" = "pēdējās %lldm";
+"last %lldm %llds" = "pēdējās %1$lldm %2$llds";
+"Worth keeping an eye on" = "Vērts pieskatīt";
+"Signal conflict detected" = "Konstatēts signālu konflikts";
+"Cable e-marker says %@ but controller reads %@." = "Kabeļa e-marker norāda %1$@, bet kontrolieris nolasa %2$@.";
+"The controller's reading is used." = "Tiek izmantots kontroliera rādījums.";
+"Ports" = "Porti";
+"Data: %@" = "Dati: %@";
+"Charging: %@" = "Uzlāde: %@";
+"Battery: fully charged" = "Akumulators: pilnībā uzlādēts";
+"Charging path: %@" = "Uzlādes ceļš: %@";
+"No active power sources" = "Nav aktīvu jaudas avotu";
+"Port %lld" = "Ports %lld";
+"measuring (%@)" = "mēra (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm ceļa novērt. (%2$@, %3$@ A diapazons, R2 %4$@)";
+"No Thunderbolt controller" = "Nav Thunderbolt kontroliera";
+"%@, up to %lld Gb/s" = "%1$@, līdz %2$lld Gb/s";
+"No data-capable ports" = "Nav datu portu";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ uz %2$@";
+"Power adapter" = "Strāvas adapteris";
+"error: %@" = "kļūda: %@";

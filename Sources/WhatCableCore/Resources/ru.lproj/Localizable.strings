@@ -406,7 +406,7 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Батарея полная, питание не потребляется";
-"Performing as expected" = "Работает как ожидается";
+"Performing as expected" = "Работает так, как ожидалось";
 "No problems seen while watching this cable." = "Проблем при наблюдении за этим кабелем не обнаружено.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Был кратковременный спад или единичное высокое значение. Это не окончательный вывод; продолжаем наблюдение.";
 "Not performing as expected" = "Работает не так, как ожидалось";
@@ -843,3 +843,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt-устройства отключены";
 "Wattage not reported" = "Мощность не сообщается";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab переключить  r обновить  c сообщить  q выйти  ↑↓ выбрать  enter развернуть/свернуть";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab переключить  r обновить  q выйти  ↑↓ прокрутка";
+"Tab switch  r refresh  q quit" = "Tab переключить  r обновить  q выйти";
+"Overview" = "Обзор";
+"Negotiation" = "Согласование";
+"WhatCable Dashboard - %@" = "Панель WhatCable - %@";
+"Updated: %@" = "Обновлено: %@";
+"waiting..." = "ожидание...";
+"No active connections" = "Нет активных подключений";
+"Live power per port. System totals at the top." = "Мощность по портам в реальном времени. Итоги системы вверху.";
+"System" = "Система";
+"Desktop Mac (no battery)" = "Настольный Mac (без батареи)";
+"Adapter: %@" = "Адаптер: %@";
+"No charger" = "Нет зарядного устройства";
+"No active power ports" = "Нет активных портов питания";
+"no live draw  contract up to %@" = "нет текущего потребления  контракт до %@";
+"Waiting for telemetry..." = "Ожидание телеметрии...";
+"Contract: %@" = "Контракт: %@";
+"VConn: %@  %@" = "VConn: %1$@  %2$@";
+"Resistance: %@" = "Сопротивление: %@";
+"Health: %@" = "Состояние: %@";
+"no live draw to chart" = "нет текущего потребления для графика";
+"Draw  (%@)" = "Потребление  (%@)";
+"last %llds" = "за %lld с";
+"last %lldm" = "за %lld мин";
+"last %lldm %llds" = "за %1$lld мин %2$lld с";
+"Worth keeping an eye on" = "Стоит понаблюдать";
+"Signal conflict detected" = "Обнаружено расхождение сигналов";
+"Cable e-marker says %@ but controller reads %@." = "E-marker кабеля сообщает %1$@, но контроллер считывает %2$@.";
+"The controller's reading is used." = "Используется значение контроллера.";
+"Ports" = "Порты";
+"Data: %@" = "Данные: %@";
+"Charging: %@" = "Зарядка: %@";
+"Battery: fully charged" = "Батарея: полностью заряжена";
+"Charging path: %@" = "Цепь зарядки: %@";
+"No active power sources" = "Нет активных источников питания";
+"Port %lld" = "Порт %lld";
+"measuring (%@)" = "измерение (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm оценка цепи (%2$@, диапазон %3$@ A, R2 %4$@)";
+"No Thunderbolt controller" = "Нет контроллера Thunderbolt";
+"%@, up to %lld Gb/s" = "%1$@, до %2$lld Гбит/с";
+"No data-capable ports" = "Нет портов с передачей данных";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ к %2$@";
+"Power adapter" = "Адаптер питания";
+"error: %@" = "ошибка: %@";

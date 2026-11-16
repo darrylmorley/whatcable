@@ -407,10 +407,10 @@
 
 /* Session monitor verdicts. */
 "Battery full, not drawing power" = "Battery full, not drawing power";
-"Performing as expected" = "Performing as expected";
+"Performing as expected" = "Աշխատում է սպասվածի պես";
 "No problems seen while watching this cable." = "No problems seen while watching this cable.";
 "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
-"Not performing as expected" = "Not performing as expected";
+"Not performing as expected" = "Չի աշխատում սպասվածի պես";
 "Isn't performing as expected" = "Isn't performing as expected";
 
 /* Power Monitor system power source indicator. */
@@ -844,3 +844,54 @@
 "Thunderbolt devices disconnected" = "Thunderbolt սարքերն անջատվեցին";
 "Wattage not reported" = "Հզորությունը չի հաղորդվում";
 "%@ (%@)" = "%1$@ (%2$@)";
+
+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
+   terminal UI: keep translations short. The key letters in the footer
+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
+   so they stay as they are. ===== */
+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab փոխել  r թարմացնել  c հաղորդել  q ելք  ↑↓ ընտրել  enter բացել/փակել";
+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab փոխել  r թարմացնել  q ելք  ↑↓ թերթել";
+"Tab switch  r refresh  q quit" = "Tab փոխել  r թարմացնել  q ելք";
+"Overview" = "Ընդհանուր տեսք";
+"Negotiation" = "Բանակցություն";
+"WhatCable Dashboard - %@" = "WhatCable վահանակ - %@";
+"Updated: %@" = "Թարմացվել է՝ %@";
+"waiting..." = "սպասում...";
+"No active connections" = "Ակտիվ կապեր չկան";
+"Live power per port. System totals at the top." = "Ընթացիկ հզորությունն ըստ պորտի։ Համակարգի ընդհանուրը՝ վերևում։";
+"System" = "Համակարգ";
+"Desktop Mac (no battery)" = "Աշխատասեղանային Mac (առանց մարտկոցի)";
+"Adapter: %@" = "Ադապտեր՝ %@";
+"No charger" = "Լիցքավորիչ չկա";
+"No active power ports" = "Ակտիվ սնուցման պորտեր չկան";
+"no live draw  contract up to %@" = "ընթացիկ սպառում չկա  պայմանագիր՝ մինչև %@";
+"Waiting for telemetry..." = "Սպասում ենք տվյալներին...";
+"Contract: %@" = "Պայմանագիր՝ %@";
+"VConn: %@  %@" = "VConn՝ %1$@  %2$@";
+"Resistance: %@" = "Դիմադրություն՝ %@";
+"Health: %@" = "Վիճակ՝ %@";
+"no live draw to chart" = "գծապատկերի համար ընթացիկ սպառում չկա";
+"Draw  (%@)" = "Սպառում  (%@)";
+"last %llds" = "վերջին %llds";
+"last %lldm" = "վերջին %lldm";
+"last %lldm %llds" = "վերջին %1$lldm %2$llds";
+"Worth keeping an eye on" = "Արժե հետևել";
+"Signal conflict detected" = "Հայտնաբերվել է ազդանշանների հակասություն";
+"Cable e-marker says %@ but controller reads %@." = "Մալուխի e-marker-ը հաղորդում է %1$@, բայց կարգավարը կարդում է %2$@։";
+"The controller's reading is used." = "Օգտագործվում է կարգավարի ցուցմունքը։";
+"Ports" = "Պորտեր";
+"Data: %@" = "Տվյալներ՝ %@";
+"Charging: %@" = "Լիցքավորում՝ %@";
+"Battery: fully charged" = "Մարտկոց՝ լիովին լիցքավորված";
+"Charging path: %@" = "Լիցքավորման ուղի՝ %@";
+"No active power sources" = "Ակտիվ սնուցման աղբյուրներ չկան";
+"Port %lld" = "Պորտ %lld";
+"measuring (%@)" = "չափվում է (%@)";
+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm ուղու գնահատական (%2$@, %3$@ A միջակայք, R2 %4$@)";
+"No Thunderbolt controller" = "Thunderbolt կարգավար չկա";
+"%@, up to %lld Gb/s" = "%1$@, մինչև %2$lld Գբ/վ";
+"No data-capable ports" = "Տվյալներ փոխանցող պորտեր չկան";
+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ դեպի %2$@";
+"Power adapter" = "Սնուցման ադապտեր";
+"error: %@" = "սխալ՝ %@";
