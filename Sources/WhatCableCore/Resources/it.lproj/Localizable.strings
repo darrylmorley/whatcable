@@ -188,7 +188,7 @@
 "Could not load the device list. Try again later." = "Impossibile caricare l'elenco dei dispositivi. Riprova più tardi.";
 "Could not reach the licence server. Check your internet connection and try again." = "Impossibile raggiungere il server delle licenze. Controlla la connessione internet e riprova.";
 "I2C error count" = "Conteggio errori I2C";
-"Inactive" = "Inattivo";
+"Inactive" = "Non attivo";
 "Invalid licence key. Check the key and try again." = "Chiave di licenza non valida. Controlla la chiave e riprova.";
 "Lanes" = "Lane";
 "Licence…" = "Licenza…";
