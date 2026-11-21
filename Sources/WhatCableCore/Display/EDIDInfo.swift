@@ -80,8 +80,9 @@ public struct EDIDInfo: Hashable, Sendable {
     /// CTA Video Format Preference entries that name a VIC, in preference order. A preference, not a mode source.
     public let ctaPreferredVICs: [Int]
 
-    /// The entry with the highest pixel clock; ties broken by the larger picture (width * height),
-    /// then the higher refresh, then the earlier entry in `modes`. Only entries with `width`,
+    /// The entry with the most picture pixels per second (width * height * refresh rounded to
+    /// whole hertz, blanking left out); ties broken by the larger picture, the higher refresh,
+    /// the higher pixel clock, then the earlier entry in `modes` (`isHigherPriority`). Only entries with `width`,
     /// `height`, `hTotal` and `vTotal` all above zero are candidates: a descriptor with no
     /// picture or no total (a 128x0 CTA DTD is a real corpus shape, and edid-decode prints it
     /// with an `inf` refresh) is a declared fact that stays in `modes`, but it is not
@@ -99,15 +100,34 @@ public struct EDIDInfo: Hashable, Sendable {
         return best
     }
 
-    /// `a` beats `b` on the `topMode` tie-break chain: pixel clock, then picture area, then
-    /// refresh. A full tie returns false, which keeps whichever of the two `topMode`'s scan
-    /// already holds, so the earlier entry in `modes` wins ties.
+    /// `a` beats `b` on the `topMode` chain, compared field by field in this order:
+    /// 1. picture pixels per second at the refresh rounded to whole hertz
+    ///    (width x height x rounded refresh, halved for interlaced; blanking left out),
+    /// 2. picture area,
+    /// 3. rounded refresh,
+    /// 4. pixel clock,
+    /// 5. exact refresh.
+    /// Not the clock first: it counts blanking, so the same picture at a lower refresh can
+    /// carry the higher clock (CTA 4K50 at 594 MHz against CVT-RB 4K60 at 533.25 MHz, issue
+    /// #677). Not area first: a super-ultrawide's 4K scaler entry has more pixels than its
+    /// native picture (Odyssey Neo G9, 3840x2160@60 against 5120x1440@120). Refresh is
+    /// rounded so that two entries for one mode (a 60.001 Hz reduced-blanking DTD and CTA
+    /// VIC 97 at 60.000) are told apart by clock, not by thousandths of a hertz; rounding,
+    /// rather than a "within 0.5 Hz" test, keeps the chain a strict ordering, so the top never
+    /// depends on the order of `modes`. A full tie returns false, which keeps whichever of the
+    /// two `topMode`'s scan already holds, so the earlier entry in `modes` wins ties.
     /// Internal rather than private: `DisplayDiagnostic` ranks a filtered list with this same chain.
     static func isHigherPriority(_ a: EDIDMode, than b: EDIDMode) -> Bool {
-        if a.pixelClockHz != b.pixelClockHz { return a.pixelClockHz > b.pixelClockHz }
+        let aRefresh = a.refreshHz.rounded()
+        let bRefresh = b.refreshHz.rounded()
+        let aRate = Double(a.width * a.height) * aRefresh / (a.interlaced ? 2 : 1)
+        let bRate = Double(b.width * b.height) * bRefresh / (b.interlaced ? 2 : 1)
+        if aRate != bRate { return aRate > bRate }
         let aArea = a.width * a.height
         let bArea = b.width * b.height
         if aArea != bArea { return aArea > bArea }
+        if aRefresh != bRefresh { return aRefresh > bRefresh }
+        if a.pixelClockHz != b.pixelClockHz { return a.pixelClockHz > b.pixelClockHz }
         if a.refreshHz != b.refreshHz { return a.refreshHz > b.refreshHz }
         return false
     }

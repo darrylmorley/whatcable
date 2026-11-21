@@ -9,13 +9,13 @@ struct EDIDModeTests {
         let m = EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 74_250_000, interlaced: true)
         #expect(abs(m.refreshHz - 60.0) < 0.001)
     }
-    @Test("topMode is the highest pixel clock, then the larger picture, then the higher refresh")
+    @Test("topMode is the highest picture pixel rate (width x height x refresh): 1440p180 outranks the preferred 4K60")
     func topModeOrder() {
         let a = EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 594_000_000)
         let b = EDIDInfo.mode(2560, 1440, hTotal: 2720, vTotal: 1525, pixelClockHz: 746_640_000, source: .displayID(block: 2, type: .typeI, index: 0, embeddedInCTA: false))
         let c = EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000, source: .ctaVIC(block: 1, vic: 16, native: true, ycbcr420Only: false))
         let e = EDIDInfo.fixture(preferred: a, modes: [a, c, b])
-        #expect(e.topMode == b)
+        #expect(e.topMode == b, "1440p180 is 663.6 M picture pixels/s against 4K60's 497.7 M")
         #expect(e.modes.count == 3)
         #expect(e.preferredWidth == 3840)
     }

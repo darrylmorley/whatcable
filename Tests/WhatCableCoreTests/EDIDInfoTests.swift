@@ -2113,4 +2113,91 @@ struct EDIDInfoTests {
         #expect(edid.blocks[0].kind == .base)
         #expect(edid.blocks[1].kind == .cta861)
     }
+
+    // MARK: Issue #677: a CTA 4K50 must not outrank a reduced-blanking 4K60
+
+    /// The two 4K entries from the Mi Monitor in issue #677 (public
+    /// darrylmorley/whatcable#677). The base DTD is 3840x2160 at 60 Hz with
+    /// CVT reduced blanking (4000 x 2222 totals, 533.25 MHz); CTA VIC 96 is
+    /// 3840x2160 at 50 Hz with standard CTA blanking (5280 x 2250 totals,
+    /// 594 MHz). The 50 Hz entry has the higher clock only because it carries
+    /// more blanking: it is the lesser picture.
+    static let mi4K60RB = EDIDMode(
+        width: 3840, height: 2160, hTotal: 4000, vTotal: 2222,
+        pixelClockHz: 533_250_000, interlaced: false,
+        source: .detailedTiming(block: 0, index: 0))
+    static let mi4K50CTA = EDIDMode(
+        width: 3840, height: 2160, hTotal: 5280, vTotal: 2250,
+        pixelClockHz: 594_000_000, interlaced: false,
+        source: .ctaVIC(block: 1, vic: 96, native: false, ycbcr420Only: false))
+
+    static func miMonitorEDID() -> EDIDInfo {
+        EDIDInfo(
+            monitorName: "Mi Monitor", versionMajor: 1, versionMinor: 4,
+            continuousFrequency: nil, preferredMode: mi4K60RB,
+            modes: [mi4K60RB, mi4K50CTA], undecodedStandardTimings: [],
+            rangeLimits: nil, displayIDRangeLimits: nil, dynamicRangeLimits: nil,
+            blocks: [], declaredExtensionCount: 1, tiledTopology: nil,
+            ctaPreferredVICs: [])
+    }
+
+    @Test("#677: the same picture at a higher refresh is the top mode, whatever the blanking")
+    func topModePrefersRefreshOverClock() throws {
+        let top = try #require(Self.miMonitorEDID().topMode)
+        #expect(top.width == 3840)
+        #expect(top.height == 2160)
+        #expect(Int(top.refreshHz.rounded()) == 60)
+        #expect(top.pixelClockHz == 533_250_000)
+    }
+
+    @Test("#677: macOS's 4K60 max mode is the resolved top, not the CTA 4K50")
+    func resolveTopModeKeepsMacOSMaxMode() throws {
+        let maxMode = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, pixelClockHz: 533_250_000)
+        let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: maxMode, edid: Self.miMonitorEDID()))
+        #expect(top.width == 3840)
+        #expect(top.height == 2160)
+        #expect(Int(top.refreshHz.rounded()) == 60)
+    }
+
+    @Test("#677 review: two entries for the same 4K60 are one mode, so the clock picks the entry, not 0.001 Hz")
+    func sameModeTwinsRankByClock() throws {
+        // BenQ PD2700U shape (corpus m4_macos26.5.2_ao): a reduced-blanking DTD that computes to
+        // 60.001 Hz beside CTA VIC 97 at exactly 60.000 Hz. Ranking on refresh would pick the DTD
+        // for this panel and the VIC for one whose DTD computes to 59.997 Hz.
+        let dtd = EDIDMode(width: 3840, height: 2160, hTotal: 4000, vTotal: 2222,
+                           pixelClockHz: 533_290_000, interlaced: false,
+                           source: .detailedTiming(block: 0, index: 0))
+        let vic97 = EDIDMode(width: 3840, height: 2160, hTotal: 4400, vTotal: 2250,
+                             pixelClockHz: 594_000_000, interlaced: false,
+                             source: .ctaVIC(block: 1, vic: 97, native: false, ycbcr420Only: false))
+        #expect(dtd.refreshHz > vic97.refreshHz, "fixture guard: the DTD computes the higher refresh")
+        let edid = EDIDInfo(
+            monitorName: "PD2700U", versionMajor: 1, versionMinor: 4,
+            continuousFrequency: nil, preferredMode: dtd,
+            modes: [dtd, vic97], undecodedStandardTimings: [],
+            rangeLimits: nil, displayIDRangeLimits: nil, dynamicRangeLimits: nil,
+            blocks: [], declaredExtensionCount: 1, tiledTopology: nil,
+            ctaPreferredVICs: [])
+        #expect(edid.topMode == vic97)
+    }
+
+    @Test("#677 review: the top never depends on the order of the declared list")
+    func topModeIsOrderIndependent() throws {
+        // Three 1080p entries whose refreshes sit within 0.5 Hz of their neighbours but not of
+        // each other. A "within 0.5 Hz is the same mode" rule ranked them in a circle
+        // (59.6 over 60.0 by clock, 60.0 over 60.4 by clock, 60.4 over 59.6 by rate), so each
+        // rotation of the list returned a different top.
+        let a = EDIDMode(width: 1920, height: 1080, hTotal: 2200, vTotal: 1350, pixelClockHz: 177_012_000, interlaced: false, source: .detailedTiming(block: 0, index: 0))
+        let b = EDIDMode(width: 1920, height: 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000, interlaced: false, source: .detailedTiming(block: 0, index: 1))
+        let c = EDIDMode(width: 1920, height: 1080, hTotal: 2080, vTotal: 1111, pixelClockHz: 139_577_000, interlaced: false, source: .detailedTiming(block: 0, index: 2))
+        #expect(abs(a.refreshHz - 59.6) < 0.01 && abs(b.refreshHz - 60.0) < 0.01 && abs(c.refreshHz - 60.4) < 0.01, "fixture guard: \(a.refreshHz) \(b.refreshHz) \(c.refreshHz)")
+        func top(_ modes: [EDIDMode]) -> EDIDMode? {
+            EDIDInfo(monitorName: nil, versionMajor: 1, versionMinor: 4, continuousFrequency: nil,
+                     preferredMode: nil, modes: modes, undecodedStandardTimings: [],
+                     rangeLimits: nil, displayIDRangeLimits: nil, dynamicRangeLimits: nil,
+                     blocks: [], declaredExtensionCount: 0, tiledTopology: nil, ctaPreferredVICs: []).topMode
+        }
+        let tops = [[a, b, c], [c, a, b], [b, c, a], [c, b, a], [a, c, b], [b, a, c]].map(top)
+        #expect(Set(tops.compactMap { $0 }).count == 1, "every order gives the same top: \(tops.map { $0?.refreshHz ?? 0 })")
+    }
 }

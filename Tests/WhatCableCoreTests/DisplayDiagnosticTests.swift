@@ -1084,7 +1084,7 @@ struct DisplayDiagnosticTests {
 
     @Test("No max mode: the declared top stands")
     func noMaxModeTheDeclaredTopStands() throws {
-        // No CoreGraphics data at all. The highest-clock declared entry is
+        // No CoreGraphics data at all. The top-ranked declared entry is
         // the top mode, and the 0xFD envelope is ignored even though it sits
         // well above it. (The issue #596 regression fixture, expectation
         // unchanged.)
@@ -1188,7 +1188,7 @@ struct DisplayDiagnosticTests {
 
     /// Samsung Odyssey G60SD's shape, from customer probe `m5_macos27.0_p`:
     /// preferred 2560x1440@60, and a fastest timing of 1920x1080@240 that
-    /// wins `topMode` on pixel clock. There is no 2560x1440@240
+    /// wins `topMode` on picture pixel rate. There is no 2560x1440@240
     /// mode, so a heading reading "2560 x 1440 · up to 240Hz" names a mode
     /// the panel does not have. Ten corpus panels share the shape.
     private let odysseyG60SD = EDIDInfo.fixture(
@@ -1802,14 +1802,15 @@ struct DisplayDiagnosticTests {
 
     @Test("Ruling 41: a scaler entry the node never lists is skipped and the listed entry below it is the top (the 1600x1200 DMT on a 1080p Dell)")
     func scalerTopIsSkippedForTheEntryTheNodeLists() throws {
-        // A 1080p panel whose EDID's highest-clock entry is a 1600x1200 standard timing; the node lists 1080p only.
+        // A 1080p panel whose EDID's top-ranked entry is a 1600x1200@75 standard timing (VESA DMT, 202.5 MHz:
+        // 144 M picture pixels/s against 1080p60's 124.4 M); the node lists 1080p only.
         let panel = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
                                      preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
-                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000, source: .detailedTiming(block: 0, index: 1))])
-        // (On the real panel the 1600x1200 is a standard timing; the source plays no part in the resolver, which reads the clock.)
+                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 202_500_000, source: .detailedTiming(block: 0, index: 1))])
+        // (On the real panel the 1600x1200 is a standard timing; the source plays no part in the resolver's ranking.)
         let live = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
         let statement = Self.offering([Self.listing(1920, 1080, 60.0, 148_500_000)])
-        // Without the statement the resolver still picks the 162 MHz entry (as today).
+        // Without the statement the resolver still picks the 1600x1200@75 entry (as today).
         let declaredOnly = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel))
         #expect(declaredOnly.width == 1600, "fixture guard: the declared top is the scaler entry")
         // With it, step 1b walks past the entry the node never lists.
@@ -1949,7 +1950,7 @@ struct DisplayDiagnosticTests {
 
     @Test("DisplayID Type IV and Type VIII entries are code lists, like the two bitmap tags: a picture-only one is skipped, not kept as a link-limited native mode (PR #665 gate fix round 4, item 1)")
     func displayIDCodeListTypesAreNotNativeDeclarations() throws {
-        // A 1080p panel whose EDID carries a 1600x1200@60 entry through a DisplayID code list; the node
+        // A 1080p panel whose EDID carries a 1600x1200@75 entry through a DisplayID code list; the node
         // lists 1600x1200 at 30 Hz only beside the native 1080p60. A Type I entry of that shape is the
         // ruling's accepted cost (it stays, not offered); the four code-list types must be skipped and
         // the top must stay the listed 1080p60.
@@ -1958,7 +1959,7 @@ struct DisplayDiagnosticTests {
         for type in [EDIDMode.DisplayIDTimingType.typeIV, .typeVIII, .vesaDMTBitmap, .ctaVICBitmap] {
             let panel = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
                                          preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
-                                         modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000,
+                                         modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 202_500_000,
                                                                source: .displayID(block: 1, type: type, index: 0, embeddedInCTA: false))])
             let codeList = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel, statement: statement))
             #expect(codeList.width == 1920 && codeList.height == 1080, "\(type): a code-list entry listed at 30 only is a scaler entry, got \(codeList.width)x\(codeList.height)")
@@ -1968,7 +1969,7 @@ struct DisplayDiagnosticTests {
         // The same entry as a Type I timing stays the top and reads not offered (the ruling's accepted cost).
         let typeI = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
                                      preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
-                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000,
+                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 202_500_000,
                                                            source: .displayID(block: 1, type: .typeI, index: 0, embeddedInCTA: false))])
         #expect(try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: typeI, statement: statement)).width == 1600)
     }
@@ -1997,12 +1998,13 @@ struct DisplayDiagnosticTests {
         let unlistedXDR = try #require(DisplayDiagnostic(dp: makeDP(lanes: 4, maxLanes: 4, rateDesc: "5.4 Gbps (HBR2)", tunneled: true, manufacturerName: "APP", currentMode: live4K, drivenTiming: fourKOnly), edid: xdr))
         #expect(unlistedXDR.facts.topModeWidth == 6016)
         #expect(unlistedXDR.facts.topModeMatch == .notListed && unlistedXDR.bottleneck == .unknownMode, "got \(unlistedXDR.bottleneck): \(unlistedXDR.detail)")
-        // An unlisted DMT standard timing is still a scaler entry: it falls through to the next
+        // An unlisted DMT standard timing (1600x1200@75, which outranks 1080p60 on picture
+        // pixels per second) is still a scaler entry: it falls through to the next
         // listed candidate, so the 1080p Dell resolves to 1080p60 and reads fine.
         let dell = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
                                     preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
-                                    modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000,
-                                                          source: .standardTiming(index: 2, derivation: .dmt, dmtID: 0x33))])
+                                    modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 202_500_000,
+                                                          source: .standardTiming(index: 2, derivation: .dmt, dmtID: 0x36))])
         let live1080 = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
         let only1080 = Self.offering([Self.listing(1920, 1080, 60.0, 148_500_000)])
         let resolved = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: dell, statement: only1080))

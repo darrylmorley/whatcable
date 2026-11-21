@@ -78,9 +78,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>one</key>
-			<string>%lld porta non attiva</string>
+			<string>%lld porta inattiva</string>
 			<key>other</key>
-			<string>%lld porte non attive</string>
+			<string>%lld porte inattive</string>
 		</dict>
 	</dict>
 </dict>

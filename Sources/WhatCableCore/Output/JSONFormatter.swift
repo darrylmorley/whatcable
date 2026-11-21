@@ -1013,7 +1013,7 @@ private struct DisplayDTO: Codable {
     /// The display's highest mode from CoreGraphics, EDID-free.
     let maxMode: CurrentModeDTO?
     /// The display's top mode as `DisplayDiagnostic.resolveTopMode` resolved
-    /// it: the highest-clock declared entry, or the CoreGraphics-only mode
+    /// it: the top-ranked declared entry, or the CoreGraphics-only mode
     /// when nothing declared matches. nil exactly when `edid` is nil.
     let topMode: TopModeDTO?
     /// The full parsed EDID: every declared mode, in every format the EDID

@@ -87,7 +87,8 @@ public struct DisplayDiagnostic {
         public let preferredHeight: Int?
         public let preferredRefreshHz: Int?
         /// Refresh of the display's TOP MODE, as `resolveTopMode` resolved
-        /// it: the highest-clock entry in the EDID's declared list, or the
+        /// it: the top-ranked entry in the EDID's declared list (highest
+        /// active pixel rate: `EDIDInfo.isHigherPriority`), or the
         /// mode macOS reports when no declared entry matches it. **Not** the
         /// 0xFD scan-range ceiling, which is the range of signals the panel
         /// accepts rather than a mode it has (issue #596). The name is kept
@@ -95,10 +96,10 @@ public struct DisplayDiagnostic {
         /// when there is no readable EDID.
         public let maxRefreshHz: Int?
         /// Resolution of that same top mode, so a label never pairs one
-        /// mode's refresh with another mode's resolution. `EDIDInfo.topMode`
-        /// is max-by-pixel-clock, and a panel whose fastest timing is
-        /// 1920x1080@240 while its preferred mode is 2560x1440 (Samsung
-        /// Odyssey G60SD) has no 2560x1440@240 mode to label. nil exactly when
+        /// mode's refresh with another mode's resolution: a panel's highest
+        /// refresh and its largest picture are often different modes (the
+        /// Samsung Odyssey G60SD runs 240 Hz only at 1920x1080 and has no
+        /// 2560x1440@240 mode to label). nil exactly when
         /// `maxRefreshHz` is nil.
         public let topModeWidth: Int?
         public let topModeHeight: Int?
@@ -806,7 +807,7 @@ extension DisplayDiagnostic {
     }
 
     /// The highest-priority entry of `modes` by `EDIDInfo`'s own tie-break
-    /// chain (pixel clock, area, refresh, then list order), admitting the
+    /// chain (picture pixel rate, area, refresh, clock, then list order), admitting the
     /// same candidates `EDIDInfo.topMode` admits: every dimension above zero.
     /// nil when nothing qualifies.
     static func highestPriority(_ modes: [EDIDMode]) -> EDIDMode? {
@@ -890,7 +891,7 @@ extension DisplayDiagnostic {
     ///
     /// Five steps, in order, and no other branch:
     /// 1. The declared full-colour candidates, ranked by `EDIDInfo.topMode`'s
-    ///    own chain (pixel clock, area, refresh, list order) over the same
+    ///    own chain (picture pixel rate, area, refresh, clock, list order) over the same
     ///    list minus the `ycbcr420Only` entries (`isYCbCr420Only`).
     ///    `preferredMode` plays no part in the ranking: it is the EDID's
     ///    stated default, not its top, and may be absent.
@@ -911,7 +912,7 @@ extension DisplayDiagnostic {
     /// 2. No max mode from CoreGraphics, or one with no readable refresh:
     ///    that candidate.
     /// 3. The max mode matches a declared entry (`declaredMode(matching:in:)`):
-    ///    that entry when its pixel clock is at least the candidate's, so a
+    ///    that entry unless the candidate outranks it on the same chain, so a
     ///    max mode that IS a declared entry is labelled from that entry;
     ///    otherwise the candidate. A max mode may only raise the top, never
     ///    lower it: CoreGraphics builds its mode list from what the trained
@@ -950,7 +951,7 @@ extension DisplayDiagnostic {
         // 3. The max mode is a declared entry: label it from that entry, but
         //    never let it lower the top.
         if let matched = Self.declaredMode(matching: maxMode, in: edid) {
-            if matched.pixelClockHz >= panelTop.pixelClockHz { return TopMode(declared: matched) }
+            if !EDIDInfo.isHigherPriority(panelTop, than: matched) { return TopMode(declared: matched) }
             return TopMode(declared: panelTop)
         }
         // 4. Not declared anywhere: above the list it is macOS's fact alone,

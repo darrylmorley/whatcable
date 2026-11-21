@@ -230,25 +230,22 @@ struct DisplayDiagnosticProbeSweepTests {
     }
 
     /// The highest declared entry the panel supports in full colour, by the
-    /// chain `EDIDInfo.topMode` uses (pixel clock, then area, then refresh,
-    /// then list order), written out here so the sweep does not lean on the
+    /// chain `EDIDInfo.topMode` uses (picture pixel rate at the whole-hertz
+    /// refresh, area, rounded refresh, clock, exact refresh, then list
+    /// order), written out here so the sweep does not lean on the
     /// code it checks.
     private static func fullColourTop(of edid: EDIDInfo) -> EDIDMode? {
         var best: EDIDMode? = nil
         for candidate in edid.modes where !isYCbCr420Only(candidate) {
             guard candidate.width > 0, candidate.height > 0, candidate.hTotal > 0, candidate.vTotal > 0 else { continue }
             guard let current = best else { best = candidate; continue }
-            if candidate.pixelClockHz != current.pixelClockHz {
-                if candidate.pixelClockHz > current.pixelClockHz { best = candidate }
-                continue
+            // Picture pixels per second at the whole-hertz refresh (blanking left out), then
+            // area, rounded refresh, clock, exact refresh (issue #677). One key, compared in order.
+            func key(_ m: EDIDMode) -> [Double] {
+                let r = m.refreshHz.rounded()
+                return [Double(m.width * m.height) * r / (m.interlaced ? 2 : 1), Double(m.width * m.height), r, Double(m.pixelClockHz), m.refreshHz]
             }
-            let candidateArea = candidate.width * candidate.height
-            let currentArea = current.width * current.height
-            if candidateArea != currentArea {
-                if candidateArea > currentArea { best = candidate }
-                continue
-            }
-            if candidate.refreshHz > current.refreshHz { best = candidate }
+            if key(candidate).lexicographicallyPrecedes(key(current)) == false, key(candidate) != key(current) { best = candidate }
         }
         return best
     }
@@ -1091,7 +1088,7 @@ struct DisplayDiagnosticProbeSweepTests {
         #expect(diag.cableAssessment == .unlikelyTheCable)
         #expect(diag.facts.liveNeededGbps == nil, "8 and 10 bit on one timing and no NSScreen depth in a probe: no cross-check figure")
         #expect(diag.facts.currentMode?.pixelClockHz == 1_188_000_000)
-        #expect(diag.facts.topModeMatch == .exact, "the EDID's 4K120 at 1188 MHz (CTA VIC 118, the top by clock) is the driven timing; replica-checked 2026-09-20")
+        #expect(diag.facts.topModeMatch == .exact, "the EDID's 4K120 at 1188 MHz (CTA VIC 118, the top mode) is the driven timing; replica-checked 2026-09-20")
         #expect(diag.facts.topModeAvailability == .offeredWithDSC)
     }
 
