@@ -106,6 +106,26 @@ func transport(_ id: UInt64) -> USB3Transport {
         #expect(hub.powerWatcher.batteryChargeState == .chargeLimitReached)
     }
 
+    /// Issue 672: the hub is the app's only feed for the held-off charger
+    /// signal. One read: the raw candidate is recorded (the widget reads it)
+    /// and the held signal waits.
+    @Test func hubFeedsTheHeldOffCandidateOnEachRead() async {
+        let reading = HubReading(
+            ports: .init(ports: [], liveEntryIDs: []),
+            pd: .init(identities: [], stateCCEntryIDs: []),
+            power: .init(sources: [], charger: nil, chargeState: .notPluggedIn, chargerHeldOffCandidate: true),
+            thunderbolt: .init(switches: [], liveEntryIDs: [], modelEntryIDs: []),
+            usb3: [], trm: .init(transports: [], cioCapabilities: []),
+            phy: nil, display: [], uvdm: []
+        )
+        let fake = FakeRead(reading: reading)
+        let hub = WatcherHub(read: { fake.read($0, $1) })
+        hub.refreshAll()
+        #expect(await waitForTicks(hub, 1))
+        #expect(hub.powerWatcher.lastHeldOffCandidate == true)
+        #expect(hub.powerWatcher.chargerHeldOffSignal == false)
+    }
+
     /// The plug-in burst reads 150 ms and 500 ms after a change; two quick
     /// reads inside one CH0R pulse must not publish running on battery.
     @Test func quickRunningOnBatteryReadsDoNotPublish() async {

@@ -3199,4 +3199,201 @@ struct PortSummaryTests {
             adapter: adapter())
         #expect(summary.headline.hasPrefix("Charging"), "\(summary.headline)")
     }
+
+    // MARK: - Charger attached but the Mac held on battery (public issue 672)
+
+    /// The #672 state: an Apple 96W brick on the port with a live 94W contract,
+    /// but macOS reports the Mac on battery (IsCharging false, no system adapter
+    /// details) and the SMC reports charger supply (AC-W set, about 20 V on the
+    /// DC-in rail). Corpus: `m2max_macos27.2`, `m5_macos27.0_aa` and three more,
+    /// all with `CH0R` 0x08. The card used to say "Connect a charger", with the charger
+    /// plainly attached.
+    private func heldOffSummary(
+        chargerHeldOffSignal: Bool?,
+        sources: [PowerSource]? = nil,
+        identities: [USBPDSOP] = [],
+        adapter: AdapterInfo? = nil
+    ) -> PortSummary {
+        PortSummary(
+            port: makePort(connected: true, active: ["CC"], supported: ["CC", "USB2", "USB3", "CIO", "DisplayPort"]),
+            sources: sources ?? [usbPD(maxW: 94, winningW: 94)],
+            identities: identities,
+            accessoryIdentity: accessory(userString: "96W USB-C Power Adapter", manufacturer: "0x05AC"),
+            batteryFullyCharged: false,
+            batteryIsCharging: false,
+            adapter: adapter,
+            chargerHeldOffSignal: chargerHeldOffSignal
+        )
+    }
+
+    @Test("Held on battery with a charger supplying voltage: says the charger is connected, not to connect one")
+    func heldOnBatterySaysChargerConnected() {
+        let summary = heldOffSummary(chargerHeldOffSignal: true)
+        #expect(summary.headline == "Charger connected", "got: \(summary.headline)")
+        #expect(summary.subtitle == "This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this.",
+                "got: \(summary.subtitle)")
+        // Never a charging claim: the Mac is not taking power.
+        #expect(summary.status != .charging && summary.status != .batteryFull, "got: \(summary.status)")
+        #expect(!summary.headline.contains("Charging") && !summary.headline.contains("Plugged in"))
+        #expect(!summary.subtitle.contains("Power is flowing"))
+        #expect(!summary.bullets.contains { $0.contains("Currently negotiated") },
+                "the contract is not in use, so no negotiated line, got: \(summary.bullets)")
+        // The charger is named and its offer shown, labelled as not in use.
+        #expect(summary.bullets.contains("Charger: 96W USB-C Power Adapter"), "got: \(summary.bullets)")
+        #expect(summary.bullets.contains("Charger offering up to 94W, not in use"), "got: \(summary.bullets)")
+    }
+
+    @Test("Held on battery: a read e-marker does not turn it into 'no charger detected'")
+    func heldOnBatteryWithReadEmarker() {
+        let cable = USBPDSOP(
+            id: 42, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x01B6, productID: 0x4003, bcdDevice: 0,
+            vdos: [(3 << 27), 0, 0, (0b10 << 5) | 0b011 | (1 << 13)], specRevision: 3
+        )
+        let summary = heldOffSummary(chargerHeldOffSignal: true, identities: [cable])
+        #expect(summary.headline == "Charger connected", "got: \(summary.headline)")
+        #expect(!summary.subtitle.contains("No data link or charger detected"), "got: \(summary.subtitle)")
+    }
+
+    /// The stale-contract protection (#466, PortSummary's `systemPowerUnavailable`
+    /// branch): a winning contract with no charger supply behind it is a
+    /// leftover, so the card keeps today's advice. Corpus: `m1_macos26.5.1_u`,
+    /// connected port with a retained 30W contract, 0.016 V on the DC-in rail
+    /// and AC-W 0xff.
+    @Test("Stale contract: no charger supply keeps 'Connect a charger'", arguments: [false, nil] as [Bool?])
+    func staleContractWithoutVoltageKeepsTodaysWording(voltage: Bool?) {
+        let summary = heldOffSummary(chargerHeldOffSignal: voltage)
+        #expect(summary.headline == "Connected", "got: \(summary.headline)")
+        #expect(summary.subtitle == "Connect a charger to identify the cable.", "got: \(summary.subtitle)")
+        #expect(!summary.bullets.contains { $0.contains("not in use") }, "got: \(summary.bullets)")
+    }
+
+    @Test("Charger supply but no live contract on this port: still 'Connect a charger'")
+    func voltageWithoutContractOnThisPortKeepsTodaysWording() {
+        // The voltage is machine-wide; without a contract here it belongs to
+        // some other port (or a MagSafe cable), never this one.
+        let summary = heldOffSummary(chargerHeldOffSignal: true, sources: [])
+        #expect(summary.headline == "Connected", "got: \(summary.headline)")
+        #expect(summary.subtitle == "Connect a charger to identify the cable.", "got: \(summary.subtitle)")
+        #expect(!summary.bullets.contains { $0.contains("not in use") })
+    }
+
+    @Test("Not on battery: the supply signal changes nothing")
+    func voltageOffBatteryChangesNothing() {
+        let withVoltage = heldOffSummary(chargerHeldOffSignal: true, adapter: adapter(watts: 94))
+        let without = heldOffSummary(chargerHeldOffSignal: nil, adapter: adapter(watts: 94))
+        #expect(withVoltage.headline == without.headline, "\(withVoltage.headline) vs \(without.headline)")
+        #expect(withVoltage.subtitle == without.subtitle)
+        #expect(withVoltage.bullets == without.bullets)
+        #expect(withVoltage.headline.hasPrefix("Plugged in"), "got: \(withVoltage.headline)")
+    }
+
+    @Test("chargerHeldOff needs every signal, including no other live port")
+    func chargerHeldOffNeedsEverySignal() {
+        let live = [usbPD(maxW: 94, winningW: 94)]
+        func held(_ onBattery: Bool, _ sources: [PowerSource], other: Bool = false, _ supply: Bool?) -> Bool {
+            SystemPowerState.chargerHeldOff(
+                onBattery: onBattery, portSources: sources,
+                anotherPortHasLiveContract: other, chargerHeldOffSignal: supply)
+        }
+        #expect(held(true, live, true))
+        #expect(!held(false, live, true))
+        #expect(!held(true, [], true))
+        #expect(!held(true, live, false))
+        #expect(!held(true, live, nil))
+        // The supply signal is machine-wide: with a second live port it can't
+        // be pinned to this one.
+        #expect(!held(true, live, other: true, true))
+    }
+
+    @Test("Charger supply needs AC-W set AND voltage: the corpus readings land on the right side")
+    func chargerSupplyThresholds() {
+        // Held Macs: about 20 V with AC-W set (m2max_macos27.2 reads AC-W 2).
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 20.1834, acW: 2) == true)
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 5.0, acW: 1) == true)
+        // m5_macos26.5.2_r: on battery, nothing attached, 6.7 V on the rail but
+        // AC-W 0xff (-1). Voltage alone would have fired.
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 6.7079, acW: -1) == false)
+        // m1_macos26.5.1_u: retained contract, 0.016 V, AC-W 0xff.
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 0.0157, acW: -1) == false)
+        // AC-W set but no voltage, and the boundary.
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 0.02, acW: 1) == false)
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 4.5, acW: 1) == false)
+        // AC-W 0 (or any other value below -1) has no corpus instance and no
+        // known meaning: unknown, so it can never fire.
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 20.0, acW: 0) == nil)
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 20.0, acW: -2) == nil)
+        #expect(!SystemPowerState.chargerHeldOff(
+            onBattery: true, portSources: [usbPD(maxW: 94, winningW: 94)], anotherPortHasLiveContract: false,
+            chargerHeldOffSignal: SystemPowerState.chargerSupplyPresent(dcInputVolts: 20.0, acW: 0)))
+        // Either reading missing: unknown.
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: nil, acW: 1) == nil)
+        #expect(SystemPowerState.chargerSupplyPresent(dcInputVolts: 20.0, acW: nil) == nil)
+    }
+
+    @Test("Cross-port: a held-off charger elsewhere does not relabel a USB-C port holding a stale contract")
+    func heldOffElsewhereDoesNotRelabelStalePort() {
+        // m3_macos27.0-shaped: the held-off charger is on MagSafe, so the SMC
+        // reports supply, while this USB-C port keeps a retained contract.
+        let summary = PortSummary(
+            port: makePort(connected: true, active: ["CC"], supported: ["CC", "USB2"]),
+            sources: [usbPD(maxW: 30, winningW: 30)],
+            batteryFullyCharged: false,
+            batteryIsCharging: false,
+            adapter: nil,
+            chargerHeldOffSignal: true,
+            anotherPortActivelyCharging: true
+        )
+        #expect(summary.headline == "Connected", "got: \(summary.headline)")
+        #expect(summary.subtitle == "Connect a charger to identify the cable.", "got: \(summary.subtitle)")
+        #expect(!summary.bullets.contains { $0.contains("not in use") }, "got: \(summary.bullets)")
+    }
+
+    /// The MagSafe 3 port as the port controller publishes it, with a charger
+    /// on it (corpus `m3_macos27.0`: 59.8W contract, held on battery).
+    private func magSafePort() -> AppleHPMInterface {
+        AppleHPMInterface(
+            id: 9, serviceName: "Port-MagSafe 3@1", className: "AppleHPMInterfaceType11",
+            portDescription: "Port-MagSafe 3@1", portTypeDescription: "MagSafe 3", portNumber: 1,
+            connectionActive: true, activeCable: nil, opticalCable: nil, usbActive: nil,
+            superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC"], transportsActive: ["CC"], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil, overcurrentCount: nil,
+            pinConfiguration: [:], powerCurrentLimits: [], firmwareVersion: nil, bootFlagsHex: nil,
+            rawProperties: ["PortType": "17"])
+    }
+
+    private func magSafeSource() -> PowerSource {
+        let w = PowerOption(voltageMV: 20_000, maxCurrentMA: 2_990, maxPowerMW: 59_800)
+        return PowerSource(id: 9, name: "USB-PD", parentPortType: 17, parentPortNumber: 1, options: [], winning: w)
+    }
+
+    @Test("MagSafe held off on battery gets the same treatment as USB-C")
+    func magSafeHeldOff() {
+        let summary = PortSummary(
+            port: magSafePort(),
+            sources: [magSafeSource()],
+            batteryFullyCharged: false,
+            batteryIsCharging: false,
+            adapter: nil,
+            chargerHeldOffSignal: true
+        )
+        #expect(summary.headline == "Charger connected", "got: \(summary.headline)")
+        #expect(summary.subtitle == "This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this.")
+        #expect(summary.status != .charging && summary.status != .batteryFull)
+        #expect(summary.bullets.contains("Charger offering up to 60W, not in use"), "got: \(summary.bullets)")
+        #expect(!summary.bullets.contains { $0.contains("Currently negotiated") })
+    }
+
+    @Test("MagSafe with a retained contract and no supply keeps today's card")
+    func magSafeStaleKeepsTodaysCard() {
+        let held = PortSummary(port: magSafePort(), sources: [magSafeSource()],
+                               batteryFullyCharged: false, batteryIsCharging: false, adapter: nil,
+                               chargerHeldOffSignal: false)
+        let before = PortSummary(port: magSafePort(), sources: [magSafeSource()],
+                                 batteryFullyCharged: false, batteryIsCharging: false, adapter: nil)
+        #expect(held.headline == before.headline && held.subtitle == before.subtitle && held.bullets == before.bullets)
+        #expect(held.headline != "Charger connected")
+    }
 }

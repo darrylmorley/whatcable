@@ -635,6 +635,10 @@
 "Answered, but reported no capability data." = "Svarte, men oppga ingen egenskapsdata.";
 "Certification ID" = "Sertifiserings-ID";
 "Connect a charger to identify the cable." = "Koble til en lader for å identifisere kabelen.";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "Lader tilkoblet";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "Denne Macen går på batteri og trekker ikke strøm fra laderen. En app som begrenser ladingen kan føre til dette.";
+"Charger offering up to %lldW, not in use" = "Laderen tilbyr opptil %lld W, ikke i bruk";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "Ingen PD-avtale på denne porten. Innkommende strøm vises nedenfor under «Systemstrøminngang».";

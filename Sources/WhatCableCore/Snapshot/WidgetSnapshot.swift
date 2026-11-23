@@ -13,17 +13,23 @@ public struct WidgetSnapshot: Codable, Equatable {
     /// value). Stored as a string so a newer app's state cannot break an older
     /// widget's decode; `batteryChargeState` reads an unknown value as nil.
     public let chargeState: String?
+    /// The app's held-off charger signal (`CableSnapshot.chargerHeldOffSignal`,
+    /// public issue 672), already held by the app's wait. The widget prefers
+    /// its own read and falls back to this one when its sandbox can't open the
+    /// SMC; see `chargerSupply`.
+    public let chargerHeldOffSignal: Bool?
 
     public var batteryChargeState: BatteryChargeState? {
         chargeState.flatMap(BatteryChargeState.init(rawValue:))
     }
 
     public init(ports: [PortEntry], timestamp: Date = Date(), powerState: PowerState? = nil,
-                chargeState: BatteryChargeState? = nil) {
+                chargeState: BatteryChargeState? = nil, chargerHeldOffSignal: Bool? = nil) {
         self.ports = ports
         self.timestamp = timestamp
         self.powerState = powerState
         self.chargeState = chargeState?.rawValue
+        self.chargerHeldOffSignal = chargerHeldOffSignal
     }
 
     /// Custom decoder so that JSON written before `powerState` or `chargeState`
@@ -34,6 +40,7 @@ public struct WidgetSnapshot: Codable, Equatable {
         timestamp = try c.decode(Date.self, forKey: .timestamp)
         powerState = try c.decodeIfPresent(PowerState.self, forKey: .powerState)
         chargeState = try c.decodeIfPresent(String.self, forKey: .chargeState)
+        chargerHeldOffSignal = try c.decodeIfPresent(Bool.self, forKey: .chargerHeldOffSignal)
     }
 
     /// One port's display-ready state. Every field is pre-computed by the
@@ -387,6 +394,8 @@ extension WidgetSnapshot {
         let activePortCount = cable.ports.filter { $0.connectionActive == true }.count
         let chargerSourceCount = ChargerWattageSource.chargerSourceCount(
             ports: cable.ports, sources: cable.powerSources)
+        let liveContractKeys = PowerSource.portKeysWithLiveContract(
+            ports: cable.ports, sources: cable.powerSources)
 
         let entries: [PortEntry] = cable.ports.map { port in
             // Two device values on purpose (plan pcie-tunnelled-usb-attribution):
@@ -440,7 +449,10 @@ extension WidgetSnapshot {
                 batteryFullyCharged: batteryFullyCharged,
                 batteryIsCharging: batteryIsCharging,
                 batteryChargeState: cable.batteryChargeState,
-                adapter: adapter
+                adapter: adapter,
+                chargerHeldOffSignal: cable.chargerHeldOffSignal,
+                anotherPortActivelyCharging: PowerSource.anotherPortHasLiveContract(
+                    than: port, liveKeys: liveContractKeys)
             )
 
             let status = Status(from: summary.status)
@@ -541,7 +553,8 @@ extension WidgetSnapshot {
             ports: entries + builtInDisplayEntries,
             timestamp: Date(),
             powerState: battery ? powerState : nil,
-            chargeState: cable.batteryChargeState
+            chargeState: cable.batteryChargeState,
+            chargerHeldOffSignal: cable.chargerHeldOffSignal
         )
     }
 }
@@ -602,5 +615,16 @@ extension WidgetSnapshot {
         let age = now.timeIntervalSince(cached.timestamp)
         guard age >= 0, age <= chargeStateFreshness else { return .live }
         return .app(cached.batteryChargeState)
+    }
+
+    /// The charger-supply flag for the widget's live read (public issue 672).
+    /// The widget's own SMC read wins when it has one. When its sandbox can't
+    /// open AppleSMC (`live` nil), the app's value from a fresh snapshot
+    /// (same freshness rule as `chargeStateSource`) stands in. nil when
+    /// neither is available, which keeps the stale-contract wording.
+    public static func chargerSupply(live: Bool?, cached: WidgetSnapshot?, now: Date) -> Bool? {
+        if let live { return live }
+        guard case .app = chargeStateSource(cached: cached, now: now) else { return nil }
+        return cached?.chargerHeldOffSignal
     }
 }

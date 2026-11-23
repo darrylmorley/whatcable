@@ -634,6 +634,10 @@
 "Answered, but reported no capability data." = "Відповів, але не повідомив даних про можливості.";
 "Certification ID" = "ID сертифікації";
 "Connect a charger to identify the cable." = "Підключіть зарядний пристрій, щоб визначити кабель.";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "Зарядний пристрій підключено";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "Цей Mac працює від батареї і не бере живлення від зарядного пристрою. Причиною може бути програма, що обмежує заряджання.";
+"Charger offering up to %lldW, not in use" = "Зарядний пристрій пропонує до %lldW, не використовується";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "На цьому порту немає PD-контракту. Вхідне живлення відображається в розділі «Вхідне живлення системи» нижче.";

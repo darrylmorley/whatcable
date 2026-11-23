@@ -635,6 +635,10 @@
 "Answered, but reported no capability data." = "有响应，但未报告能力数据。";
 "Certification ID" = "认证 ID";
 "Connect a charger to identify the cable." = "请连接充电器以识别线缆。";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "已连接充电器";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "这台 Mac 正在使用电池供电，没有从充电器取电。限制充电的 App 可能会导致这种情况。";
+"Charger offering up to %lldW, not in use" = "充电器可提供最高 %lldW，未在使用";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "此端口没有 PD 合约。输入的电力显示在下方的“系统电源输入”中。";

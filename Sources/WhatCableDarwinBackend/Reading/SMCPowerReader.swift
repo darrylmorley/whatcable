@@ -111,6 +111,26 @@ public final class SMCPowerReader: @unchecked Sendable {
         )
     }
 
+    /// Reads the two SMC keys `SystemPowerState.chargerSupplyPresent` needs
+    /// (public issue 672): the DC-in voltage (`VD0R`) and the adapter slot
+    /// (`AC-W`, a signed byte, -1 when no adapter). Two keys, cheap enough for
+    /// every poll tick. Each is nil when the SMC can't be opened or the key is
+    /// absent.
+    public func readChargerSupplySignals() -> (dcInputVolts: Double?, acW: Int?) {
+        lock.lock(); defer { lock.unlock() }
+        guard open() else { return (nil, nil) }
+        let volts = readFloat("VD0R").map(Double.init)
+        let acW = readKey("AC-W").flatMap(Self.decodeSignedByte)
+        return (volts, acW)
+    }
+
+    /// `si8` keys (`AC-W`): one signed byte. Internal so it is unit-testable
+    /// without SMC hardware.
+    static func decodeSignedByte(_ bytes: [UInt8]) -> Int? {
+        guard let first = bytes.first else { return nil }
+        return Int(Int8(bitPattern: first))
+    }
+
     /// Reads the negotiated charging contract on channels `D1..D4`.
     ///
     /// Opens lazily. Returns `[]` when the SMC can't be opened or the keys are

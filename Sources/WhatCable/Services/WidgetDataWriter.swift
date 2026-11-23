@@ -199,6 +199,12 @@ final class WidgetDataWriter {
             .sink { [weak self] _ in self?.scheduleWrite() }
             .store(in: &cancellables)
 
+        // A charger held off on battery changes the card headline (issue 672).
+        WatcherHub.shared.powerWatcher.$chargerHeldOffSignal
+            .dropFirst()
+            .sink { [weak self] _ in self?.scheduleWrite() }
+            .store(in: &cancellables)
+
         WatcherHub.shared.pdWatcher.$identities
             .dropFirst()
             .sink { [weak self] _ in self?.scheduleWrite() }
@@ -458,6 +464,8 @@ final class WidgetDataWriter {
         let activePortCount = portWatcher.ports.filter { $0.connectionActive == true }.count
         let chargerSourceCount = ChargerWattageSource.chargerSourceCount(
             ports: portWatcher.ports, sources: powerWatcher.sources)
+        let liveContractKeys = PowerSource.portKeysWithLiveContract(
+            ports: portWatcher.ports, sources: powerWatcher.sources)
 
         // Native HDMI / built-in display port entries. Synthesized as widget
         // PortEntry rows so the existing widget layout (which already shows
@@ -546,6 +554,9 @@ final class WidgetDataWriter {
                 batteryIsCharging: batteryCharging,
                 batteryChargeState: chargeState,
                 adapter: adapter,
+                chargerHeldOffSignal: powerWatcher.chargerHeldOffSignal,
+                anotherPortActivelyCharging: PowerSource.anotherPortHasLiveContract(
+                    than: port, liveKeys: liveContractKeys),
                 connectionAge: connectionAge
             )
 
@@ -650,7 +661,8 @@ final class WidgetDataWriter {
         )
 
         // The debounced state the widget prefers while this file is fresh.
-        let snapshot = WidgetSnapshot(ports: entries + builtInDisplayEntries, powerState: powerState, chargeState: chargeState)
+        let snapshot = WidgetSnapshot(ports: entries + builtInDisplayEntries, powerState: powerState, chargeState: chargeState,
+                                      chargerHeldOffSignal: powerWatcher.chargerHeldOffSignal)
         return (snapshot, Self.readingWindowRemaining(ages: portAges))
     }
 

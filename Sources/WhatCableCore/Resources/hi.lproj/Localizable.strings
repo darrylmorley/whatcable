@@ -634,6 +634,10 @@
 "Answered, but reported no capability data." = "उत्तर दिया, लेकिन कोई क्षमता डेटा नहीं बताया।";
 "Certification ID" = "प्रमाणन ID";
 "Connect a charger to identify the cable." = "केबल की पहचान के लिए चार्जर कनेक्ट करें।";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "चार्जर लगा हुआ है";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "यह Mac बैटरी पर चल रहा है और चार्जर से बिजली नहीं ले रहा है। चार्ज सीमित करने वाला कोई ऐप ऐसा कर सकता है।";
+"Charger offering up to %lldW, not in use" = "चार्जर अधिकतम %lld W दे रहा है, उपयोग में नहीं";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "इस पोर्ट पर कोई PD कॉन्ट्रैक्ट नहीं है। आने वाली पावर नीचे «सिस्टम पावर इनपुट» में दिखती है।";

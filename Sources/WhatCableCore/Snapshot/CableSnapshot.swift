@@ -76,6 +76,75 @@ public enum SystemPowerState {
     public static func onBattery(batteryIsCharging: Bool?, adapter: AdapterInfo?) -> Bool {
         batteryIsCharging == false && adapter == nil
     }
+
+    /// DC-in voltage above which the SMC rail counts as supplied (SMC `VD0R`).
+    /// The lowest USB-PD level is 5 V. Voltage alone is NOT proof of a
+    /// charger: `m5_macos26.5.2_r` reads 6.7 V on battery with nothing
+    /// attached. See `chargerSupplyPresent`.
+    public static let chargerVoltageThresholdVolts = 4.5
+
+    /// SMC `AC-W` (signed byte) when no adapter is attached: raw 0xff.
+    public static let acWNoAdapter = -1
+
+    /// Whether the SMC says a charger is attached and supplying the Mac,
+    /// whatever macOS does with it. Needs BOTH machine-wide SMC signals:
+    ///
+    /// - `AC-W` (signed byte) is not -1 (raw 0xff), and
+    /// - `VD0R` (DC-in voltage) is above `chargerVoltageThresholdVolts`.
+    ///
+    /// Measured across the probe corpus (public issue 672), on the 209
+    /// on-battery captures (IsCharging and ExternalConnected both false) that
+    /// carry both keys: `AC-W` is set on exactly 5, the 5 Macs held on battery
+    /// with a charger attached (all about 20 V, all with SMC `CH0R` 0x08), and
+    /// reads 0xff on the other 204. Voltage alone would have let one of those
+    /// 204 through (`m5_macos26.5.2_r`: 6.7 V, AC-W 0xff, nothing attached).
+    /// Retained-contract Macs with nothing attached (`m1_macos26.5.1_u` and
+    /// six more) read under 0.05 V with AC-W 0xff. On external power, AC-W is
+    /// set on 856 of 857 captures.
+    ///
+    /// nil when either reading is unavailable (desktop, SMC closed to this
+    /// process), which callers treat as "not shown to be present".
+    ///
+    /// Only -1 (no adapter) and 1 or more (an adapter, as on every corpus
+    /// capture that has one) are understood. Anything else, 0 included, has no
+    /// corpus instance and no known meaning, so it reads as unknown (nil) and
+    /// can never fire.
+    public static func chargerSupplyPresent(dcInputVolts: Double?, acW: Int?) -> Bool? {
+        guard let volts = dcInputVolts, let acW else { return nil }
+        if acW == acWNoAdapter { return false }
+        guard acW >= 1 else { return nil }
+        return volts > chargerVoltageThresholdVolts
+    }
+
+    /// A charger is attached to THIS port and powered, but the Mac is running
+    /// on battery anyway: macOS isn't drawing from it. Charge-limit apps are
+    /// the likely cause (inferred, public issue 672).
+    ///
+    /// Every signal is needed, because each missing one has a corpus case that
+    /// would make the claim false:
+    /// - `onBattery`: without it this is just a charger that is charging.
+    /// - charger supply present (`chargerSupplyPresent`, carried here as the
+    ///   held-off signal, which also folds in on-battery): a controller can
+    ///   keep a winning contract after the charger is gone (the stale-PDO
+    ///   case, seen on a connected port in `m1_macos26.5.1_u`).
+    /// - a live winning contract on THIS port, and on no other port
+    ///   (MagSafe included): the supply signal is machine-wide, so it can only
+    ///   be pinned to a port when exactly one port holds a contract. A
+    ///   held-off MagSafe charger next to a USB-C port with a retained
+    ///   contract must not relabel the USB-C port.
+    ///
+    /// Unknown supply (nil) never fires.
+    public static func chargerHeldOff(
+        onBattery: Bool,
+        portSources: [PowerSource],
+        anotherPortHasLiveContract: Bool,
+        chargerHeldOffSignal: Bool?
+    ) -> Bool {
+        onBattery
+            && chargerHeldOffSignal == true
+            && !anotherPortHasLiveContract
+            && PowerSource.hasLiveChargingContract(in: portSources)
+    }
 }
 
 /// External power adapter info. Populated by the Darwin backend from
@@ -216,6 +285,17 @@ public struct CableSnapshot: Equatable {
     /// consumers then use the two battery-record flags. A `var` so a one-shot
     /// read can replace it after its confirm read.
     public var batteryChargeState: BatteryChargeState?
+    /// The held-off charger signal (public issue 672): the SMC reports a
+    /// charger supplying the Mac (`SystemPowerState.chargerSupplyPresent`: AC-W
+    /// set and DC-in voltage) AND the Mac reads as on battery. Machine-wide,
+    /// not per port; feeds `SystemPowerState.chargerHeldOff`.
+    ///
+    /// On a live surface (the app, `--watch`) it is only true once that has
+    /// held for `ChargerHeldOffHold.holdSeconds`, so a plug or unplug can't
+    /// flash the card. A one-shot read has nothing to flash, so it carries the
+    /// single read's raw value; a `var` so `snapshot()` can set it. nil when
+    /// unread: desktops, an SMC this process can't open.
+    public var chargerHeldOffSignal: Bool?
 
     public init(
         ports: [AppleHPMInterface],
@@ -234,7 +314,8 @@ public struct CableSnapshot: Equatable {
         displayPorts: [IOPortTransportStateDisplayPort] = [],
         batteryFullyCharged: Bool? = nil,
         batteryIsCharging: Bool? = nil,
-        batteryChargeState: BatteryChargeState? = nil
+        batteryChargeState: BatteryChargeState? = nil,
+        chargerHeldOffSignal: Bool? = nil
     ) {
         self.ports = ports
         self.powerSources = powerSources
@@ -253,6 +334,7 @@ public struct CableSnapshot: Equatable {
         self.batteryFullyCharged = batteryFullyCharged
         self.batteryIsCharging = batteryIsCharging
         self.batteryChargeState = batteryChargeState
+        self.chargerHeldOffSignal = chargerHeldOffSignal
     }
 }
 

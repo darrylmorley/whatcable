@@ -634,6 +634,10 @@
 "Answered, but reported no capability data." = "Heeft geantwoord, maar geen capaciteitsgegevens gemeld.";
 "Certification ID" = "Certificerings-ID";
 "Connect a charger to identify the cable." = "Sluit een oplader aan om de kabel te identificeren.";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "Oplader aangesloten";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "Deze Mac werkt op de batterij en neemt geen stroom af van de oplader. Een app die het opladen begrenst kan dit veroorzaken.";
+"Charger offering up to %lldW, not in use" = "Oplader biedt tot %lldW, niet in gebruik";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "Geen PD-contract op deze poort. Inkomend vermogen wordt weergegeven in Systeemvermogensinvoer hieronder.";

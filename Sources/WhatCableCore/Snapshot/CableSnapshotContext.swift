@@ -92,6 +92,8 @@ public struct CableSnapshotContext {
     public let batteryFullyCharged: Bool?
     public let batteryIsCharging: Bool?
     public let batteryChargeState: BatteryChargeState?
+    /// See `CableSnapshot.chargerHeldOffSignal`.
+    public let chargerHeldOffSignal: Bool?
     public let federatedIdentities: [FederatedIdentity]
     public let thunderboltSwitches: [IOThunderboltSwitch]
     public let isDesktopMac: Bool
@@ -110,10 +112,7 @@ public struct CableSnapshotContext {
         // ungated on adapter/battery: this only feeds
         // anotherPortActivelyCharging, and ChargingDiagnostic applies the
         // system-power gate before acting on it.
-        let chargingPortKeys = Set(ports.compactMap { port -> String? in
-            let portSources = sources.filter { $0.canonicallyMatches(port: port) }
-            return PowerSource.hasLiveChargingContract(in: portSources) ? port.portKey : nil
-        })
+        let chargingPortKeys = PowerSource.portKeysWithLiveContract(ports: ports, sources: sources)
         self.portContexts = ports.map { port in
             let portSources = sources.filter { $0.canonicallyMatches(port: port) }
             let matched = port.matchingDevices(from: snapshot.usbDevices)
@@ -151,15 +150,15 @@ public struct CableSnapshotContext {
                     activePortCount: activePortCount,
                     chargerSourceCount: chargerSourceCount,
                     adapter: snapshot.adapter),
-                anotherPortActivelyCharging: port.portKey.map { key in
-                    chargingPortKeys.contains { $0 != key }
-                } ?? false
+                anotherPortActivelyCharging: PowerSource.anotherPortHasLiveContract(
+                    than: port, liveKeys: chargingPortKeys)
             )
         }
         self.adapter = snapshot.adapter
         self.batteryFullyCharged = snapshot.batteryFullyCharged
         self.batteryIsCharging = snapshot.batteryIsCharging
         self.batteryChargeState = snapshot.batteryChargeState
+        self.chargerHeldOffSignal = snapshot.chargerHeldOffSignal
         self.federatedIdentities = snapshot.federatedIdentities
         self.thunderboltSwitches = snapshot.thunderboltSwitches
         self.isDesktopMac = snapshot.isDesktopMac

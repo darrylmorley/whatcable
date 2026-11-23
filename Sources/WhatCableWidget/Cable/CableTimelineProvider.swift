@@ -64,7 +64,7 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
     /// match notifications are not needed here, only a single synchronous
     /// property scan.
     @MainActor
-    private func liveSnapshot(chargeState: BatteryChargeState?) -> WidgetSnapshot? {
+    private func liveSnapshot(chargeState: BatteryChargeState?, cached: WidgetSnapshot?) -> WidgetSnapshot? {
         let portWatcher = AppleHPMInterfaceWatcher()
         let powerWatcher = PowerSourceWatcher()
         let pdWatcher = USBPDSOPWatcher()
@@ -180,7 +180,14 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
             displayPorts: displayWatcher.statuses.map(\.status),
             batteryFullyCharged: battery.battery?.fullyCharged,
             batteryIsCharging: battery.battery?.isCharging,
-            batteryChargeState: chargeState
+            batteryChargeState: chargeState,
+            // The widget's own read, through the same watcher read as the
+            // sources. One read, so the raw held-off precondition: the widget
+            // has nothing to flash (issue 672). When the sandbox blocks the SMC
+            // it is nil and the app's held value from a fresh App Group
+            // snapshot stands in; with neither, nil keeps today's wording.
+            chargerHeldOffSignal: WidgetSnapshot.chargerSupply(
+                live: powerWatcher.lastHeldOffCandidate, cached: cached, now: Date())
         )
 
         log.debug("Live IOKit read: \(ports.count) ports")
@@ -222,7 +229,7 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
         case .live:
             chargeState = await Self.liveConfirmedChargeState()
         }
-        if let live = await liveSnapshot(chargeState: chargeState) {
+        if let live = await liveSnapshot(chargeState: chargeState, cached: cached) {
             return CableWidgetEntry(date: live.timestamp, snapshot: live, configuration: configuration)
         }
         if let cached {

@@ -640,6 +640,10 @@
 "Answered, but reported no capability data." = "Answered, but reported no capability data.";
 "Certification ID" = "Certification ID";
 "Connect a charger to identify the cable." = "Connect a charger to identify the cable.";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "Charger connected";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this.";
+"Charger offering up to %lldW, not in use" = "Charger offering up to %lldW, not in use";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "No PD contract on this port. Incoming power shows in System Power Input below.";

@@ -118,6 +118,43 @@ import Testing
         w.stop()
     }
 
+    @MainActor @Test func heldOffWaitsForTheHoldAndSurvivesTheChargerPath() {
+        // Issue 672. The held-off precondition is published only after it has
+        // held for ChargerHeldOffHold.holdSeconds, on the watcher's own clock.
+        final class Clock { var now: TimeInterval = 100 }
+        let clock = Clock()
+        let w = PowerSourceWatcher(smcReader: SMCPowerReader(), clock: { clock.now })
+        w.refresh(using: .init(sources: [], charger: nil, chargeState: nil, chargerHeldOffCandidate: true))
+        #expect(w.chargerHeldOffSignal == false, "must wait on the way in")
+        // The raw candidate is kept for one-shot readers (the widget).
+        #expect(w.lastHeldOffCandidate == true)
+        clock.now = 101
+        w.refresh(using: .init(sources: [], charger: nil, chargeState: nil, chargerHeldOffCandidate: true))
+        #expect(w.chargerHeldOffSignal == false)
+        clock.now = 100 + ChargerHeldOffHold.holdSeconds
+        w.refresh(using: .init(sources: [], charger: nil, chargeState: nil, chargerHeldOffCandidate: true))
+        #expect(w.chargerHeldOffSignal == true)
+        // The charger-watts path re-applies a reading without the candidate;
+        // that must not wipe it, as with the charge state.
+        w.apply(.init(sources: [], charger: .init(input: 0, rated: 0)))
+        #expect(w.chargerHeldOffSignal == true)
+        // Leaving is immediate, and a new run waits again.
+        w.applyChargerSupply(false)
+        #expect(w.chargerHeldOffSignal == false)
+        clock.now = 200
+        w.applyChargerSupply(true)
+        #expect(w.chargerHeldOffSignal == false)
+        w.stop()
+        #expect(w.chargerHeldOffSignal == nil)
+    }
+
+    @Test func acWDecodesAsASignedByte() {
+        // AC-W is si8: raw 0xff is -1, "no adapter" (issue 672).
+        #expect(SMCPowerReader.decodeSignedByte([0xff]) == -1)
+        #expect(SMCPowerReader.decodeSignedByte([0x02]) == 2)
+        #expect(SMCPowerReader.decodeSignedByte([]) == nil)
+    }
+
     @MainActor @Test func powerApplyWithoutChargerLeavesReadoutAlone() {
         let w = PowerSourceWatcher(smcReader: SMCPowerReader())
         w.apply(PowerSourceWatcher.Reading(sources: [], charger: nil))

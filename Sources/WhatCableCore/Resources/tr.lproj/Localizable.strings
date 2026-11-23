@@ -634,6 +634,10 @@
 "Answered, but reported no capability data." = "Yanıt verdi, ancak yetenek verisi bildirmedi.";
 "Certification ID" = "Sertifika kimliği";
 "Connect a charger to identify the cable." = "Kabloyu tanımlamak için bir şarj cihazı bağlayın.";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "Şarj aleti takılı";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "Bu Mac batarya ile çalışıyor ve şarj aletinden güç çekmiyor. Şarjı sınırlayan bir uygulama buna neden olabilir.";
+"Charger offering up to %lldW, not in use" = "Şarj aleti en fazla %lldW sunuyor, kullanılmıyor";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "Bu portta PD sözleşmesi yok. Gelen güç aşağıdaki Sistem Güç Girişi bölümünde gösteriliyor.";

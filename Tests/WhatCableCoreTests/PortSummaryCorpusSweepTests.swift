@@ -836,4 +836,329 @@ struct PortSummaryCorpusSweepTests {
         #expect(violations.isEmpty,
             "\(violations.count) case(s) had a decodable Cable VDO but no 'Cable speed' bullet: \(violations.prefix(5))")
     }
+
+    // MARK: - Charger attached but the Mac held on battery (public issue 672)
+    //
+    // The system-power inputs this sweep otherwise leaves out, read per folder:
+    //
+    // - probe 32: the top-level `IsCharging` and `ExternalConnected` flags of
+    //   the AppleSmartBattery dump (2-space indent; deeper copies are nested
+    //   dicts and are skipped).
+    // - probe 39: whether `IOPSCopyExternalPowerAdapterDetails` was nil, which
+    //   is the app's `adapter`. Older captures have no probe 39; for those the
+    //   battery's `ExternalConnected` stands in. Measured on the 455 folders
+    //   that carry both: nil details exactly when `ExternalConnected` is false,
+    //   455 of 455.
+    // - probe 34: SMC `VD0R` (little-endian IEEE float) and `AC-W` (signed
+    //   byte), decoded here from their raw bytes, not the probe's printed value.
+    // - probes 17/19: which ports (by type AND number, so MagSafe 3@1 and
+    //   USB-C@1 stay apart) hold a live winning contract, for the cross-port
+    //   rule.
+
+    private struct SystemPower {
+        let onBattery: Bool
+        let dcInputVolts: Double?
+        let acW: Int?
+        /// "type/number" of every port holding a live winning contract.
+        let liveContractKeys: Set<String>
+
+        var supply: Bool? { SystemPowerState.chargerSupplyPresent(dcInputVolts: dcInputVolts, acW: acW) }
+    }
+
+    private static func topLevelFlag(_ text: String, key: String) -> String? {
+        for line in text.split(separator: "\n", omittingEmptySubsequences: false) {
+            guard line.hasPrefix("  \(key) ="), !line.hasPrefix("   ") else { continue }
+            return line.split(separator: "=", maxSplits: 1).last?
+                .trimmingCharacters(in: .whitespaces).split(separator: " ").first.map(String.init)
+        }
+        return nil
+    }
+
+    /// Raw bytes of one SMC key from probe 34, in the order the probe prints.
+    private static func smcRawBytes(folder: String, key: String) -> [UInt8]? {
+        guard let text = loadProbeText(folder: folder, probe: "34_smc_power_keys") else { return nil }
+        for line in text.split(separator: "\n") {
+            let fields = line.split(separator: " ")
+            guard fields.first.map(String.init) == key,
+                  let raw = fields.first(where: { $0.hasPrefix("raw=") })?.dropFirst(4),
+                  raw.count % 2 == 0, !raw.isEmpty else { continue }
+            var bytes: [UInt8] = []
+            var i = raw.startIndex
+            while i < raw.endIndex {
+                let j = raw.index(i, offsetBy: 2)
+                guard let b = UInt8(raw[i..<j], radix: 16) else { return nil }
+                bytes.append(b)
+                i = j
+            }
+            return bytes
+        }
+        return nil
+    }
+
+    private static func vd0rVolts(folder: String) -> Double? {
+        guard let b = smcRawBytes(folder: folder, key: "VD0R"), b.count == 4 else { return nil }
+        let bits = UInt32(b[0]) | UInt32(b[1]) << 8 | UInt32(b[2]) << 16 | UInt32(b[3]) << 24
+        let v = Float(bitPattern: bits)
+        return v.isFinite ? Double(v) : nil
+    }
+
+    private static func acW(folder: String) -> Int? {
+        guard let b = smcRawBytes(folder: folder, key: "AC-W"), b.count == 1 else { return nil }
+        return Int(Int8(bitPattern: b[0]))
+    }
+
+    /// Connected ports only, as `PowerSource.portKeysWithLiveContract`: a
+    /// retained contract on an empty port is not a live port.
+    private static func liveContractKeys(folder: String) -> Set<String> {
+        let connected = Set(loadPorts(folder: folder).filter(\.connectionActive).map { p in
+            "\(p.portTypeDescription?.hasPrefix("MagSafe") == true ? 17 : 2)/\(p.portNumber)"
+        })
+        let grouped = Dictionary(grouping: powerSources(folder: folder)) { "\($0.parentPortType)/\($0.parentPortNumber)" }
+        return Set(grouped.compactMap { key, sources in
+            connected.contains(key) && PowerSource.hasLiveChargingContract(in: sources) ? key : nil
+        })
+    }
+
+    private static func systemPower(folder: String) -> SystemPower? {
+        guard let p32 = loadProbeText(folder: folder, probe: "32_smart_battery_full_keys"),
+              let charging = topLevelFlag(p32, key: "IsCharging") else { return nil }
+        let isCharging = !(charging == "false" || charging == "0")
+        let adapterNil: Bool
+        if let p39 = loadProbeText(folder: folder, probe: "39_system_power_adapter"),
+           let section = p39.components(separatedBy: "=== IOPSCopyExternalPowerAdapterDetails ===").dropFirst().first {
+            adapterNil = section.components(separatedBy: "===").first?.contains("status: nil") == true
+        } else if let ext = topLevelFlag(p32, key: "ExternalConnected") {
+            adapterNil = ext == "false" || ext == "0"
+        } else {
+            return nil
+        }
+        let onBattery = !isCharging && adapterNil
+        return SystemPower(
+            onBattery: onBattery,
+            dcInputVolts: vd0rVolts(folder: folder),
+            acW: acW(folder: folder),
+            liveContractKeys: onBattery ? liveContractKeys(folder: folder) : [])
+    }
+
+    /// One read per folder, shared by every test below.
+    private static let powerByFolder: [String: SystemPower] = {
+        var result: [String: SystemPower] = [:]
+        for folder in allFolders() {
+            if let p = systemPower(folder: folder) { result[folder] = p }
+        }
+        return result
+    }()
+
+    /// The Macs held on battery with a charger attached and powered: about 20 V
+    /// on the DC-in rail, AC-W set, SMC CH0R 0x08, a live contract on the port.
+    ///
+    /// Every USB-C one is a dock or hub that also supplies power (Thunderbolt,
+    /// DisplayPort or USB data on the same port), so the data headline keeps
+    /// its place and what changes is the charger group: the offer now shows,
+    /// labelled as not in use. No corpus capture is a bare USB-C charger held
+    /// on battery (the reporter's shape); the "Charger connected" headline for
+    /// that is pinned by the unit tests in `PortSummaryTests`. The fifth held
+    /// Mac, `m3_macos27.0`, holds its charger on MagSafe; see
+    /// `magSafeHeldOffReplay`.
+    private static let heldOffPorts: Set<String> = [
+        "m2max_macos27.2 port 2",
+        "m5_macos27.0_aa port 1",
+        "m1_macos26.5.1_p port 2",
+        "m5pro_macos26.5.2_m port 1",
+    ]
+    private static let heldOffFolders: Set<String> = [
+        "m2max_macos27.2", "m5_macos27.0_aa", "m1_macos26.5.1_p", "m5pro_macos26.5.2_m", "m3_macos27.0",
+    ]
+
+    /// On battery with a retained 30W contract on a connected port, at
+    /// 0.016 V and AC-W 0xff: the stale case. It must keep today's card exactly.
+    private static let staleRetainedContractPort = "m1_macos26.5.1_u port 1"
+
+    /// On battery with stale PD contract registers (PortControllerInfo state 5,
+    /// a non-zero RDO, MaxPower 0) and AC-W ff, from the issue 672 investigation. Only
+    /// `m5pro_macos26.6.1_c` has a connected USB-C port to render.
+    private static let staleContractFolders: [String] = [
+        "m4max_macos26.5.2_l", "m4pro_macos27.0_t", "m5_macos27.0_s", "m5_macos27.0_t",
+        "m5pro_macos26.5.2_s", "m5pro_macos26.6.1_c", "m5pro_macos27.2",
+    ]
+
+    /// This sweep joins sources to ports by port NUMBER alone, so MagSafe 3@1's
+    /// source lands on USB-C@1 too (`m3_macos27.0`, a MagSafe charger held on
+    /// battery). The app joins by controller UUID and never does that, so the
+    /// replay keeps only sources whose parent port type matches.
+    private static func sources(_ sources: [PowerSource], type: Int, number: Int) -> [PowerSource] {
+        sources.filter { $0.parentPortType == type && $0.parentPortNumber == number }
+    }
+
+    private static func heldOffSummary(
+        port: AppleHPMInterface, type: Int, sources: [PowerSource],
+        identities: [USBPDSOP], cio: CIOCableCapability?, power: SystemPower
+    ) -> PortSummary {
+        let key = "\(type)/\(port.portNumber ?? -1)"
+        return PortSummary(
+            port: port,
+            sources: sources,
+            identities: identities,
+            cioCapability: cio,
+            batteryIsCharging: false,
+            adapter: nil,
+            chargerHeldOffSignal: power.supply,
+            anotherPortActivelyCharging: power.liveContractKeys.contains { $0 != key }
+        )
+    }
+
+    private static func heldOffSummary(_ c: Case, _ power: SystemPower) -> PortSummary {
+        heldOffSummary(port: c.port, type: 2,
+                       sources: sources(c.sources, type: 2, number: c.port.portNumber ?? -1),
+                       identities: c.identities, cio: c.cio, power: power)
+    }
+
+    private static func fired(_ s: PortSummary) -> Bool {
+        s.headline == "Charger connected" || s.bullets.contains { $0.hasSuffix("W, not in use") }
+    }
+
+    @Test("Issue 672: the SMC supply signal is set on exactly the held-on-battery Macs")
+    func supplySignalSeparatesHeldFromNothingAttached() {
+        var withBoth = 0
+        var supplied: Set<String> = []
+        for (folder, power) in Self.powerByFolder where power.onBattery {
+            guard power.dcInputVolts != nil, power.acW != nil else { continue }
+            withBoth += 1
+            if power.supply == true { supplied.insert(folder) }
+        }
+        print("Issue 672 supply: \(withBoth) on-battery captures with VD0R and AC-W; supplied: \(supplied.sorted())")
+        #expect(withBoth > 0)
+        #expect(Self.heldOffFolders.isSubset(of: supplied), "held folders without supply: \(Self.heldOffFolders.subtracting(supplied).sorted())")
+        // Only the held Macs: AC-W reads 0xff on every other on-battery capture.
+        #expect(supplied == Self.heldOffFolders, "unexpected supplied folders: \(supplied.subtracting(Self.heldOffFolders).sorted())")
+    }
+
+    @Test("Issue 672: m5_macos26.5.2_r (6.7 V, AC-W 0xff, nothing attached) is not a charger")
+    func voltageWithoutAdapterSlotIsNotACharger() throws {
+        let folder = "m5_macos26.5.2_r"
+        let power = try #require(Self.powerByFolder[folder])
+        #expect(power.onBattery)
+        let volts = try #require(power.dcInputVolts)
+        #expect(volts > 4.5, "\(volts) V: the case is only meaningful while the voltage alone would pass")
+        #expect(power.acW == -1)
+        #expect(power.supply == false)
+        // Its retained 67W contract is on Port-USB-C@4, which only
+        // ConnectionActive=false kept off the card. Force it live: still silent.
+        let port4 = try #require(Self.loadPorts(folder: folder).first {
+            $0.portTypeDescription == "USB-C" && $0.portNumber == 4
+        })
+        let src = Self.sources(Self.powerSources(folder: folder), type: 2, number: 4)
+        #expect(PowerSource.hasLiveChargingContract(in: src), "fixture lost its retained contract")
+        var forced = Self.heldOffSummary(port: port4.asAppleHPMInterface, type: 2, sources: src,
+                                         identities: [], cio: nil, power: power)
+        #expect(!Self.fired(forced), "\(forced.headline) / \(forced.bullets)")
+        forced = PortSummary(port: port4.asAppleHPMInterface, sources: src, isConnectedOverride: true,
+                             batteryIsCharging: false, adapter: nil, chargerHeldOffSignal: power.supply)
+        #expect(!Self.fired(forced), "\(forced.headline) / \(forced.bullets)")
+    }
+
+    @Test("Issue 672: held-on-battery ports show the charger as not in use; stale contracts keep 'Connect a charger'")
+    func heldOnBatteryReplay() {
+        var fired: Set<String> = []
+        var reached: [String: PortSummary] = [:]
+        var onBatteryCases = 0
+        for c in Self.cases {
+            guard let power = Self.powerByFolder[c.folder], power.onBattery else { continue }
+            onBatteryCases += 1
+            let summary = Self.heldOffSummary(c, power)
+            reached[Self.key(c)] = summary
+            if Self.fired(summary) {
+                fired.insert(Self.key(c))
+                // The rule, from the test's own reading.
+                let volts = power.dcInputVolts ?? 0
+                let own = "2/\(c.port.portNumber ?? -1)"
+                #expect(volts > 4.5 && power.acW != -1 && power.liveContractKeys == [own],
+                    "\(Self.key(c)) fired at \(volts) V, AC-W \(power.acW ?? 99), live ports \(power.liveContractKeys)")
+                #expect(summary.status != .charging && summary.status != .batteryFull)
+                #expect(!summary.bullets.contains { $0.contains("Currently negotiated") })
+                #expect(summary.bullets.contains { $0.hasSuffix("W, not in use") }, "\(Self.key(c)): \(summary.bullets)")
+                #expect(!summary.headline.contains("Charging") && !summary.headline.contains("Plugged in")
+                        && summary.subtitle != "Connect a charger to identify the cable.",
+                        "\(Self.key(c)): \(summary.headline) / \(summary.subtitle)")
+            }
+        }
+        print("Issue 672 replay: \(onBatteryCases) on-battery connected USB-C ports; fired: \(fired.sorted())")
+        #expect(onBatteryCases > 0, "no on-battery corpus port reached: the sweep tests nothing")
+        let missing = Self.heldOffPorts.subtracting(fired)
+        #expect(missing.isEmpty, "held-on-battery ports that did not fire: \(missing.sorted().map { "\($0): \(reached[$0].map { "\($0.headline) / \($0.subtitle) / \($0.bullets)" } ?? "not reached")" })")
+        #expect(fired.subtracting(Self.heldOffPorts).isEmpty, "unexpected: \(fired.subtracting(Self.heldOffPorts).sorted())")
+        let key = Self.staleRetainedContractPort
+        if let summary = reached[key] {
+            #expect(summary.headline == "Connected", "\(key): \(summary.headline)")
+            #expect(summary.subtitle == "Connect a charger to identify the cable.", "\(key): \(summary.subtitle)")
+            #expect(!fired.contains(key))
+        } else {
+            Issue.record("\(key) was not replayed as an on-battery connected port")
+        }
+    }
+
+    @Test("Issue 672: a MagSafe charger held on battery (m3_macos27.0) reads 'Charger connected'; its USB-C neighbours don't")
+    func magSafeHeldOffReplay() throws {
+        let folder = "m3_macos27.0"
+        let power = try #require(Self.powerByFolder[folder])
+        #expect(power.onBattery && power.supply == true)
+        let ports = Self.loadPorts(folder: folder).filter { $0.connectionActive }
+        let all = Self.powerSources(folder: folder)
+        let magSafe = try #require(ports.first { $0.portTypeDescription?.hasPrefix("MagSafe") == true })
+        let summary = Self.heldOffSummary(
+            port: magSafe.asAppleHPMInterface, type: 17,
+            sources: Self.sources(all, type: 17, number: magSafe.portNumber),
+            identities: [], cio: nil, power: power)
+        #expect(summary.headline == "Charger connected", "\(summary.headline) / \(summary.bullets)")
+        #expect(summary.subtitle == "This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this.")
+        #expect(summary.bullets.contains("Charger offering up to 60W, not in use"), "\(summary.bullets)")
+        var usbC = 0
+        for p in ports where p.portTypeDescription == "USB-C" {
+            usbC += 1
+            let s = Self.heldOffSummary(
+                port: p.asAppleHPMInterface, type: 2,
+                sources: Self.sources(all, type: 2, number: p.portNumber),
+                identities: Self.identities(folder: folder).filter { $0.parentPortNumber == p.portNumber },
+                cio: nil, power: power)
+            #expect(!Self.fired(s), "USB-C@\(p.portNumber) relabelled: \(s.headline) / \(s.bullets)")
+        }
+        #expect(usbC > 0, "m3_macos27.0 lost its connected USB-C ports")
+    }
+
+    @Test("Issue 672: the 7 stale-contract folders read no charger supply and never fire")
+    func staleContractFoldersStaySilent() {
+        for folder in Self.staleContractFolders {
+            guard let power = Self.powerByFolder[folder] else {
+                Issue.record("\(folder): missing probe 32 or its flags")
+                continue
+            }
+            #expect(power.onBattery, "\(folder) is not on battery by the app's rule")
+            #expect(power.dcInputVolts != nil && power.acW != nil, "\(folder): SMC keys missing")
+            #expect(power.supply == false, "\(folder): \(power.dcInputVolts ?? -1) V, AC-W \(power.acW ?? 99)")
+            for c in Self.cases where c.folder == folder {
+                let summary = Self.heldOffSummary(c, power)
+                #expect(!Self.fired(summary), "\(Self.key(c)) fired")
+            }
+        }
+    }
+
+    @Test("Issue 672: off battery, the charger-supply signal changes no corpus card")
+    func voltageSignalIsInertOffBattery() {
+        let adapter = AdapterInfo(watts: 96, isCharging: true, source: "AC")
+        var examined = 0
+        var changed: [String] = []
+        for c in Self.cases {
+            examined += 1
+            func summary(_ voltage: Bool?) -> PortSummary {
+                PortSummary(port: c.port, sources: c.sources, identities: c.identities, cioCapability: c.cio,
+                            batteryIsCharging: false, adapter: adapter, chargerHeldOffSignal: voltage)
+            }
+            let a = summary(true), b = summary(nil)
+            if a.headline != b.headline || a.subtitle != b.subtitle || a.bullets != b.bullets {
+                changed.append(Self.key(c))
+            }
+        }
+        #expect(examined > 0)
+        #expect(changed.isEmpty, "the supply signal changed \(changed.count) off-battery card(s): \(changed.prefix(5))")
+    }
 }

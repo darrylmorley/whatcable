@@ -107,6 +107,17 @@ extension PortSummary {
         batteryIsCharging: Bool? = nil,
         batteryChargeState: BatteryChargeState? = nil,
         adapter: AdapterInfo? = nil,
+        // The held-off charger signal (`CableSnapshot.chargerHeldOffSignal`):
+        // the SMC reports a charger supplying the Mac and the Mac reads as on
+        // battery; on live surfaces only once that has held. nil means unknown
+        // (desktop, SMC unreadable, or a caller that does not read it) and is
+        // treated as not present (public issue 672).
+        chargerHeldOffSignal: Bool? = nil,
+        // True when a DIFFERENT port (MagSafe included) holds a live winning
+        // charging contract. The supply signal above is machine-wide, so the
+        // held-off state is only pinned to this port when no other port could
+        // be the charger. Same value `ChargingDiagnostic` takes (#264).
+        anotherPortActivelyCharging: Bool = false,
         // Nonnegative elapsed MONOTONIC seconds since CC attach. nil means
         // unknown: one-shot surfaces (CLI, widget extension), or the first
         // observation of a connection that was already active when the
@@ -343,6 +354,28 @@ extension PortSummary {
             ? nil
             : PowerSource.preferredChargingSource(in: sources)
 
+        // A charger is on this port and powered, but the Mac is on battery
+        // anyway (public issue 672; a charge-limit app is the likely cause). The
+        // gate above is right that its contract must not drive charging copy:
+        // nothing is being drawn. But the charger IS there, so the card must
+        // not ask for one. The SMC supply signal (AC-W set and DC-in voltage)
+        // is what separates this from a stale contract left behind by an
+        // unplugged charger, and it is machine-wide, so no other port may hold
+        // a contract; see `SystemPowerState.chargerHeldOff` for why every
+        // signal is needed. Never set when `chargingSource` is.
+        let heldOffSource: PowerSource? = connected
+            && SystemPowerState.chargerHeldOff(
+                onBattery: systemPowerUnavailable,
+                portSources: sources,
+                anotherPortHasLiveContract: anotherPortActivelyCharging,
+                chargerHeldOffSignal: chargerHeldOffSignal)
+            ? PowerSource.preferredChargingSource(in: sources)
+            : nil
+        /// Whatever charger is on this port, drawn from or not. For deciding
+        /// what the partner IS (a charger, not a "connected device"), never
+        /// for a charging claim.
+        let chargerOnPort = chargingSource ?? heldOffSource
+
         // Apple's own name for the accessory, from the port's UVDM node.
         // Nil for every non-Apple accessory, and for an Apple one whose node
         // publishes nothing displayable.
@@ -375,7 +408,7 @@ extension PortSummary {
         // AdapterDetails, or "Charger: <name>" from the port's UVDM node. We
         // use this to avoid double-prefixing with the PD and FedDetails
         // fallbacks below when the signals identify the same charger.
-        let adapterIdentityWillFire = chargingSource != nil
+        let adapterIdentityWillFire = chargerOnPort != nil
             && (adapter?.manufacturer?.isEmpty == false || accessoryChargerName != nil)
 
         // A Mac on the far end answers Discover Identity as a plain USB
@@ -389,7 +422,7 @@ extension PortSummary {
         if let partner = identities.first(where: { $0.endpoint == .sop }),
            let header = partner.idHeader {
             let vendor = VendorDB.label(for: partner.vendorID)
-            if header.isCable && chargingSource != nil {
+            if header.isCable && chargerOnPort != nil {
                 // A device sourcing power on this port cannot be a passive or
                 // active cable. Chargers routinely fill the PD ID-header
                 // product-type field with junk (USB-PD has no "charger" product
@@ -444,7 +477,7 @@ extension PortSummary {
             // name or just a hex code, both of which mislead users when
             // labelled as the "connected device" or "charger".
             let vendor = "\(vendorName) (0x\(String(format: "%04X", fed.vendorID)))"
-            if chargingSource != nil && !adapterIdentityWillFire && accessoryDeviceName == nil {
+            if chargerOnPort != nil && !adapterIdentityWillFire && accessoryDeviceName == nil {
                 // A charging source is on this port and we don't have
                 // a richer Manufacturer/Name pair from AdapterDetails;
                 // label this as the charger. A named non-adapter accessory
@@ -459,7 +492,7 @@ extension PortSummary {
                 // %@ argument, so this reuses the existing key.
                 let label = "\(accessoryDeviceName) (Apple)"
                 measured.append(String(localized: "Connected device: \(label)", bundle: _coreLocalizedBundle))
-            } else if chargingSource == nil {
+            } else if chargerOnPort == nil {
                 // No charging source: the connected thing is a
                 // peripheral, dock, drive, etc.
                 measured.append(String(localized: "Connected device: \(vendor)", bundle: _coreLocalizedBundle))
@@ -485,7 +518,7 @@ extension PortSummary {
         // something is connected (active transport, charger, SOP partner,
         // or USB device), not just when transports are active. Without
         // this, the .unknown state (empty active) never shows the bullet.
-        let hasPartner = chargingSource != nil
+        let hasPartner = chargerOnPort != nil
             || identities.contains(where: { $0.endpoint == .sop })
             || !devices.isEmpty
         let hasPayload = !active.isEmpty || hasPartner
@@ -861,6 +894,25 @@ extension PortSummary {
                 // The contract the port controller actually settled on.
                 measured.append(String(localized: "Currently negotiated: \(volts) @ \(amps) (\(watts))", bundle: _coreLocalizedBundle))
             }
+        } else if let heldOffSource {
+            // The charger is attached but not in use (issue 672). Name it the
+            // same way the live-source branch above does, and show what it
+            // offers, labelled so it never reads as power being drawn. No
+            // "Currently negotiated" line: the contract exists, but nothing
+            // flows over it.
+            if let manufacturer = adapter?.manufacturer, !manufacturer.isEmpty {
+                if let name = adapter?.name, !name.isEmpty {
+                    chargerLines.append(String(localized: "Charger: \(manufacturer) \(name)", bundle: _coreLocalizedBundle))
+                } else {
+                    chargerLines.append(String(localized: "Charger: \(manufacturer)", bundle: _coreLocalizedBundle))
+                }
+            } else if let accessoryChargerName {
+                chargerLines.append(String(localized: "Charger: \(accessoryChargerName)", bundle: _coreLocalizedBundle))
+            }
+            let offerW = Int((Double(heldOffSource.maxPowerMW) / 1000).rounded())
+            if offerW > 0 {
+                chargerLines.append(String(localized: "Charger offering up to \(offerW)W, not in use", bundle: _coreLocalizedBundle))
+            }
         } else if !systemPowerUnavailable,
                   case .systemAdapterFallback(let w) = chargerWattageSource, w > 0 {
             // No live USB-PD source on this port (e.g. the battery is full so
@@ -1113,6 +1165,23 @@ extension PortSummary {
             self.status = .charging
             self.headline = String(localized: "Plugged in", bundle: _coreLocalizedBundle)
             self.subtitle = ""
+        } else if heldOffSource != nil {
+            // Issue 672: a charger is attached and powered but macOS is running
+            // the Mac on battery. Both branches below would be wrong here: the
+            // e-marker one says no charger is detected, and the on-battery one
+            // asks the user to connect a charger that is already connected.
+            //
+            // Hedged on purpose. The corpus cases all carry SMC CH0R 0x08, and
+            // charge-limit apps are inferred (not confirmed by any primary
+            // source) to cause that, so the app is named as one possible
+            // cause, never THE cause. Status stays .unknown: not charging, and worth a look.
+            self.status = .unknown
+            // Its own key, not the notification's "Charger connected": the
+            // notification announces an event ("was connected"), and several
+            // languages word that differently from a state.
+            self.headline = String(localized: "portCard.headline.chargerConnected",
+                                   defaultValue: "Charger connected", bundle: _coreLocalizedBundle)
+            self.subtitle = String(localized: "This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this.", bundle: _coreLocalizedBundle)
         } else if emarkerRead {
             // The cable's e-marker was read in full, so the bullets above
             // already list its maker, speed and power rating. The catch-all
@@ -1155,6 +1224,10 @@ extension PortSummary {
             // Before it, an on-battery port with a stale FedDetails entry
             // claimed "Plugged in" instead, so the wrong advice was hidden
             // behind a worse bug.
+            //
+            // A charger that is attached and powered but held off by macOS
+            // takes the `heldOffSource` branch above instead (issue 672). A
+            // retained contract with no voltage behind it still lands here.
             self.status = .unknown
             self.headline = String(localized: "Connected", bundle: _coreLocalizedBundle)
             self.subtitle = String(localized: "Connect a charger to identify the cable.", bundle: _coreLocalizedBundle)

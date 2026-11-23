@@ -14,6 +14,7 @@ public enum TextFormatter {
         batteryFullyCharged: Bool? = nil,
         batteryIsCharging: Bool? = nil,
         batteryChargeState: BatteryChargeState? = nil,
+        chargerHeldOffSignal: Bool? = nil,
         federatedIdentities: [FederatedIdentity] = [],
         usb3Transports: [USB3Transport] = [],
         trmTransports: [TRMTransport] = [],
@@ -52,7 +53,8 @@ public enum TextFormatter {
             displayPorts: displayPorts,
             batteryFullyCharged: batteryFullyCharged,
             batteryIsCharging: batteryIsCharging,
-            batteryChargeState: batteryChargeState
+            batteryChargeState: batteryChargeState,
+            chargerHeldOffSignal: chargerHeldOffSignal
         ))
         // Devices behind a Thunderbolt dock or display match no physical port
         // (issue #274). Two paths, not one:
@@ -97,6 +99,7 @@ public enum TextFormatter {
                 batteryFullyCharged: context.batteryFullyCharged,
                 batteryIsCharging: context.batteryIsCharging,
                 batteryChargeState: context.batteryChargeState,
+                chargerHeldOffSignal: context.chargerHeldOffSignal,
                 usbDevices: portContext.matchedDevices,
                 structuralTunnelledDevices: portContext.structurallyScopedTunnelledDevices,
                 displayPorts: portContext.portDisplayPorts,
@@ -256,6 +259,7 @@ public enum TextFormatter {
         batteryFullyCharged: Bool? = nil,
         batteryIsCharging: Bool? = nil,
         batteryChargeState: BatteryChargeState? = nil,
+        chargerHeldOffSignal: Bool? = nil,
         usbDevices: [USBDevice] = [],
         // Tunnelled devices structurally scoped to THIS port (the
         // follow-up): merged into the SAME "Connected devices" tree as
@@ -283,7 +287,9 @@ public enum TextFormatter {
             batteryFullyCharged: batteryFullyCharged,
             batteryIsCharging: batteryIsCharging,
             batteryChargeState: batteryChargeState,
-            adapter: adapter
+            adapter: adapter,
+            chargerHeldOffSignal: chargerHeldOffSignal,
+            anotherPortActivelyCharging: anotherPortActivelyCharging
         )
         let label = terminalField(port.portDescription ?? port.serviceName)
         let typeSuffix = port.portTypeDescription.map { " (\(terminalField($0)))" } ?? ""

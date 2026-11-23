@@ -635,6 +635,10 @@
 "Answered, but reported no capability data." = "Hat geantwortet, aber keine Fähigkeitsdaten gemeldet.";
 "Certification ID" = "Zertifizierungs-ID";
 "Connect a charger to identify the cable." = "Schließen Sie ein Netzteil an, um das Kabel zu identifizieren.";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "Ladegerät angeschlossen";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "Dieser Mac läuft mit Batterie und bezieht keinen Strom vom Ladegerät. Eine App zur Ladebegrenzung kann das verursachen.";
+"Charger offering up to %lldW, not in use" = "Ladegerät bietet bis zu %lld W, nicht in Verwendung";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "Kein PD-Vertrag an diesem Anschluss. Eingehende Leistung wird unten unter „System-Stromeingang“ angezeigt.";

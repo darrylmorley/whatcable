@@ -441,6 +441,7 @@ struct ContentView: View {
                 let batteryFull = batteryResult.battery?.fullyCharged
                 let batteryCharging = batteryResult.battery?.isCharging
                 let batteryChargeState = powerWatcher.batteryChargeState
+                let chargerHeldOffSignal = powerWatcher.chargerHeldOffSignal
                 // Port keys with a live negotiated contract, so a connected-
                 // but-idle second charger can tell another port is the active
                 // source rather than being stuck mid-negotiation (#264).
@@ -448,9 +449,8 @@ struct ContentView: View {
                 // `anotherPortActivelyCharging`, and ChargingDiagnostic applies
                 // the system-power gate before acting on it, so a stale PDO
                 // here can't surface a charging claim.
-                let chargingPortKeys = Set(portWatcher.ports.compactMap { port -> String? in
-                    PowerSource.hasLiveChargingContract(in: powerWatcher.sources(for: port)) ? port.portKey : nil
-                })
+                let chargingPortKeys = PowerSource.portKeysWithLiveContract(
+                    ports: portWatcher.ports, sources: powerWatcher.sources)
                 ScrollView {
                     VStack(spacing: 12) {
                         ForEach(visiblePorts) { port in
@@ -489,7 +489,9 @@ struct ContentView: View {
                                 batteryIsCharging: batteryCharging,
                                 batteryChargeState: batteryChargeState,
                                 adapter: adapter,
-                                anotherPortActivelyCharging: port.portKey.map { key in chargingPortKeys.contains { $0 != key } } ?? false,
+                                chargerHeldOffSignal: chargerHeldOffSignal,
+                                anotherPortActivelyCharging: PowerSource.anotherPortHasLiveContract(
+                                    than: port, liveKeys: chargingPortKeys),
                                 connectionDiagnostic: faultTracker.diagnostic(for: port.portKey),
                                 federatedIdentities: federatedIdentities,
                                 connectionAttachInstant: portWatcher.connectionAttachInstant(for: port.id),
@@ -1121,6 +1123,9 @@ struct PortCard: View {
     /// Threaded through so the "Charger: <Manufacturer> <Name>" bullet
     /// can fire on the active charging port.
     let adapter: AdapterInfo?
+    /// SMC DC-in voltage says a charger is supplying the Mac, so a charger
+    /// held off on battery reads as attached, not missing (public issue 672).
+    var chargerHeldOffSignal: Bool? = nil
     /// True when a different port holds the live charging contract, so a
     /// connected-but-idle charger here reads as on standby rather than
     /// stuck mid-negotiation. See issue #264.
@@ -1181,6 +1186,8 @@ struct PortCard: View {
             batteryIsCharging: batteryIsCharging,
             batteryChargeState: batteryChargeState,
             adapter: adapter,
+            chargerHeldOffSignal: chargerHeldOffSignal,
+            anotherPortActivelyCharging: anotherPortActivelyCharging,
             connectionAge: connectionAge
         )
     }

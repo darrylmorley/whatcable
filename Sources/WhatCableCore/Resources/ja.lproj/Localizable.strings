@@ -636,6 +636,10 @@
 "Answered, but reported no capability data." = "応答しましたが、能力データは報告されませんでした。";
 "Certification ID" = "認証 ID";
 "Connect a charger to identify the cable." = "ケーブルを識別するには充電器を接続してください。";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "充電器が接続されています";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "このMacはバッテリーで動作しており、充電器から電力を取り込んでいません。充電を制限するアプリが原因の場合があります。";
+"Charger offering up to %lldW, not in use" = "充電器は最大%lld Wを供給可能、未使用";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "このポートには PD 契約がありません。入力される電力は下の「システム電源入力」に表示されます。";

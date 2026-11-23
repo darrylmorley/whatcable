@@ -635,6 +635,10 @@
 "Answered, but reported no capability data." = "Պատասխանեց, բայց հնարավորությունների տվյալներ չհաղորդեց։";
 "Certification ID" = "Հավաստագրման ID";
 "Connect a charger to identify the cable." = "Միացրեք լիցքավորիչ՝ մալուխը որոշելու համար։";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "Լիցքավորիչը միացված է";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "Այս Mac-ն աշխատում է մարտկոցով և հոսանք չի վերցնում լիցքավորիչից։ Լիցքավորումը սահմանափակող հավելվածը կարող է դրա պատճառը լինել։";
+"Charger offering up to %lldW, not in use" = "Լիցքավորիչն առաջարկում է մինչև %lldW, չի օգտագործվում";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "Այս պորտում PD պայմանագիր չկա։ Մուտքային հզորությունը ցուցադրվում է ստորև՝ «Համակարգի սնուցման մուտք» բաժնում։";

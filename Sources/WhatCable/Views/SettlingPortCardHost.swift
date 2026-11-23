@@ -48,6 +48,8 @@ struct SettlingPortCardHost: View {
     let batteryIsCharging: Bool?
     let batteryChargeState: BatteryChargeState?
     let adapter: AdapterInfo?
+    /// SMC DC-in voltage says a charger is supplying the Mac (public issue 672).
+    let chargerHeldOffSignal: Bool?
     var anotherPortActivelyCharging: Bool = false
     var connectionDiagnostic: ConnectionDiagnostic? = nil
     var federatedIdentities: [FederatedIdentity] = []
@@ -125,6 +127,7 @@ struct SettlingPortCardHost: View {
         batteryIsCharging: Bool?,
         batteryChargeState: BatteryChargeState? = nil,
         adapter: AdapterInfo?,
+        chargerHeldOffSignal: Bool? = nil,
         anotherPortActivelyCharging: Bool = false,
         connectionDiagnostic: ConnectionDiagnostic? = nil,
         federatedIdentities: [FederatedIdentity] = [],
@@ -152,6 +155,7 @@ struct SettlingPortCardHost: View {
         self.batteryIsCharging = batteryIsCharging
         self.batteryChargeState = batteryChargeState
         self.adapter = adapter
+        self.chargerHeldOffSignal = chargerHeldOffSignal
         self.anotherPortActivelyCharging = anotherPortActivelyCharging
         self.connectionDiagnostic = connectionDiagnostic
         self.federatedIdentities = federatedIdentities
@@ -290,6 +294,7 @@ struct SettlingPortCardHost: View {
                     batteryIsCharging: batteryIsCharging,
                     batteryChargeState: batteryChargeState,
                     adapter: adapter,
+                    chargerHeldOffSignal: chargerHeldOffSignal,
                     anotherPortActivelyCharging: anotherPortActivelyCharging,
                     connectionDiagnostic: connectionDiagnostic,
                     federatedIdentities: federatedIdentities,

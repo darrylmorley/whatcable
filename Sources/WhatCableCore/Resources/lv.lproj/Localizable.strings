@@ -634,6 +634,10 @@
 "Answered, but reported no capability data." = "Atbildēja, bet nepaziņoja datus par iespējām.";
 "Certification ID" = "Sertifikācijas ID";
 "Connect a charger to identify the cable." = "Pievienojiet lādētāju, lai identificētu kabeli.";
+/* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
+"portCard.headline.chargerConnected" = "Lādētājs ir pievienots";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "Šis Mac darbojas ar akumulatoru un neņem strāvu no lādētāja. To var izraisīt uzlādes ierobežošanas lietotne.";
+"Charger offering up to %lldW, not in use" = "Lādētājs piedāvā līdz %lld W, netiek izmantots";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "Šim portam nav PD līguma. Ienākošā jauda redzama zemāk sadaļā „Sistēmas jaudas ievade“.";

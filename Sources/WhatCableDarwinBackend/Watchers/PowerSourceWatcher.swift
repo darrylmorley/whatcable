@@ -88,6 +88,22 @@ public final class PowerSourceWatcher: ObservableObject {
     /// "use the battery record": no SMC keys, a desktop, or nothing published
     /// yet. Published, so the open popover redraws when it changes.
     @Published public private(set) var batteryChargeState: BatteryChargeState?
+    /// The SMC says a charger is supplying the Mac while it reads as on
+    /// battery, and that has held for `ChargerHeldOffHold.holdSeconds`
+    /// (public issue 672). The hold keeps the held-off card from flashing
+    /// around a plug or an unplug; until it has elapsed this reads false.
+    /// Consumers use it only for the held-off state, which also gates on
+    /// on-battery and on the port's own contract. Published as a Bool, not the
+    /// readings, so a rail that wobbles by millivolts does not redraw the
+    /// popover. nil: unknown (desktop, SMC unreadable, nothing read yet).
+    @Published public private(set) var chargerHeldOffSignal: Bool?
+    /// Monotonic seconds at the first read of the current unbroken run of
+    /// held-off candidates; nil when the last read was anything else.
+    private var heldOffCandidateSince: TimeInterval?
+    /// The last read's held-off candidate before the hold. For a one-shot
+    /// process (the widget's own read), which has nothing to flash and so uses
+    /// the raw value.
+    public private(set) var lastHeldOffCandidate: Bool?
     /// Monotonic seconds at the first read of the current unbroken run of
     /// running-on-battery reads; nil when the last read was anything else.
     private var runningOnBatterySince: TimeInterval?
@@ -190,6 +206,9 @@ public final class PowerSourceWatcher: ObservableObject {
         sources.removeAll()
         runningOnBatterySince = nil
         if batteryChargeState != nil { batteryChargeState = nil }
+        heldOffCandidateSince = nil
+        lastHeldOffCandidate = nil
+        if chargerHeldOffSignal != nil { chargerHeldOffSignal = nil }
     }
 
     // MARK: - Charger-in watts notification
@@ -244,11 +263,19 @@ public final class PowerSourceWatcher: ObservableObject {
         /// The SMC chain's undebounced decision for this read; nil when it could
         /// not decide. Applied through `applyChargeState(_:)`, never `apply(_:)`.
         public let chargeState: BatteryChargeState?
+        /// This read's held-off precondition, before the hold
+        /// (`ChargerHeldOffHold.candidate`); nil when the SMC supply reading is
+        /// unavailable. Applied through `applyChargerSupply(_:)`, never
+        /// `apply(_:)`, for the same reason as `chargeState`: the charger-watts
+        /// path re-applies a reading built without it.
+        public let chargerHeldOffCandidate: Bool?
 
-        public init(sources: [PowerSource], charger: ChargerWatts?, chargeState: BatteryChargeState? = nil) {
+        public init(sources: [PowerSource], charger: ChargerWatts?, chargeState: BatteryChargeState? = nil,
+                    chargerHeldOffCandidate: Bool? = nil) {
             self.sources = sources
             self.charger = charger
             self.chargeState = chargeState
+            self.chargerHeldOffCandidate = chargerHeldOffCandidate
         }
     }
 
@@ -265,6 +292,16 @@ public final class PowerSourceWatcher: ObservableObject {
     func refresh(using reading: Reading) {
         apply(reading)
         applyChargeState(reading.chargeState)
+        applyChargerSupply(reading.chargerHeldOffCandidate)
+    }
+
+    /// Feed one read's held-off candidate through `ChargerHeldOffHold`. Call
+    /// exactly once per hardware read.
+    public func applyChargerSupply(_ candidate: Bool?) {
+        lastHeldOffCandidate = candidate
+        let result = ChargerHeldOffHold.step(candidate: candidate, now: clock(), since: heldOffCandidateSince)
+        heldOffCandidateSince = result.since
+        if result.published != chargerHeldOffSignal { chargerHeldOffSignal = result.published }
     }
 
     /// Feed one read's charge state through the debounce. Call exactly once per
@@ -359,11 +396,37 @@ public final class PowerSourceWatcher: ObservableObject {
                 rebuilt.append(s)
             }
         }
+        let chargeState = readChargeState(smcReader: smcReader)
         return Reading(
             sources: rebuilt,
             charger: readCharger ? readChargerWatts(smcReader: smcReader) : nil,
-            chargeState: readChargeState(smcReader: smcReader)
+            chargeState: chargeState,
+            chargerHeldOffCandidate: readChargerHeldOffCandidate(smcReader: smcReader, chargeState: chargeState)
         )
+    }
+
+    /// This read's held-off precondition (public issue 672): the SMC reports a
+    /// charger supplying the Mac AND the Mac reads as on battery, by the same
+    /// rule the port card uses (`SystemPowerState.onBattery` on the battery
+    /// record resolved with the SMC charge state). Pass the charge state this
+    /// read already took, so the SMC chain isn't read twice.
+    ///
+    /// Cost: two SMC keys every read. The battery record and macOS's adapter
+    /// details are read only when the SMC also leaves "on battery" possible
+    /// (`ChargerHeldOffHold.candidate`): never on a Mac that is charging; on a
+    /// Mac at a charge limit or on hold (SMC on hold / limit reached) only the
+    /// adapter details, one call; the battery record only when the SMC chain
+    /// can't decide or says full.
+    nonisolated public static func readChargerHeldOffCandidate(
+        smcReader: SMCPowerReader, chargeState: BatteryChargeState?
+    ) -> Bool? {
+        let signals = smcReader.readChargerSupplySignals()
+        return ChargerHeldOffHold.candidate(
+            chargerSupplyPresent: SystemPowerState.chargerSupplyPresent(
+                dcInputVolts: signals.dcInputVolts, acW: signals.acW),
+            chargeState: chargeState,
+            batteryIsCharging: { AppleSmartBatteryReader.read().battery?.isCharging },
+            adapterPresent: { SystemPower.currentAdapter() != nil })
     }
 
     /// Whether the battery dictionary says the Mac is externally powered, for

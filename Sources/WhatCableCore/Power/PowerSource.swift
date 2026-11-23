@@ -295,6 +295,35 @@ extension PowerSource {
               let winning = source.winning else { return false }
         return winning.maxPowerMW > 0
     }
+
+    /// Port keys of CONNECTED ports whose canonically matched sources hold a
+    /// live contract (`hasLiveChargingContract`), MagSafe included. The one
+    /// definition of the set behind `anotherPortActivelyCharging` (#264),
+    /// which the held-off charger state (public issue 672) also needs: shared
+    /// so the CLI, the widget, the app and the Negotiation window can't each
+    /// compute a different one.
+    ///
+    /// A disconnected port is skipped: a controller can keep a retained
+    /// contract on a port with nothing in it (corpus `m5_macos26.5.2_r`,
+    /// Port-USB-C@4), and counting it would block a genuine held-off charger
+    /// on another port. Replayed across the corpus, the filter changes no
+    /// `ChargingDiagnostic` verdict.
+    public static func portKeysWithLiveContract(
+        ports: [AppleHPMInterface], sources: [PowerSource]
+    ) -> Set<String> {
+        Set(ports.compactMap { port -> String? in
+            guard port.connectionActive == true else { return nil }
+            let portSources = sources.filter { $0.canonicallyMatches(port: port) }
+            return hasLiveChargingContract(in: portSources) ? port.portKey : nil
+        })
+    }
+
+    /// True when a port OTHER than `port` holds a live contract.
+    public static func anotherPortHasLiveContract(
+        than port: AppleHPMInterface, liveKeys: Set<String>
+    ) -> Bool {
+        port.portKey.map { key in liveKeys.contains { $0 != key } } ?? false
+    }
 }
 
 extension AppleHPMInterface {

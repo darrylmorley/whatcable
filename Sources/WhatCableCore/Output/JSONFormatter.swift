@@ -12,6 +12,7 @@ public enum JSONFormatter {
         batteryFullyCharged: Bool? = nil,
         batteryIsCharging: Bool? = nil,
         batteryChargeState: BatteryChargeState? = nil,
+        chargerHeldOffSignal: Bool? = nil,
         federatedIdentities: [FederatedIdentity] = [],
         usb3Transports: [USB3Transport] = [],
         trmTransports: [TRMTransport] = [],
@@ -42,7 +43,8 @@ public enum JSONFormatter {
             displayPorts: displayPorts,
             batteryFullyCharged: batteryFullyCharged,
             batteryIsCharging: batteryIsCharging,
-            batteryChargeState: batteryChargeState
+            batteryChargeState: batteryChargeState,
+            chargerHeldOffSignal: chargerHeldOffSignal
         ))
         // Map each switch's hardware UID to its position in the encoded
         // array. The JSON exposes only these per-snapshot indices; the raw
@@ -96,6 +98,7 @@ public enum JSONFormatter {
                     batteryFullyCharged: context.batteryFullyCharged,
                     batteryIsCharging: context.batteryIsCharging,
                     batteryChargeState: context.batteryChargeState,
+                    chargerHeldOffSignal: context.chargerHeldOffSignal,
                     usbDevices: portContext.matchedDevices,
                     structuralTunnelledDevices: portContext.structurallyScopedTunnelledDevices,
                     displayPorts: portContext.portDisplayPorts,
@@ -300,6 +303,7 @@ private struct PortDTO: Codable {
         batteryFullyCharged: Bool? = nil,
         batteryIsCharging: Bool? = nil,
         batteryChargeState: BatteryChargeState? = nil,
+        chargerHeldOffSignal: Bool? = nil,
         usbDevices: [USBDevice] = [],
         // Tunnelled devices structurally scoped to this port by apciecN root
         // name. Joined into the per-port device tree below; kept OUT of the
@@ -336,7 +340,9 @@ private struct PortDTO: Codable {
             batteryFullyCharged: batteryFullyCharged,
             batteryIsCharging: batteryIsCharging,
             batteryChargeState: batteryChargeState,
-            adapter: adapter
+            adapter: adapter,
+            chargerHeldOffSignal: chargerHeldOffSignal,
+            anotherPortActivelyCharging: anotherPortActivelyCharging
         )
         self.status = String(describing: summary.status)
         self.headline = summary.headline
