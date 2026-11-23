@@ -316,6 +316,12 @@
 "Open WhatCable to start monitoring." = "Atveriet WhatCable, lai sāktu uzraudzību.";
 "See what your USB-C cables can do at a glance." = "Īsumā redziet, ko spēj jūsu USB-C kabeļi.";
 
+/* Widget configuration sheet (App Intents): the intent's description and
+   its two parameters. macOS shows these in the Mac's system language. */
+"Choose which ports to show." = "Izvēlieties, kurus portus rādīt.";
+"Pin a port" = "Piespraust portu";
+"Ports to show" = "Rādāmie porti";
+
 /* Negotiation diagnostics + Pro UX (PR #55) */
 "The cable's e-marker and the Thunderbolt controller disagree on its speed. The controller measured a higher, confirmed rate, so that figure is used." = "Kabeļa e-marker un Thunderbolt kontrolieris nesakrīt par ātrumu. Kontrolieris izmērīja augstāku, apstiprinātu ātrumu, tāpēc tiek izmantots šis lielums.";
 "Running at %@" = "Darbojas ar %@";
@@ -518,6 +524,12 @@
 "Underperformed %d times" = "%d reizes zems sniegums";
 "Occasional caution" = "Reti brīdinājumi";
 "Performing" = "Darbojas";
+
+/* Saved Cables: the caption under each cable (fingerprint summary, then a
+   relative date the system formats, e.g. "2 days ago") and the label on
+   the chart's rated-speed line. */
+"%@  ·  Last seen %@" = "%1$@  ·  Pēdējoreiz redzēts %2$@";
+"Rated %lld Gbps" = "Novērtēts %lld Gbps";
 
 /* Cable history: full-blob identity */
 "Identified by its e-marker (VID 0x%04X, PID 0x%04X)" = "Identificēts pēc e-marker (VID 0x%04X, PID 0x%04X)";

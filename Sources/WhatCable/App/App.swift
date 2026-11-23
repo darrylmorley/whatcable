@@ -24,6 +24,7 @@ struct WhatCableApp: App {
             applyLanguage: { code in
                 AppSettings.applyLocale(code)
                 AppSettings.syncAppleLanguages(code, userChanged: false, in: .standard)
+                AppSettings.shareLanguageWithWidget(code)
             },
             bootstrap: { bootstrapPlugins(registry: .shared) }
         )

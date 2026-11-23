@@ -1,5 +1,6 @@
 import Foundation
 import ServiceManagement
+import WidgetKit
 import os.log
 import WhatCableAppKit
 import WhatCableCore
@@ -190,6 +191,14 @@ final class AppSettings: ObservableObject {
         setCoreLocale(identifier)
     }
 
+    /// Hands the choice to the widget (a separate process), which applies it
+    /// at the start of each refresh so its strings match the app's. Kept out
+    /// of `applyLocale` so tests that switch the catalogue don't write to the
+    /// real App Group container.
+    nonisolated static func shareLanguageWithWidget(_ identifier: String) {
+        WidgetLanguage.write(identifier, to: WidgetLanguage.sharedFileURL)
+    }
+
     /// What to do with the app's own `AppleLanguages` entry. That entry is
     /// what Apple's frameworks read for their strings (Services, Hide, Quit,
     /// the Edit and Window menus, window titles), and they read it once per
@@ -218,8 +227,8 @@ final class AppSettings: ObservableObject {
 
     nonisolated static func syncAppleLanguages(_ preferred: String, userChanged: Bool, in defaults: UserDefaults) {
         switch appleLanguagesUpdate(preferred: preferred, userChanged: userChanged) {
-        case .set(let languages): defaults.set(languages, forKey: "AppleLanguages")
-        case .remove: defaults.removeObject(forKey: "AppleLanguages")
+        case .set(let languages): defaults.set(languages, forKey: appleLanguagesKey)
+        case .remove: defaults.removeObject(forKey: appleLanguagesKey)
         case .leave: break
         }
     }
@@ -235,6 +244,10 @@ final class AppSettings: ObservableObject {
             defaults.set(preferredLanguage, forKey: Keys.preferredLanguage)
             Self.applyLocale(preferredLanguage)
             Self.syncAppleLanguages(preferredLanguage, userChanged: true, in: defaults)
+            Self.shareLanguageWithWidget(preferredLanguage)
+            // Redraw the widget in the new language now rather than at its
+            // next scheduled refresh. A no-op when no widget is installed.
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 

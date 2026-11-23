@@ -32,10 +32,12 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
     typealias Intent = CableWidgetIntent
 
     func placeholder(in context: Context) -> CableWidgetEntry {
-        CableWidgetEntry.placeholder
+        WidgetLanguageSetup.apply("cable placeholder")
+        return CableWidgetEntry.placeholder
     }
 
     func snapshot(for configuration: CableWidgetIntent, in context: Context) async -> CableWidgetEntry {
+        WidgetLanguageSetup.apply("cable snapshot")
         if context.isPreview {
             return .placeholder
         }
@@ -43,6 +45,8 @@ struct CableTimelineProvider: AppIntentTimelineProvider {
     }
 
     func timeline(for configuration: CableWidgetIntent, in context: Context) async -> Timeline<CableWidgetEntry> {
+        // Strings follow the language picked in WhatCable, not the Mac's.
+        WidgetLanguageSetup.apply("cable timeline")
         let entry = await currentEntry(for: configuration)
         // Always request a refresh in ~60s. The OS may honour this later or
         // earlier depending on budget; this is a hint, not a guarantee.

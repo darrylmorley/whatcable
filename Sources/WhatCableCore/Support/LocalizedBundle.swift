@@ -26,6 +26,11 @@ public var _coreLocalizedBundle: Bundle {
 /// picker lists its `localizations`.
 public var coreLocalizationBundle: Bundle { .module }
 
+/// The preferences key holding a language list: the user's (global domain),
+/// or one app's own override. The app writes its own; the widget reads the
+/// user's. Named once here so every reader and writer agrees.
+public let appleLanguagesKey = "AppleLanguages"
+
 public func setCoreLocale(_ identifier: String) {
     let resolved: Bundle
     if identifier.isEmpty {

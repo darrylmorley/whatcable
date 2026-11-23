@@ -11,10 +11,12 @@ struct PowerTimelineProvider: TimelineProvider {
     typealias Entry = PowerMonitorEntry
 
     func placeholder(in context: Context) -> PowerMonitorEntry {
-        PowerMonitorEntry.placeholder
+        WidgetLanguageSetup.apply("power placeholder")
+        return PowerMonitorEntry.placeholder
     }
 
     func getSnapshot(in context: Context, completion: @escaping (PowerMonitorEntry) -> Void) {
+        WidgetLanguageSetup.apply("power snapshot")
         if context.isPreview {
             completion(.placeholder)
         } else {
@@ -23,6 +25,8 @@ struct PowerTimelineProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<PowerMonitorEntry>) -> Void) {
+        // Strings follow the language picked in WhatCable, not the Mac's.
+        WidgetLanguageSetup.apply("power timeline")
         let entry = currentEntry()
         // Always request a refresh in ~60s. The OS may honour this later or
         // earlier depending on budget. Power data only comes from the main app's

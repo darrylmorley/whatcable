@@ -31,6 +31,22 @@ targets:
     platform: macOS
     sources:
       - path: Sources/WhatCableWidget
+      # Core's translation catalogue, copied into the widget's own
+      # Resources/<lang>.lproj. References to Core's files, not a second
+      # catalogue. Two effects:
+      # - The App Intents strings (the configuration intent's title and
+      #   parameters, shown in the widget's configuration sheet) are
+      #   localised by macOS from the extension's own bundle, in the Mac's
+      #   system language. Without these files that bundle offers only
+      #   English.
+      # - The extension now declares every language the catalogue has. Its
+      #   own views read Core's strings through _coreLocalizedBundle, which
+      #   the timeline providers point at the language picked in WhatCable
+      #   (WidgetLanguage); "System default" follows the Mac's language.
+      - path: Sources/WhatCableCore/Resources
+        buildPhase: resources
+        includes:
+          - "*.lproj"
     dependencies:
       - package: WhatCable
         product: WhatCableCore

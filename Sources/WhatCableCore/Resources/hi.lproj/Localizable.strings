@@ -316,6 +316,12 @@
 "Open WhatCable to start monitoring." = "मॉनिटरिंग शुरू करने के लिए WhatCable खोलें।";
 "See what your USB-C cables can do at a glance." = "अपने USB-C केबल की क्षमता एक नज़र में देखें।";
 
+/* Widget configuration sheet (App Intents): the intent's description and
+   its two parameters. macOS shows these in the Mac's system language. */
+"Choose which ports to show." = "चुनें कि कौन-से पोर्ट दिखाए जाएँ।";
+"Pin a port" = "एक पोर्ट पिन करें";
+"Ports to show" = "दिखाए जाने वाले पोर्ट";
+
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
 "The cable's e-marker and the Thunderbolt controller disagree on its speed. The controller measured a higher, confirmed rate, so that figure is used." = "केबल का e-marker और Thunderbolt कंट्रोलर गति को लेकर सहमत नहीं हैं। कंट्रोलर ने एक अधिक, पुष्टि की हुई गति मापी है, इसलिए वही आंकड़ा उपयोग किया जाता है।";
 "Running at %@" = "%@ पर चल रहा है";
@@ -518,6 +524,12 @@
 "Underperformed %d times" = "%d बार कम प्रदर्शन किया";
 "Occasional caution" = "कभी-कभी सावधानी";
 "Performing" = "प्रदर्शन कर रहा है";
+
+/* Saved Cables: the caption under each cable (fingerprint summary, then a
+   relative date the system formats, e.g. "2 days ago") and the label on
+   the chart's rated-speed line. */
+"%@  ·  Last seen %@" = "%1$@  ·  अंतिम बार देखा गया %2$@";
+"Rated %lld Gbps" = "रेटिंग: %lld Gbps";
 
 /* Cable history: full-blob identity */
 "Identified by its e-marker (VID 0x%04X, PID 0x%04X)" = "इसके e-marker से पहचाना गया (VID 0x%04X, PID 0x%04X)";
