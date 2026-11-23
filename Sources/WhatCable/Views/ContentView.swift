@@ -1411,7 +1411,7 @@ struct PortCard: View {
                     .padding(.leading, 48)
             }
 
-            if let diag = ChargingDiagnostic(port: port, sources: powerSources, identities: identities, adapter: adapter, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged, batteryIsCharging: batteryIsCharging, batteryChargeState: batteryChargeState, anotherPortActivelyCharging: anotherPortActivelyCharging, federatedIdentities: federatedIdentities) {
+            if let diag = ChargingDiagnostic(port: port, sources: powerSources, identities: identities, adapter: adapter, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged, batteryIsCharging: batteryIsCharging, batteryChargeState: batteryChargeState, anotherPortActivelyCharging: anotherPortActivelyCharging, federatedIdentities: federatedIdentities, accessoryIdentity: accessoryIdentity) {
                 DiagnosticBanner(diagnostic: diag)
                     .padding(.leading, 48)
             }
@@ -1687,12 +1687,13 @@ struct CalloutBanner: View {
 struct DiagnosticBanner: View {
     let diagnostic: ChargingDiagnostic
 
-    // Only a cable limit is a warning. A fine/standby charger reads positive;
+    // Only a cable limit (read, or the hedged #672 hint) is a warning. A
+    // fine/standby charger reads positive;
     // the benign/transient states (Mac drawing less, negotiation pending,
     // adapter-fallback wattage) read as calm neutral notes, not alarms.
     private var role: CalloutRole {
         switch diagnostic.bottleneck {
-        case .cableLimit: return .warning
+        case .cableLimit, .possibleCableLimit: return .warning
         case .fine, .standbyCharger: return .positive
         case .macLimit, .chargerLimit, .noCharger: return .neutral
         }

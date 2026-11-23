@@ -906,3 +906,7 @@
 "%@ to %@ (Thunderbolt link to a device)" = "%2$@ तक %1$@";
 "Power adapter" = "पावर एडेप्टर";
 "error: %@" = "त्रुटि: %@";
+/* Charging banner (#672): hedged, the cable's rating was not read. Never say the cable IS limiting. */
+"Cable may be limiting charging speed" = "केबल शायद चार्जिंग गति सीमित कर रहा है";
+/* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
+"This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "यह %1$lld W चार्जर केवल %2$lld W तक दे रहा है। चार्जर ऐसा तब करते हैं जब वे पुष्टि नहीं कर पाते कि केबल 5A के लिए रेटेड है। 5A, 100 W या अधिक, के लिए रेटेड केबल आज़माएँ।";

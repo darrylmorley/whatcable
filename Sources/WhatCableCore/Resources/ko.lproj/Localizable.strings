@@ -906,3 +906,7 @@
 "%@ to %@ (Thunderbolt link to a device)" = "%2$@(으)로 %1$@";
 "Power adapter" = "전원 어댑터";
 "error: %@" = "오류: %@";
+/* Charging banner (#672): hedged, the cable's rating was not read. Never say the cable IS limiting. */
+"Cable may be limiting charging speed" = "케이블이 충전 속도를 제한하고 있을 수 있어요";
+/* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
+"This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "이 %1$lldW 충전기는 최대 %2$lldW만 제공하고 있어요. 충전기는 케이블이 5A를 지원하는지 확인할 수 없을 때 이렇게 해요. 5A, 100W 이상을 지원하는 케이블을 사용해 보세요.";

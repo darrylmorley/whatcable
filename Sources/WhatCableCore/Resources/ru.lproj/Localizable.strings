@@ -906,3 +906,7 @@
 "%@ to %@ (Thunderbolt link to a device)" = "%1$@ к %2$@";
 "Power adapter" = "Адаптер питания";
 "error: %@" = "ошибка: %@";
+/* Charging banner (#672): hedged, the cable's rating was not read. Never say the cable IS limiting. */
+"Cable may be limiting charging speed" = "Возможно, кабель ограничивает скорость зарядки";
+/* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
+"This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "Это зарядное устройство на %1$lld Вт предлагает только до %2$lld Вт. Так бывает, когда зарядное устройство не может подтвердить, что кабель рассчитан на 5 А. Попробуйте кабель, рассчитанный на 5 А, 100 Вт или больше.";

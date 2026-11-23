@@ -907,3 +907,7 @@
 "%@ to %@ (Thunderbolt link to a device)" = "%1$@ a %2$@";
 "Power adapter" = "Adaptador de corriente";
 "error: %@" = "Error: %@";
+/* Charging banner (#672): hedged, the cable's rating was not read. Never say the cable IS limiting. */
+"Cable may be limiting charging speed" = "Puede que el cable esté limitando la velocidad de carga";
+/* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
+"This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "Este cargador de %1$lld W solo ofrece hasta %2$lld W. Los cargadores hacen esto cuando no pueden confirmar que el cable admite 5 A. Prueba un cable que admita 5 A, 100 W o más.";

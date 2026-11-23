@@ -7,6 +7,12 @@ public struct ChargingDiagnostic {
         case noCharger
         case chargerLimit(chargerW: Int)
         case cableLimit(cableW: Int, chargerW: Int)
+        /// macOS has not read the cable's rating, but an Apple charger rated
+        /// well above 60 W is offering 3 A at most, which is what a charger
+        /// does when it has not found a 5 A cable. Hedged: see
+        /// `ChargerCableHint`. Issue #672.
+        /// `negotiatedW` is the live contract, for breakdown tables.
+        case possibleCableLimit(offeredW: Int, chargerRatedW: Int, negotiatedW: Int)
         case macLimit(negotiatedW: Int, chargerW: Int, cableW: Int?)
         case fine(negotiatedW: Int)
         /// A charger is connected but the Mac is drawing power from a
@@ -30,8 +36,9 @@ public struct ChargingDiagnostic {
         // and `chargerLimit` ("negotiation hasn't completed yet" / "wattage
         // is from the system reading") describe benign or transient states,
         // so they are informational, not warnings. `fine` / `standbyCharger`
-        // are also fine.
-        case .cableLimit: return true
+        // are also fine. `possibleCableLimit` is hedged in its wording, but it
+        // is still something the person can act on (try another cable).
+        case .cableLimit, .possibleCableLimit: return true
         default: return false
         }
     }
@@ -48,7 +55,10 @@ extension ChargingDiagnostic {
         batteryIsCharging: Bool? = nil,
         batteryChargeState: BatteryChargeState? = nil,
         anotherPortActivelyCharging: Bool = false,
-        federatedIdentities: [FederatedIdentity] = []
+        federatedIdentities: [FederatedIdentity] = [],
+        // Apple's own name for the accessory on this port (UVDM). Names the
+        // charger for the #672 cable hint; AdapterDetails is the fallback.
+        accessoryIdentity: AppleAccessoryIdentity? = nil
     ) {
         // A decided SMC charge state wins over the battery record, which lags a
         // plug-in by up to about a minute. nil (no SMC keys) and `.notPluggedIn`
@@ -138,17 +148,45 @@ extension ChargingDiagnostic {
             .first(where: { $0.endpoint == .sopPrime || $0.endpoint == .sopDoublePrime })?
             .cableVDO?.maxWatts
 
-        self.chargerW = chargerMaxW > 0 ? chargerMaxW : nil
         self.cableW = cableMaxW
+
+        // #672: an Apple charger rated well above 60 W offering 3 A at most,
+        // with no cable rating read. USB-C only: a MagSafe cable is not
+        // something to swap for a 5 A one. Only consulted when no rating was
+        // read, so a read rating always keeps today's check.
+        let cableHint: ChargerCableHint? = {
+            guard cableMaxW == nil,
+                  let identity = port.identity, identity.typeCode == PortIdentity.usbCTypeCode
+            else { return nil }
+            let name = ChargerCableHint.chargerName(
+                accessory: accessoryIdentity, adapter: adapter,
+                portHasLiveContract: (negotiatedW ?? 0) > 0,
+                anotherPortActivelyCharging: anotherPortActivelyCharging)
+            return ChargerCableHint.evaluate(chargerName: name, source: source)
+        }()
 
         // Order of suspicion:
         // 1. If cable rated below charger, cable is the bottleneck.
-        // 2. If negotiated below both, the Mac (or current state) limits.
-        // 3. Otherwise charger is the ceiling.
+        // 2. If no rating was read but an Apple charger is holding back to
+        //    3 A, the cable may be the bottleneck (hedged).
+        // 3. If negotiated below both, the Mac (or current state) limits.
+        // 4. Otherwise charger is the ceiling.
+        // With the #672 hint the charger's own ceiling is its rating, not the
+        // capped offer, so breakdown tables read "Charger 96 W" beside "This
+        // 96W charger". The offer travels in the bottleneck.
+        self.chargerW = cableHint.map(\.chargerRatedW) ?? (chargerMaxW > 0 ? chargerMaxW : nil)
         if let cableW = cableMaxW, cableW < chargerMaxW {
             self.bottleneck = .cableLimit(cableW: cableW, chargerW: chargerMaxW)
             self.summary = String(localized: "Cable is limiting charging speed", bundle: _coreLocalizedBundle)
             self.detail = String(localized: "Charger can deliver up to \(chargerMaxW)W, but this cable is only rated to carry \(cableW)W. Replace the cable to charge faster.", bundle: _coreLocalizedBundle)
+        } else if let hint = cableHint {
+            let rated = hint.chargerRatedW
+            let offered = hint.offeredW
+            self.bottleneck = .possibleCableLimit(offeredW: offered, chargerRatedW: rated, negotiatedW: negotiatedW ?? 0)
+            // Hedged on purpose: the charger's behaviour points at the cable,
+            // but nothing here read the cable's rating. Never say it IS 60 W.
+            self.summary = String(localized: "Cable may be limiting charging speed", bundle: _coreLocalizedBundle)
+            self.detail = String(localized: "This \(rated)W charger is only offering up to \(offered)W. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more.", bundle: _coreLocalizedBundle)
         } else if let n = negotiatedW, n < chargerMaxW - max(5, chargerMaxW / 10),
                   (cableMaxW.map { n < $0 - max(5, $0 / 10) } ?? true) {
             self.bottleneck = .macLimit(negotiatedW: n, chargerW: chargerMaxW, cableW: cableMaxW)

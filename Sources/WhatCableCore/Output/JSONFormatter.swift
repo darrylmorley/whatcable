@@ -397,7 +397,7 @@ private struct PortDTO: Codable {
 
         self.device = partnerIdentity.map { DeviceDTO(identity: $0) }
 
-        self.charging = ChargingDiagnostic(port: port, sources: sources, identities: identities, adapter: adapter, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged, batteryIsCharging: batteryIsCharging, batteryChargeState: batteryChargeState, anotherPortActivelyCharging: anotherPortActivelyCharging, federatedIdentities: federatedIdentities)
+        self.charging = ChargingDiagnostic(port: port, sources: sources, identities: identities, adapter: adapter, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged, batteryIsCharging: batteryIsCharging, batteryChargeState: batteryChargeState, anotherPortActivelyCharging: anotherPortActivelyCharging, federatedIdentities: federatedIdentities, accessoryIdentity: accessoryIdentity)
             .map { ChargingDTO(diagnostic: $0) }
 
         let dataLinkDiag = DataLinkDiagnostic(
@@ -945,8 +945,19 @@ private struct ChargingDTO: Codable {
     let detail: String
     let bottleneck: String
     let isWarning: Bool
+    /// `possibleCableLimit` only: the charger's own rating and the most it is
+    /// offering now. Omitted for every other bottleneck.
+    let chargerRatedW: Int?
+    let offeredW: Int?
 
     init(diagnostic: ChargingDiagnostic) {
+        if case .possibleCableLimit(let offered, let rated, _) = diagnostic.bottleneck {
+            self.chargerRatedW = rated
+            self.offeredW = offered
+        } else {
+            self.chargerRatedW = nil
+            self.offeredW = nil
+        }
         self.summary = diagnostic.summary
         self.detail = diagnostic.detail
         self.isWarning = diagnostic.isWarning
@@ -954,6 +965,7 @@ private struct ChargingDTO: Codable {
         case .noCharger: self.bottleneck = "noCharger"
         case .chargerLimit: self.bottleneck = "chargerLimit"
         case .cableLimit: self.bottleneck = "cableLimit"
+        case .possibleCableLimit: self.bottleneck = "possibleCableLimit"
         case .macLimit: self.bottleneck = "macLimit"
         case .fine: self.bottleneck = "fine"
         case .standbyCharger: self.bottleneck = "standbyCharger"

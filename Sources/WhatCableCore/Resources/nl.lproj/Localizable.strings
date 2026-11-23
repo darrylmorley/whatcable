@@ -906,3 +906,7 @@
 "%@ to %@ (Thunderbolt link to a device)" = "%1$@ naar %2$@";
 "Power adapter" = "Netadapter";
 "error: %@" = "fout: %@";
+/* Charging banner (#672): hedged, the cable's rating was not read. Never say the cable IS limiting. */
+"Cable may be limiting charging speed" = "Kabel beperkt mogelijk de oplaadsnelheid";
+/* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
+"This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "Deze %1$lldW-oplader biedt maar tot %2$lldW aan. Opladers doen dat als ze niet kunnen bevestigen dat de kabel geschikt is voor 5A. Probeer een kabel die geschikt is voor 5A, 100W of meer.";

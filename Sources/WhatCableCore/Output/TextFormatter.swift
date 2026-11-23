@@ -311,7 +311,7 @@ public enum TextFormatter {
             }
         }
 
-        if let diag = ChargingDiagnostic(port: port, sources: sources, identities: identities, adapter: adapter, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged, batteryIsCharging: batteryIsCharging, batteryChargeState: batteryChargeState, anotherPortActivelyCharging: anotherPortActivelyCharging, federatedIdentities: federatedIdentities) {
+        if let diag = ChargingDiagnostic(port: port, sources: sources, identities: identities, adapter: adapter, wattageSource: chargerWattageSource, batteryFullyCharged: batteryFullyCharged, batteryIsCharging: batteryIsCharging, batteryChargeState: batteryChargeState, anotherPortActivelyCharging: anotherPortActivelyCharging, federatedIdentities: federatedIdentities, accessoryIdentity: accessoryIdentity) {
             let diagColor = diag.isWarning ? ANSI.yellow : ANSI.green
             out += "\n" + ANSI.wrap(ANSI.bold, String(localized: "Charging: ", bundle: _coreLocalizedBundle)) + ANSI.wrap(diagColor, terminalField(diag.summary)) + "\n"
             out += "  " + ANSI.wrap(ANSI.dim, terminalField(diag.detail)) + "\n"
