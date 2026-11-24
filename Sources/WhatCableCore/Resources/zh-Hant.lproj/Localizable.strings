@@ -636,8 +636,8 @@
 "Connect a charger to identify the cable." = "請連接充電器來識別線材。";
 /* Port card: a charger is attached and powered but macOS runs the Mac on battery (issue #672). */
 "portCard.headline.chargerConnected" = "已接上充電器";
-"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "這台 Mac 目前由電池供電，沒有從充電器取電。限制充電的 App 可能會造成這種情況。";
-"Charger offering up to %lldW, not in use" = "充電器可提供最高 %lldW，未使用中";
+"This Mac is running on battery and isn't drawing power from the charger. A charge-limit app can cause this." = "這台 Mac 目前由電池供電，未從充電器取用電力。限制充電上限的應用程式可能會造成這種情況。";
+"Charger offering up to %lldW, not in use" = "充電器最高可提供 %lldW，Mac 目前未取用電力";
 
 /* Power Monitor: a charge path that never negotiates a contract (issue #592) */
 "No PD contract on this port. Incoming power shows in System Power Input below." = "此連接埠沒有 PD 協議。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
@@ -913,4 +913,4 @@
 /* Charging banner (#672): hedged, the cable's rating was not read. Never say the cable IS limiting. */
 "Cable may be limiting charging speed" = "線材可能限制了充電速度";
 /* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
-"This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "這個 %1$lldW 充電器最高只提供 %2$lldW。充電器無法確認線材支援 5A 時就會這樣。請換一條支援 5A、100W 或以上的線材試試。";
+"This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "這款額定功率為 %1$lldW 的充電器目前最高只提供 %2$lldW。當充電器無法確認線材的額定電流為 5A 時，就會限制供電功率。請嘗試改用額定電流為 5A、額定功率為 100W 以上的線材。";
