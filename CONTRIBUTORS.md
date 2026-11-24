@@ -11,6 +11,7 @@ Thanks to everyone who has contributed to WhatCable.
 - [@JimmFly](https://github.com/JimmFly) - localisation infrastructure, Simplified Chinese translation
 - [@IonBazan](https://github.com/IonBazan) - i18n migration to .lproj/.strings, Polish translation, obsolete vendor IDs
 - [@bovirus](https://github.com/bovirus) - Italian translation
+- [@aliafshany](https://github.com/aliafshany) - Persian translation
 - [@Vardan933](https://github.com/Vardan933) - Armenian translation
 - [@jimmyorz](https://github.com/jimmyorz) - Traditional Chinese translation
 - [@dohun0310](https://github.com/dohun0310) - Korean translation
@@ -27,3 +28,5 @@ Thanks to everyone who has contributed to WhatCable.
 - [@iFindProblems](https://github.com/iFindProblems) - Dock mode bug reports
 - [@NaiveTomcat](https://github.com/NaiveTomcat) - Power Monitor regression and MagSafe PD contract bug reports
 - [@pandoratactful](https://github.com/pandoratactful) - active Thunderbolt cable e-marker mismatch report
+- [@salt-lick](https://github.com/salt-lick) - cable report template fingerprint rendering
+- [@ferdnyc](https://github.com/ferdnyc) - README usbee details

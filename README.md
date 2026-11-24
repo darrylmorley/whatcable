@@ -26,9 +26,11 @@ Per port, in plain English:
 - **At-a-glance headline:** Thunderbolt / USB4, USB device, Display connected, Charging only, Slow USB / charge-only cable, Nothing connected
 - **Charging diagnostic:** when something's plugged in, a banner identifies the bottleneck:
   - *"Cable is limiting charging speed"* (cable rated below the charger)
+  - *"Cable may be limiting charging speed"* (an Apple charger is holding back to 3 A because it couldn't confirm the cable is rated for 5 A)
   - *"Charging at 30W (charger can do up to 96W)"* (Mac is asking for less, e.g. battery near full)
   - *"Charging well at 96W"* (everything matches)
   - *"Battery full, not charging"* (plugged in, battery full, so the Mac isn't drawing power)
+  - *"Charger connected"* (the Mac is running on battery and not drawing from the charger, which a charge-limit app can cause)
 - **Mid-session fault warnings:** if a cable develops trouble while it's plugged in (a power overcurrent, or the connection dropping and coming back), a banner appears on the port. It reads the port's own fault counters, so it catches faults that only show up once a cable is under load.
 - **Data-speed diagnostic:** a plain-English verdict on what's limiting the link, the Mac port, the cable, or the device. For example *"Cable is limiting data speed"*, *"Device runs at 10 Gbps, this is the fastest it supports, not a cable problem"*, or *"Running slower than expected"* when the link came up degraded. Shown inline, in the CLI, and in JSON.
 - **Cable e-marker info:** the cable's actual speed (USB 2.0, 5 / 10 / 20 / 40 / 80 Gbps), current rating (3 A / 5 A up to 60W / 100W / 240W), and the chip's vendor
@@ -68,7 +70,7 @@ WhatCable is free and open source. If you find it useful, you can support the pr
 - **Negotiation Diagnostics:** the full per-connection breakdown, what the Mac port, cable, and device each support vs what was negotiated, side by side with the weak link highlighted, plus an e-marker vs Thunderbolt-controller cross-check
 - **Display Diagnostics:** reads your monitor's live display mode straight from macOS and compares it against what the DisplayPort link is carrying, so a screen stuck below its top resolution or refresh has an explanation. Shows the true resolution even on 5K and 6K displays, confirms full quality when a screen reaches its top mode via compression (DSC), and names any HDMI or DisplayPort adapter in the chain
 - Port health counters and cable resistance estimation
-- **Terminal dashboard:** a live full-screen view of every port, power, and Thunderbolt for the SSH and tmux crowd. Three screens (Overview, Negotiation, Power), Tab to switch, with a plain cable-health verdict per port. Run `whatcable --dashboard`
+- **Terminal dashboard:** a live full-screen view of every port, power, and Thunderbolt for the SSH and tmux crowd. Three screens (Overview, Negotiation, Power), Tab to switch, with a plain cable-health verdict per port. Run `whatcable --dashboard`. It uses full colour when your terminal reports it (iTerm2, Ghostty) and 256 colours otherwise (Terminal.app); set `COLORTERM=truecolor` to force full colour
 - Pin diagrams and liquid detection status
 - Pro screens open inside the app, with an optional detach into their own window
 - Works even on Macs that don't expose live per-port metering

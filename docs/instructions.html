@@ -724,6 +724,7 @@
 <ul>
   <li><strong>Nothing connected</strong> - the port is empty.</li>
   <li><strong>Charging</strong> or <strong>Plugged in &middot; battery full</strong> - a charger or power source is connected.</li>
+  <li><strong>Charger connected</strong> - a charger is plugged in but your Mac is running on battery and not drawing from it. A charge-limit app can cause this.</li>
   <li><strong>Thunderbolt / USB4</strong> - a high-speed device, dock, or daisy-chain is connected.</li>
   <li><strong>Display connected</strong> or <strong>USB-C with video</strong> - a monitor is plugged in.</li>
   <li><strong>USB device</strong> - a regular USB accessory (drive, hub, keyboard, etc.) is connected.</li>
@@ -1039,6 +1040,9 @@
 <h3>TUI dashboard (CLI) <span class="pro-badge">Pro</span></h3>
 <p>
   A live full-screen terminal view of ports, power, and Thunderbolt, for the SSH and tmux crowd. Three screens: Overview, Negotiation, and Power. Tab cycles screens, arrow keys select ports, q quits. Run <code>whatcable --dashboard</code>.
+</p>
+<p>
+  The dashboard uses full colour when your terminal reports it (iTerm2, Ghostty) and 256 colours otherwise (Terminal.app). To force full colour, run <code>COLORTERM=truecolor whatcable --dashboard</code>.
 </p>
 
 <figure>
