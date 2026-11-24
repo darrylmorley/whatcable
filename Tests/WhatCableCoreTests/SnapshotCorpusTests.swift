@@ -120,8 +120,8 @@ struct SnapshotCorpusTests {
         // runs folder that exists but holds no runs is a broken link, and must
         // fail rather than pass on nothing.
         //
-        // Two shapes are not complete snapshots and are still correct
-        // (first met 2026-11-12):
+        // Three shapes are not complete snapshots and are still correct
+        // (the byte-cap stop below; the other two first met 2026-11-12):
         // - stopped with `identifiers_incomplete`: FORMAT.md lets any probe
         //   stop that way, header then footer, no records, `step` naming the
         //   lookup that failed. Every probe on an Intel Mac with Bluetooth
@@ -151,6 +151,18 @@ struct SnapshotCorpusTests {
                 #expect(file.records.isEmpty, "\(name): stopped for identifiers but holds records")
                 let step = file.footer?["step"] as? String ?? ""
                 #expect(step.count > 0, "\(name): stopped for identifiers with no step")
+                continue
+            }
+            // Stopped at the probe's byte cap (first met 2026-11-24, two runs
+            // from one Mac with a large registry): FORMAT.md allows it, at a
+            // record boundary, with `records` counting what was written. It is
+            // a partial snapshot, so it is checked but not counted complete.
+            if file.footer?["status"] as? String == "stopped",
+               file.footer?["reason"] as? String == "byte_cap" {
+                #expect(!file.records.isEmpty, "\(name): stopped at the byte cap with no records")
+                #expect(file.footer?["records"] as? Int == file.records.count,
+                        "\(name): byte-cap footer's record count does not match the file")
+                #expect(try RegistrySnapshot(file).entries.count > 0, "\(name): byte-capped with no entries")
                 continue
             }
             #expect(file.isComplete, "\(name): snapshot was cut off")

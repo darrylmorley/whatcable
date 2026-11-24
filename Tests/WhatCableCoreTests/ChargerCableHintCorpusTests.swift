@@ -29,7 +29,11 @@ import Testing
 ///
 /// The Python cross-check (a second parser that reads probe 19's decoded text,
 /// not its raw words) found the same 8 signature folders on 2026-11-21. Seven
-/// of them reach the diagnostic. The eighth, `m4_macos15.7.7`, shows the
+/// of them reach the diagnostic. A ninth, `m4pro_macos27.0.1_e` (96 W at
+/// 20 V x 3 A, SOP' node with no identity), came with the 2026-11-12 ingest,
+/// which the 2026-11-21 corpus did not yet hold; it reaches the diagnostic,
+/// re-derived by hand from probes 19, 32 and 01 on 2026-11-24, so eight do.
+/// The one that does not, `m4_macos15.7.7`, shows the
 /// signature in PortControllerInfo and AdapterDetails, but macOS 15.7.7
 /// published no USB-PD power-source node for that port (only Brick ID and
 /// TypeC, neither with a winning option), so `ChargingDiagnostic` sees no
@@ -50,9 +54,10 @@ struct ChargerCableHintCorpusTests {
         "m2pro_macos26.5.1": (67, 60),
         "m4pro_macos26.5.2_k": (70, 60),
         "m4pro_macos26.6.2_k": (70, 60),
+        "m4pro_macos27.0.1_e": (96, 60),
     ]
 
-    /// The eighth signature capture (96 W at 20 V x 3 A): no USB-PD node in
+    /// The signature capture that cannot fire (96 W at 20 V x 3 A): no USB-PD node in
     /// probe 17, so no contract for the diagnostic to judge. See the type doc.
     static let signatureWithoutUSBPDNode = "m4_macos15.7.7"
 
@@ -125,7 +130,7 @@ struct ChargerCableHintCorpusTests {
 
     // MARK: - Tests
 
-    @Test("Exactly the 7 reachable signature captures fire, with the expected wattages")
+    @Test("Exactly the 8 reachable signature captures fire, with the expected wattages")
     func signatureFoldersFire() {
         guard !Self.cases.isEmpty else {
             Issue.record("corpus not linked: run scripts/link-research.sh"); return
