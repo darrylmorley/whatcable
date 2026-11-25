@@ -231,6 +231,10 @@ private struct BulletGroupDTO: Codable {
 private struct PortDTO: Codable {
     let name: String
     let type: String?
+    /// macOS's own name for this port, present only when a per-model
+    /// correction renamed it (issue #627). Explains why `name` differs from
+    /// `rawProperties.PortDescription`. Omitted when nil.
+    let registryPortName: String?
     let className: String
     let connectionActive: Bool
     let pdCapable: Bool
@@ -321,6 +325,7 @@ private struct PortDTO: Codable {
     ) {
         self.name = port.portDescription ?? port.serviceName
         self.type = port.portTypeDescription
+        self.registryPortName = port.registryPortName
         self.className = port.className
         self.connectionActive = port.connectionActive ?? false
         self.pdCapable = port.transportsSupported.contains("CC")

@@ -28,18 +28,17 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
     // The exact IOKit class for a USB-C port node varies by chip
     // generation. M3-era machines expose `AppleHPMInterfaceType10/11/12`;
     // M1 and M2 expose `AppleTCControllerType10/11`; MacBook Neo
-    // (A-series) uses `AppleHPMInterfaceType18`. Apple-silicon desktop
-    // front USB-C ports (Mac mini, Studio) are plain USB behind an
-    // internal hub with no port-controller node, so they never appear
-    // here regardless of class (see issue #291). `IOPort` is the shared
-    // superclass of these port nodes, kept as a defensive catch-all, not
-    // a front-port mechanism. It is probably redundant on M3+ (the HPM
-    // classes above are `IOPort` subclasses, already matched by name), but
-    // it is left in deliberately: dropping it is a behaviour change that
-    // could hide a USB-C port on hardware we haven't tested, for no proven
-    // gain. Revisit only if it ever pulls in noise. The
-    // `PortTypeDescription` / `Port-` filter in `makePort` drops anything
-    // that isn't a real physical port.
+    // (A-series) uses `AppleHPMInterfaceType18`. `IOPort` is the shared
+    // superclass of these port nodes, and the catch-all is load-bearing:
+    // Apple-silicon desktop front USB-C ports (Mac mini, Studio) are plain
+    // USB behind an internal hub with no port-controller node, and macOS
+    // publishes each one as a plain `IOPort` node (e.g. `Port-USB-C@5` /
+    // `@6` on the Mac mini, Mac16,11). Matching `IOPort` is the only route by
+    // which those front ports become cards; removing it drops them. It also
+    // matches the M5 Max Studio's corrected front USB-C (issue #627, see
+    // `PortNumberingCorrection`). The `PortTypeDescription` / `Port-` filter
+    // in `AppleHPMInterface.from` drops anything that isn't a real physical
+    // USB-C or MagSafe port, so USB-A `IOPort` nodes never become cards.
     ///
     /// The named classes are shared with the other reader that walks them
     /// (`PowerService.hpmPortKeysWithRIDs`); the `IOPort` catch-all is
@@ -400,15 +399,66 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
             return props?.takeRetainedValue() as? [String: Any]
         }
 
-        return AppleHPMInterface.from(
-            entryID: entryID,
+        return portFrom(
             serviceName: serviceName,
             className: className,
             read: read,
             readAll: bulkPropertyFetch ? readAll : nil,
+            entryID: entryID,
             busIndex: Self.busIndex(for: service),
-            hpmControllerUUID: Self.hpmControllerUUID(for: service)
+            hpmControllerUUID: Self.hpmControllerUUID(for: service),
+            model: DarwinSystemInfo.macModel
         )
+    }
+
+    /// The pure half of `makePort`: applies the per-model port correction
+    /// (`PortNumberingCorrection`) and builds the port. Internal so corpus
+    /// replays run the same path production does.
+    ///
+    /// - The service name and the port-naming keys are corrected, so the USB-C
+    ///   gate in `AppleHPMInterface.from` sees the real connector.
+    /// - `rawProperties` stays macOS's own data on both paths. With
+    ///   `readAll` it is the bulk dump. Without it (`readAllPorts`, the
+    ///   `bulkPropertyFetch: false` path) it is built here from the
+    ///   UNCORRECTED `read` over `rawPropertyFallbackKeys`, present keys only,
+    ///   which is what `from` would have built itself.
+    /// - `registryPortName` records macOS's name only when it was corrected.
+    ///
+    /// `model` is required, with no default, so a missed production call
+    /// site is a compile error. Tests pass nil.
+    nonisolated static func portFrom(
+        serviceName: String,
+        className: String,
+        read: (String) -> Any?,
+        readAll: (() -> [String: Any]?)?,
+        entryID: UInt64,
+        busIndex: Int?,
+        hpmControllerUUID: String?,
+        model: String?
+    ) -> AppleHPMInterface? {
+        let rawReadAll: () -> [String: Any]?
+        if let readAll {
+            rawReadAll = readAll
+        } else {
+            var raw: [String: Any] = [:]
+            for key in AppleHPMInterface.rawPropertyFallbackKeys {
+                if let value = read(key) { raw[key] = value }
+            }
+            rawReadAll = { raw }
+        }
+        let correctedName = PortNumberingCorrection.corrected(portNodeName: serviceName, model: model)
+        return PortNumberingCorrection.correctingRead(read, model: model) { correctedRead in
+            AppleHPMInterface.from(
+                entryID: entryID,
+                serviceName: correctedName,
+                className: className,
+                read: correctedRead,
+                readAll: rawReadAll,
+                busIndex: busIndex,
+                hpmControllerUUID: hpmControllerUUID,
+                registryPortName: correctedName == serviceName ? nil : serviceName
+            )
+        }
     }
 
     /// Walks the IOKit parent chain looking for a controller-index node. M3-era

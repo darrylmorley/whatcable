@@ -914,3 +914,5 @@
 "Cable may be limiting charging speed" = "線材可能限制了充電速度";
 /* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
 "This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "這款額定功率為 %1$lldW 的充電器目前最高只提供 %2$lldW。當充電器無法確認線材的額定電流為 5A 時，就會限制供電功率。請嘗試改用額定電流為 5A、額定功率為 100W 以上的線材。";
+/* --raw note (issue #627): %@ = the port name macOS publishes, e.g. Port-USB-A@2. The card shows the corrected name. */
+"macOS names this port %@; corrected for this Mac model" = "macOS 將此埠命名為 %@；已針對此 Mac 機型更正";

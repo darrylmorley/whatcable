@@ -37,6 +37,16 @@ public enum SnapshotCorpus {
         guard FileManager.default.fileExists(atPath: url.path) else { return nil }
         return try FormatOneFile(contentsOf: url)
     }
+
+    /// The run's `hw.model` from `run.json`: `summary.model`, else the
+    /// registry snapshot probe's own `model`. Nil when neither is present.
+    public static func model(run: URL) -> String? {
+        guard let data = try? Data(contentsOf: run.appendingPathComponent("run.json")),
+              let meta = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        if let model = (meta["summary"] as? [String: Any])?["model"] as? String { return model }
+        let probes = meta["probes"] as? [String: Any]
+        return (probes?["50_registry_snapshot"] as? [String: Any])?["model"] as? String
+    }
 }
 
 /// One format 1 file: header, records, footer.

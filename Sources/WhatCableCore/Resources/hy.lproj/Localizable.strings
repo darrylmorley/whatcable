@@ -915,3 +915,5 @@
 "Cable may be limiting charging speed" = "Մալուխը կարող է սահմանափակել լիցքավորման արագությունը";
 /* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
 "This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "Այս %1$lldW լիցքավորիչն առաջարկում է միայն մինչև %2$lldW։ Լիցքավորիչներն այդպես են անում, երբ չեն կարողանում հաստատել, որ մալուխը նախատեսված է 5A-ի համար։ Փորձեք 5A-ի համար նախատեսված մալուխ, 100W կամ ավելի։";
+/* --raw note (issue #627): %@ = the port name macOS publishes, e.g. Port-USB-A@2. The card shows the corrected name. */
+"macOS names this port %@; corrected for this Mac model" = "macOS-ը այս պորտն անվանում է %@; ուղղված է Mac-ի այս մոդելի համար";

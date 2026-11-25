@@ -914,3 +914,5 @@
 "Cable may be limiting charging speed" = "Можливо, кабель обмежує швидкість заряджання";
 /* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
 "This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "Цей зарядний пристрій на %1$lldW пропонує лише до %2$lldW. Зарядні пристрої так роблять, коли не можуть підтвердити, що кабель розрахований на 5A. Спробуйте кабель, розрахований на 5A, 100W або більше.";
+/* --raw note (issue #627): %@ = the port name macOS publishes, e.g. Port-USB-A@2. The card shows the corrected name. */
+"macOS names this port %@; corrected for this Mac model" = "macOS називає цей порт %@; виправлено для цієї моделі Mac";

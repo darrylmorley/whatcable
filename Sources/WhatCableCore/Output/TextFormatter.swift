@@ -465,6 +465,11 @@ public enum TextFormatter {
             }
 
             out += "\n" + ANSI.wrap(ANSI.bold, String(localized: "Raw IOKit properties:", bundle: _coreLocalizedBundle)) + "\n"
+            if let registryName = port.registryPortName {
+                // The raw keys below are macOS's own; say why the card's name
+                // differs from them (issue #627).
+                out += "  " + ANSI.wrap(ANSI.dim, terminalField(String(localized: "macOS names this port \(registryName); corrected for this Mac model", bundle: _coreLocalizedBundle))) + "\n"
+            }
             for key in port.redactedRawProperties.keys.sorted() {
                 let value = port.redactedRawProperties[key] ?? ""
                 out += "  " + ANSI.wrap(ANSI.gray, terminalField(key)) + " = \(terminalField(value))\n"

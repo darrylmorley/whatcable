@@ -20,6 +20,12 @@ public enum DarwinSystemInfo {
         return String(cString: buf)
     }
 
+    /// `fetchMacModel()`, read once per process and cached. The model cannot
+    /// change while the process runs. The watchers pass it to the pure parse
+    /// functions so per-model port corrections (`PortNumberingCorrection`)
+    /// apply in the app, the CLI and the widget without any caller passing it.
+    public static let macModel: String = fetchMacModel()
+
     /// True when this process is running on genuinely Intel hardware, which
     /// WhatCable can't read cables on: Intel Macs don't publish the IOKit
     /// port-controller data every reading is built on. Confirmed against all 7

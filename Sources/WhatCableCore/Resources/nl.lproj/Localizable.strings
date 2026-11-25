@@ -914,3 +914,5 @@
 "Cable may be limiting charging speed" = "Kabel beperkt mogelijk de oplaadsnelheid";
 /* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
 "This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "Deze %1$lldW-oplader biedt maar tot %2$lldW aan. Opladers doen dat als ze niet kunnen bevestigen dat de kabel geschikt is voor 5A. Probeer een kabel die geschikt is voor 5A, 100W of meer.";
+/* --raw note (issue #627): %@ = the port name macOS publishes, e.g. Port-USB-A@2. The card shows the corrected name. */
+"macOS names this port %@; corrected for this Mac model" = "macOS noemt deze poort %@; gecorrigeerd voor dit Mac-model";

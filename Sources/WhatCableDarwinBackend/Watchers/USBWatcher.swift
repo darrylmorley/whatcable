@@ -627,10 +627,15 @@ public final class USBWatcher: ObservableObject {
     /// - Parameter deviceClass: the device's own `bDeviceClass`. Used only in
     ///   the embedded branch: class 9 (hub) with no hub ancestor is the
     ///   Mac's own root fan-out silicon (see the plumbing rule below).
+    /// - Parameter model: the Mac's `hw.model`, used to correct a port name
+    ///   macOS gets wrong on that model (`PortNumberingCorrection`). Required
+    ///   with no default so a missed production call site fails to compile;
+    ///   tests pass nil.
     nonisolated static func classifyAncestry(
         _ ancestors: [USBAncestor],
         ownUSBPortType: Int? = nil,
-        deviceClass: UInt8? = nil
+        deviceClass: UInt8? = nil,
+        model: String?
     ) -> AncestryClassification {
         var portName: String?
         var bus: Int?
@@ -681,7 +686,7 @@ public final class USBWatcher: ObservableObject {
             if ancestor.conformsToUSBHostDevice { hasHubAncestor = true }
             if portName == nil, let portPath = ancestor.usbIOPortPath {
                 if let name = Self.portName(fromUSBIOPortPath: portPath) {
-                    portName = name
+                    portName = PortNumberingCorrection.corrected(portNodeName: name, model: model)
                 } else {
                     // Found a `UsbIOPort` ancestor, but its path tail isn't a
                     // recognised `Port-*` node. Without a port name the device
@@ -1111,7 +1116,8 @@ public final class USBWatcher: ObservableObject {
         let classification = Self.classifyAncestry(
             Self.collectAncestors(of: service),
             ownUSBPortType: ownUSBPortType,
-            deviceClass: deviceClass
+            deviceClass: deviceClass,
+            model: DarwinSystemInfo.macModel
         )
         // Fallback: the device's own locationID upper byte mirrors its
         // controller's locationID upper byte on Apple Silicon.

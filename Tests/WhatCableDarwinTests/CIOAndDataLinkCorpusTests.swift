@@ -863,7 +863,7 @@ struct CIOAndDataLinkCorpusTests {
             let usb3Props = Self.parseDashBlocks(text: text19, classPrefix: "IOPortTransportStateUSB3")
             let usb3Transports: [USB3Transport] = usb3Props.enumerated().compactMap { (i, props) in
                 let read: (String) -> Any? = { props[$0] }
-                return USB3TransportWatcher.makeTransport(entryID: UInt64(2000 + i), read: read, hpmControllerUUID: nil)
+                return USB3TransportWatcher.makeTransport(entryID: UInt64(2000 + i), read: read, hpmControllerUUID: nil, model: nil)
             }
 
             // Parse CIO capabilities from probe 17
@@ -948,7 +948,7 @@ struct CIOAndDataLinkCorpusTests {
 
             let usb3Props = Self.parseDashBlocks(text: text19, classPrefix: "IOPortTransportStateUSB3")
             let usb3Transports: [USB3Transport] = usb3Props.enumerated().compactMap { (i, props) in
-                USB3TransportWatcher.makeTransport(entryID: UInt64(2000 + i), read: { props[$0] }, hpmControllerUUID: nil)
+                USB3TransportWatcher.makeTransport(entryID: UInt64(2000 + i), read: { props[$0] }, hpmControllerUUID: nil, model: nil)
             }
 
             let cioBlocks = Self.extractCIOBlocks(text: text17)
@@ -1085,7 +1085,7 @@ struct CIOAndDataLinkCorpusTests {
         // USB3 transports from probe 19
         let usb3Props = Self.parseDashBlocks(text: text19, classPrefix: "IOPortTransportStateUSB3")
         let usb3Transports: [USB3Transport] = usb3Props.enumerated().compactMap { (i, props) in
-            USB3TransportWatcher.makeTransport(entryID: UInt64(2000 + i), read: { props[$0] }, hpmControllerUUID: nil)
+            USB3TransportWatcher.makeTransport(entryID: UInt64(2000 + i), read: { props[$0] }, hpmControllerUUID: nil, model: nil)
         }
 
         // Get the port for portKey 2/1
@@ -1140,7 +1140,7 @@ struct CIOAndDataLinkCorpusTests {
 
             let usb3Props = Self.parseDashBlocks(text: text19, classPrefix: "IOPortTransportStateUSB3")
             let transports: [USB3Transport] = usb3Props.enumerated().compactMap { (i, props) in
-                USB3TransportWatcher.makeTransport(entryID: UInt64(i), read: { props[$0] }, hpmControllerUUID: nil)
+                USB3TransportWatcher.makeTransport(entryID: UInt64(i), read: { props[$0] }, hpmControllerUUID: nil, model: nil)
             }
 
             #expect(!transports.isEmpty,

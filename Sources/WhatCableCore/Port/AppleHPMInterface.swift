@@ -58,6 +58,17 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
     /// is fine because the value is only used as a live join key, never persisted.
     public let hpmControllerUUID: String?
     public let rawProperties: [String: String]
+    /// `PortType` as read through the per-key read, so it carries a
+    /// per-model correction (`PortNumberingCorrection`) where one applies.
+    /// `identity` prefers it over `rawProperties["PortType"]`, which stays
+    /// exactly what macOS published. Nil for fixtures built memberwise, which
+    /// then fall back to `rawProperties` as before.
+    public let reportedTypeCode: Int?
+    /// macOS's own name for this port node, set only when a per-model
+    /// correction renamed it (e.g. `Port-USB-A@2` on `Mac17,14`, shown as
+    /// `Port-USB-C@6`). Nil when no correction applied. Lets `--raw` and
+    /// `--json` say why `serviceName` differs from the raw `PortDescription`.
+    public let registryPortName: String?
 
     /// Build from a parsed IOKit property dictionary. Returns nil
     /// if the entry isn't a real physical Type-C / MagSafe port. Lives in
@@ -94,7 +105,8 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
         read: (String) -> Any?,
         readAll: (() -> [String: Any]?)? = nil,
         busIndex: Int? = nil,
-        hpmControllerUUID: String? = nil
+        hpmControllerUUID: String? = nil,
+        registryPortName: String? = nil
     ) -> AppleHPMInterface? {
         // Only return things that actually look like a physical Type-C or
         // MagSafe port. Real ports have a `PortTypeDescription` and a name
@@ -158,7 +170,9 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
             accessoryActivePowerMode: (read("IOAccessoryActivePowerMode") as? NSNumber)?.intValue,
             busIndex: busIndex,
             hpmControllerUUID: hpmControllerUUID,
-            rawProperties: raw
+            rawProperties: raw,
+            reportedTypeCode: (read("PortType") as? NSNumber)?.intValue,
+            registryPortName: registryPortName
         )
     }
 
@@ -194,7 +208,9 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
         accessoryActivePowerMode: Int? = nil,
         busIndex: Int? = nil,
         hpmControllerUUID: String? = nil,
-        rawProperties: [String: String]
+        rawProperties: [String: String],
+        reportedTypeCode: Int? = nil,
+        registryPortName: String? = nil
     ) {
         self.id = id
         self.serviceName = serviceName
@@ -228,6 +244,8 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
         self.busIndex = busIndex
         self.hpmControllerUUID = hpmControllerUUID
         self.rawProperties = rawProperties
+        self.reportedTypeCode = reportedTypeCode
+        self.registryPortName = registryPortName
     }
 
     // Keys that are internal join keys used to correlate data across IOKit

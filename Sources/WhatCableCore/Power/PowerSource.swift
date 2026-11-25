@@ -329,11 +329,17 @@ extension PowerSource {
 extension AppleHPMInterface {
     /// This port's identity, or nil when the port has no number (so nothing can
     /// be keyed to it at all).
+    ///
+    /// The type code comes from `reportedTypeCode` (the per-key read, which
+    /// carries a per-model correction) before `rawProperties["PortType"]`
+    /// (macOS's own value, kept raw for `--raw`). Otherwise a corrected port
+    /// would be keyed by its uncorrected type while its transports carry the
+    /// corrected one, and the two would never join (issue #627).
     public var identity: PortIdentity? {
         guard let n = portNumber else { return nil }
         return PortIdentity.from(
             typeDescription: portTypeDescription,
-            reportedTypeCode: rawProperties["PortType"].flatMap { Int($0) },
+            reportedTypeCode: reportedTypeCode ?? rawProperties["PortType"].flatMap { Int($0) },
             number: n
         )
     }

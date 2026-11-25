@@ -378,7 +378,8 @@ struct TransportWatcherSweepTests {
                     if USB3TransportWatcher.makeTransport(
                         entryID: UInt64(i),
                         read: read,
-                        hpmControllerUUID: nil
+                        hpmControllerUUID: nil,
+                        model: nil
                     ) != nil {
                         models17 += 1
                     }
@@ -393,7 +394,8 @@ struct TransportWatcherSweepTests {
                     if USB3TransportWatcher.makeTransport(
                         entryID: UInt64(2000 + i),
                         read: read,
-                        hpmControllerUUID: nil
+                        hpmControllerUUID: nil,
+                        model: nil
                     ) != nil {
                         models19 += 1
                     }
@@ -435,7 +437,8 @@ struct TransportWatcherSweepTests {
                     guard let model = USB3TransportWatcher.makeTransport(
                         entryID: UInt64(i),
                         read: read,
-                        hpmControllerUUID: nil
+                        hpmControllerUUID: nil,
+                        model: nil
                     ) else { continue }
 
                     // signalingDescription round-trips

@@ -230,7 +230,7 @@ public final class TRMTransportWatcher: ObservableObject {
         let trmStateRaw = read("TRM_State")
         guard trmStateRaw != nil else { return nil }
 
-        let parent = parentPortIdentity(read: read)
+        let parent = parentPortIdentity(read: read, model: DarwinSystemInfo.macModel)
         let portKey = "\(parent.type)/\(parent.number)"
 
         return TRMTransport(
@@ -285,7 +285,7 @@ public final class TRMTransportWatcher: ObservableObject {
             return nil
         }
 
-        let parent = parentPortIdentity(read: read)
+        let parent = parentPortIdentity(read: read, model: DarwinSystemInfo.macModel)
         let portKey = "\(parent.type)/\(parent.number)"
 
         return CIOCableCapability(
@@ -307,7 +307,17 @@ public final class TRMTransportWatcher: ObservableObject {
 
     /// Reads the parent port type and number from the service's properties.
     /// Same approach as `USB3TransportWatcher` and `PowerSourceWatcher`.
-    nonisolated static func parentPortIdentity(read: (String) -> Any?) -> (type: Int, number: Int) {
+    ///
+    /// The keys are read through `PortNumberingCorrection` for `model` (the
+    /// Mac's `hw.model`). Required with no default, so every caller decides;
+    /// tests pass nil.
+    nonisolated static func parentPortIdentity(read: (String) -> Any?, model: String?) -> (type: Int, number: Int) {
+        PortNumberingCorrection.correctingRead(read, model: model) { read in
+            rawParentPortIdentity(read: read)
+        }
+    }
+
+    nonisolated private static func rawParentPortIdentity(read: (String) -> Any?) -> (type: Int, number: Int) {
         let type = (read("ParentBuiltInPortType") as? NSNumber)?.intValue
             ?? (read("ParentPortType") as? NSNumber)?.intValue
             ?? 0

@@ -538,7 +538,7 @@ struct SnapshotRenderCorpusSweepTests {
             }
             for (i, props) in parseDashBlocks(text: probe17Text, classPrefix: "IOPortTransportStateUSB3").enumerated() {
                 let read: (String) -> Any? = { props[$0] }
-                if let t = USB3TransportWatcher.makeTransport(entryID: UInt64(7000 + i), read: read, hpmControllerUUID: nil) {
+                if let t = USB3TransportWatcher.makeTransport(entryID: UInt64(7000 + i), read: read, hpmControllerUUID: nil, model: nil) {
                     usb3Transports.append(t)
                 }
             }

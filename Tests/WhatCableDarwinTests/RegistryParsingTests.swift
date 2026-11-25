@@ -435,7 +435,7 @@ struct RegistryParsingTests {
             ancestor(serviceName: "pci-bridge"),
             ancestor(serviceName: "apciec0"),
         ]
-        let classification = USBWatcher.classifyAncestry(ancestors)
+        let classification = USBWatcher.classifyAncestry(ancestors, model: nil)
         #expect(classification.tunnelled == true)
         #expect(classification.tunnelBridgeDepth == 2)
         #expect(classification.tunnelRootName == "apciec0")
@@ -447,7 +447,7 @@ struct RegistryParsingTests {
         let ancestors: [USBWatcher.USBAncestor] = [
             ancestor(className: "AppleT8112USBXHCI", serviceName: "AppleT8112USBXHCI"),
         ]
-        let classification = USBWatcher.classifyAncestry(ancestors)
+        let classification = USBWatcher.classifyAncestry(ancestors, model: nil)
         #expect(classification.tunnelled == false)
         #expect(classification.tunnelBridgeDepth == nil)
         #expect(classification.tunnelRootName == nil)
@@ -466,7 +466,7 @@ struct RegistryParsingTests {
         let ancestors: [USBWatcher.USBAncestor] = [
             ancestor(className: "AppleUSBXHCIFL1100", serviceName: "AppleUSBXHCIFL1100"),
         ]
-        let classification = USBWatcher.classifyAncestry(ancestors)
+        let classification = USBWatcher.classifyAncestry(ancestors, model: nil)
         #expect(classification.tunnelled == true)
         #expect(classification.tunnelBridgeDepth == nil)
         #expect(classification.tunnelRootName == nil)

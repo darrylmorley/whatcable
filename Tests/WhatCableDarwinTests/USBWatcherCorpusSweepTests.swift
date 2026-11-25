@@ -306,7 +306,8 @@ struct USBWatcherCorpusSweepTests {
         let c = USBWatcher.classifyAncestry(
             productionAncestors(ancestors),
             ownUSBPortType: ownUSBPortType,
-            deviceClass: deviceClass
+            deviceClass: deviceClass,
+            model: nil
         )
         return WalkResult(
             portName: c.portName,

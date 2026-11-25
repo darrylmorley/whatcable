@@ -79,7 +79,7 @@ struct PCIeTunnelWalkTests {
             ancestor(className: "AppleT6000PCIeC", serviceName: "AppleT6000PCIeC"),
             ancestor(serviceName: "apciec1"),
         ]
-        let c = USBWatcher.classifyAncestry(ancestors)
+        let c = USBWatcher.classifyAncestry(ancestors, model: nil)
         #expect(c.tunnelled == true)
         #expect(c.carrier == .pcieTunnel)
         #expect(c.tunnelBridgeDepth == 2)
@@ -117,7 +117,7 @@ struct PCIeTunnelWalkTests {
             ancestor(className: "AppleT6000PCIeC", serviceName: "AppleT6000PCIeC", entryID: 107),
             ancestor(serviceName: "apciec1", entryID: 108),
         ]
-        let c = USBWatcher.classifyAncestry(ancestors)
+        let c = USBWatcher.classifyAncestry(ancestors, model: nil)
         #expect(c.tunnelControllerRegistryPath == controllerPath,
             "the saved path must name the controller (entryID 100), never a bridge hop or the apciec1 root")
         #expect(c.tunnelAncestorEntryIDs == [100, 101, 102, 103, 104, 105, 106, 107, 108],
@@ -134,7 +134,7 @@ struct PCIeTunnelWalkTests {
             ancestor(serviceName: "pci-bridge"),
             ancestor(serviceName: "apciec2"),
         ]
-        let c = USBWatcher.classifyAncestry(ancestors)
+        let c = USBWatcher.classifyAncestry(ancestors, model: nil)
         #expect(c.tunnelled == true)
         #expect(c.carrier == .usbTunnel)
         #expect(c.tunnelBridgeDepth == 2)
@@ -153,7 +153,7 @@ struct PCIeTunnelWalkTests {
             ancestor(serviceName: "pci-bridge"),
             ancestor(serviceName: "apciec0"),
         ]
-        let c = USBWatcher.classifyAncestry(ancestors)
+        let c = USBWatcher.classifyAncestry(ancestors, model: nil)
         #expect(c.tunnelled == false)
         #expect(c.carrier == nil)
         #expect(c.tunnelBridgeDepth == nil)
@@ -239,7 +239,7 @@ struct PCIeTunnelWalkTests {
         ]
         let ancestors = lines.compactMap { Self.parseAncestorLine($0) }
         #expect(ancestors.count == 10, "all rows incl. continuation parse as ancestors, got \(ancestors.count)")
-        let c = USBWatcher.classifyAncestry(ancestors)
+        let c = USBWatcher.classifyAncestry(ancestors, model: nil)
         #expect(c.tunnelled == true)
         #expect(c.carrier == .pcieTunnel)
         #expect(c.tunnelBridgeDepth == 2, "two pci-bridge names between controller and root")
@@ -329,8 +329,8 @@ struct PCIeTunnelWalkTests {
         #expect(newMarker.path == savedControllerPath,
             "the marker's path= must equal the saved controller path, not a bridge or apciecN name")
 
-        let oldClassification = USBWatcher.classifyAncestry(oldAncestors)
-        let newClassification = USBWatcher.classifyAncestry(newAncestors)
+        let oldClassification = USBWatcher.classifyAncestry(oldAncestors, model: nil)
+        let newClassification = USBWatcher.classifyAncestry(newAncestors, model: nil)
         #expect(oldClassification.tunnelled == newClassification.tunnelled)
         #expect(oldClassification.carrier == newClassification.carrier)
         #expect(oldClassification.tunnelBridgeDepth == newClassification.tunnelBridgeDepth)
@@ -360,7 +360,7 @@ struct PCIeTunnelWalkTests {
         for block in text.components(separatedBy: "--- Device[").dropFirst() {
             let ancestors = block.split(separator: "\n").compactMap { Self.parseAncestorLine(String($0)) }
             guard !ancestors.isEmpty else { continue }
-            let c = USBWatcher.classifyAncestry(ancestors)
+            let c = USBWatcher.classifyAncestry(ancestors, model: nil)
             if c.tunnelled {
                 tunnelledCount += 1
                 #expect(c.carrier == .pcieTunnel, "every tunnelled device in this capture is on the LG's FL1100")

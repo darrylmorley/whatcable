@@ -124,7 +124,7 @@ public final class USB3TransportWatcher: ObservableObject {
         // Walk the parent chain to get the HPM controller UUID so this
         // transport can be matched to its port by identity, not by @N.
         let uuid = wcHPMControllerUUID(for: service)
-        return Self.makeTransport(entryID: entryID, read: read, hpmControllerUUID: uuid)
+        return Self.makeTransport(entryID: entryID, read: read, hpmControllerUUID: uuid, model: DarwinSystemInfo.macModel)
     }
 
     // MARK: - Parse function (internal, testable)
@@ -132,7 +132,22 @@ public final class USB3TransportWatcher: ObservableObject {
     /// Parse a USB3 transport from a property-read closure. The `hpmControllerUUID`
     /// is passed in so the caller can walk the parent chain once and tests can
     /// supply nil without IOKit.
+    ///
+    /// `model` is the Mac's `hw.model`: the parent-port keys are read through
+    /// `PortNumberingCorrection` so this transport joins the corrected port
+    /// card. Required with no default; tests pass nil.
     nonisolated static func makeTransport(
+        entryID: UInt64,
+        read: (String) -> Any?,
+        hpmControllerUUID: String?,
+        model: String?
+    ) -> USB3Transport? {
+        PortNumberingCorrection.correctingRead(read, model: model) { read in
+            parseTransport(entryID: entryID, read: read, hpmControllerUUID: hpmControllerUUID)
+        }
+    }
+
+    nonisolated private static func parseTransport(
         entryID: UInt64,
         read: (String) -> Any?,
         hpmControllerUUID: String?

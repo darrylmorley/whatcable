@@ -158,7 +158,7 @@ public final class AppleUVDMWatcher: ObservableObject {
             return nil
         }
 
-        let parent = TRMTransportWatcher.parentPortIdentity(read: read)
+        let parent = TRMTransportWatcher.parentPortIdentity(read: read, model: DarwinSystemInfo.macModel)
         let portKey = "\(parent.type)/\(parent.number)"
 
         return AppleAccessoryIdentity(
