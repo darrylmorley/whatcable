@@ -318,9 +318,9 @@
 
 /* Widget configuration sheet (App Intents): the intent's description and
    its two parameters. macOS shows these in the Mac's system language. */
-"Choose which ports to show." = "Scegli quali porte mostrare.";
+"Choose which ports to show." = "Scegli quali porte visualizzare.";
 "Pin a port" = "Fissa una porta";
-"Ports to show" = "Porte da mostrare";
+"Ports to show" = "Porte da visualizzare";
 
 /* Negotiation diagnostics + Pro UX (PR #55). English; non-English to be refined by the community translation flow. */
 "The cable's e-marker and the Thunderbolt controller disagree on its speed. The controller measured a higher, confirmed rate, so that figure is used." = "L'e-marker del cavo e il controller Thunderbolt non sono d'accordo sulla velocità. Il controller ha misurato una velocità più alta e confermata, quindi viene usato questo valore.";
