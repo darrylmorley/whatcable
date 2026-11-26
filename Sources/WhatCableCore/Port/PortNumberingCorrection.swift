@@ -21,6 +21,19 @@ import Foundation
 ///
 /// Pure: no IOKit. The Darwin backend resolves the model and applies these
 /// functions at each reader that names these sockets.
+///
+/// If Apple fixes the names: this table would then swap correct names back
+/// to wrong ones, so the entry must come out. The tripwire is
+/// `PortNumberingCorrectionCorpusTests` ("Mac17,14 still names hub port 2
+/// C@6 and hub port 4 A@2"): it fails as soon as an ingested Mac17,14 run
+/// shows the internal hub ports carrying different socket names, and says
+/// which run and macOS version. Before removing anything, have an owner on
+/// that macOS version confirm which physical socket each device is in. To
+/// roll back for every macOS version, delete the `"Mac17,14"` entry and the
+/// tests that expect the swap (PortNumberingCorrectionTests,
+/// PortNumberingCorrectionReplayTests, and T4 in the corpus tests). If only
+/// newer macOS versions are fixed, the table needs a macOS version bound
+/// instead, which is a design change.
 public enum PortNumberingCorrection {
 
     /// One socket as a `PortType` code and an `@N` number.

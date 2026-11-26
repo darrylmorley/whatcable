@@ -192,6 +192,54 @@ struct PortNumberingCorrectionCorpusTests {
         #expect(total >= 14, "only \(total) other-model runs name C@6 or A@2: \(runsNamingSockets)")
     }
 
+    /// Rollback tripwire. The correction is only right while macOS keeps the
+    /// wrong names: Apple's internal hub port 2 (physically the rear USB-A by
+    /// the power cable) named `Port-USB-C@6`, and hub port 4 (physically the
+    /// front USB-C by the card reader) named `Port-USB-A@2`, on both the
+    /// USB 2 and USB 3 sides. Every Mac17,14 run in the corpus, including
+    /// ones ingested later, must still show that. If one does not, Apple may
+    /// have fixed the names, and the table would now be swapping correct
+    /// names back to wrong ones: see the note on `PortNumberingCorrection`.
+    @Test("Mac17,14 still names hub port 2 C@6 and hub port 4 A@2 (rollback tripwire)")
+    func rollbackTripwire() throws {
+        guard corpusLinked() else { return }
+        let expected: [String: String] = [
+            "usb2-hub-port2": "Port-USB-C@6", "usb3-hub-port2": "Port-USB-C@6",
+            "usb2-hub-port4": "Port-USB-A@2", "usb3-hub-port4": "Port-USB-A@2",
+        ]
+        var checkedRuns: [String] = []
+        for run in SnapshotCorpus.allRuns() where SnapshotCorpus.model(run: run) == "Mac17,14" {
+            guard let file = try SnapshotCorpus.load(run: run, probe: "50_registry_snapshot") else { continue }
+            let name = run.lastPathComponent
+            let macOS = (try? JSONSerialization.jsonObject(with: Data(contentsOf: run.appendingPathComponent("run.json"))))
+                .flatMap { ($0 as? [String: Any])?["summary"] as? [String: Any] }?["macos"] as? String ?? "unknown"
+            let snapshot = try RegistrySnapshot(file)
+            var linkNames: [UInt64: String] = [:]
+            for link in snapshot.links where link.plane == "IOService" { linkNames[link.id] = link.name }
+
+            // Every hub port whose UsbIOPort names C@6 or A@2, by its own
+            // IOService name, and every expected hub port by the socket it names.
+            var socketByHubPort: [String: String] = [:]
+            for entry in snapshot.entries.values {
+                let props = properties(entry.properties)
+                let path = (props["UsbIOPort"] as? String)
+                    ?? (props["UsbIOPort"] as? Data).flatMap { String(data: $0, encoding: .utf8) }
+                guard let socket = path?.split(separator: "/").last.map({ String($0).trimmingCharacters(in: .controlCharacters) }),
+                      let hubPort = linkNames[entry.id] else { continue }
+                if namesSwappedSocket(socket) || expected[hubPort] != nil { socketByHubPort[hubPort] = socket }
+            }
+            #expect(socketByHubPort == expected, """
+                \(name) (Mac17,14, macOS \(macOS)): internal hub ports no longer carry the swapped names. \
+                Apple may have fixed them on this macOS version, and PortNumberingCorrection would now \
+                swap correct names back to wrong ones. Confirm the physical sockets with an owner, then \
+                remove or bound the Mac17,14 entry. Seen: \(socketByHubPort.sorted { $0.key < $1.key })
+                """)
+            checkedRuns.append(name)
+        }
+        // The two known runs must be among those checked: an empty sweep is not a pass.
+        #expect(Set(mac17_14Runs).isSubset(of: Set(checkedRuns)), "checked \(checkedRuns)")
+    }
+
     /// Both Mac17,14 runs must be present when the corpus is linked.
     @Test("The two Mac17,14 runs are present and have the right model", arguments: mac17_14Runs)
     func runsPresent(runID: String) {
